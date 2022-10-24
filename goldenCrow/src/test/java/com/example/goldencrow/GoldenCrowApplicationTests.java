@@ -1,10 +1,10 @@
-package com.ssafy.crowstudio;
+package com.example.goldencrow;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CrowStudioApplicationTests {
+class GoldenCrowApplicationTests {
 
     @Test
     void contextLoads() {
