@@ -1,4 +1,4 @@
-package com.example.goldencrow.dto;
+package com.example.goldencrow.plan.dto;
 
 import lombok.Data;
 

@@ -1,6 +1,6 @@
-package com.example.goldencrow.repository;
+package com.example.goldencrow.plan.repository;
 
-import com.ssafy.entity.PlanGrand;
+import com.example.goldencrow.plan.entity.PlanGrand;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
