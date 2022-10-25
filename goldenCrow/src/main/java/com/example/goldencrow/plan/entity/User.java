@@ -1,12 +1,15 @@
-package com.example.goldencrow.entity;
+package com.example.goldencrow.plan.entity;
+
+import lombok.Data;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
-/*@DynamicUpdate
+@DynamicUpdate
 @Entity
 @Table(name = "USER_TB")
 @Data
-@NamedNativeQuery(
+/*@NamedNativeQuery(
 		name="user_rank",
 		query="select USER_UID, USER_NICKNAME, USER_CPOINT, rank() over(order by USER_CPOINT desc) as ranking from USER_TB",
 		resultSetMapping="user_rank_dto")

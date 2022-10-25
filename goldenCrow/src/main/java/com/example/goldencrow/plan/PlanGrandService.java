@@ -1,38 +1,31 @@
-package com.example.goldencrow.service;
+package com.example.goldencrow.plan;
 
-import com.ssafy.repository.PlanGrandRepository;
-/*import com.ssafy.dto.PlanDetailDto;
-import com.ssafy.dto.PlanDetailSubDto;
-import com.ssafy.dto.PlanListDto;
-import com.ssafy.dto.PlanUpdateDto;*/
-import com.ssafy.entity.PlanGrand;
+import com.example.goldencrow.plan.entity.PlanGrand;
+import com.example.goldencrow.plan.repository.PlanGrandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
-public class PlanGrandServiceImpl implements PlanGrandService {
+public class PlanGrandService {
 	@Autowired
 	private PlanGrandRepository pGR;
 
 /*	@Autowired
 	private PlanSmallRepository pSR;*/
 
-	@Override
 	public List<PlanGrand> findAll() {
 		List<PlanGrand> plangrands = new ArrayList<>();
 		pGR.findAll().forEach(e->plangrands.add(e));
 		return plangrands;
 	}
 
-	@Override
 	public Optional<PlanGrand> findbyId(Long grandplanSeq) {
 		Optional<PlanGrand> plangrand = pGR.findById(grandplanSeq);
 		return plangrand;
 	}
 
-	@Override
 	public int deleteById(Long grandplanSeq) {
 		Optional<PlanGrand> e = pGR.findById(grandplanSeq);
 
@@ -52,7 +45,6 @@ public class PlanGrandServiceImpl implements PlanGrandService {
 
 	}
 
-	@Override
 	public PlanGrand save(PlanGrand plangrand) {
 
 		//다 만들었으니까 등록한다
@@ -60,7 +52,6 @@ public class PlanGrandServiceImpl implements PlanGrandService {
 		return plangrand;
 	}
 
-	@Override
 	public void updateById(Long grandplanSeq, PlanGrand plangrand) {
 		Optional<PlanGrand> e = pGR.findById(grandplanSeq);
 
@@ -122,7 +113,6 @@ public class PlanGrandServiceImpl implements PlanGrandService {
 		}
 	}*/
 
-	@Override
 	public List<PlanGrand> findByUser_UserUid(String uid) {
 		return pGR.findByUser_UserUid(uid);
 	}
