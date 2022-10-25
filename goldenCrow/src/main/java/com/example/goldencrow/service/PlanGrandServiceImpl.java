@@ -1,11 +1,11 @@
 package com.example.goldencrow.service;
 
-import com.ssafy.repository.PlanGrandRepository;
+import com.example.goldencrow.repository.PlanGrandRepository;
 /*import com.ssafy.dto.PlanDetailDto;
-import com.ssafy.dto.PlanDetailSubDto;
-import com.ssafy.dto.PlanListDto;
-import com.ssafy.dto.PlanUpdateDto;*/
-import com.ssafy.entity.PlanGrand;
+import com.example.goldencrow.dto.PlanDetailSubDto;
+import com.example.goldencrow.dto.PlanListDto;
+import com.example.goldencrow.dto.PlanUpdateDto;*/
+import com.example.goldencrow.entity.PlanGrand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
