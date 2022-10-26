@@ -1,6 +1,6 @@
 import React from "react";
 
-const Main = () => {
+const Intro = () => {
   return (
     // <div className="flex flex-col justify-items-center items-center mt-60">
     <div className="flex flex-col h-screen justify-center justify-items-center items-center">
@@ -18,4 +18,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default Intro;
