@@ -1,6 +1,7 @@
 package com.ssafy.back_file.File;
 
 
+import com.ssafy.back_file.Team.TeamEntity;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -15,10 +16,12 @@ public class FileEntity {
     // 제목, 경로, 작성일자, 수정일자
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
+    @Column(name = "fileSeq")
     private Long fileSeq;
 
-    private Long teamSeq;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "teamSeq")
+    private TeamEntity team;
 
     private String fileTitle;
 

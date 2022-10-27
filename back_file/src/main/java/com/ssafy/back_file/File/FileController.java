@@ -1,6 +1,7 @@
 package com.ssafy.back_file.File;
 
 
+import com.ssafy.back_file.File.Service.FileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/api/projects")
+@RequestMapping(value = "/api-file/projects")
 public class FileController {
+
+    private final FileService fileService;
+
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
+    }
     /**
      *
      * @param fileName
@@ -28,21 +35,10 @@ public class FileController {
      */
     @PostMapping("/{fileName}")
     public ResponseEntity<String> userFileCreate(@PathVariable String fileName, @RequestBody HashMap<String, String> filePath) {
-        String newFilePath = filePath.get("filePath") + "\\" + fileName;
-
-        File newFile = new File(newFilePath);
-        System.out.println("HERE!!!!!!!!!!!!");
-        try {
-            if(newFile.createNewFile()) {
-                System.out.println("File Create Success");
-                return new ResponseEntity<>("Success", HttpStatus.OK);
-            } else {
-                System.out.println("Failed!!!!!!!!");
-                return new ResponseEntity<>("Fail", HttpStatus.BAD_REQUEST);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Fail", HttpStatus.BAD_REQUEST);
+        if (fileService.createFile(fileName,filePath.get("filePath"))) {
+            return new ResponseEntity<>("파일 생성이 완료되었습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("파일 생성에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 
