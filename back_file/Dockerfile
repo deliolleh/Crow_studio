@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk
+FROM openjdk:8-jdk as build
 
 ARG WORKSPACE=home/ubuntu/S07P31D207/back_file
 WORKDIR ${WORKSPACE}
