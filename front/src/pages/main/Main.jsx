@@ -12,7 +12,7 @@ const SidebarItems = styled.div`
   width: 292px;
   height: 100vh;
   margin-left: 3px;
-`
+`;
 
 const Main = () => {
   return (
@@ -24,7 +24,7 @@ const Main = () => {
         </SidebarItems>
       </div>
     </>
-  )
-}
+  );
+};
 
 export default Main;
