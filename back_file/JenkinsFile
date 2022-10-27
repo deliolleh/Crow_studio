@@ -4,7 +4,7 @@ pipeline {
                 stage('Docker build') {
                         agent any
                         steps {
-                                sh 'docker build -t backFile ./back-file'
+                                sh 'docker build -t backFile ./back_file'
                                 sh 'docker build -t front ./front'
                         }
                 }
