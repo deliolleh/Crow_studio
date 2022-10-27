@@ -81,11 +81,11 @@ public class UserController {
     public ResponseEntity<String> editNicknamePut(@RequestHeader("jwt") String jwt, @RequestBody Map<String, String> req) {
 
         if(jwt==null){
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
         }
 
         if(req.get("userNickname")==null){
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
         // 일단 성공하면 이렇게 반환될 겁니다
@@ -98,11 +98,11 @@ public class UserController {
     public ResponseEntity<String> editProfilePut(@RequestHeader("jwt") String jwt, @RequestBody Map<String, String> req) {
 
         if(jwt==null){
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
         }
 
         if(req.get("userProfile")==null){
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
         // 일단 성공하면 이렇게 반환될 겁니다
@@ -115,11 +115,11 @@ public class UserController {
     public ResponseEntity<String> editPasswordPut(@RequestHeader("jwt") String jwt, @RequestBody Map<String, String> req) {
 
         if(jwt==null){
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
         }
 
         if(req.get("userPassword")==null || req.get("userNewPassword")==null){
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
         // 일단 성공하면 이렇게 반환될 겁니다
@@ -132,7 +132,7 @@ public class UserController {
     public ResponseEntity<String> quitDelete(@RequestHeader("jwt") String jwt){
 
         if(jwt==null){
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
         }
 
         return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
@@ -144,11 +144,11 @@ public class UserController {
     public ResponseEntity<String> personalPost(@RequestHeader("jwt") String jwt, @RequestBody Map<String, Json> req){
 
         if(jwt==null){
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
         }
 
         if(req.get("userSettings")==null){
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
         System.out.println(req.toString());

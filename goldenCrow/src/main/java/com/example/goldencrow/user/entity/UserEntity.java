@@ -42,7 +42,7 @@ public class UserEntity {
     }
 
     public UserEntity(String userId, String userNickname) {
-        this.userSeq = userSeq;
+        this.userId = userId;
         this.userNickname = userNickname;
         this.userSettings = "";
         // 패스워드와 리프레시 토큰은 jwt서비스를 거쳐서 처리
