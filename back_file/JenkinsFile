@@ -4,7 +4,7 @@ pipeline {
                 stage('Docker build') {
                         agent any
                         steps {
-                                sh 'docker build -t backFile ../back_file'
+                                sh 'docker build -t backfile ../back_file'
                                 sh 'docker build -t front ../front'
                         }
                 }
@@ -14,18 +14,18 @@ pipeline {
                                 sh 'docker ps -f name=front -q \
                                         | xargs --no-run-if-empty docker container stop'
 
-                                sh 'docker ps -f name=backFile -q \
+                                sh 'docker ps -f name=backfile -q \
                                         | xargs --no-run-if-empty docker container stop'
 
                                 sh 'docker container ls -a -f name=front -q \
                                         | xargs -r docker container rm'
 
-                                sh 'docker container ls -a -f name=backFile -q \
+                                sh 'docker container ls -a -f name=backfile -q \
                                         | xargs -r docker container rm'
 
 
                                 sh 'docker run -d --name front -p 80:80 front'
-                                sh 'docker run -d --name back -p 8080:8080 backFile'
+                                sh 'docker run -d --name back -p 8080:8080 backfile'
                         }
                 }
         }
