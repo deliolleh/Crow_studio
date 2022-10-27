@@ -9,7 +9,7 @@ COPY . .
 RUN chmod +x gradlew
 RUN ./gradlew clean bootJar
 
-ARG JAR_FILE=./back_file-0.0.1-SNAPSHOT.jar
+ARG JAR_FILE=back_file/build/libs/back_file-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
 
 ENTRYPOINT ["java","-jar","/app.jar"]
