@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @DynamicUpdate
-@Table(name = "user")
+@Table(name = "team")
 @Data
 public class TeamEntity {
 
@@ -26,7 +26,7 @@ public class TeamEntity {
     private String teamName;
 
     @ManyToOne
-    @JoinColumn(name="userSeq", referencedColumnName = "userSeq")
+    @JoinColumn(name="teamLeaderSeq", referencedColumnName = "userSeq")
     private UserEntity teamLeader;
 
     public TeamEntity() {
