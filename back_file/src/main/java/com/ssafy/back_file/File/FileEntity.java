@@ -2,14 +2,17 @@ package com.ssafy.back_file.File;
 
 
 import com.ssafy.back_file.Team.TeamEntity;
+import com.ssafy.back_file.Team.TeamRepository;
+
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
+@Getter @Setter
 @Table(name = "file")
 public class FileEntity {
     // 파일, 팀, 멤버 pk
@@ -30,5 +33,15 @@ public class FileEntity {
     private LocalDateTime fileCreatedAt;
 
     private LocalDateTime fileUpdatedAt;
+
+    public FileEntity() {};
+
+    public FileEntity(FileCreateDto fileCreateDto,TeamEntity team) {
+        this.fileTitle = fileCreateDto.getFileTitle();
+        this.filePath = fileCreateDto.getFilePath();
+        this.fileCreatedAt = LocalDateTime.now();
+        this.fileUpdatedAt = LocalDateTime.now();
+        this.team = team;
+    }
 
 }
