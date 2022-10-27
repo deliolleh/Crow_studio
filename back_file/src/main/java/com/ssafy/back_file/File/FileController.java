@@ -28,14 +28,14 @@ public class FileController {
     }
     /**
      *
-     * @param fileName
-     * @param filePath
+     * @param fileCreateDto
      * @return Message
      * 파일 생성 포스트 요청
      */
-    @PostMapping("/{fileName}")
-    public ResponseEntity<String> userFileCreate(@PathVariable String fileName, @RequestBody HashMap<String, String> filePath) {
-        if (fileService.createFile(fileName,filePath.get("filePath"))) {
+
+    @PostMapping("/{teamSeq}")
+    public ResponseEntity<String> userFileCreate(@PathVariable Long teamSeq, @RequestBody FileCreateDto fileCreateDto) {
+        if (fileService.createFile(fileCreateDto, teamSeq)) {
             return new ResponseEntity<>("파일 생성이 완료되었습니다.", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("파일 생성에 실패했습니다.", HttpStatus.BAD_REQUEST);
