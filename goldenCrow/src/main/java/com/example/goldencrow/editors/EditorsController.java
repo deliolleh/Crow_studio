@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/editors")
+@RequestMapping("/api/editors")
 public class EditorsController {
 
     public EditorsService editorsService;
@@ -18,7 +18,8 @@ public class EditorsController {
     }
 
     @PostMapping("/format/{language}")
-    public ResponseEntity<Map<String, String>> fileFormat(@PathVariable String language, @RequestBody Map<String, String> rawText) {
+    public ResponseEntity<Map<String, String>> fileFormat(@PathVariable String language,
+                                                          @RequestBody Map<String, String> rawText) {
         String code = rawText.get("text");
 
         HashMap<String, String> response = editorsService.Formatting(language, code);
@@ -31,17 +32,29 @@ public class EditorsController {
         }
     }
 
-    @PostMapping("/lint/{language}")
-    public ResponseEntity<Map<String, String>> fileLint(@PathVariable String language, @RequestBody Map<String, String> rawText) {
-        String code = rawText.get("text");
-
-        HashMap<String, String> response = editorsService.Linting(language, code);
+    @GetMapping("/format/{language}")
+    public ResponseEntity<Map<String, String>> formatResult(@PathVariable String language, @RequestBody HashMap<String, String> rawData) {
+        String name = rawData.get("name"); // format 파일을 만든 시간
+        HashMap<String, String> response = editorsService.FormatRead(language, name);
         if (response.get("data").equals("null")) {
-            System.out.println("formatting Fail");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
-            System.out.println("formatting Success");
-            return ResponseEntity.ok(response);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+    }
+
+    @PostMapping("/lint/{language}")
+
+    public ResponseEntity<Map<String, Object>> fileLint(@PathVariable String language, @RequestBody Map<String, String> rawText) {
+        String code = rawText.get("text");
+
+        HashMap<String, Object> response = editorsService.Linting(language, code);
+        if (response.get("data").equals("null")) {
+            System.out.println("lint Fail");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else {
+            System.out.println("lint Success");
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
     }
 

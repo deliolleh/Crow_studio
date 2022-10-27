@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/variable")
+@RequestMapping("/api/variable")
 public class VariableController {
 
     public VariableService variableService;
