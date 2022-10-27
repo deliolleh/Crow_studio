@@ -5,7 +5,7 @@ import Header from "./components/Header";
 import Intro from "./pages/intro/Intro";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
-import Main from "./pages/main/Main";
+import Main from "./pages/_main/Main";
 import Mypage from "./pages/mypage/Mypage";
 
 const router = createBrowserRouter([
