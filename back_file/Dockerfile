@@ -6,6 +6,7 @@ WORKDIR ${WORKSPACE}
 
 # copy code & build
 COPY . .
+RUN chmod +x gradlew
 RUN ./gradlew clean bootJar
 
 ARG JAR_FILE=./back_file-0.0.1-SNAPSHOT.jar
