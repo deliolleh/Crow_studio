@@ -1,21 +1,14 @@
 package com.ssafy.back_file.File;
 
 
+import com.ssafy.back_file.File.FileDto.FileCreateDto;
 import com.ssafy.back_file.File.Service.FileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Clob;
 import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api-file/projects")
@@ -57,24 +50,24 @@ public class FileController {
 
     /**
      * 파일 이름 변경 요청
-     * @param fileName - 파일 시퀀스로 바뀔 예정
+     * @param
      * @return
      */
-    @PutMapping("/{fileName}")
-    public ResponseEntity<String> fileNameUpdate(@PathVariable String fileName, @RequestBody HashMap<String, String> filePath) {
-        String newFilePath = filePath.get("filePath") + "\\" + fileName;
-        String renameFilePath = filePath.get("filePath") + "\\" + filePath.get("newFileName");
-        File targetFile = new File(newFilePath);
-        File reNameFile = new File(renameFilePath);
-
-        boolean result = targetFile.renameTo(reNameFile);
-
-        if (result) {
-            return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.BAD_REQUEST);
-        }
-    }
+//    @PutMapping("/{teamSeq}/files")
+//    public ResponseEntity<String> fileNameUpdate(@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
+//        String newFilePath = filePath.get("filePath");
+//        String renameFilePath = filePath.get("filePath") + "\\" + filePath.get("newFileName");
+//        File targetFile = new File(newFilePath);
+//        File reNameFile = new File(renameFilePath);
+//
+//        boolean result = targetFile.renameTo(reNameFile);
+//
+//        if (result) {
+//            return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.BAD_REQUEST);
+//        }
+//    }
     @PostMapping("/project")
     public ResponseEntity<String> projectCreate(@RequestParam Long type, @RequestBody HashMap<String, String> filePath) {
         String env = "cmd /c";
@@ -91,16 +84,17 @@ public class FileController {
         return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
-    @PostMapping("/save/{fileSeq}")
-    public ResponseEntity<String> saveFile(@PathVariable Long fileSeq,@RequestBody HashMap<String, String> fileContent){
+    @PutMapping("/{teamSeq}/files")
+    public ResponseEntity<String> saveFile(@PathVariable Long teamSeq,@RequestBody HashMap<String, String> fileContent){
         String content = fileContent.get("fileContent");
-        String fileName = fileContent.get("fileName");
-        if (content == null) {
-            return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
-        } else if (fileName == null) {
-            return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
-        } else {
+        String filePath = fileContent.get("filePath");
+
+        boolean result = fileService.saveFile(filePath,content);
+        boolean result2 = fileService.updateFileUpdatedAt(teamSeq,filePath);
+        if (result && result2) {
             return new ResponseEntity<>("Success", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
         }
     }
 
