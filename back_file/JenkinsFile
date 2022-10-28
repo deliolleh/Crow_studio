@@ -24,7 +24,7 @@ pipeline {
                                         | xargs -r docker container rm'
 
 
-                                sh 'docker run -d --name front -p 80:80 front'
+                                sh 'docker run -d --name front -p 8000:80 front'
                                 sh 'docker run -d --name backfile -p 8080:8080 backfile'
                         }
                 }
