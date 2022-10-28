@@ -128,7 +128,15 @@ public class UserService {
 
     }
 
-    // 닉네임수정
+//    // 닉네임수정
+//    public String editNicknameService(String jwt, Map<String, String> req){
+//
+//
+//
+//
+//
+//
+//    }
 
     // 프로필사진 수정
 
