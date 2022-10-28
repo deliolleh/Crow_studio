@@ -2,10 +2,10 @@ import React, { Fragment } from "react";
 import styled from "styled-components";
 import { Menu, Transition } from '@headlessui/react';
 
-//import svg
+// import svg
 import { ReactComponent as IcNewFile } from "../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../assets/icons/ic_new_dir.svg";
-import {ReactComponent as IcToggle } from "../../../assets/icons/ic_toggle.svg"
+import { ReactComponent as IcToggle } from "../../../assets/icons/ic_toggle.svg";
 
 // styled
 const DirectoryContainer = styled.div`
@@ -46,6 +46,7 @@ const Directory = () => {
             <IcSpan>
               <IcNewDir alt="IcNewDir" />
             </IcSpan>
+            {/* dropdown */}
             <Menu as="div" className="relative">
               <Menu.Button>
                 <IcSpan className="flex">
@@ -62,7 +63,7 @@ const Directory = () => {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute left-6 -top-2 z-10 mt-2 w-56 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <Menu.Items className="absolute left-6 -top-2 z-10 mt-2 w-36 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="py-1">
                     <Menu.Item>
                       {({ active }) => (

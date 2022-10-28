@@ -4,9 +4,9 @@ import styled from "styled-components";
 // components
 import Sidebar from "./components/Sidebar";
 import Directory from "./components/Directory";
-// import Git from "./components/Git";
-// import Team from "./components/Team";
-// import Settings from "./components/Settings";
+import Git from "./components/Git";
+import Team from "./components/Team";
+import Settings from "./components/Settings";
 
 const SidebarItems = styled.div`
   width: 292px;
@@ -20,7 +20,8 @@ const Main = () => {
       <div className="flex">
         <Sidebar />
         <SidebarItems>
-          <Directory />
+          {/* <Directory /> */}
+          <Team />
         </SidebarItems>
       </div>
     </>
