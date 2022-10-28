@@ -21,7 +21,7 @@ const Modify = ({ closeModify }) => {
       </div>
 
       <div className="w-96">
-        <label htmlFor="email" className="text-primary_dark text-sm">
+        <label htmlFor="nickname" className="text-primary_dark text-sm">
           닉네임
         </label>
         <input
@@ -36,7 +36,7 @@ const Modify = ({ closeModify }) => {
       </div>
 
       <div className="w-96">
-        <label htmlFor="email" className="text-primary_dark text-sm">
+        <label htmlFor="status" className="text-primary_dark text-sm">
           상태 메시지
         </label>
         <input

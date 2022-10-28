@@ -7,6 +7,7 @@ import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
 import Main from "./pages/main/Main";
 import Mypage from "./pages/mypage/Mypage";
+import ProjectCreate from "./pages/project-create/ProjectCreate";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: "/mypage",
     element: <Mypage />,
+  },
+  {
+    path: "/project/create",
+    element: <ProjectCreate />,
   },
 ]);
 
