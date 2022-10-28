@@ -1,6 +1,7 @@
 package com.ssafy.back_file.File;
 
 
+import com.ssafy.back_file.File.Service.FileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,53 +18,41 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/api/projects")
+@RequestMapping(value = "/api-file/projects")
 public class FileController {
+
+    private final FileService fileService;
+
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
+    }
     /**
      *
-     * @param fileName
-     * @param filePath
+     * @param fileCreateDto
      * @return Message
      * 파일 생성 포스트 요청
      */
-    @PostMapping("/{fileName}")
-    public ResponseEntity<String> userFileCreate(@PathVariable String fileName, @RequestBody HashMap<String, String> filePath) {
-        String newFilePath = filePath.get("filePath") + "\\" + fileName;
 
-        File newFile = new File(newFilePath);
-        System.out.println("HERE!!!!!!!!!!!!");
-        try {
-            if(newFile.createNewFile()) {
-                System.out.println("File Create Success");
-                return new ResponseEntity<>("Success", HttpStatus.OK);
-            } else {
-                System.out.println("Failed!!!!!!!!");
-                return new ResponseEntity<>("Fail", HttpStatus.BAD_REQUEST);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Fail", HttpStatus.BAD_REQUEST);
+    @PostMapping("/{teamSeq}/files")
+    public ResponseEntity<String> userFileCreate(@PathVariable Long teamSeq, @RequestBody FileCreateDto fileCreateDto) {
+        if (fileService.createFile(fileCreateDto, teamSeq)) {
+            return new ResponseEntity<>("파일 생성이 완료되었습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("파일 생성에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 
     /**
-     * @param fileName - 파일 시퀀스로 바뀔 예정
      * @param filePath
      * 파일 삭제 요청
      */
-    @DeleteMapping("/{fileName}")
-    public ResponseEntity<String> userFileDelete(@PathVariable String fileName, @RequestBody HashMap<String, String> filePath) {
-
-        String newFilePath = filePath.get("filePath") + "\\" + fileName;
-        Path path = Paths.get(newFilePath);
-        try {
-            Files.delete(path);
-        } catch (NoSuchFileException e) {
-            return new ResponseEntity<>("파일이 존재하지 않습니다.",HttpStatus.BAD_REQUEST);
-        } catch (IOException e) {
-            return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+    @DeleteMapping("/{teamSeq}/files")
+    public ResponseEntity<String> userFileDelete(@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
+        if (fileService.deleteFile(filePath.get("filePath"), teamSeq)) {
+            return new ResponseEntity<>("파일 삭제를 성공했습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("파일 삭제를 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("성공적으로 삭제!", HttpStatus.OK);
     }
 
     /**

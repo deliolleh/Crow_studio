@@ -1,15 +1,19 @@
 FROM openjdk:8-jdk
 
-ARG WORKSPACE=/home/ubuntu/back_file
-# ARG BUILD_TARGET=${WORKSPACE}/build/libs
-WORKDIR ${WORKSPACE}
+# ARG WORKSPACE=home/ubuntu/S07P31D207/back_file
+# WORKDIR ${WORKSPACE}
 
-# copy code & build
 COPY . .
 RUN chmod +x gradlew
-RUN ./gradlew clean bootJar
 
-ARG JAR_FILE=build/libs/back_file-0.0.1-SNAPSHOT.jar
+RUN ./gradlew clean bootJar
+RUN find -name 'back_file-0.0.1-SNAPSHOT.jar'
+RUN ls
+
+RUN ls ./build/libs
+
+ARG JAR_FILE=./build/libs/back_file-0.0.1-SNAPSHOT.jar
+# ARG JAR_FILE=./docker-volume/jenkins/users/TeamGoldenCrow_738252207133088006/back_file-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
 
 ENTRYPOINT ["java","-jar","/app.jar"]
