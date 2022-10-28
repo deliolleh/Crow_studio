@@ -1,15 +1,17 @@
 package com.ssafy.back_file.File;
 
 
+import com.ssafy.back_file.File.FileDto.FileCreateDto;
 import com.ssafy.back_file.Team.TeamEntity;
-import com.ssafy.back_file.Team.TeamRepository;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter @Setter
@@ -29,18 +31,17 @@ public class FileEntity {
     private String fileTitle;
 
     private String filePath;
+    private Date fileCreatedAt;
 
-    private LocalDateTime fileCreatedAt;
-
-    private LocalDateTime fileUpdatedAt;
+    private Date fileUpdatedAt;
 
     public FileEntity() {};
 
-    public FileEntity(FileCreateDto fileCreateDto,TeamEntity team) {
+    public FileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
         this.fileTitle = fileCreateDto.getFileTitle();
         this.filePath = fileCreateDto.getFilePath();
-        this.fileCreatedAt = LocalDateTime.now();
-        this.fileUpdatedAt = LocalDateTime.now();
+        this.fileCreatedAt = new Date();
+        this.fileUpdatedAt = new Date();
         this.team = team;
     }
 
