@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.spring.web.json.Json;
 
-import javax.xml.ws.Response;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,30 +29,49 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<Map<String, String>> signupPost(@RequestBody Map<String, String> req) {
 
+        String userId = req.get("userId");
+        String userPassword = req.get("userPassword");
+        String userNickname = req.get("userNickname");
+
         // 셋 중 하나라도 비면 401
-        if(req.get("userId")==null || req.get("userPassword")==null || req.get("userNickname")==null){
+        if(userId==null || userPassword==null || userNickname==null){
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
         // 일단 성공하면 이렇게 반환될 겁니다
-        Map<String, String> result = new HashMap<>();
-        result.put("jwt", "123412341234");
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        Map<String, String> temp = userService.signupService(userId, userPassword, userNickname);
 
+        if(temp.get("result").equals("success")){
+            Map<String, String> res = new HashMap<>();
+            res.put("jwt", temp.get("jwt"));
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+        }
     }
 
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> loginPost(@RequestBody Map<String, String> req){
 
-        if(req.get("userId")==null || req.get("userPassword")==null){
+        String userId = req.get("userId");
+        String userPassword = req.get("userPassword");
+
+        if(userId==null || userPassword==null){
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
         // 일단 성공하면 이렇게 반환될 겁니다
-        Map<String, String> result = new HashMap<>();
-        result.put("jwt", "123412341234");
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        Map<String, String> temp = userService.loginService(userId, userPassword);
+
+        if(temp.get("result").equals("success")){
+            Map<String, String> res = new HashMap<>();
+            res.put("jwt", temp.get("jwt"));
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        } else {
+            // 비번이 틀렸거나 없는 정보입니다
+            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+        }
 
     }
 
