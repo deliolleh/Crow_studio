@@ -33,7 +33,7 @@ public class FileController {
      * 파일 생성 포스트 요청
      */
 
-    @PostMapping("/{teamSeq}")
+    @PostMapping("/{teamSeq}/files")
     public ResponseEntity<String> userFileCreate(@PathVariable Long teamSeq, @RequestBody FileCreateDto fileCreateDto) {
         if (fileService.createFile(fileCreateDto, teamSeq)) {
             return new ResponseEntity<>("파일 생성이 완료되었습니다.", HttpStatus.OK);
@@ -43,23 +43,16 @@ public class FileController {
     }
 
     /**
-     * @param fileName - 파일 시퀀스로 바뀔 예정
      * @param filePath
      * 파일 삭제 요청
      */
-    @DeleteMapping("/{fileName}")
-    public ResponseEntity<String> userFileDelete(@PathVariable String fileName, @RequestBody HashMap<String, String> filePath) {
-
-        String newFilePath = filePath.get("filePath") + "\\" + fileName;
-        Path path = Paths.get(newFilePath);
-        try {
-            Files.delete(path);
-        } catch (NoSuchFileException e) {
-            return new ResponseEntity<>("파일이 존재하지 않습니다.",HttpStatus.BAD_REQUEST);
-        } catch (IOException e) {
-            return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+    @DeleteMapping("/{teamSeq}/files")
+    public ResponseEntity<String> userFileDelete(@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
+        if (fileService.deleteFile(filePath.get("filePath"), teamSeq)) {
+            return new ResponseEntity<>("파일 삭제를 성공했습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("파일 삭제를 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("성공적으로 삭제!", HttpStatus.OK);
     }
 
     /**

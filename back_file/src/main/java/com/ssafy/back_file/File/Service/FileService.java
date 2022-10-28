@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 public class FileService {
@@ -42,6 +46,24 @@ public class FileService {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public boolean deleteFile(String filePath, Long teamSeq) {
+        Path path = Paths.get(filePath);
+        TeamEntity team = teamRepository.findByTeamSeq(teamSeq);
+        FileEntity file = fileRepository.findByTeamAndFilePath(team, filePath);
+        if (file == null) {
+            return false;
+        }
+        try {
+            Files.delete(path);
+        } catch (NoSuchFileException e) {
+            return false;
+        } catch (IOException e) {
+            return false;
+        }
+        fileRepository.delete(file);
+        return true;
     }
 
 }
