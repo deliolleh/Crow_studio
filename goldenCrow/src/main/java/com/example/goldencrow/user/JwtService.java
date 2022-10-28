@@ -22,8 +22,8 @@ public class JwtService {
     private final Base64.Encoder encoder = Base64.getEncoder();
     private final Base64.Decoder decoder = Base64.getDecoder();
 
-    private long accessTokenValidTime = Duration.ofDays(1).toMillis(); // 만료시간 1일
-    private long refreshTokenValidTime = Duration.ofDays(30).toMillis(); // 만료시간 30일
+    private long accessTokenValidTime = Duration.ofDays(30).toMillis(); // 만료시간 30일
+    private long refreshTokenValidTime = Duration.ofDays(100).toMillis(); // 만료시간 100일
 
     // 액세스 토큰 만들기
     public String createAccess(Long userSeq){
@@ -80,13 +80,13 @@ public class JwtService {
     }
 
     // 이거 우리 토큰 맞는지, 유효기간 남았는지, 파스하면 뭔지 확인하기
-    public Map<String, Object> verifyJWT(String jwt) throws UnsupportedEncodingException{
+    public Map<String, Object> verifyJWT(String jwt) throws Exception{
         Map<String, Object> claimMap = new HashMap<>();
 
         try {
             Claims claims = Jwts.parser()
                     .setSigningKey(SECRET_KEY.getBytes("UTF-8"))
-                    .parseClaimsJwt(jwt)
+                    .parseClaimsJws(jwt)
                     .getBody();
 
             claimMap = claims;
@@ -113,7 +113,7 @@ public class JwtService {
         try {
             Claims claims = Jwts.parser()
                     .setSigningKey(SECRET_KEY.getBytes("UTF-8"))
-                    .parseClaimsJwt(jwt)
+                    .parseClaimsJws(jwt)
                     .getBody();
 
             // 리프레시 토큰이 만료되었을 것이라는 전제는 없다...
