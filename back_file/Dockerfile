@@ -28,8 +28,7 @@ COPY src src
 RUN chmod +x ./gradlew
 RUN ./gradlew bootjar
 
-# COPY --from=builder build/libs/*.jar app.jar
-COPY build/libs/*.jar app.jar
+COPY --from=builder build/libs/*.jar app.jar
 
 ENTRYPOINT ["java","-jar","/app.jar"]
 
