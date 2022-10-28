@@ -21,8 +21,9 @@ const Main = () => {
         <Sidebar />
         <SidebarItems>
           {/* <Directory /> */}
+          <Git />
           {/* <Team /> */}
-          <Settings />
+          {/* <Settings /> */}
         </SidebarItems>
       </div>
     </>
