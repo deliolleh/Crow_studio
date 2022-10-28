@@ -5,10 +5,10 @@ FROM openjdk:8-jdk
 
 COPY . .
 RUN chmod +x gradlew
+RUN ls
 RUN ./gradlew clean bootJar
-RUN ls
-RUN cd build
-RUN ls
+RUN find -name 'back_file-0.0.1-SNAPSHOT.jar'
+
 ARG JAR_FILE=build/libs/back_file-0.0.1-SNAPSHOT.jar
 # ARG JAR_FILE=./docker-volume/jenkins/users/TeamGoldenCrow_738252207133088006/back_file-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
