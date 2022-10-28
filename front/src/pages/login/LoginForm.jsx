@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const initialInputState = { email: "", password: "" }; // 초기 이메일, 비밀번호 상태
 const initialErrorState = { emailErrorMsg: "", passwordErrorMsg: "" };
@@ -12,32 +12,29 @@ const LoginForm = ({ loginHandler }) => {
   useEffect(() => {}, [email, password, emailErrorMsg, passwordErrorMsg]);
 
   // 이메일 입력창 입력시 작동
-  const emailChangeHandler = useCallback((e) => {
+  const emailChangeHandler = (e) => {
     e.preventDefault();
     setInputs((prev) => {
       return { ...prev, email: e.target.value };
     });
-  }, []);
+  };
 
   // 비밀번호 입력창 입력시 작동
-  const passwordChangeHandler = useCallback((e) => {
+  const passwordChangeHandler = (e) => {
     e.preventDefault();
     setInputs((prev) => {
       return { ...prev, password: e.target.value };
     });
-  }, []);
+  };
 
   // 폼 제출시 작동
-  const submitHandler = useCallback(
-    (e) => {
-      e.preventDefault();
+  const submitHandler = (e) => {
+    e.preventDefault();
 
-      const loginData = { email, password };
-      setErrorMsgs(initialErrorState);
-      loginHandler(loginData);
-    },
-    [email, password, loginHandler]
-  );
+    const loginData = { email, password };
+    setErrorMsgs(initialErrorState);
+    loginHandler(loginData);
+  };
 
   return (
     <form
