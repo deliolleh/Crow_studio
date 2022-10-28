@@ -285,6 +285,8 @@ module.exports = {
       'point_sora': '#9187FF',
       'point_purple': '#D4A8E3',
       'point_purple_-2': '#A34DC1',
+      'point_purple_op20': '#786F7B',
+      
 
       // Custom black and white
       'point_e5e5e5_dark': '#E5E5E5',
