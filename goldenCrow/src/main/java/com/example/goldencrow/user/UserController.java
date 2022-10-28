@@ -84,13 +84,17 @@ public class UserController {
         }
 
         // 일단 성공하면 이렇게 반환될 겁니다
-        UserInfoDto userInfoDto = new UserInfoDto();
-        userInfoDto.setUserSeq(new Long(1));
-        userInfoDto.setUserId("userIdSample");
-        userInfoDto.setUserNickname("userNicknameSample");
-        userInfoDto.setUserProfile("user/profile/Sample/jpg");
+        UserInfoDto userInfoDto = userService.infoService(jwt);
+        UserInfoDto.Result result = userInfoDto.getResult();
 
-        return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
+        if(result==UserInfoDto.Result.EXPIRE) {
+            // 액세스 토큰 재발급 요청하세요...
+            return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
+        } else if(result== UserInfoDto.Result.SUCCESS) {
+            return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
 
     }
 

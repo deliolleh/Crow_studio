@@ -1,6 +1,7 @@
 package com.example.goldencrow.user;
 
 import com.example.goldencrow.common.CryptoUtil;
+import com.example.goldencrow.user.dto.UserInfoDto;
 import com.example.goldencrow.user.entity.UserEntity;
 import com.example.goldencrow.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +98,35 @@ public class UserService {
     }
 
     // 회원정보조회
+    public UserInfoDto infoService(String jwt){
+
+        UserInfoDto userInfoDto = new UserInfoDto();
+
+        try {
+            Map<String, Object> verifying = jwtService.verifyJWT(jwt);
+            String verifyingResult = (String) verifying.get("result");
+            System.out.println(verifyingResult);
+
+            if(verifyingResult.equals("expire")){
+                userInfoDto.setResult(UserInfoDto.Result.EXPIRE);
+
+            } else if(verifyingResult.equals("success")){
+                UserEntity userEntity = userRepository.findById(new Long(Integer.parseInt(verifying.get("jti").toString()))).get();
+                userInfoDto = new UserInfoDto(userEntity);
+                userInfoDto.setResult(UserInfoDto.Result.SUCCESS);
+
+            } else {
+                userInfoDto.setResult(UserInfoDto.Result.FAILURE);
+            }
+
+        } catch (Exception e) {
+            userInfoDto.setResult(UserInfoDto.Result.FAILURE);
+            throw new RuntimeException(e);
+        }
+
+        return userInfoDto;
+
+    }
 
     // 닉네임수정
 
