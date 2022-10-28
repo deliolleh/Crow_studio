@@ -2,11 +2,8 @@ package com.example.goldencrow.user.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
-import org.json.JSONObject;
-import springfox.documentation.spring.web.json.Json;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @DynamicUpdate
@@ -45,6 +42,7 @@ public class UserEntity {
         this.userId = userId;
         this.userNickname = userNickname;
         this.userSettings = "";
-        // 패스워드와 리프레시 토큰은 jwt서비스를 거쳐서 처리
+        // 패스워드는 인코딩해서 따로 처리
+        // 리프레시 토큰은 jwt서비스를 거쳐서 처리
     }
 }
