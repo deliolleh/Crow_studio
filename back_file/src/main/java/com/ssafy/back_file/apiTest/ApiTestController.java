@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/api/api-test")
+@RequestMapping(value = "/api-file/api-test")
 public class ApiTestController {
     private final ApiTestService apiTestService;
 

@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/api/compile")
+@RequestMapping(value = "/api-file/compile")
 public class CompileController {
     private final CompileService compileService;
 
