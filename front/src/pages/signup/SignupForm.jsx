@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const initialInputState = { email: "", password1: "", password2: "" }; // 초기 이메일, 비밀번호1, 비밀번호2 상태
 const initialErrorState = { emailErrorMsg: "", passwordErrorMsg: "" };
@@ -19,40 +19,37 @@ const SignupForm = ({ signupHandler }) => {
   ]);
 
   // 이메일 입력창 입력시 작동
-  const emailChangeHandler = useCallback((e) => {
+  const emailChangeHandler = (e) => {
     e.preventDefault();
     setInputs((prev) => {
       return { ...prev, email: e.target.value };
     });
-  }, []);
+  };
 
   // 비밀번호 입력창 입력시 작동
-  const password1ChangeHandler = useCallback((e) => {
+  const password1ChangeHandler = (e) => {
     e.preventDefault();
     setInputs((prev) => {
       return { ...prev, password1: e.target.value };
     });
-  }, []);
+  };
 
   // 비밀번호 확인 입력창 입력시 작동
-  const password2ChangeHandler = useCallback((e) => {
+  const password2ChangeHandler = (e) => {
     e.preventDefault();
     setInputs((prev) => {
       return { ...prev, password2: e.target.value };
     });
-  }, []);
+  };
 
   // 폼 제출시 작동
-  const submitHandler = useCallback(
-    (e) => {
-      e.preventDefault();
+  const submitHandler = (e) => {
+    e.preventDefault();
 
-      const signupData = { email, password1, password2 };
-      setErrorMsgs(initialErrorState);
-      signupHandler(signupData);
-    },
-    [email, password1, password2, signupHandler]
-  );
+    const signupData = { email, password1, password2 };
+    setErrorMsgs(initialErrorState);
+    signupHandler(signupData);
+  };
 
   return (
     <form
