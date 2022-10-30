@@ -7,8 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
+import java.io.*;
 import java.util.HashMap;
+
+import static java.lang.System.out;
 
 @RestController
 @RequestMapping(value = "/api-file/projects")
@@ -68,15 +70,73 @@ public class FileController {
 //            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.BAD_REQUEST);
 //        }
 //    }
+    /** 예외처리 안 되어 있음, DB에 저장 안 됨 */
     @PostMapping("/project")
     public ResponseEntity<String> projectCreate(@RequestParam Long type, @RequestBody HashMap<String, String> filePath) {
         String env = "cmd /c";
-        System.out.println(filePath);
-        if (type <= 4 && 1 <= type && filePath.get("filePath") != null && filePath.get("projectName") != null) {
+        String fileTitle = filePath.get("projectName");
+        String baseUrl = "C:\\Users\\multicampus\\Desktop\\test";
+        File file = new File(baseUrl + "\\" + fileTitle + ".py");
+        if (type == 2) {
+            String command = "django-admin startproject " + fileTitle;
+            out.println(command);
+            long start,end;
+            try {
+                Process p = Runtime.getRuntime().exec(String.format("cmd /c \"cd C:/Users/multicampus/Desktop/test && %s\"",command));
+
+                BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                String line = null;
+                start = System.currentTimeMillis();
+                while ((line = input.readLine()) != null) {out.println("Result : " + line);}
+                    end = System.currentTimeMillis();
+                    out.println("<br>Running Time : " + (end - start) / 1000f + "s.");
+
+
+
+                //Process create = Runtime.getRuntime().exec(env + command);
+                out.println(p);
+                //System.out.println(create);
+            } catch (IOException e) {
+                out.println("명령어 안나갔음!! 망함!!!");
+                return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+            }
             return new ResponseEntity<>("Success", HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+
+            try{
+                if (!file.createNewFile()) {
+                    return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+                }
+            } catch(IOException e) {
+                return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+            }
         }
+
+        if (type == 3) {
+            String content = "from flask import Flask\n\napp=Flask(" + filePath.get("projectName") +")\n\n@app.route(\"/\")\ndef hello_world():\n\treturn \"<p>Hello, World</p>\"";
+            try {
+                FileWriter overWriteFile = new FileWriter(file, false);
+                overWriteFile.write(content);
+                overWriteFile.close();
+
+            } catch (IOException e) {
+                out.println("here!!!!!!!!!!!");
+                return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity<>("Success", HttpStatus.OK);
+        } else if (type == 4) {
+            String content = "from fastapi import FastAPI\n\napp=FastAPI()\n\n@app.get(\"/\")\nasync def root():\n\treturn {\"message\" : \"Hello, World\"}";
+            try {
+                FileWriter overWriteFile = new FileWriter(file, false);
+                overWriteFile.write(content);
+                overWriteFile.close();
+            } catch (IOException e) {
+                out.println("fastapi 여기서 터짐? 왜 터짐?");
+                return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+            }
+        }
+        return new ResponseEntity<>("Success", HttpStatus.OK);
+
     }
 
     @GetMapping("/{teamSeq}")
