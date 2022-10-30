@@ -1,8 +1,14 @@
-FROM openjdk:8-jdk
+FROM openjdk:8-jdk AS builder
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+COPY src src
 
-ARG JAR_FILE=build/libs/goldenCrow-0.0.1-SNAPSHOT.jar
-COPY ${JAR_FILE} app.jar
+RUN chmod +x ./gradlew
+RUN ./gradlew bootjar
+
+FROM openjdk:8-jdk
+COPY --from=builder build/libs/*.jar app.jar
 
 ENTRYPOINT ["java","-jar","/app.jar"]
-
-
