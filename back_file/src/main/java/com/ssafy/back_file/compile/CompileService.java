@@ -1,7 +1,7 @@
 package com.ssafy.back_file.compile;
 
-import com.ssafy.back_file.File.FileDto.FileCreateDto;
-import com.ssafy.back_file.File.Service.FileService;
+//import com.ssafy.back_file.File.FileDto.FileCreateDto;
+//import com.ssafy.back_file.File.Service.FileService;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -15,7 +15,7 @@ import java.util.Objects;
 @Service
 public class CompileService {
 
-    private FileService fileService;
+//    private FileService fileService;
 
     // 포트 할당 로직
     public void port(String filePath, String type) {
@@ -41,9 +41,8 @@ public class CompileService {
 //    }
 
 
-    public String pyCompile(Map<String, Object> req) {
-
-        if (req.get("type") == "pure") {
+    public String pyCompile(Map<String, String> req) {
+        if (Objects.equals(req.get("type"), "pure")) {
             String command = "python3 " + req.get("filePath");
             String result = "";
             Runtime rt = Runtime.getRuntime();
