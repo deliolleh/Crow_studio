@@ -17,7 +17,7 @@ public class CompileController {
     }
 
     @PostMapping("/py")
-    public ResponseEntity<String> pyCompile(@RequestBody Map<String, Object> req) {
+    public ResponseEntity<String> pyCompile(@RequestBody Map<String, String> req) {
         String res = compileService.pyCompile(req);
         return new ResponseEntity<>(res, HttpStatus.OK);
 
