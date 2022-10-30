@@ -42,26 +42,29 @@ public class CompileService {
 
 
     public String pyCompile(Map<String, String> req) {
+        System.out.println(req.get("filePath"));
         if (Objects.equals(req.get("type"), "pure")) {
-            String command = "python3 " + req.get("filePath");
+//            String command = String.format("python %s", req.get("filePath"));
+            String command = String.format("python3 %s", req.get("filePath"));
             String result = "";
-            Runtime rt = Runtime.getRuntime();
-            Process p = null;
+//            Runtime rt = Runtime.getRuntime();
+//            Process p = null;
             StringBuffer sb = new StringBuffer();
             try{
-                p=rt.exec(command);
+                Process p = Runtime.getRuntime().exec(command);
                 BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 String cl = null;
-                while((cl=in.readLine())!=null){
+                while((cl = in.readLine()) != null){
                     sb.append(cl);
+                    sb.append("\n");
                 }
                 result = sb.toString();
                 in.close();
+                return result;
             }catch(IOException e){
                 e.printStackTrace();
                 return "";
             }
-            return result;
         }
         else {
             return "no pure";
