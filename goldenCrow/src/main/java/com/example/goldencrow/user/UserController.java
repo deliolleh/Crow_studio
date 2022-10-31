@@ -107,7 +107,11 @@ public class UserController {
         }
 
         // 일단 성공하면 이렇게 반환될 겁니다
-        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        if(userService.editNicknameService(jwt, req).equals("success")) {
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
 
     }
 
