@@ -128,7 +128,43 @@ public class UserService {
 
     }
 
-    // 닉네임수정
+        UserInfoDto userInfoDto = new UserInfoDto();
+
+        try {
+            Map<String, Object> verifying = jwtService.verifyJWT(jwt);
+            String verifyingResult = (String) verifying.get("result");
+            System.out.println(verifyingResult);
+
+            if(verifyingResult.equals("expire")){
+                userInfoDto.setResult(UserInfoDto.Result.EXPIRE);
+
+            } else if(verifyingResult.equals("success")){
+                UserEntity userEntity = userRepository.findById(new Long(Integer.parseInt(verifying.get("jti").toString()))).get();
+                userInfoDto = new UserInfoDto(userEntity);
+                userInfoDto.setResult(UserInfoDto.Result.SUCCESS);
+
+            } else {
+                userInfoDto.setResult(UserInfoDto.Result.FAILURE);
+            }
+
+        } catch (Exception e) {
+            userInfoDto.setResult(UserInfoDto.Result.FAILURE);
+            throw new RuntimeException(e);
+        }
+
+        return userInfoDto;
+
+    }
+
+//    // 닉네임수정
+//    public String editNicknameService(String jwt, Map<String, String> req){
+//
+//
+//
+//
+//
+//
+//    }
 
     // 프로필사진 수정
 

@@ -77,11 +77,7 @@ public class UserController {
 
     // 회원정보 조회
     @GetMapping("/info")
-    public ResponseEntity<UserInfoDto> infoGet(@RequestHeader("jwt") String jwt){
-
-        if(jwt==null){
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-        }
+    public ResponseEntity<UserInfoDto> infoGet(@RequestHeader("jwt") String jwt) {
 
         // 일단 성공하면 이렇게 반환될 겁니다
         UserInfoDto userInfoDto = userService.infoService(jwt);
@@ -216,5 +212,8 @@ public class UserController {
         return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
 
     }
+
+    // 리프레시 토큰으로 액세스토큰 요청
+
 
 }

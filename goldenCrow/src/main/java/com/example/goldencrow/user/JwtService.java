@@ -80,7 +80,7 @@ public class JwtService {
     }
 
     // 이거 우리 토큰 맞는지, 유효기간 남았는지, 파스하면 뭔지 확인하기
-    public Map<String, Object> verifyJWT(String jwt) throws Exception{
+    public Map<String, Object> verifyJWT(String jwt) throws Exception {
         Map<String, Object> claimMap = new HashMap<>();
 
         try {
@@ -103,6 +103,26 @@ public class JwtService {
         }
 
         return claimMap;
+
+    }
+
+    // parse 하면 누군지 찾아내기
+    public Long JWTtoUserSeq(String jwt) {
+
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(SECRET_KEY.getBytes("UTF-8"))
+                    .parseClaimsJws(jwt)
+                    .getBody();
+
+            Map<String, Object> claimMap = claims;
+            Long userSeq = (Long) claimMap.get("userSeq");
+
+            return userSeq;
+
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
