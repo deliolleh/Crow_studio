@@ -36,8 +36,8 @@ public class FileController {
     public ResponseEntity<String> userFileCreate(@RequestHeader("jwt") String jwt,@PathVariable Long teamSeq, @RequestBody FileCreateDto fileCreateDto) {
 
         if (fileService.createFile(fileCreateDto, teamSeq)) {
-            String newFilePath = fileCreateDto.getFilePath() + "/" + fileCreateDto.getFileTitle();
-            out.println(newFilePath);
+            String ts = String.valueOf(teamSeq);
+            String newFilePath = fileCreateDto.getFilePath() + "/"+ts+"/" + fileCreateDto.getFileTitle();
             return new ResponseEntity<>(newFilePath, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("파일 생성에 실패했습니다.", HttpStatus.BAD_REQUEST);
@@ -49,7 +49,7 @@ public class FileController {
      * 파일 삭제 요청
      */
     @DeleteMapping("/{teamSeq}/files")
-    public ResponseEntity<String> userFileDelete(@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
+    public ResponseEntity<String> userFileDelete(@RequestHeader("jwt") String jwt,@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
         if (fileService.deleteFile(filePath.get("filePath"), teamSeq)) {
             return new ResponseEntity<>("파일 삭제를 성공했습니다.", HttpStatus.OK);
         } else {
