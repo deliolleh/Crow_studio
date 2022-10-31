@@ -1,13 +1,25 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
+import { signup } from "../../redux/authSlice";
 
 import SignupTitle from "./SignupTitle";
 import SignupForm from "./SignupForm";
 
 const Signup = () => {
-  const signupHandler = useCallback((signupData) => {
+  const dispatch = useDispatch();
+
+  const signupHandler = (signupData) => {
     console.log("signupData:", signupData);
-  }, []);
+
+    dispatch(signup(signupData))
+      .unwrap()
+      .then((res) => {
+        console.log("res:", res);
+      })
+      .catch((err) => console.error("err:", err));
+  };
 
   return (
     <section className="w-max h-max">
