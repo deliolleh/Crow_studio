@@ -4,6 +4,7 @@ import com.example.goldencrow.common.CryptoUtil;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import com.example.goldencrow.user.entity.UserEntity;
 import com.example.goldencrow.user.repository.UserRepository;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -244,9 +245,27 @@ public class UserService {
 
     }
 
-
-
     // 개인 환경세팅 저장
+    public String personalPost(String jwt, UserInfoDto data) {
+
+        // 사용자 정보 불러와서 체크하고
+        // jwt에서 userSeq를 뽑아내고
+        Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+        // userSeq로 userEntity를 뽑아낸 다음
+        UserEntity userEntity = userRepository.findById(userSeq).get();
+
+        // 받아온 json을 String으로 바꾸기
+        JSONObject jsonObject = new JSONObject(data);
+        String settings = jsonObject.toString();
+        userEntity.setUserSettings(settings);
+
+        // 해당 부분 등록 (수정)
+        userRepository.saveAndFlush(userEntity);
+
+        return "success";
+
+    }
 
     // 개인 환경세팅 조회
 

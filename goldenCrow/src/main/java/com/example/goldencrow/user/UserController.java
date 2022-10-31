@@ -6,7 +6,6 @@ import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.spring.web.json.Json;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -149,8 +148,6 @@ public class UserController {
     @DeleteMapping("/quit")
     public ResponseEntity<String> quitDelete(@RequestHeader("jwt") String jwt){
 
-        System.out.println(jwt);
-
         // 일단 성공하면 이렇게 반환될 겁니다
         if(userService.quitUser(jwt).equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
@@ -161,19 +158,15 @@ public class UserController {
     }
 
     // 개인 환경 세팅 저장
-    @PostMapping("/personal")
-    public ResponseEntity<String> personalPost(@RequestHeader("jwt") String jwt, @RequestBody Map<String, Json> req){
+    @PutMapping("/personal")
+    public ResponseEntity<String> personalPost(@RequestHeader("jwt") String jwt, @RequestBody UserInfoDto req){
 
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
-        }
-
-        if(req.get("userSettings")==null){
+        // 일단 성공하면 이렇게 반환될 겁니다
+        if(userService.personalPost(jwt, req).equals("success")) {
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
-
-        System.out.println(req.toString());
-        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
 
     }
 
