@@ -19,7 +19,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 //                .excludePathPatterns("/api/forum/read")
 //                .excludePathPatterns("/api/forum/read/**");
 
-        // 토큰 필요없는 거 여기에 차차 다 추가하기
     }
 
     @Override
