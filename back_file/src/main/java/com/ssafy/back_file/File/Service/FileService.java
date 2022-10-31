@@ -34,7 +34,6 @@ public class FileService {
      * 파일이 성공적으로 생성되면 true
      * 아니면 false 반환*/
     public boolean createFile(FileCreateDto fileCreateDto, Long teamSeq) {
-        String baseUrl = "http://k7d207.p.ssafy.io";
         String ts = String.valueOf(teamSeq);
         String newFilePath = fileCreateDto.getFilePath() + "/"+ts+"/" + fileCreateDto.getFileTitle();
 
