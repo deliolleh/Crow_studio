@@ -126,7 +126,6 @@ public class UserService {
 
         return userInfoDto;
 
-
     }
 
     // 닉네임수정
