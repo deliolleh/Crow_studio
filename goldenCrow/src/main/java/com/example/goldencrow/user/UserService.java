@@ -4,6 +4,7 @@ import com.example.goldencrow.common.CryptoUtil;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import com.example.goldencrow.user.entity.UserEntity;
 import com.example.goldencrow.user.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -105,21 +106,9 @@ public class UserService {
         UserInfoDto userInfoDto = new UserInfoDto();
 
         try {
-            Map<String, Object> verifying = jwtService.verifyJWT(jwt);
-            String verifyingResult = (String) verifying.get("result");
-            System.out.println(verifyingResult);
-
-            if(verifyingResult.equals("expire")){
-                userInfoDto.setResult(UserInfoDto.Result.EXPIRE);
-
-            } else if(verifyingResult.equals("success")){
-                UserEntity userEntity = userRepository.findById(new Long(Integer.parseInt(verifying.get("jti").toString()))).get();
-                userInfoDto = new UserInfoDto(userEntity);
-                userInfoDto.setResult(UserInfoDto.Result.SUCCESS);
-
-            } else {
-                userInfoDto.setResult(UserInfoDto.Result.FAILURE);
-            }
+            UserEntity userEntity = userRepository.findById(jwtService.JWTtoUserSeq(jwt)).get();
+            userInfoDto = new UserInfoDto(userEntity);
+            userInfoDto.setResult(UserInfoDto.Result.SUCCESS);
 
         } catch (Exception e) {
             userInfoDto.setResult(UserInfoDto.Result.FAILURE);
@@ -127,7 +116,6 @@ public class UserService {
         }
 
         return userInfoDto;
-
 
     }
 
@@ -248,27 +236,75 @@ public class UserService {
     // 개인 환경세팅 저장
     public String personalPost(String jwt, UserInfoDto data) {
 
-        // 사용자 정보 불러와서 체크하고
-        // jwt에서 userSeq를 뽑아내고
-        Long userSeq = jwtService.JWTtoUserSeq(jwt);
+        try {
+            // 사용자 정보 불러와서 체크하고
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
-        // userSeq로 userEntity를 뽑아낸 다음
-        UserEntity userEntity = userRepository.findById(userSeq).get();
+            // userSeq로 userEntity를 뽑아낸 다음
+            UserEntity userEntity = userRepository.findById(userSeq).get();
 
-        // 받아온 json을 String으로 바꾸기
-        JSONObject jsonObject = new JSONObject(data);
-        String settings = jsonObject.toString();
-        userEntity.setUserSettings(settings);
+            // 받아온 json을 String으로 바꾸기
+            JSONObject jsonObject = new JSONObject(data);
+            String settings = jsonObject.toString();
+            userEntity.setUserSettings(settings);
 
-        // 해당 부분 등록 (수정)
-        userRepository.saveAndFlush(userEntity);
+            // 해당 부분 등록 (수정)
+            userRepository.saveAndFlush(userEntity);
 
-        return "success";
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
 
     }
 
     // 개인 환경세팅 조회
+    public UserInfoDto personalGet(String jwt) {
+
+        ObjectMapper mapper = new ObjectMapper();
+        UserInfoDto userInfoDto = new UserInfoDto();
+
+        try {
+            // 사용자 정보 불러와서 체크하고
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+            // userSeq로 userEntity를 뽑아낸 다음
+            UserEntity userEntity = userRepository.findById(userSeq).get();
+            String data = userEntity.getUserSettings();
+
+            userInfoDto = mapper.readValue(data, UserInfoDto.class);
+            userInfoDto.setResult(UserInfoDto.Result.SUCCESS);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            userInfoDto.setResult(UserInfoDto.Result.FAILURE);
+        }
+
+        return userInfoDto;
+
+    }
 
     // 마이페이지 조회
+    public UserInfoDto mypage(Long userSeq) {
+
+        UserInfoDto userInfoDto = new UserInfoDto();
+
+        try {
+            UserEntity userEntity = userRepository.findById(userSeq).get();
+            userInfoDto = new UserInfoDto(userEntity);
+            userInfoDto.setResult(UserInfoDto.Result.SUCCESS);
+
+        } catch (Exception e) {
+            userInfoDto.setResult(UserInfoDto.Result.FAILURE);
+            throw new RuntimeException(e);
+        }
+
+        return userInfoDto;
+
+
+    }
 
 }
