@@ -1,100 +1,142 @@
 package com.ssafy.back_file.File;
 
 
+import com.ssafy.back_file.File.FileDto.FileCreateDto;
+import com.ssafy.back_file.File.Service.FileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Clob;
+import java.io.*;
 import java.util.HashMap;
-import java.util.Map;
+
+import static java.lang.System.out;
 
 @RestController
-@RequestMapping(value = "/api/projects")
+@RequestMapping(value = "/api-file/projects")
 public class FileController {
+
+    private final FileService fileService;
+
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
+    }
     /**
      *
-     * @param fileName
-     * @param filePath
+     * @param fileCreateDto
      * @return Message
      * 파일 생성 포스트 요청
      */
-    @PostMapping("/{fileName}")
-    public ResponseEntity<String> userFileCreate(@PathVariable String fileName, @RequestBody HashMap<String, String> filePath) {
-        String newFilePath = filePath.get("filePath") + "\\" + fileName;
 
-        File newFile = new File(newFilePath);
-        System.out.println("HERE!!!!!!!!!!!!");
-        try {
-            if(newFile.createNewFile()) {
-                System.out.println("File Create Success");
-                return new ResponseEntity<>("Success", HttpStatus.OK);
-            } else {
-                System.out.println("Failed!!!!!!!!");
-                return new ResponseEntity<>("Fail", HttpStatus.BAD_REQUEST);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Fail", HttpStatus.BAD_REQUEST);
+    @PostMapping("/{teamSeq}/files")
+    public ResponseEntity<String> userFileCreate(@PathVariable Long teamSeq, @RequestBody FileCreateDto fileCreateDto) {
+        if (fileService.createFile(fileCreateDto, teamSeq)) {
+            return new ResponseEntity<>("파일 생성이 완료되었습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("파일 생성에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 
     /**
-     * @param fileName - 파일 시퀀스로 바뀔 예정
      * @param filePath
      * 파일 삭제 요청
      */
-    @DeleteMapping("/{fileName}")
-    public ResponseEntity<String> userFileDelete(@PathVariable String fileName, @RequestBody HashMap<String, String> filePath) {
-
-        String newFilePath = filePath.get("filePath") + "\\" + fileName;
-        Path path = Paths.get(newFilePath);
-        try {
-            Files.delete(path);
-        } catch (NoSuchFileException e) {
-            return new ResponseEntity<>("파일이 존재하지 않습니다.",HttpStatus.BAD_REQUEST);
-        } catch (IOException e) {
-            return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+    @DeleteMapping("/{teamSeq}/files")
+    public ResponseEntity<String> userFileDelete(@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
+        if (fileService.deleteFile(filePath.get("filePath"), teamSeq)) {
+            return new ResponseEntity<>("파일 삭제를 성공했습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("파일 삭제를 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("성공적으로 삭제!", HttpStatus.OK);
     }
 
     /**
      * 파일 이름 변경 요청
-     * @param fileName - 파일 시퀀스로 바뀔 예정
+     * @param
      * @return
      */
-    @PutMapping("/{fileName}")
-    public ResponseEntity<String> fileNameUpdate(@PathVariable String fileName, @RequestBody HashMap<String, String> filePath) {
-        String newFilePath = filePath.get("filePath") + "\\" + fileName;
-        String renameFilePath = filePath.get("filePath") + "\\" + filePath.get("newFileName");
-        File targetFile = new File(newFilePath);
-        File reNameFile = new File(renameFilePath);
-
-        boolean result = targetFile.renameTo(reNameFile);
-
-        if (result) {
-            return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.BAD_REQUEST);
-        }
-    }
+//    @PutMapping("/{teamSeq}/files")
+//    public ResponseEntity<String> fileNameUpdate(@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
+//        String newFilePath = filePath.get("filePath");
+//        String renameFilePath = filePath.get("filePath") + "\\" + filePath.get("newFileName");
+//        File targetFile = new File(newFilePath);
+//        File reNameFile = new File(renameFilePath);
+//
+//        boolean result = targetFile.renameTo(reNameFile);
+//
+//        if (result) {
+//            return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.BAD_REQUEST);
+//        }
+//    }
+    /** 예외처리 안 되어 있음, DB에 저장 안 됨 */
     @PostMapping("/project")
     public ResponseEntity<String> projectCreate(@RequestParam Long type, @RequestBody HashMap<String, String> filePath) {
         String env = "cmd /c";
-        System.out.println(filePath);
-        if (type <= 4 && 1 <= type && filePath.get("filePath") != null && filePath.get("projectName") != null) {
+        String fileTitle = filePath.get("projectName");
+        String baseUrl = "C:\\Users\\multicampus\\Desktop\\test";
+        File file = new File(baseUrl + "\\" + fileTitle + ".py");
+        if (type == 2) {
+            String command = "django-admin startproject " + fileTitle;
+            out.println(command);
+            long start,end;
+            try {
+                Process p = Runtime.getRuntime().exec(String.format("cmd /c \"cd C:/Users/multicampus/Desktop/test && %s\"",command));
+
+                BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                String line = null;
+                start = System.currentTimeMillis();
+                while ((line = input.readLine()) != null) {out.println("Result : " + line);}
+                    end = System.currentTimeMillis();
+                    out.println("<br>Running Time : " + (end - start) / 1000f + "s.");
+
+
+
+                //Process create = Runtime.getRuntime().exec(env + command);
+                out.println(p);
+                //System.out.println(create);
+            } catch (IOException e) {
+                out.println("명령어 안나갔음!! 망함!!!");
+                return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+            }
             return new ResponseEntity<>("Success", HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+
+            try{
+                if (!file.createNewFile()) {
+                    return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+                }
+            } catch(IOException e) {
+                return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+            }
         }
+
+        if (type == 3) {
+            String content = "from flask import Flask\n\napp=Flask(" + filePath.get("projectName") +")\n\n@app.route(\"/\")\ndef hello_world():\n\treturn \"<p>Hello, World</p>\"";
+            try {
+                FileWriter overWriteFile = new FileWriter(file, false);
+                overWriteFile.write(content);
+                overWriteFile.close();
+
+            } catch (IOException e) {
+                out.println("here!!!!!!!!!!!");
+                return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity<>("Success", HttpStatus.OK);
+        } else if (type == 4) {
+            String content = "from fastapi import FastAPI\n\napp=FastAPI()\n\n@app.get(\"/\")\nasync def root():\n\treturn {\"message\" : \"Hello, World\"}";
+            try {
+                FileWriter overWriteFile = new FileWriter(file, false);
+                overWriteFile.write(content);
+                overWriteFile.close();
+            } catch (IOException e) {
+                out.println("fastapi 여기서 터짐? 왜 터짐?");
+                return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+            }
+        }
+        return new ResponseEntity<>("Success", HttpStatus.OK);
+
     }
 
     @GetMapping("/{teamSeq}")
@@ -102,16 +144,17 @@ public class FileController {
         return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
-    @PostMapping("/save/{fileSeq}")
-    public ResponseEntity<String> saveFile(@PathVariable Long fileSeq,@RequestBody HashMap<String, String> fileContent){
+    @PutMapping("/{teamSeq}/files")
+    public ResponseEntity<String> saveFile(@PathVariable Long teamSeq,@RequestBody HashMap<String, String> fileContent){
         String content = fileContent.get("fileContent");
-        String fileName = fileContent.get("fileName");
-        if (content == null) {
-            return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
-        } else if (fileName == null) {
-            return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
-        } else {
+        String filePath = fileContent.get("filePath");
+
+        boolean result = fileService.saveFile(filePath,content);
+        boolean result2 = fileService.updateFileUpdatedAt(teamSeq,filePath);
+        if (result && result2) {
             return new ResponseEntity<>("Success", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
         }
     }
 
