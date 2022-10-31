@@ -106,9 +106,8 @@ public class JwtService {
 
     }
 
-    // 리프레시 토큰을 보내주면 그걸로 새로 액세스 토큰을 발급하기
-    public String createRefreshByAccess(String jwt)throws UnsupportedEncodingException{
-        Map<String, Object> claimMap = new HashMap<>();
+    // parse 하면 누군지 찾아내기
+    public Long JWTtoUserSeq(String jwt) {
 
         try {
             Claims claims = Jwts.parser()
@@ -116,18 +115,39 @@ public class JwtService {
                     .parseClaimsJws(jwt)
                     .getBody();
 
-            // 리프레시 토큰이 만료되었을 것이라는 전제는 없다...
+            Map<String, Object> claimMap = claims;
+            Long userSeq = (Long) claimMap.get("userSeq");
 
-            claimMap = claims;
-            Long userSeq = (Long) claimMap.get("jti");
+            return userSeq;
 
-            return createAccess(userSeq);
-
-        } catch (Exception e){
-            System.out.println(e);
-            return null;
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
 
     }
+
+//    // 리프레시 토큰을 보내주면 그걸로 새로 액세스 토큰을 발급하기
+//    public String createRefreshByAccess(String jwt)throws UnsupportedEncodingException{
+//        Map<String, Object> claimMap = new HashMap<>();
+//
+//        try {
+//            Claims claims = Jwts.parser()
+//                    .setSigningKey(SECRET_KEY.getBytes("UTF-8"))
+//                    .parseClaimsJws(jwt)
+//                    .getBody();
+//
+//            // 리프레시 토큰이 만료되었을 것이라는 전제는 없다...
+//
+//            claimMap = claims;
+//            Long userSeq = (Long) claimMap.get("jti");
+//
+//            return createAccess(userSeq);
+//
+//        } catch (Exception e){
+//            System.out.println(e);
+//            return null;
+//        }
+//
+//    }
 
 }
