@@ -2,6 +2,7 @@ package com.ssafy.back_file.compile;
 
 import com.ssafy.back_file.File.FileDto.FileCreateDto;
 import com.ssafy.back_file.File.Service.FileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -13,6 +14,7 @@ import java.util.Objects;
 @Service
 public class CompileService {
 
+    @Autowired
     private FileService fileService;
 
     // 실행 결과 반환 로직
@@ -56,8 +58,8 @@ public class CompileService {
         return saveDockerfile(filePath, teamSeq, content);
     }
 
+    // 파일 저장
     public boolean saveDockerfile(String filePath, Long teamSeq, String content) {
-        // 파일 저장
         // create
         FileCreateDto fileCreateDto = new FileCreateDto();
         fileCreateDto.setFilePath(filePath);
@@ -65,8 +67,7 @@ public class CompileService {
         boolean created = fileService.createFile(fileCreateDto, teamSeq);
         if (!created) { return false; }
         // save
-        boolean saved = fileService.saveFile(filePath, content);
-        return saved;
+        return fileService.saveFile(filePath, content);
     }
 
 
