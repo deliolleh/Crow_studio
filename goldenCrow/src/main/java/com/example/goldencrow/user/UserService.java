@@ -129,15 +129,35 @@ public class UserService {
 
     }
 
-//    // 닉네임수정
-//    public String editNicknameService(String jwt, Map<String, String> req){
-//
-//
-//
-//
-//
-//
-//    }
+    // 닉네임수정
+    public String editNicknameService(String jwt, Map<String, String> req){
+
+        // jwt 체크는 인터셉터에서 해서 넘어왔을테니까
+
+        try {
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+            System.out.println(userSeq);
+
+            // userSeq로 userEntity를 뽑아낸 다음
+            UserEntity userEntity = userRepository.findById(userSeq).get();
+
+            // userEntity의 닉네임 부분을 req에서 꺼내온 값으로 수정
+            userEntity.setUserNickname(req.get("userNickname"));
+
+            // saveAndFlush
+            userRepository.saveAndFlush(userEntity);
+
+            // 성공 여부 반환
+            return "success";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+
+
+    }
 
     // 프로필사진 수정
 

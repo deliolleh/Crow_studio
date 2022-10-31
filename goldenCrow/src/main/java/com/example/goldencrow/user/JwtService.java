@@ -116,7 +116,7 @@ public class JwtService {
                     .getBody();
 
             Map<String, Object> claimMap = claims;
-            Long userSeq = (Long) claimMap.get("userSeq");
+            Long userSeq = Long.valueOf(String.valueOf(claimMap.get("jti")));
 
             return userSeq;
 
