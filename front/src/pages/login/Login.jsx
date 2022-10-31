@@ -1,13 +1,23 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
+import { login } from "../../redux/authSlice";
 
 import LoginTitle from "./LoginTitle";
 import LoginForm from "./LoginForm";
 
 const Login = () => {
-  const loginHandler = useCallback((loginData) => {
-    console.log("loginData:", loginData);
-  }, []);
+  const dispatch = useDispatch();
+
+  const loginHandler = (loginData) => {
+    console.log("stringified loginData:", loginData);
+
+    dispatch(login(loginData))
+      .unwrap()
+      .then((res) => console.log("res:", res))
+      .catch((err) => console.error("err:", err));
+  };
 
   return (
     <section className="w-max h-max">

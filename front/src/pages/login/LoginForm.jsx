@@ -31,9 +31,9 @@ const LoginForm = ({ loginHandler }) => {
   const submitHandler = (e) => {
     e.preventDefault();
 
-    const loginData = { email, password };
+    const loginData = { userId: email, userPassword: password };
     setErrorMsgs(initialErrorState);
-    loginHandler(loginData);
+    loginHandler(JSON.stringify(loginData));
   };
 
   return (

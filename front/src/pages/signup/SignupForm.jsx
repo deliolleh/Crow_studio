@@ -1,19 +1,36 @@
 import React, { useState, useEffect } from "react";
 
-const initialInputState = { email: "", password1: "", password2: "" }; // 초기 이메일, 비밀번호1, 비밀번호2 상태
-const initialErrorState = { emailErrorMsg: "", passwordErrorMsg: "" };
+const initialInputState = {
+  email: "",
+  nickname: "",
+  password1: "",
+  password2: "",
+}; // 초기 이메일, 닉네임, 비밀번호1, 비밀번호2 상태
+
+const initialErrorState = {
+  emailErrorMsg: "",
+  nicknameErrorMsg: "",
+  passwordErrorMsg: "",
+};
 
 const SignupForm = ({ signupHandler }) => {
   const [inputs, setInputs] = useState(initialInputState); // 초기 입력
   const [errorMsgs, setErrorMsgs] = useState(initialErrorState); // 초기 에러메시지
-  const { email, password1, password2 } = inputs; // 이메일, 비밀번호 상태 할당
-  const { emailErrorMsg, password1ErrorMsg, password2ErrorMsg } = errorMsgs; // 에러메시지 상태 할당
+  const { email, nickname, password1, password2 } = inputs; // 이메일, 비밀번호 상태 할당
+  const {
+    emailErrorMsg,
+    nicknameErrorMsg,
+    password1ErrorMsg,
+    password2ErrorMsg,
+  } = errorMsgs; // 에러메시지 상태 할당
 
   useEffect(() => {}, [
     email,
+    nickname,
     password1,
     password2,
     emailErrorMsg,
+    nicknameErrorMsg,
     password1ErrorMsg,
     password2ErrorMsg,
   ]);
@@ -23,6 +40,14 @@ const SignupForm = ({ signupHandler }) => {
     e.preventDefault();
     setInputs((prev) => {
       return { ...prev, email: e.target.value };
+    });
+  };
+
+  // 닉네임 입력창 입력시 작동
+  const nicknameChangeHandler = (e) => {
+    e.preventDefault();
+    setInputs((prev) => {
+      return { ...prev, nickname: e.target.value };
     });
   };
 
@@ -46,9 +71,18 @@ const SignupForm = ({ signupHandler }) => {
   const submitHandler = (e) => {
     e.preventDefault();
 
-    const signupData = { email, password1, password2 };
+    if (password1 !== password2) {
+      console.log("비밀번호가 서로 일치하지 않음");
+      return;
+    }
+
+    const signupData = {
+      userId: email,
+      userPassword: password1,
+      userNickname: nickname,
+    };
     setErrorMsgs(initialErrorState);
-    signupHandler(signupData);
+    signupHandler(JSON.stringify(signupData));
   };
 
   return (
@@ -73,6 +107,24 @@ const SignupForm = ({ signupHandler }) => {
           onChange={emailChangeHandler}
         />
         <div className="h-6 mb-2">{emailErrorMsg}</div>
+      </div>
+
+      {/* Nickname */}
+      <div className="w-full">
+        <label htmlFor="nickname" className="">
+          닉네임
+        </label>
+        <input
+          type="text"
+          id="nickname"
+          name="nickname"
+          className="w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
+          placeholder="닉네임을 입력하세요"
+          required
+          value={nickname}
+          onChange={nicknameChangeHandler}
+        />
+        <div className="h-6 mb-2">{nicknameErrorMsg}</div>
       </div>
 
       {/* Password 1 */}
