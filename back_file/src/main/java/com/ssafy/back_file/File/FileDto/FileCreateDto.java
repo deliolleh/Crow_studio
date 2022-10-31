@@ -1,9 +1,7 @@
-package com.ssafy.back_file.File;
+package com.ssafy.back_file.File.FileDto;
 
 import lombok.Data;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 /** 파일 생성 DTO
  * 파일 이름과 경로만! */
