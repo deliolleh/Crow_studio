@@ -1,5 +1,6 @@
 package com.example.goldencrow.variable;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +18,14 @@ public class VariableController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Map<String, Object>> varialbeRecommend(@RequestParam("which") String alphabet) {
-        HashMap<String, Object> response = variableService.variableRecommend(alphabet);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Map<String, Object>> varialbeRecommend(@RequestBody HashMap<String, String> alphabet) {
+        String text = alphabet.get("data");
+        HashMap<String, Object> response = variableService.variableRecommend(text);
+        if (response.get("data") != null) {
+            return ResponseEntity.ok(response);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
     }
 }
