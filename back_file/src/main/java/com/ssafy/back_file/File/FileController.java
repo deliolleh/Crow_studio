@@ -3,6 +3,7 @@ package com.ssafy.back_file.File;
 
 import com.ssafy.back_file.File.FileDto.FileCreateDto;
 import com.ssafy.back_file.File.Service.FileService;
+import com.ssafy.back_file.user.JwtService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,21 +18,27 @@ import static java.lang.System.out;
 public class FileController {
 
     private final FileService fileService;
-
-    public FileController(FileService fileService) {
+    private final JwtService jwtService;
+    private String baseUrl = "/home/ubuntu/crow_data/";
+    public FileController(FileService fileService, JwtService jwtService) {
         this.fileService = fileService;
+        this.jwtService = jwtService;
     }
     /**
      *
      * @param fileCreateDto
      * @return Message
      * 파일 생성 포스트 요청
+     * 기본 경로를 잡아줄 지? 아니면 그냥 보내줄지?
      */
 
     @PostMapping("/{teamSeq}/files")
-    public ResponseEntity<String> userFileCreate(@PathVariable Long teamSeq, @RequestBody FileCreateDto fileCreateDto) {
+    public ResponseEntity<String> userFileCreate(@RequestHeader("jwt") String jwt,@PathVariable Long teamSeq, @RequestBody FileCreateDto fileCreateDto) {
+
         if (fileService.createFile(fileCreateDto, teamSeq)) {
-            return new ResponseEntity<>("파일 생성이 완료되었습니다.", HttpStatus.OK);
+            String newFilePath = fileCreateDto.getFilePath() + "/" + fileCreateDto.getFileTitle();
+            out.println(newFilePath);
+            return new ResponseEntity<>(newFilePath, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("파일 생성에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
@@ -140,7 +147,8 @@ public class FileController {
     }
 
     @GetMapping("/{teamSeq}")
-    public ResponseEntity<String> getDirectory(@PathVariable Long teamSeq) {
+    public ResponseEntity<String> getDirectory(@RequestHeader("jwt") String jwt, @PathVariable Long teamSeq) {
+        out.println(jwtService.JWTtoUserSeq(jwt));
         return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
