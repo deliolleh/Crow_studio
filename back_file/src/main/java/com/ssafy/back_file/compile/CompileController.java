@@ -16,10 +16,9 @@ public class CompileController {
         this.compileService = compileService;
     }
 
-    @PostMapping("/py")
-    public ResponseEntity<String> pyCompile(@RequestBody Map<String, String> req) {
-        System.out.println(req.get("type"));
-        String res = compileService.pyCompile(req);
+    @PostMapping("/py/{teamSeq}")
+    public ResponseEntity<String> pyCompile(@RequestBody Map<String, String> req, @PathVariable Long teamSeq) {
+        String res = compileService.pyCompile(req, teamSeq);
         return new ResponseEntity<>(res, HttpStatus.OK);
 
     }
