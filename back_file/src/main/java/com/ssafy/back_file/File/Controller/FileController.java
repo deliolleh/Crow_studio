@@ -1,4 +1,4 @@
-package com.ssafy.back_file.File;
+package com.ssafy.back_file.File.Controller;
 
 
 import com.ssafy.back_file.File.FileDto.FileCreateDto;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import static java.lang.System.out;
 
 @RestController
-@RequestMapping(value = "/api-file/projects")
+@RequestMapping(value = "/api-file/files")
 public class FileController {
 
     private final FileService fileService;
@@ -32,9 +32,8 @@ public class FileController {
      * 기본 경로를 잡아줄 지? 아니면 그냥 보내줄지?
      */
 
-    @PostMapping("/{teamSeq}/files")
+    @PostMapping("/{teamSeq}")
     public ResponseEntity<String> userFileCreate(@RequestHeader("jwt") String jwt,@PathVariable Long teamSeq, @RequestBody FileCreateDto fileCreateDto) {
-
         if (fileService.createFile(fileCreateDto, teamSeq)) {
             String ts = String.valueOf(teamSeq);
             String newFilePath = fileCreateDto.getFilePath() + "/"+ts+"/" + fileCreateDto.getFileTitle();
@@ -45,10 +44,10 @@ public class FileController {
     }
 
     /**
-     * @param filePath
+     * @param teamSeq
      * 파일 삭제 요청
      */
-    @DeleteMapping("/{teamSeq}/files")
+    @DeleteMapping("/{teamSeq}")
     public ResponseEntity<String> userFileDelete(@RequestHeader("jwt") String jwt,@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
         if (fileService.deleteFile(filePath.get("filePath"), teamSeq)) {
             return new ResponseEntity<>("파일 삭제를 성공했습니다.", HttpStatus.OK);
@@ -77,74 +76,7 @@ public class FileController {
 //            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.BAD_REQUEST);
 //        }
 //    }
-    /** 예외처리 안 되어 있음, DB에 저장 안 됨 */
-    @PostMapping("/project")
-    public ResponseEntity<String> projectCreate(@RequestParam Long type, @RequestBody HashMap<String, String> filePath) {
-        String env = "cmd /c";
-        String fileTitle = filePath.get("projectName");
-        String baseUrl = "C:\\Users\\multicampus\\Desktop\\test";
-        File file = new File(baseUrl + "\\" + fileTitle + ".py");
-        if (type == 2) {
-            String command = "django-admin startproject " + fileTitle;
-            out.println(command);
-            long start,end;
-            try {
-                Process p = Runtime.getRuntime().exec(String.format("cmd /c \"cd C:/Users/multicampus/Desktop/test && %s\"",command));
 
-                BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                String line = null;
-                start = System.currentTimeMillis();
-                while ((line = input.readLine()) != null) {out.println("Result : " + line);}
-                    end = System.currentTimeMillis();
-                    out.println("<br>Running Time : " + (end - start) / 1000f + "s.");
-
-
-
-                //Process create = Runtime.getRuntime().exec(env + command);
-                out.println(p);
-                //System.out.println(create);
-            } catch (IOException e) {
-                out.println("명령어 안나갔음!! 망함!!!");
-                return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
-            }
-            return new ResponseEntity<>("Success", HttpStatus.OK);
-        } else {
-
-            try{
-                if (!file.createNewFile()) {
-                    return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
-                }
-            } catch(IOException e) {
-                return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
-            }
-        }
-
-        if (type == 3) {
-            String content = "from flask import Flask\n\napp=Flask(" + filePath.get("projectName") +")\n\n@app.route(\"/\")\ndef hello_world():\n\treturn \"<p>Hello, World</p>\"";
-            try {
-                FileWriter overWriteFile = new FileWriter(file, false);
-                overWriteFile.write(content);
-                overWriteFile.close();
-
-            } catch (IOException e) {
-                out.println("here!!!!!!!!!!!");
-                return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
-            }
-            return new ResponseEntity<>("Success", HttpStatus.OK);
-        } else if (type == 4) {
-            String content = "from fastapi import FastAPI\n\napp=FastAPI()\n\n@app.get(\"/\")\nasync def root():\n\treturn {\"message\" : \"Hello, World\"}";
-            try {
-                FileWriter overWriteFile = new FileWriter(file, false);
-                overWriteFile.write(content);
-                overWriteFile.close();
-            } catch (IOException e) {
-                out.println("fastapi 여기서 터짐? 왜 터짐?");
-                return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
-            }
-        }
-        return new ResponseEntity<>("Success", HttpStatus.OK);
-
-    }
 
     @GetMapping("/{teamSeq}")
     public ResponseEntity<String> getDirectory(@RequestHeader("jwt") String jwt, @PathVariable Long teamSeq) {

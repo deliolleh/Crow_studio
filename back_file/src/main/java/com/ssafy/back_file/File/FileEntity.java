@@ -45,14 +45,6 @@ public class FileEntity {
         this.team = team;
     }
 
-    public FileEntity() {};
 
-    public FileEntity(FileCreateDto fileCreateDto,TeamEntity team) {
-        this.fileTitle = fileCreateDto.getFileTitle();
-        this.filePath = fileCreateDto.getFilePath();
-        this.fileCreatedAt = LocalDateTime.now();
-        this.fileUpdatedAt = LocalDateTime.now();
-        this.team = team;
-    }
 
 }
