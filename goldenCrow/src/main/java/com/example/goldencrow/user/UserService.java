@@ -218,7 +218,24 @@ public class UserService {
 
     }
 
-    // 회원탈퇴
+//    // 회원탈퇴
+//    public String quitUser(String jwt) {
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//    }
+
+
 
     // 개인 환경세팅 저장
 
