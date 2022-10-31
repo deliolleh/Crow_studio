@@ -137,7 +137,6 @@ public class UserService {
         try {
             // jwt에서 userSeq를 뽑아내고
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
-            System.out.println(userSeq);
 
             // userSeq로 userEntity를 뽑아낸 다음
             UserEntity userEntity = userRepository.findById(userSeq).get();
@@ -156,12 +155,68 @@ public class UserService {
             return "error";
         }
 
-
     }
 
     // 프로필사진 수정
+    public String editProfileService(String jwt, Map<String, String> req){
+
+        // jwt 체크는 인터셉터에서 해서 넘어왔을테니까
+
+        try {
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+            // userSeq로 userEntity를 뽑아낸 다음
+            UserEntity userEntity = userRepository.findById(userSeq).get();
+
+            // userEntity의 프로필 부분을 req에서 꺼내온 값으로 수정
+            userEntity.setUserProfile(req.get("userProfile"));
+
+            // saveAndFlush
+            userRepository.saveAndFlush(userEntity);
+
+            // 성공 여부 반환
+            return "success";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+
+    }
 
     // 비밀번호 수정
+    public String editPasswordService(String jwt, Map<String, String> req){
+
+        // jwt 체크는 인터셉터에서 해서 넘어왔을테니까
+
+        try {
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+            // userSeq로 userEntity를 뽑아낸 다음
+            UserEntity userEntity = userRepository.findById(userSeq).get();
+
+            // 유저패스워드가 같은지 확인
+            String originPW = userEntity.getUserPassWord();
+            String testPW = CryptoUtil.Sha256.hash(req.get("userPassword"));
+
+            if(originPW.equals(testPW)) {
+                // userEntity의 비밀번호 부분을 req에서 꺼내온 값으로 수정
+                userEntity.setUserPassWord(CryptoUtil.Sha256.hash(req.get("userNewPassword")));
+                userRepository.saveAndFlush(userEntity);
+                return "success";
+
+            } else {
+                return "error";
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+
+    }
 
     // 회원탈퇴
 
