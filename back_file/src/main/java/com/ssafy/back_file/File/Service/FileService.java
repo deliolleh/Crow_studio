@@ -41,7 +41,8 @@ public class FileService {
         Optional<TeamEntity> team = teamRepository.findByTeamSeq(teamSeq);
         File newFile = new File(newFilePath);
         FileCreateDto newFileCreateDto = new FileCreateDto(fileCreateDto.getFileTitle(),newFilePath);
-        FileEntity fileEntity = new FileEntity(fileCreateDto,team.get());
+        FileEntity fileEntity = new FileEntity(newFileCreateDto,team.get());
+
 
         try{
             System.out.println(newFilePath);
