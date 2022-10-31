@@ -20,35 +20,44 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FileService {
-
+    @Autowired
     private TeamRepository teamRepository;
 
-
+    @Autowired
     private FileRepository fileRepository;
     /** 파일 생성 로직
      * 파일이 성공적으로 생성되면 true
      * 아니면 false 반환*/
     public boolean createFile(FileCreateDto fileCreateDto, Long teamSeq) {
-        TeamEntity team = teamRepository.findByTeamSeq(teamSeq);
-        String newFilePath = fileCreateDto.getFilePath() + "\\" + fileCreateDto.getFileTitle();
+        String baseUrl = "http://k7d207.p.ssafy.io";
+        String ts = String.valueOf(teamSeq);
+        String newFilePath = fileCreateDto.getFilePath() + "/"+ts+"/" + fileCreateDto.getFileTitle();
+
+        Optional<TeamEntity> team = teamRepository.findByTeamSeq(teamSeq);
         File newFile = new File(newFilePath);
-        FileEntity fileEntity = new FileEntity(fileCreateDto,team);
+        FileCreateDto newFileCreateDto = new FileCreateDto(fileCreateDto.getFileTitle(),newFilePath);
+        FileEntity fileEntity = new FileEntity(fileCreateDto,team.get());
 
         try{
+            System.out.println(newFilePath);
             if(newFile.createNewFile()) {
                 fileRepository.saveAndFlush(fileEntity);
                 return true;
             } else {
+                System.out.println("here");
                 return false;
             }
         } catch (IOException e) {
+            System.out.println(e);
             return false;
         }
     }
-
+    /** 파일 삭제  */
     public boolean deleteFile(String filePath, Long teamSeq) {
         Path path = Paths.get(filePath);
         if (!fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq,filePath).isPresent()) {
