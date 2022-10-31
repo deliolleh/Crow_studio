@@ -127,6 +127,7 @@ public class UserService {
 
         return userInfoDto;
 
+
     }
 
     // 닉네임수정
@@ -137,6 +138,7 @@ public class UserService {
         try {
             // jwt에서 userSeq를 뽑아내고
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
+            System.out.println(userSeq);
 
             // userSeq로 userEntity를 뽑아낸 다음
             UserEntity userEntity = userRepository.findById(userSeq).get();
@@ -154,6 +156,7 @@ public class UserService {
             e.printStackTrace();
             return "error";
         }
+
 
     }
 
@@ -218,7 +221,24 @@ public class UserService {
 
     }
 
-    // 회원탈퇴
+//    // 회원탈퇴
+//    public String quitUser(String jwt) {
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//    }
+
+
 
     // 개인 환경세팅 저장
 
