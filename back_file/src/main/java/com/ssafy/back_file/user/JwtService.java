@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,9 @@ import java.util.Map;
 @Service
 public class JwtService {
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Value("${secret.jwt.key}")
     private String SECRET_KEY;
     private final Base64.Encoder encoder = Base64.getEncoder();
@@ -25,59 +29,59 @@ public class JwtService {
     private long accessTokenValidTime = Duration.ofDays(30).toMillis(); // 만료시간 30일
     private long refreshTokenValidTime = Duration.ofDays(100).toMillis(); // 만료시간 100일
 
-//    // 액세스 토큰 만들기
-//    public String createAccess(Long userSeq){
-//
-//        // 헤더 설정
-//        Map<String, Object> headers = new HashMap<>();
-//        headers.put("typ", "JWT");
-//        headers.put("alg", "HS256");
-//
-//        // 페이로드 설정
-//        Map<String, Object> payloads = new HashMap<>();
-//        payloads.put("jti", userSeq);
-//
-//        Date ext = new Date();
-//        ext.setTime(ext.getTime()+accessTokenValidTime);
-//
-//        // 토큰 빌드
-//        String jwt = Jwts.builder()
-//                .setHeader(headers)
-//                .setClaims(payloads)
-//                .setExpiration(ext)
-//                .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
-//                .compact();
-//
-//        return jwt;
-//
-//    }
-//
-//    // 리프레시 토큰 만들기
-//    public String createRefresh(Long userSeq){
-//
-//        // 헤더 설정
-//        Map<String, Object> headers = new HashMap<>();
-//        headers.put("typ", "JWT");
-//        headers.put("alg", "HS256");
-//
-//        // 페이로드 설정
-//        Map<String, Object> payloads = new HashMap<>();
-//        payloads.put("jti", userSeq);
-//
-//        Date ext = new Date();
-//        ext.setTime(ext.getTime()+refreshTokenValidTime);
-//
-//        // 토큰 빌드
-//        String jwt = Jwts.builder()
-//                .setHeader(headers)
-//                .setClaims(payloads)
-//                .setExpiration(ext)
-//                .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
-//                .compact();
-//
-//        return jwt;
-//
-//    }
+    // 액세스 토큰 만들기
+    public String createAccess(Long userSeq){
+
+        // 헤더 설정
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("typ", "JWT");
+        headers.put("alg", "HS256");
+
+        // 페이로드 설정
+        Map<String, Object> payloads = new HashMap<>();
+        payloads.put("jti", userSeq);
+
+        Date ext = new Date();
+        ext.setTime(ext.getTime()+accessTokenValidTime);
+
+        // 토큰 빌드
+        String jwt = Jwts.builder()
+                .setHeader(headers)
+                .setClaims(payloads)
+                .setExpiration(ext)
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
+                .compact();
+
+        return jwt;
+
+    }
+
+    // 리프레시 토큰 만들기
+    public String createRefresh(Long userSeq){
+
+        // 헤더 설정
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("typ", "JWT");
+        headers.put("alg", "HS256");
+
+        // 페이로드 설정
+        Map<String, Object> payloads = new HashMap<>();
+        payloads.put("jti", userSeq);
+
+        Date ext = new Date();
+        ext.setTime(ext.getTime()+refreshTokenValidTime);
+
+        // 토큰 빌드
+        String jwt = Jwts.builder()
+                .setHeader(headers)
+                .setClaims(payloads)
+                .setExpiration(ext)
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
+                .compact();
+
+        return jwt;
+
+    }
 
     // 이거 우리 토큰 맞는지, 유효기간 남았는지, 파스하면 뭔지 확인하기
     public Map<String, Object> verifyJWT(String jwt) throws Exception {
@@ -91,6 +95,11 @@ public class JwtService {
 
             claimMap = claims;
             claimMap.put("result", "success");
+
+            // 이 값으로 유저찾아서 없으면 터트림
+            if(!userRepository.findById(Long.valueOf(String.valueOf(claimMap.get("jti")))).isPresent()) {
+                claimMap.put("result", "error");
+            }
 
         } catch (ExpiredJwtException e) {
             // 토큰이 만료된 경우

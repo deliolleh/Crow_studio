@@ -1,6 +1,7 @@
 package com.example.goldencrow.config;
 
 import com.example.goldencrow.common.JwtInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -10,9 +11,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
+    @Autowired
+    JwtInterceptor jwtInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry){
-        registry.addInterceptor(this.jwtInterceptor())
+        registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/api/users/signup")
                 .excludePathPatterns("/api/users/login")
@@ -34,9 +38,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .maxAge(6000);
     }
 
-    private JwtInterceptor jwtInterceptor() {
-        return new JwtInterceptor();
-    }
+//    @Bean
+//    protected JwtInterceptor jwtInterceptor() {
+//        return new JwtInterceptor();
+//    }
 
 
 }

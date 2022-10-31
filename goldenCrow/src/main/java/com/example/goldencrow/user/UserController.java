@@ -98,10 +98,6 @@ public class UserController {
     @PutMapping("/edit/nickname")
     public ResponseEntity<String> editNicknamePut(@RequestHeader("jwt") String jwt, @RequestBody Map<String, String> req) {
 
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
-        }
-
         if(req.get("userNickname")==null){
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
@@ -118,10 +114,6 @@ public class UserController {
     // 프로필사진 수정
     @PutMapping("/edit/profile")
     public ResponseEntity<String> editProfilePut(@RequestHeader("jwt") String jwt, @RequestBody Map<String, String> req) {
-
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
-        }
 
         if(req.get("userProfile")==null){
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -140,10 +132,6 @@ public class UserController {
     @PutMapping("/edit/password")
     public ResponseEntity<String> editPasswordPut(@RequestHeader("jwt") String jwt, @RequestBody Map<String, String> req) {
 
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
-        }
-
         if(req.get("userPassword")==null || req.get("userNewPassword")==null){
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
@@ -161,11 +149,14 @@ public class UserController {
     @DeleteMapping("/quit")
     public ResponseEntity<String> quitDelete(@RequestHeader("jwt") String jwt){
 
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
-        }
+        System.out.println(jwt);
 
-        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        // 일단 성공하면 이렇게 반환될 겁니다
+        if(userService.quitUser(jwt).equals("success")) {
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
 
     }
 

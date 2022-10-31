@@ -1,9 +1,11 @@
 package com.example.goldencrow.user;
 
+import com.example.goldencrow.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,9 @@ import java.util.Map;
 
 @Service
 public class JwtService {
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Value("${secret.jwt.key}")
     private String SECRET_KEY;
@@ -91,6 +96,11 @@ public class JwtService {
 
             claimMap = claims;
             claimMap.put("result", "success");
+
+            // 이 값으로 유저찾아서 없으면 터트림
+            if(!userRepository.findById(Long.valueOf(String.valueOf(claimMap.get("jti")))).isPresent()) {
+                claimMap.put("result", "error");
+            }
 
         } catch (ExpiredJwtException e) {
             // 토큰이 만료된 경우

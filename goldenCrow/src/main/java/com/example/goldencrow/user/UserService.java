@@ -221,22 +221,28 @@ public class UserService {
 
     }
 
-//    // 회원탈퇴
-//    public String quitUser(String jwt) {
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//    }
+    // 회원탈퇴
+    public String quitUser(String jwt) {
+
+        try {
+            // 사용자 정보 불러와서 체크하고
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+            // userSeq로 userEntity를 뽑아낸 다음
+            UserEntity userEntity = userRepository.findById(userSeq).get();
+
+            // 해당 유저 삭제
+            userRepository.delete(userEntity);
+            return "success";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+
+        }
+
+    }
 
 
 
