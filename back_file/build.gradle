@@ -24,6 +24,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok:1.18.10"
     annotationProcessor "org.projectlombok:lombok:1.18.10"
 //    testImplementation 'org.springframework.security:spring-security-test'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 
 }
 
