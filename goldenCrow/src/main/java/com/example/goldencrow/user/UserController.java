@@ -1,8 +1,6 @@
 package com.example.goldencrow.user;
 
 import com.example.goldencrow.user.dto.UserInfoDto;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -172,23 +170,13 @@ public class UserController {
 
     // 개인 환경 세팅 조회
     @GetMapping("/personal")
-    public ResponseEntity<JSONObject> personalGet(@RequestHeader("jwt") String jwt){
+    public ResponseEntity<UserInfoDto> personalGet(@RequestHeader("jwt") String jwt){
 
-        if(jwt==null){
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-        }
+        UserInfoDto userInfoDto = userService.personalGet(jwt);
 
-        try {
-            JSONObject jsonObject = new JSONObject(
-                    "{ " +
-                            "\"name\":\"John\"," +
-                            "\"age\":31," +
-                            "\"city\":\"New York\"" +
-                        "}"
-            );
-            return new ResponseEntity<>(jsonObject, HttpStatus.OK);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if(userInfoDto.getResult()== UserInfoDto.Result.SUCCESS){
+            return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
+        } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
@@ -198,14 +186,13 @@ public class UserController {
     @GetMapping("/mypage/{userSeq}")
     public ResponseEntity<UserInfoDto> mypageGet(@PathVariable Long userSeq){
 
-        // 일단 성공하면 이렇게 반환될 겁니다
-        UserInfoDto userInfoDto = new UserInfoDto();
-        userInfoDto.setUserSeq(new Long(1));
-        userInfoDto.setUserId("userIdSample");
-        userInfoDto.setUserNickname("userNicknameSample");
-        userInfoDto.setUserProfile("user/profile/Sample/jpg");
+        UserInfoDto userInfoDto = userService.mypage(userSeq);
 
-        return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
+        if(userInfoDto.getResult()== UserInfoDto.Result.SUCCESS){
+            return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
 
     }
 
