@@ -33,6 +33,7 @@ public class UserService {
             // 존재할 경우, result에서 결과를 전달함
             res.put("result", "duplicate error");
             System.out.println("duplicate error");
+
         } else {
             // 존재하지 않을 경우, 회원가입 진행
 
