@@ -49,8 +49,8 @@ public class CompileService {
                     "WORKDIR " + filePath + "\n" +
                     "COPY . .\n" +
                     "WORKDIR ./" + projectName +
-                    "CMD [\"python3\", \"manage.py\", \"runserver\", \"0.0.0.0:0\"]\n" +
-                    "EXPOSE 0";
+                    "CMD [\"python3\", \"manage.py\", \"runserver\", \"0.0.0.0:3000\"]\n" +
+                    "EXPOSE 3000";
         }
         File file = new File(filePath + "/Dockerfile");
         try {
