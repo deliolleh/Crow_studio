@@ -26,4 +26,11 @@ public class MemberEntity {
     @JoinColumn(name="teamSeq", referencedColumnName = "teamSeq")
     private TeamEntity team;
 
+    public MemberEntity() {
+    }
+
+    public MemberEntity(UserEntity userEntity, TeamEntity teamEntity) {
+        this.user = userEntity;
+        this.team = teamEntity;
+    }
 }

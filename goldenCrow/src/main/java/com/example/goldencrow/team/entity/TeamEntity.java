@@ -28,7 +28,8 @@ public class TeamEntity {
     public TeamEntity() {
     }
 
-    public TeamEntity(String teamName) {
+    public TeamEntity(UserEntity userEntity, String teamName) {
+        this.teamLeader = userEntity;
         this.teamName = teamName;
         // User들은 서비스에서 등록하자~
     }

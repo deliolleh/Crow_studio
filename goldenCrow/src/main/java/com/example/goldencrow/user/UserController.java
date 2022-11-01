@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -192,6 +193,24 @@ public class UserController {
             return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    // 사용자 검색하기
+    @PostMapping("/search")
+    public ResponseEntity<List<UserInfoDto>> searchUserGet(@RequestBody Map<String, String> req){
+
+        String word = req.get("searchWord");
+
+        // 내가 속한 것만 골라서 반환
+        List<UserInfoDto> userInfoDtoList = userService.searchUser(word);
+
+        if(userInfoDtoList==null) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        } else {
+            // 리스트가 비어있어도 잘못된 게 아니기 때문에 그건 거르지 않는다
+            return new ResponseEntity<>(userInfoDtoList, HttpStatus.OK);
         }
 
     }

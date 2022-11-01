@@ -9,8 +9,9 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -21,9 +22,6 @@ public class UserService {
 
     @Autowired
     private JwtService jwtService;
-
-    @Autowired
-    private EntityManager em;
 
     // 회원가입
     public Map<String, String> signupService(String userId, String userPassword, String userNickname){
@@ -304,7 +302,18 @@ public class UserService {
 
         return userInfoDto;
 
-
     }
 
+    public List<UserInfoDto> searchUser(String word) {
+
+        List<UserEntity> userEntityList = userRepository.findAllByUserIdContainingOrUserNicknameContaining(word, word);
+        List<UserInfoDto> userInfoDtoList = new ArrayList<>();
+
+        for(UserEntity u : userEntityList) {
+            userInfoDtoList.add(new UserInfoDto(u));
+        }
+
+        return userInfoDtoList;
+
+    }
 }
