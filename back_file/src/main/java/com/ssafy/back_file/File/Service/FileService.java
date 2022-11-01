@@ -36,24 +36,30 @@ public class FileService {
     /** 파일 생성 로직
      * 파일이 성공적으로 생성되면 true
      * 아니면 false 반환*/
-    public boolean createFile(FileCreateDto fileCreateDto, Long teamSeq) {
-        String ts = String.valueOf(teamSeq);
-        String newFilePath = fileCreateDto.getFilePath() + "/"+ts+"/" + fileCreateDto.getFileTitle();
+    public boolean createFile(FileCreateDto fileCreateDto, Integer type, Long teamSeq) {
+        String newFilePath = fileCreateDto.getFilePath() + "/"+ fileCreateDto.getFileTitle();
 
         Optional<TeamEntity> team = teamRepository.findByTeamSeq(teamSeq);
         File newFile = new File(newFilePath);
         FileCreateDto newFileCreateDto = new FileCreateDto(fileCreateDto.getFileTitle(),newFilePath);
         FileEntity fileEntity = new FileEntity(newFileCreateDto,team.get());
 
-
         try{
-            System.out.println(newFilePath);
-            if(newFile.createNewFile()) {
-                fileRepository.saveAndFlush(fileEntity);
-                return true;
+            if (type == 1){
+                if(newFile.createNewFile()) {
+                    fileRepository.saveAndFlush(fileEntity);
+                    return true;
+                } else {
+                    System.out.println("here");
+                    return false;
+                }
             } else {
-                System.out.println("here");
-                return false;
+                if (newFile.mkdir()) {
+                    fileRepository.saveAndFlush(fileEntity);
+                    return true;
+                } else {
+                    return false;
+                }
             }
         } catch (IOException e) {
             System.out.println(e);
