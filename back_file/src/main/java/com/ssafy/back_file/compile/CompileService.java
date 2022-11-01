@@ -5,9 +5,7 @@ import com.ssafy.back_file.File.Service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.Map;
 import java.util.Objects;
 
@@ -40,7 +38,7 @@ public class CompileService {
     }
 
     // 도커파일 생성
-    public boolean createDockerfile(String filePath, Long teamSeq, String type) {
+    public String createDockerfile(String filePath, Long teamSeq, String type) {
         int filePathIndex = filePath.lastIndexOf("/");
         String projectName = filePath.substring(filePathIndex);
 //        String dockerfilePath = filePath + "/Dockerfile";
@@ -54,24 +52,33 @@ public class CompileService {
                     "CMD [\"python3\", \"manage.py\", \"runserver\", \"0.0.0.0:0\"]\n" +
                     "EXPOSE 0";
         }
+        File file = new File(filePath + "/Dockerfile");
+        try {
+            FileWriter overWriteFile = new FileWriter(file, false);
+            overWriteFile.write(content);
+            overWriteFile.close();
+        } catch (IOException e) {
+            return e.getMessage();
+        }
+        return "SUCCESS";
 
-        return saveDockerfile(filePath, teamSeq, content);
+//        return saveDockerfile(filePath, teamSeq, content);
     }
 
     // 파일 저장
-    public boolean saveDockerfile(String filePath, Long teamSeq, String content) {
-        // create
-        FileCreateDto fileCreateDto = new FileCreateDto();
-        fileCreateDto.setFilePath(filePath);
-        fileCreateDto.setFileTitle("Dockerfile");
-        boolean created = fileService.createFile(fileCreateDto, 1, teamSeq);
-        if (!created) {
-            System.out.println("Can't createFile");
-            return false;
-        }
-        // save
-        return fileService.saveFile(filePath, content);
-    }
+//    public boolean saveDockerfile(String filePath, Long teamSeq, String content) {
+//        // create
+//        FileCreateDto fileCreateDto = new FileCreateDto();
+//        fileCreateDto.setFilePath(filePath);
+//        fileCreateDto.setFileTitle("Dockerfile");
+//        boolean created = fileService.createFile(fileCreateDto, 1, teamSeq);
+//        if (!created) {
+//            System.out.println("Can't createFile");
+//            return false;
+//        }
+//        // save
+//        return fileService.saveFile(filePath, content);
+//    }
 
 
     public String pyCompile(Map<String, String> req, Long teamSeq) {
@@ -86,8 +93,8 @@ public class CompileService {
         // Django 프로젝트일 때
         else if (Objects.equals(req.get("type"), "django")) {
             // 도커파일 추가
-            boolean dockerfile = createDockerfile(filePath, teamSeq, req.get("type"));
-            if (!dockerfile) { return "Can't make dockerfile"; }
+            String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"));
+            if (!Objects.equals(dockerfile, "SUCCESS")) { return "Can't make dockerfile"; }
             // 도커 이미지 빌드
             String image = String.format("docker build -t %s .", projectName);
             try {
