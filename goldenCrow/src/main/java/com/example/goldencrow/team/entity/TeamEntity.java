@@ -1,4 +1,4 @@
-package com.example.goldencrow.team;
+package com.example.goldencrow.team.entity;
 
 import com.example.goldencrow.user.entity.UserEntity;
 import lombok.Data;
@@ -17,10 +17,6 @@ public class TeamEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long teamSeq;
-
-    @ManyToOne
-    @JoinColumn(name="userSeq", referencedColumnName = "userSeq")
-    private UserEntity user;
 
     @Column
     private String teamName;

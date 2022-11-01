@@ -1,6 +1,6 @@
 package com.example.goldencrow.team.dto;
 
-import com.example.goldencrow.team.TeamEntity;
+import com.example.goldencrow.team.entity.TeamEntity;
 import lombok.Data;
 
 @Data
