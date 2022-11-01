@@ -3,6 +3,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 # 빌드
 RUN npm install --force
+
 COPY . /usr/src/app
 RUN npm run build
 
