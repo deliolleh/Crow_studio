@@ -1,6 +1,7 @@
 package com.example.goldencrow.team;
 
 import com.example.goldencrow.team.dto.TeamDto;
+import com.example.goldencrow.user.JwtService;
 import com.example.goldencrow.user.UserService;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import org.springframework.http.HttpStatus;
@@ -22,9 +23,12 @@ public class TeamController {
 
     private final TeamService teamService;
 
-    public TeamController(UserService userService, TeamService teamService) {
+    private final JwtService jwtService;
+
+    public TeamController(UserService userService, TeamService teamService, JwtService jwtService) {
         this.userService = userService;
         this.teamService = teamService;
+        this.jwtService = jwtService;
     }
 
     // 팀 목록 조회 GET
