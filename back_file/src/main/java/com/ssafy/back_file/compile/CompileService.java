@@ -64,7 +64,7 @@ public class CompileService {
         FileCreateDto fileCreateDto = new FileCreateDto();
         fileCreateDto.setFilePath(filePath);
         fileCreateDto.setFileTitle("Dockerfile");
-        boolean created = fileService.createFile(fileCreateDto, teamSeq);
+        boolean created = fileService.createFile(fileCreateDto, 1, teamSeq);
         if (!created) {
             System.out.println("Can't createFile");
             return false;
