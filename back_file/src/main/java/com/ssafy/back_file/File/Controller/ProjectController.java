@@ -76,10 +76,9 @@ public class ProjectController {
 
 
         try {
-            Process p = Runtime.getRuntime().exec("/bin/sh -c cd /home/ubuntu/crow_data && touch mainb.py");
-            Process a = Runtime.getRuntime().exec("cmd /c cd /home/ubuntu/crow_data && touch mainc.py");
-
-
+            Process p = Runtime.getRuntime().exec("./bin/sh -c cd /home/ubuntu/crow_data && touch mainb.py");
+            Process a = Runtime.getRuntime().exec(".../bin/sh -c cd /home/ubuntu/crow_data && touch mainc.py");
+            Runtime.getRuntime().exec("../bin/sh -c cd /home/ubuntu/crow_data && touch mainc.py");
 
         } catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
 
