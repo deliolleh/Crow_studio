@@ -8,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
+
+import java.io.IOException;
+
 import java.util.HashMap;
 
 @RestController
@@ -67,6 +70,10 @@ public class ProjectController {
     @DeleteMapping("/{teamSeq}")
     public ResponseEntity<String> deletePjt(@PathVariable Long teamSeq) {
         String cmd = String.format("/bin/sh -c cd /home/ubuntu/crow_data && sudo rm -r %d",teamSeq);
+
+        try {Process p = Runtime.getRuntime().exec(cmd);}
+        catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
+
         return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 }
