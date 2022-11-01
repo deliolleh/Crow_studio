@@ -71,13 +71,13 @@ public class ProjectController {
     public ResponseEntity<String> deletePjt(@PathVariable Long teamSeq) {
 
         String cmd = "/bin/sh -c cd /home/ubuntu/crow_data && sudo rm -r 15";
-        String[] cmd2 = {"/bin/sh","-c","cd /home/ubuntu/crow_data", "&&", "sudo", "rm -r 15"};
+
 
 
 
         try {
             Process p = Runtime.getRuntime().exec("/bin/sh -c cd /home/ubuntu/crow_data && ls");
-            Process a = Runtime.getRuntime().exec(cmd2);
+            Process a = Runtime.getRuntime().exec("cmd /c cd /home/ubuntu/crow_data && rmdir /s 15");
 
 
 
