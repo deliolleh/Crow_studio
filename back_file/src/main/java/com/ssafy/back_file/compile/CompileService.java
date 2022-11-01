@@ -46,7 +46,7 @@ public class CompileService {
         if (Objects.equals(type, "django")) {
             content = "FROM python:3.10\n" +
                     "RUN pip3 install django\n" +
-                    "WORKDIR" + filePath + "\n" +
+                    "WORKDIR " + filePath + "\n" +
                     "COPY . .\n" +
                     "WORKDIR ./" + projectName +
                     "CMD [\"python3\", \"manage.py\", \"runserver\", \"0.0.0.0:0\"]\n" +
