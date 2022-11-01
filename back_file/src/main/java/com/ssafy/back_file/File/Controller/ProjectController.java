@@ -33,6 +33,7 @@ public class ProjectController {
     public static void showFilesInDIr (String path) {
         File file = new File(path);
         File files[] = file.listFiles();
+        System.out.println(files);
         String names[] = file.list();
 
         for (int i = 0; i < files.length; i++) {
