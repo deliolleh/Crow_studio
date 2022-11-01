@@ -69,13 +69,17 @@ public class ProjectController {
     }
     @DeleteMapping("/{teamSeq}")
     public ResponseEntity<String> deletePjt(@PathVariable Long teamSeq) {
-        String[] cmd = {"/bin/sh","-c","cd","/home/ubuntu/crow_data","&&","sudo","rm","-r",String.valueOf(teamSeq)};
+
+        String cmd = "/bin/sh -c cd /home/ubuntu/crow_data && sudo rm -r 15";
 
 
 
-        try {Process p = Runtime.getRuntime().exec(cmd);}
-        catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
 
-        return new ResponseEntity<>("Success", HttpStatus.OK);
+        try {
+            Process p = Runtime.getRuntime().exec(cmd);
+
+        } catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
+
+        return new ResponseEntity<>("Why?", HttpStatus.OK);
     }
 }
