@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Draggable } from "react-beautiful-dnd";
 
 // styled
 const TabsContainer = styled.div`
@@ -9,13 +10,18 @@ const TabsContainer = styled.div`
 `;
 
 
-const Tabs = () => {
+const Tabs = ({ item, provided, snapshot }) => {
   return (
-    <>
-      <TabsContainer className="bg-component_-2_dark">
-        <div>tab</div>
+      <TabsContainer
+        className="bg-component_-2_dark"
+        ref={provided.innerRef}
+        snapshot={snapshot}
+        {...provided.draggableProps}
+        {...provided.dragHandleProps}
+      >
+        <div>{item.id}</div>
+        <div>{item.content}</div>
       </TabsContainer>
-    </>
   )
 }
 
