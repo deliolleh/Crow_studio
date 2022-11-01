@@ -1,13 +1,12 @@
 import React from "react";
+
 import { useNavigate } from "react-router-dom";
 
 const Intro = () => {
   const navigate = useNavigate();
-
   const clickButtonHandler = () => navigate("/project/create");
 
   return (
-    // <div className="flex flex-col justify-items-center items-center mt-60">
     <div className="flex flex-col h-screen justify-center justify-items-center items-center">
       <div className="">logo</div>
       <div className="text-7xl font-bold text-white mt-5">까마귀공방</div>

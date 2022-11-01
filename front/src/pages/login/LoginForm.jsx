@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 const initialInputState = { email: "", password: "" }; // 초기 이메일, 비밀번호 상태
 const initialErrorState = { emailErrorMsg: "", passwordErrorMsg: "" };
 
-const LoginForm = ({ loginHandler }) => {
+const LoginForm = ({ onLogin }) => {
   const [inputs, setInputs] = useState(initialInputState); // 초기 입력
   const [errorMsgs, setErrorMsgs] = useState(initialErrorState); // 초기 에러메시지
   const { email, password } = inputs; // 이메일, 비밀번호 상태 할당
@@ -30,10 +30,9 @@ const LoginForm = ({ loginHandler }) => {
   // 폼 제출시 작동
   const submitHandler = (e) => {
     e.preventDefault();
-
     const loginData = { userId: email, userPassword: password };
     setErrorMsgs(initialErrorState);
-    loginHandler(JSON.stringify(loginData));
+    onLogin(JSON.stringify(loginData));
   };
 
   return (

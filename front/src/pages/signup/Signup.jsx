@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import { signup } from "../../redux/authSlice";
+import { signup } from "../../redux/userSlice";
 
 import SignupTitle from "./SignupTitle";
 import SignupForm from "./SignupForm";
