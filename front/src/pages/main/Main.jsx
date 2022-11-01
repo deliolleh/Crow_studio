@@ -1,6 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, Component } from "react";
+import ReactDOM from "react-dom";
 import styled from "styled-components";
 import SplitPane, { Pane } from "react-split-pane";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 // components
 import Sidebar from "./components/Sidebar";
@@ -9,13 +11,21 @@ import Git from "./components/Git";
 import Team from "./components/Team";
 import Settings from "./components/Settings";
 import Tabs from "./components/Tabs";
-import { useEffect } from "react";
 
+
+// styled
 const SidebarItems = styled.div`
   width: 292px;
   height: 100vh;
   margin-left: 3px;
 `;
+
+// beautiful-dnd
+const elements = [
+  { id: "one", content: "one" },
+  { id: "two", content: "two" },
+];
+
 
 const Main = () => {
   // // *****************    codesandbox    ********************
@@ -114,6 +124,11 @@ const Main = () => {
   // const currentPosition = state.editor.currentDevToolsPosition; 
   // // *********************     codesandbox    *****************
 
+  // 
+  
+  
+  
+  // split pane size
   const sizeRef = useRef();
   const [ sideBarSize, setSideBarSize ] = useState(0);
 
@@ -123,6 +138,16 @@ const Main = () => {
     console.log(sideBarSize)
     console.log(sizeRef.current.getBoundingClientRect().width)
   }, [])
+
+  // Beautiful DND 함수형으로 바꿔주기
+  const [items, setItems] = useState(elements);
+
+  const onDragEnd = (result) => {
+    const newItems = Array.from(items);
+    const [removed] = newItems.splice(result.source.index, 1);
+    newItems.splice(result.destination.index, 0, removed);
+    setItems(newItems);
+  };
 
   return (
     <>
@@ -136,16 +161,43 @@ const Main = () => {
             {/* <Settings /> */}
           </SidebarItems>
         </div>
-        <div>
-          <SplitPane
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                style={{ display: "flex", width: `calc(100vw - ${sideBarSize}px - 30px)`, }}
+              >
+                <SplitPane
+                  style={{ position: 'static', overflow: 'visible', width: `calc(100vw - ${sideBarSize}px - 30px)`,}}
+                  split="vertical"
+                  defaultSize="50%"
+                >
+                  {items.map((item, index) => (
+                    <Draggable key={item.id} draggableId={item.id} index={index}>
+                      {(provided, snapshot) => (
+                        <Tabs
+                          provided={provided}
+                          snapshot={snapshot}
+                          item={item}
+                        />
+                      )}
+                    </Draggable>
+                  ))}
+                </SplitPane>
+              </div>
+            )}
+          </Droppable>
+          {/* <SplitPane
             style={{ position: 'static', overflow: 'visible', width: `calc(100vw - ${sideBarSize}px - 30px)`,}}
             split="vertical"
             defaultSize="50%"
           >
             <Tabs />
             <Tabs />
-          </SplitPane>
-        </div>
+          </SplitPane> */}
+        </DragDropContext>
       </div>
     </>
   );

@@ -39,7 +39,7 @@ body {
   height: 11px;
   margin: -5px 0;
   cursor: row-resize;
-  width: 100%;
+  width: 100vw;
 }
 
 .Resizer.horizontal:hover {
@@ -49,6 +49,7 @@ body {
 
 .Resizer.vertical {
   width: 11px;
+  height: 100vh;
   margin: 0 -5px;
   cursor: col-resize;
 }
