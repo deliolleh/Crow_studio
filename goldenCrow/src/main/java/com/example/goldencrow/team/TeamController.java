@@ -37,28 +37,14 @@ public class TeamController {
     public ResponseEntity<List<TeamDto>> teamListGet(@RequestHeader("jwt") String jwt){
 
         // 내가 속한 것만 골라서 반환
+        List<TeamDto> teamDtoList = teamService.teamList(jwt);
 
-        if(jwt==null){
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        if(teamDtoList==null) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        } else {
+            // 리스트가 비어있어도 잘못된 게 아니기 때문에 그건 거르지 않는다
+            return new ResponseEntity<>(teamDtoList, HttpStatus.OK);
         }
-
-        List<TeamDto> teamDtoList = new ArrayList<>();
-
-        TeamDto teamDto = new TeamDto();
-        teamDto.setTeamSeq(new Long(1));
-        teamDto.setTeamName("team Name Sample 1");
-        teamDto.setTeamLeaderSeq(new Long(1));
-        teamDto.setTeamLeaderNickname("team Leader Nickname Sample 1");
-        teamDtoList.add(teamDto);
-
-        teamDto.setTeamSeq(new Long(2));
-        teamDto.setTeamName("team Name Sample 2");
-        teamDto.setTeamLeaderSeq(new Long(2));
-        teamDto.setTeamLeaderNickname("team Leader Nickname Sample 2");
-        teamDtoList.add(teamDto);
-
-        // 일단 성공하면 이렇게 반환될 겁니다
-        return new ResponseEntity<>(teamDtoList, HttpStatus.OK);
 
     }
 
@@ -67,19 +53,18 @@ public class TeamController {
     @PostMapping("/create")
     public ResponseEntity<String> teamCreatePost(@RequestHeader("jwt") String jwt, @RequestBody Map<String, String> req) {
 
-        // 팀장이 본인으로 자동 설정될 예정임
-
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
-        }
-
-        if(req.get("teamName")==null){
+        if(req.get("teamName")==null) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        if(teamService.teamCreate(jwt, req.get("teamName")).equals("success")) {
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
 
     }
+
     // 팀 수정 PUT
     // modify
     @PutMapping("/modify/{teamSeq}")
@@ -88,15 +73,15 @@ public class TeamController {
         // 리더 권한 없으면 터질 예정임
         // 이전 이름과 같아도 수정함
 
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
-        }
-
         if(req.get("teamName")==null){
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        if(teamService.teamModify(jwt, teamSeq, req.get("teamName")).equals("success")){
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
 
     }
 
@@ -108,11 +93,11 @@ public class TeamController {
         // 리더 권한 없으면 터질 예정임
         // 이후 팀 파일과 이것저것 싹 날아감
 
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
+        if(teamService.teamDelete(jwt, teamSeq).equals("success")){
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
-
-        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
 
     }
 
