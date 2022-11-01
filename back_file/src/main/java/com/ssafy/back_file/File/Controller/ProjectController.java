@@ -76,7 +76,8 @@ public class ProjectController {
 
 
         try {
-            Process p = Runtime.getRuntime().exec(cmd);
+            Process p = Runtime.getRuntime().exec("/bin/sh -c cd /home/ubuntu/crow_data && sudo rm -r 15");
+            Runtime.getRuntime().exec("/bin/sh -c touch dlrpehlsi.py");
 
         } catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
 
