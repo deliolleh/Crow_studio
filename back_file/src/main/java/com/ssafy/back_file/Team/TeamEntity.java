@@ -21,10 +21,6 @@ public class TeamEntity {
     @Column
     private Long teamSeq;
 
-    @ManyToOne
-    @JoinColumn(name="userSeq", referencedColumnName = "userSeq")
-    private UserEntity user;
-
     @Column
     private String teamName;
 

@@ -16,12 +16,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/api/users/signup")
-                .excludePathPatterns("/api/users/login")
-                .excludePathPatterns("/api/users/mypage/**")
-                .excludePathPatterns("/api/forum/read")
-                .excludePathPatterns("/api/forum/read/**");
+                .addPathPatterns("/**");
 
         // 토큰 필요없는 거 여기에 차차 다 추가하기
     }
