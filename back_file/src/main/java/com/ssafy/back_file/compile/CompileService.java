@@ -65,7 +65,10 @@ public class CompileService {
         fileCreateDto.setFilePath(filePath);
         fileCreateDto.setFileTitle("Dockerfile");
         boolean created = fileService.createFile(fileCreateDto, teamSeq);
-        if (!created) { return false; }
+        if (!created) {
+            System.out.println("Can't createFile");
+            return false;
+        }
         // save
         return fileService.saveFile(filePath, content);
     }
@@ -101,26 +104,8 @@ public class CompileService {
         }
 
         else {
-            return "haha";
+            return "not pure and not django";
         }
 
-
-//        try {
-//            String cmd = String.format("python %s", req.get("filePath"));
-//            Process p = Runtime.getRuntime().exec("cmd /c " + cmd);
-//
-//            BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//            String l = null;
-//            StringBuffer sb = new StringBuffer();
-//            while ((l = r.readLine()) != null) {
-//                sb.append(l);
-//                sb.append("\n");
-//            }
-//            return sb.toString();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
     }
 }
