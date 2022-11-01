@@ -98,7 +98,6 @@ public class JwtService {
 
             // 이 값으로 유저찾아서 없으면 터트림
             if(!userRepository.findById(Long.valueOf(String.valueOf(claimMap.get("jti")))).isPresent()) {
-                System.out.println("해당 유저가 존재하지 않음");
                 claimMap.put("result", "error");
             }
 
