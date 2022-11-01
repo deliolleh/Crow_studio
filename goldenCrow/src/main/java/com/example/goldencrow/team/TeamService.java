@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TeamService {
@@ -95,7 +96,27 @@ public class TeamService {
 
     }
 
+    public String teamModify(String jwt, Long teamSeq, String teamName) {
 
+        try {
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
+            Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
 
+            if(teamEntityOptional.isPresent()){
+                TeamEntity teamEntity = teamEntityOptional.get();
+                teamEntity.setTeamName(teamName);
+                teamRepository.save(teamEntity);
+                return "success";
+            } else {
+                return "401";
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+
+    }
 }

@@ -73,15 +73,15 @@ public class TeamController {
         // 리더 권한 없으면 터질 예정임
         // 이전 이름과 같아도 수정함
 
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
-        }
-
         if(req.get("teamName")==null){
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        if(teamService.teamModify(jwt, teamSeq, req.get("teamName")).equals("success")){
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
 
     }
 
