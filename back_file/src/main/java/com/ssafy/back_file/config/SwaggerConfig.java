@@ -1,4 +1,4 @@
-//package com.example.goldencrow.config;
+package com.ssafy.back_file.config;//package com.example.goldencrow.config;
 //
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
