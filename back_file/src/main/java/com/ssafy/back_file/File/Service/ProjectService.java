@@ -28,7 +28,7 @@ public class ProjectService {
         }
 
         if (type == 2) {
-            String command = "django-admin startproject " + fileTitle;
+            String command = "sudo django-admin startproject " + fileTitle + " .";
             try {
                 String[] cmd = {"/bin/sh", "-c", "cd ", newBaseUrl, " && ", command};
                 Process p = Runtime.getRuntime().exec(cmd);
@@ -48,6 +48,7 @@ public class ProjectService {
                 return e.getMessage();
             }
         } else if (type == 3) {
+            File pjtDir = new File(newBaseUrl+"/" +projectName);
             File file = new File(newBaseUrl + "/main.py");
             String content = "from flask import Flask\n\napp=Flask(" + projectName +")\n\n@app.route(\"/\")\ndef hello_world():\n\treturn \"<p>Hello, World</p>\"";
             try {

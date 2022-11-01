@@ -33,10 +33,9 @@ public class FileController {
      */
 
     @PostMapping("/{teamSeq}")
-    public ResponseEntity<String> userFileCreate(@RequestHeader("jwt") String jwt,@PathVariable Long teamSeq, @RequestBody FileCreateDto fileCreateDto) {
-        if (fileService.createFile(fileCreateDto, teamSeq)) {
-            String ts = String.valueOf(teamSeq);
-            String newFilePath = fileCreateDto.getFilePath() + "/"+ts+"/" + fileCreateDto.getFileTitle();
+    public ResponseEntity<String> userFileCreate(@RequestHeader("jwt") String jwt,@RequestParam Integer type,@PathVariable Long teamSeq, @RequestBody FileCreateDto fileCreateDto) {
+        if (fileService.createFile(fileCreateDto, type, teamSeq)) {
+            String newFilePath = fileCreateDto.getFilePath()  + "/" + fileCreateDto.getFileTitle();
             return new ResponseEntity<>(newFilePath, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("파일 생성에 실패했습니다.", HttpStatus.BAD_REQUEST);
