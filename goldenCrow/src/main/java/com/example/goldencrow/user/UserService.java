@@ -9,7 +9,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,9 +20,6 @@ public class UserService {
 
     @Autowired
     private JwtService jwtService;
-
-    @Autowired
-    private EntityManager em;
 
     // 회원가입
     public Map<String, String> signupService(String userId, String userPassword, String userNickname){
