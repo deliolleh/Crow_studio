@@ -6,14 +6,13 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 
 @Service
 public class EditorsService {
     String path = System.getProperty("user.dir");
+
+    int checkOs = System.getProperty("os.name").indexOf("windows");
 
     public HashMap<String, String> Formatting(String language, String code) {
         long now = new Date().getTime();
@@ -31,8 +30,8 @@ public class EditorsService {
             String name = path + "\\format" + now + type;
             // temp.py 파일 생성
             File file = new File(name);
-            FileOutputStream fw = new FileOutputStream(file);
-            PrintWriter writer = new PrintWriter(fw);
+            FileOutputStream ffw = new FileOutputStream(file);
+            PrintWriter writer = new PrintWriter(ffw);
             // temp.py에 code를 입력
             writer.print(code);
 
@@ -42,7 +41,12 @@ public class EditorsService {
 
             // windows cmd를 가리키는 변수
             // 나중에 Ubuntu할 때 맞는 변수로 바꿀 것
-            String env = "cmd /c ";
+            String env;
+            if (checkOs > -1) {
+                env = "cmd /c";
+            } else {
+                env = "/bin/sh -c";
+            }
             String command = "black " + name;
 
             // Black 작동 => 성공
@@ -108,8 +112,8 @@ public class EditorsService {
         if (language.equals("python")) {
             try {
                 File file = new File(path + "\\lint.py");
-                FileOutputStream fw = new FileOutputStream(file);
-                PrintWriter writer = new PrintWriter(fw);
+                FileOutputStream lfw = new FileOutputStream(file);
+                PrintWriter writer = new PrintWriter(lfw);
                 // temp.py에 code를 입력
                 writer.print(code);
 
@@ -119,7 +123,12 @@ public class EditorsService {
 
                 // windows cmd를 가리키는 변수
                 // 나중에 Ubuntu할 때 맞는 변수로 바꿀 것
-                String env = "cmd /c ";
+                String env;
+                if (checkOs > -1) {
+                    env = "cmd /c";
+                } else {
+                    env = "/bin/sh -c";
+                }
                 String filePath = path + "\\lint.py";
                 String command = "pylint " + filePath;
 
