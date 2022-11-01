@@ -76,8 +76,10 @@ public class ProjectController {
 
 
         try {
-            Process p = Runtime.getRuntime().exec("./bin/sh -c cd /home/ubuntu/crow_data && touch mainb.py");
-            Process a = Runtime.getRuntime().exec("sh -c cd /home/ubuntu/crow_data && touch mainc.py");
+            Process p = Runtime.getRuntime().exec("./bin/sh -c sudo touch mainb.py");
+            Process a = Runtime.getRuntime().exec("sh -c sudo touch mainc.py");
+            Runtime.getRuntime().exec("sh -c touch maind.py");
+            Runtime.getRuntime().exec("/bin/sh -c sudo touch maine.py");
             System.out.println(p.getInputStream());
             System.out.println(a.getInputStream());
 
