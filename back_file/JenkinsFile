@@ -1,0 +1,33 @@
+pipeline { 
+        agent none
+        stages {
+                stage('Docker build') {
+                        agent any
+                        steps {
+                                sh 'docker build -t backfile ./back_file'
+                                sh 'docker build -t front ./front'
+                        }
+                }
+                stage('Docker run') {
+                        agent any
+                        steps {
+                                sh 'docker ps -f name=front -q \
+                                        | xargs --no-run-if-empty docker container stop'
+
+                                sh 'docker ps -f name=backfile -q \
+                                        | xargs --no-run-if-empty docker container stop'
+
+                                sh 'docker container ls -a -f name=front -q \
+                                        | xargs -r docker container rm'
+
+                                sh 'docker container ls -a -f name=backfile -q \
+                                        | xargs -r docker container rm'
+
+
+                                sh 'docker run -d --name front -p 8000:80 -v /home/ubuntu/crow_data:/home/ubuntu/crow_data front'
+                                sh 'docker run -d --name backfile -p 8080:8080 -v /home/ubuntu/crow_data:/home/ubuntu/crow_data backfile'
+                        }
+                }
+        }
+
+}

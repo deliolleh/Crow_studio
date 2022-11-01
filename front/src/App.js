@@ -2,12 +2,12 @@ import React from "react";
 import { createBrowserRouter, RouterProvider, Route } from "react-router-dom";
 
 import Header from "./components/Header";
-import Main from "./pages/main/Main";
+import Intro from "./pages/intro/Intro";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Main />,
+    element: <Intro />,
   },
 ]);
 
