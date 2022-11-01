@@ -72,17 +72,14 @@ public class ProjectController {
 
         String cmd = "/bin/sh -c cd /home/ubuntu/crow_data && sudo rm -r 15";
 
-
-
-
         try {
-            Runtime.getRuntime().exec("bash -c cd /home/ubuntu/crow_data && touch maind.py");
-            Runtime.getRuntime().exec("bash -c cd /home/ubuntu/crow_data && sudo touch maine.py");
+            Runtime.getRuntime().exec("/bin/bash -c cd /home/ubuntu/crow_data && touch maind.py");
+            Runtime.getRuntime().exec("/bin/bash -c cd /home/ubuntu/crow_data && sudo touch maine.py");
 
         } catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
         try {
-            Process p = Runtime.getRuntime().exec("./bin/sh -c cd /home/123asd");
-            Process a = Runtime.getRuntime().exec("sh -c sudo cd /home/사람살려사람");
+            Process p = Runtime.getRuntime().exec("./bin/bash -c cd /home/123asd");
+            Process a = Runtime.getRuntime().exec(".sh -c sudo cd /home/사람살려사람");
         } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
