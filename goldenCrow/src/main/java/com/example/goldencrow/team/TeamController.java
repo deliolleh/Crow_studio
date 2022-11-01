@@ -93,11 +93,11 @@ public class TeamController {
         // 리더 권한 없으면 터질 예정임
         // 이후 팀 파일과 이것저것 싹 날아감
 
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
+        if(teamService.teamDelete(jwt, teamSeq).equals("success")){
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
-
-        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
 
     }
 

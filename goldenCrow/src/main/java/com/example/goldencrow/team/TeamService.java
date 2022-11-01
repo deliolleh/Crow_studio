@@ -119,4 +119,33 @@ public class TeamService {
         }
 
     }
+
+    public String teamDelete(String jwt, Long teamSeq) {
+
+        try {
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+            Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
+
+            if(teamEntityOptional.isPresent()){
+                TeamEntity teamEntity = teamEntityOptional.get();
+                teamRepository.delete(teamEntity);
+
+                // 팀이 날아가기 때문에 멤버db도 날아가고 파일db도 날아간다
+                // 하지만 파일을 직접 날리긴 해야해!!
+
+                // 그래서 이쯤에서 restTemplate로 파일 날리는 api를 써야함
+
+                return "success";
+            } else {
+                return "401";
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+
+    }
 }
