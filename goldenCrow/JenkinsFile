@@ -16,7 +16,7 @@ pipeline {
                                 sh 'docker container ls -a -f name=goldencrow -q \
                                         | xargs -r docker container rm'
 
-                                sh 'docker run -d --name goldencrow -p 8081:8081 -v /home/ubuntu/crow_data:/home/ubuntu/crow_data goldencrow'
+                                sh 'docker run -d --name goldencrow -p 8080:8080 -v /home/ubuntu/crow_data:/home/ubuntu/crow_data goldencrow'
                         }
                 }
         }
