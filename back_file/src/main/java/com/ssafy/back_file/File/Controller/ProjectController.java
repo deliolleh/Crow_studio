@@ -64,4 +64,9 @@ public class ProjectController {
 
         return new ResponseEntity<>("1", HttpStatus.ACCEPTED);
     }
+    @DeleteMapping("/{teamSeq}")
+    public ResponseEntity<String> deletePjt(@PathVariable Long teamSeq) {
+        String cmd = String.format("/bin/sh -c cd /home/ubuntu/crow_data && sudo rm -r %d",teamSeq);
+        return new ResponseEntity<>("Success", HttpStatus.OK);
+    }
 }

@@ -36,8 +36,9 @@ public class ProjectService {
 
         if (type == 2) {
             String command = "sudo django-admin startproject " + fileTitle + " .";
+            out.println(command);
             try {
-                String[] cmd = {"/bin/sh", "-c", "cd ", newBaseUrl, " && ", command};
+                String cmd = String.format("/bin/sh -c cd %s && %s", newBaseUrl, command);
                 Process p = Runtime.getRuntime().exec(cmd);
             } catch (IOException e) {
                 return e.getMessage();
