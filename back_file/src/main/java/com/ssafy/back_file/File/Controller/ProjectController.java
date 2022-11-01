@@ -62,7 +62,7 @@ public class ProjectController {
 
     @GetMapping("/")
     public ResponseEntity<String> pjtRead(@RequestHeader("jwt") String jwt) {
-        String baseUrl = "C:\\Users\\multicampus\\Desktop\\test";
+        String baseUrl = "/home/ubuntu/crow_data/999";
         showFilesInDIr(baseUrl);
 
         return new ResponseEntity<>("1", HttpStatus.ACCEPTED);
