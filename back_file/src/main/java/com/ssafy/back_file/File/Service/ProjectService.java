@@ -17,7 +17,7 @@ public class ProjectService {
     private FileRepository fileRepository;
 
     public String createProject(Long teamSeq, Integer type, String projectName) {
-        String env = "cmd /c";
+
         String fileTitle = projectName;
         String baseUrl = "/home/ubuntu/crow_data";
         String newBaseUrl = baseUrl + "/" + String.valueOf(teamSeq);
@@ -30,7 +30,8 @@ public class ProjectService {
         if (type == 2) {
             String command = "django-admin startproject " + fileTitle;
             try {
-                Process p = Runtime.getRuntime().exec(String.format("cmd /c \"cd %s && %s\"",newBaseUrl,command));
+                String[] cmd = {"/bin/sh", "-c", "cd ", newBaseUrl, " && ", command};
+                Process p = Runtime.getRuntime().exec(cmd);
             } catch (IOException e) {
                 return e.getMessage();
             }
