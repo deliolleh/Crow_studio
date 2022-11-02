@@ -4,35 +4,57 @@ import userApi from "../api/userApi";
 
 const initialState = {
   isLoggedIn: false,
-  // mySeq: "",
+  mySeq: "",
   myEmail: "",
   myNickname: "",
-  // myImageURL: "",
+  myImageURL: "",
   // myDesc: "",
 };
 
 export const signup = createAsyncThunk(
   "user/signup",
-  async (signupData, { rejectWithValue }) => {
-    const response = await userApi.signup(signupData);
-    return response.data;
-  }
-);
-
-export const login = createAsyncThunk(
-  "user/login",
-  async (loginData, { rejectWithValue }) => {
+  async (signupData, { rejectWithValue, dispatch }) => {
     try {
-      const response = await userApi.login(loginData);
+      const response = await userApi.signup(signupData);
+      localStorage.setItem("access-token", `jwt ${response.data.jwt}`);
+      dispatch(getUser());
       return response.data;
     } catch (err) {
       if (!err.response) {
         throw err;
       }
-      // return rejectWithValue(err);
+      return rejectWithValue(err.response.status);
     }
   }
 );
+
+export const login = createAsyncThunk(
+  "user/login",
+  async (loginData, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await userApi.login(loginData);
+      localStorage.setItem("access-token", `jwt ${response.data.jwt}`);
+      dispatch(getUser());
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+      return rejectWithValue(err.response.status);
+    }
+  }
+);
+
+export const getUser = createAsyncThunk("user/getuser", async (_) => {
+  try {
+    const response = await userApi.getUser();
+    return response.data;
+  } catch (err) {
+    if (!err.reponse) {
+      throw err;
+    }
+  }
+});
 
 export const userSlice = createSlice({
   name: "user",
@@ -40,11 +62,21 @@ export const userSlice = createSlice({
   // reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(login.fulfilled, (state, { payload }) => {
+      .addCase(getUser.fulfilled, (state, action) => {
+        const { userId, userNickname, userProfile, userSeq } = action.payload;
         state.isLoggedIn = true;
-        console.log("fulfilled payload:", payload);
+        state.myEmail = userId;
+        state.myNickname = userNickname;
+        state.myImageURL = userProfile;
+        state.mySeq = userSeq;
       })
-      .addCase(login.rejected, (state, action) => {});
+      .addCase(getUser.rejected, (state) => {
+        state.isLoggedIn = false;
+        state.myEmail = "";
+        state.myNickname = "";
+        state.myImageURL = "";
+        state.mySeq = "";
+      });
   },
 });
 

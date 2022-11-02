@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import { login } from "../../redux/userSlice";
@@ -9,10 +9,22 @@ import LoginForm from "./LoginForm";
 
 const Login = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const loginHandler = (loginData) => {
-    console.log("stringified loginData:", loginData);
-    dispatch(login(loginData)).unwrap().then(console.log).catch(console.err);
+    dispatch(login(loginData))
+      .unwrap()
+      .then(() => {
+        alert("로그인 성공");
+        navigate("/");
+      })
+      .catch((errorStatusCode) => {
+        if (errorStatusCode === 409) {
+          alert("존재하지 않는 이메일이나 비밀번호입니다");
+        } else {
+          alert("비상!!");
+        }
+      });
   };
 
   return (

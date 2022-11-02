@@ -24,8 +24,8 @@ pipeline {
                                         | xargs -r docker container rm'
 
 
-                                sh 'docker run -d --name front -p 8000:80 -v /home/ubuntu/crow_data:/home/ubuntu/crow_data front'
-                                sh 'docker run -d --name backfile -p 8080:8080 -v /home/ubuntu/crow_data:/home/ubuntu/crow_data backfile'
+                                sh 'docker run -d --name front -p 80:80 -v /home/ubuntu/crow_data:/home/ubuntu/crow_data front'
+                                sh 'docker run -d --name backfile -p 8081:8081 -v /home/ubuntu/crow_data:/home/ubuntu/crow_data backfile'
                         }
                 }
         }
