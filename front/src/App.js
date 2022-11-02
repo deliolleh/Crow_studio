@@ -40,7 +40,7 @@ const router = createBrowserRouter([
     element: <Main />,
   },
   {
-    path: "/mypage",
+    path: "/mypage/:userSeq",
     element: <Mypage />,
   },
   {
