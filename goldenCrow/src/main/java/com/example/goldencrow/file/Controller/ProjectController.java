@@ -27,7 +27,7 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    public static void showFilesInDIr (String path) {
+    public static void showFilesInDIr(String path) {
         File file = new File(path);
         File files[] = file.listFiles();
         System.out.println(files);
@@ -47,11 +47,11 @@ public class ProjectController {
     }
 
     @PostMapping("/{teamSeq}")
-    public ResponseEntity<String> teamProjectCreate(@RequestHeader("jwt") String jwt, @PathVariable Long teamSeq,@RequestParam Integer type, @RequestBody HashMap<String,String> projectName){
+    public ResponseEntity<String> teamProjectCreate(@RequestHeader("jwt") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> projectName) {
         String pjt = projectName.get("projectName");
-        if (projectService.createProject(teamSeq,type,pjt) == "1") {
+        if (projectService.createProject(teamSeq, type, pjt) == "1") {
             return new ResponseEntity<>("프로젝트 생성 성공했습니다.", HttpStatus.OK);
-        } else if (projectService.createProject(teamSeq,type,pjt) == "2") {
+        } else if (projectService.createProject(teamSeq, type, pjt) == "2") {
             return new ResponseEntity<>("이미 동일한 프로젝트가 존재합니다.", HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(projectService.createProject(teamSeq, type, pjt), HttpStatus.BAD_REQUEST);
@@ -71,10 +71,14 @@ public class ProjectController {
     public ResponseEntity<String> deletePjt(@RequestHeader("jwt") String jwt) {
         ProcessBuilder builder = new ProcessBuilder();
         ProcessBuilder tester = new ProcessBuilder();
+
+
+
         try {
-            builder.command("ls");
+            builder.command("pip", "install", "django");
             builder.directory(new File("./home/ubuntu/crow_data/"));
-            tester.command("django-admin startproject helloworld");
+            tester.command("django-admin", "startproject", "helloworld");
+
             tester.directory(new File("./home/ubuntu/crow_data/"));
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -82,7 +86,7 @@ public class ProjectController {
 
         try {
             Process process = builder.start();
-            //tester.start();
+            tester.start();
             System.out.println("여기요여기");
             InputStream stderr = process.getInputStream();
             InputStreamReader isr = new InputStreamReader(stderr);
@@ -92,12 +96,13 @@ public class ProjectController {
             System.out.println(isr);
             while ((line = br.readLine()) != null) {
                 System.out.println(line);
-
             }
+
             process.waitFor();
             System.out.println("Waiting ...");
-        } catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
-        catch (InterruptedException e) {
+        } catch (IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (InterruptedException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
