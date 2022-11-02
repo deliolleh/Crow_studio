@@ -67,6 +67,17 @@ export const getUser = createAsyncThunk("user/getuser", async (_) => {
   }
 });
 
+export const getMypage = createAsyncThunk("user/getMypage", async (userSeq) => {
+  try {
+    const response = await userApi.getMypage(userSeq);
+    return response.data;
+  } catch (err) {
+    if (!err.response) {
+      throw err;
+    }
+  }
+});
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
