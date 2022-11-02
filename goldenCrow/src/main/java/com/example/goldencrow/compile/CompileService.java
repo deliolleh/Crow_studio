@@ -100,8 +100,18 @@ public class CompileService {
 //            String image = String.format("docker build -t %s .", projectName);
             String[] image = {"docker", "build", "-t", projectName, "."};
             try {
+                String result = "";
+                StringBuffer sb = new StringBuffer();
                 Process p = Runtime.getRuntime().exec(image);
                 BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                String cl = null;
+                while((cl = in.readLine()) != null){
+                    sb.append(cl);
+                    sb.append("\n");
+                }
+                result = sb.toString();
+                in.close();
+                System.out.println(result);
             } catch(IOException e){
                 System.out.println("이미지 빌드가 안됨");
                 e.printStackTrace();
