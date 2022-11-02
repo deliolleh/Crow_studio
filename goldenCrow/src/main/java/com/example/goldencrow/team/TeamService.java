@@ -78,12 +78,12 @@ public class TeamService {
 
             // 이 사람을 팀장으로 하는 팀 생성하고 저장
             TeamEntity teamEntity = new TeamEntity(userEntity, teamName);
-            teamRepository.save(teamEntity);
+            teamRepository.saveAndFlush(teamEntity);
 
             // 멤버 테이블에도 그 사람을 등록
             TeamEntity savedTeamEntity = teamRepository.findTeamEntityByTeamLeaderAndTeamName(userEntity, teamName).get();
             MemberEntity memberEntity = new MemberEntity(userEntity, savedTeamEntity);
-            memberRepository.save(memberEntity);
+            memberRepository.saveAndFlush(memberEntity);
 
             // 성공 여부 반환
             return "success";
@@ -107,10 +107,10 @@ public class TeamService {
             if(teamEntityOptional.isPresent()){
                 TeamEntity teamEntity = teamEntityOptional.get();
                 teamEntity.setTeamName(teamName);
-                teamRepository.save(teamEntity);
+                teamRepository.saveAndFlush(teamEntity);
                 return "success";
             } else {
-                return "401";
+                return "403";
             }
 
         } catch (Exception e) {
@@ -140,7 +140,7 @@ public class TeamService {
 
                 return "success";
             } else {
-                return "401";
+                return "403";
             }
 
         } catch (Exception e) {
@@ -184,4 +184,42 @@ public class TeamService {
         }
 
     }
+
+    // 팀원 추가
+    public String memberAdd(String jwt, Long teamSeq, Long memberSeq) {
+
+        try {
+
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+            // 그런 팀이 존재하는지 체크
+            Optional<TeamEntity> teamEntity = teamRepository.findById(teamSeq);
+
+            // 팀이 존재하는지 체크
+            if(teamEntity.isPresent()) {
+                // 내가 장이 맞는지 체크
+                if(teamEntity.get().getTeamLeader().getUserSeq()==userSeq) {
+                    // 이 멤버가 여기 원래 없는게 맞는지 체크
+                    if(!memberRepository.findByUser_UserSeqAndTeam_TeamSeq(memberSeq, teamSeq).isPresent()) {
+                        // 모든 조건 만족
+                        MemberEntity memberEntity = new MemberEntity(userRepository.findById(memberSeq).get(),teamEntity.get());
+                        memberRepository.saveAndFlush(memberEntity);
+                        return "success";
+
+                    } else { return "error"; }
+                } else { return "403"; }
+            } else { return "error"; }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+
+    }
+
+
+
+
+
 }

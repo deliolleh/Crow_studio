@@ -17,6 +17,7 @@ public class TeamController {
 
     private final String SUCCESS = "SUCCESS";
     private final String FAILURE = "FAILURE";
+    private final String FORBIDDEN = "FORBIDDEN";
 
     private final UserService userService;
 
@@ -76,8 +77,12 @@ public class TeamController {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
-        if(teamService.teamModify(jwt, teamSeq, req.get("teamName")).equals("success")){
+        String result = teamService.teamModify(jwt, teamSeq, req.get("teamName"));
+
+        if(result.equals("success")){
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else if(result.equals("403")) {
+            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
@@ -92,8 +97,12 @@ public class TeamController {
         // 리더 권한 없으면 터질 예정임
         // 이후 팀 파일과 이것저것 싹 날아감
 
-        if(teamService.teamDelete(jwt, teamSeq).equals("success")){
+        String result = teamService.teamDelete(jwt, teamSeq);
+
+        if(result.equals("success")){
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else if(result.equals("403")) {
+            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
@@ -127,16 +136,19 @@ public class TeamController {
         // 리더 권한 없으면 터질 예정임
         // 이미 팀 내 유저면 터질 예정임
 
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
-        }
-
         if(req.get("teamSeq")==null || req.get("memberSeq")==null){
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        String result = teamService.memberAdd(jwt, req.get("teamSeq"), req.get("memberSeq"));
 
+        if(result.equals("success")) {
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else if(result.equals("403")) {
+            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
     }
 
     // 팀원 삭제 DELETE
