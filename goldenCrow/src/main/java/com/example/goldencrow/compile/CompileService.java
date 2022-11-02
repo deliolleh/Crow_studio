@@ -98,35 +98,39 @@ public class CompileService {
             System.out.println("도커파일 만들기 성공! 빌드를 해보자");
             // 도커 이미지 빌드
 //            String image = String.format("docker build -t %s .", projectName);
-            try {
-                String[] image = {"docker", "build", "-t", projectName, filePath+"/"};
-                System.out.println("build 명령어: " + Arrays.toString(image));
-                String result = "";
-                StringBuffer sb = new StringBuffer();
-                Process p = Runtime.getRuntime().exec(image);
-                BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                String cl;
-                while((cl = in.readLine()) != null){
-                    System.out.println(cl);
-                    sb.append(cl);
-                    sb.append("\n");
-                }
-                result = sb.toString();
-                p.waitFor();
-                in.close();
-                System.out.println("결과: " + result);
-                p.destroy();
-            } catch(IOException e){
-                System.out.println("이미지 빌드가 안됨");
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            String[] image = {"docker", "build", "-t", projectName, filePath+"/"};
+            String imageBuild = resultString(image);
+            if (imageBuild.isEmpty()) { return "Can't build docker image"; }
+//            try {
+//
+//                System.out.println("build 명령어: " + Arrays.toString(image));
+//                String result = "";
+//                StringBuffer sb = new StringBuffer();
+//                Process p = Runtime.getRuntime().exec(image);
+//                BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//                String cl;
+//                while((cl = in.readLine()) != null){
+//                    System.out.println(cl);
+//                    sb.append(cl);
+//                    sb.append("\n");
+//                }
+//                result = sb.toString();
+//                p.waitFor();
+//                in.close();
+//                System.out.println("결과: " + result);
+//                p.destroy();
+//            } catch(IOException e){
+//                System.out.println("이미지 빌드가 안됨");
+//                e.printStackTrace();
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
             System.out.println("런 해보쟈");
             // 도커 런
             String[] command = {"docker", "run", "-d", "--name", projectName, "-P", projectName};
             System.out.println(Arrays.toString(command));
             String container = resultString(command);
+            if (container.isEmpty()) { return "Can't run docker container"; }
             String portString = portNum(container);
             // \n 전까지의 문자열에서 : 뒤에 있는 숫자만 가져오기
             String[] portList = portString.split("\n");
