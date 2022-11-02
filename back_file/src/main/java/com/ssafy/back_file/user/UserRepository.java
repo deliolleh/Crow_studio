@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    //UserEntity findByUserSeq(Long userSeq);
+    UserEntity findByUserSeq(Long userSeq);
 }

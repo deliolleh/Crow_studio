@@ -18,7 +18,7 @@ public class VariableController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Map<String, Object>> varialbeRecommend(@RequestBody HashMap<String, String> alphabet) {
+    public ResponseEntity<Map<String, Object>> variableRecommend(@RequestBody HashMap<String, String> alphabet) {
         String text = alphabet.get("data");
         HashMap<String, Object> response = variableService.variableRecommend(text);
         if (response.get("data") != null) {
