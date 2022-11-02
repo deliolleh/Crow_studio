@@ -12,7 +12,7 @@ import java.util.*;
 public class EditorsService {
     String path = System.getProperty("user.dir");
 
-    int checkOs = System.getProperty("os.name").indexOf("windows");
+    boolean checkOs = System.getProperty("os.name").toLowerCase().contains("window");
 
     public HashMap<String, String> Formatting(String language, String code) {
         long now = new Date().getTime();
@@ -27,9 +27,9 @@ public class EditorsService {
 
         try {
 
-            String name = path + "\\format" + now + type;
+            String name = "format" + now + type;
             // temp.py 파일 생성
-            File file = new File(name);
+            File file = new File(path + "\\" + name);
             FileOutputStream ffw = new FileOutputStream(file);
             PrintWriter writer = new PrintWriter(ffw);
             // temp.py에 code를 입력
@@ -42,12 +42,13 @@ public class EditorsService {
             // windows cmd를 가리키는 변수
             // 나중에 Ubuntu할 때 맞는 변수로 바꿀 것
             String env;
-            if (checkOs > -1) {
+            System.out.println(checkOs);
+            if (checkOs) {
                 env = "cmd /c";
             } else {
                 env = "/bin/sh -c";
             }
-            String[] command = {env, "black", name};
+            String command = env + " black " + name;
 
             // Black 작동 => 성공
             Runtime.getRuntime().exec(command);
@@ -124,7 +125,7 @@ public class EditorsService {
                 // windows cmd를 가리키는 변수
                 // 나중에 Ubuntu할 때 맞는 변수로 바꿀 것
                 String env;
-                if (checkOs > -1) {
+                if (checkOs) {
                     env = "cmd /c";
                 } else {
                     env = "/bin/sh -c";
