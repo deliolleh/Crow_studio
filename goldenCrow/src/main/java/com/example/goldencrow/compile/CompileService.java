@@ -94,12 +94,15 @@ public class CompileService {
             // 도커파일 추가
             String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"));
             if (!Objects.equals(dockerfile, "SUCCESS")) { return "Can't make dockerfile"; }
+            System.out.println("도커파일 만들기 성공! 빌드를 해보자");
             // 도커 이미지 빌드
-            String image = String.format("docker build -t %s .", projectName);
+//            String image = String.format("docker build -t %s .", projectName);
+            String[] image = {"docker", "build", "-t", projectName, "."};
             try {
                 Process p = Runtime.getRuntime().exec(image);
                 BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
             } catch(IOException e){
+                System.out.println("이미지 빌드가 안됨");
                 e.printStackTrace();
             }
 
