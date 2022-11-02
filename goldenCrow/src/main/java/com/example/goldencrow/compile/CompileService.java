@@ -127,7 +127,11 @@ public class CompileService {
             String[] command = {"docker", "run", "-d", "--name", projectName, "-P", projectName};
             System.out.println(Arrays.toString(command));
             String container = resultString(command);
-            return portNum(container);
+            String portString = portNum(container);
+            // \n 전까지의 문자열에서 : 뒤에 있는 숫자만 가져오기
+            String[] portList = portString.split("\n");
+            String[] realPort = portList[1].split(":");
+            return "k7d207.p.ssafy.io:" + realPort[1];
 
         }
 
