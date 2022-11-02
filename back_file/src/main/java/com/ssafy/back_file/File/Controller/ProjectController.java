@@ -68,7 +68,7 @@ public class ProjectController {
 
         return new ResponseEntity<>("1", HttpStatus.ACCEPTED);
     }
-    @PostMapping("/test")
+    @GetMapping("/test")
     public ResponseEntity<String> deletePjt() {
 
         String cmd = "/bin/sh -c cd /home/ubuntu/crow_data && sudo rm -r 15";
