@@ -35,9 +35,8 @@ public class ProjectService {
         }
 
         if (type == 2) {
-            String command = "django-admin startproject " + fileTitle;
             ProcessBuilder djangoStarter = new ProcessBuilder();
-            djangoStarter.command("sh", "-c","sudo",command);
+            djangoStarter.command("sh", "-c", String.format("django-admin startproject %s",fileTitle));
             djangoStarter.directory(newDir);
             try {
                 djangoStarter.start();
