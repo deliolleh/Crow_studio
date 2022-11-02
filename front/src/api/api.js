@@ -6,15 +6,10 @@ const headers = {
   "Content-Type": "application/json;charset=UTF-8",
   Accept: "*/*",
   "Access-Control-Allow-Origin": "*",
-  crossDomain: true,
-  credentials: "include",
   withCredentials: true,
 };
 
-const api = axios.create({
-  baseURL,
-  headers: headers,
-});
+const api = axios.create({ baseURL, headers });
 
 api.interceptors.request.use((config) => {
   if (!config.headers.jwt) {
@@ -22,8 +17,6 @@ api.interceptors.request.use((config) => {
     if (accessToken) {
       // config.headers.Authorization = accessToken;
       config.headers.jwt = accessToken.slice(4);
-    } else {
-      // config.headers.jwt = "";
     }
   }
   return config;
