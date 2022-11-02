@@ -11,7 +11,7 @@ public class ForumPageDto {
 
 //    private int totalPage;
 //    private int page;
-    private List<ForumDto> forumList;
+    private List<ForumListDto> forumList;
 
     private ForumDto.ForumResult result;
 
@@ -21,7 +21,7 @@ public class ForumPageDto {
     public ForumPageDto(List<ForumEntity> forumEntity) {
         this.forumList = new ArrayList<>();
         for (ForumEntity forum : forumEntity) {
-            forumList.add(new ForumDto(forum));
+            forumList.add(new ForumListDto(forum));
         }
     }
 }
