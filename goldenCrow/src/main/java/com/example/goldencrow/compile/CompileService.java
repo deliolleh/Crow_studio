@@ -86,7 +86,8 @@ public class CompileService {
         String projectName = filePath.substring(filePathIndex);
         // 퓨어파이썬일 때
         if (Objects.equals(req.get("type"), "pure")) {
-            String command = String.format("python3 %s", filePath);
+//            String command = String.format("python3 %s", filePath);
+            String[] command = {"python3", filePath};
             return resultString(command);
         }
         // Django 프로젝트일 때
