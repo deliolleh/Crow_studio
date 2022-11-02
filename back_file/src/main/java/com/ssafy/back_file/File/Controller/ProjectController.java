@@ -96,6 +96,7 @@ public class ProjectController {
         try {
             Runtime.getRuntime().exec("/bin/bash -c cd /home/ubuntu/crow_data && touch maind.py");
             Runtime.getRuntime().exec("/bin/bash -c cd /home/ubuntu/crow_data && sudo touch maine.py");
+            builder.start();
 
         } catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
         try {
