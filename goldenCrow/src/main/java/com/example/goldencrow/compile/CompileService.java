@@ -17,8 +17,8 @@ public class CompileService {
 
     // 실행 결과 반환 로직
     public String resultString(String[] cmd) {
+        String result = "";
         try{
-            String result = "";
             StringBuffer sb = new StringBuffer();
             Process p = Runtime.getRuntime().exec(cmd);
             BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -39,7 +39,7 @@ public class CompileService {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
+        return result;
     }
 
     // 도커파일 생성
