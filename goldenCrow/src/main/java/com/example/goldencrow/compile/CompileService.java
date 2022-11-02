@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
@@ -100,6 +101,7 @@ public class CompileService {
 //            String image = String.format("docker build -t %s .", projectName);
             try {
                 String[] image = {"docker", "build", "-t", projectName, filePath+"/"};
+                System.out.println("build 명령어: " + Arrays.toString(image));
                 String result = "";
                 StringBuffer sb = new StringBuffer();
                 Process p = Runtime.getRuntime().exec(image);
