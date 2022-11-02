@@ -69,19 +69,6 @@ public class ProjectController {
         return new ResponseEntity<>("1", HttpStatus.ACCEPTED);
     }
 
-    public ProcessBuilder inputCommand(String cmd) {
-        ProcessBuilder builder = new ProcessBuilder();
-        try {
-            builder.command("sh", "-c", cmd);
-            builder.directory(new File("/usr/local/bin/"));
-            }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return builder;
-    }
-
-
 
     @GetMapping("/test")
     public ResponseEntity<String> deletePjt() {
