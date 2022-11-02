@@ -72,7 +72,7 @@ public class ProjectController {
         ProcessBuilder builder = new ProcessBuilder();
         ProcessBuilder tester = new ProcessBuilder();
         try {
-            builder.command("sh", "-c","sudo", "django-admin", "startproject", "helloWorld");
+            builder.command("django-admin", "startproject", "helloWorld");
             builder.directory(new File("/home/ubuntu/crow_data/"));
             tester.command("sh", "-c","sudo","django-admin startproject", "helloWorld");
             tester.directory(new File("/home/ubuntu/crow_data/15/"));
