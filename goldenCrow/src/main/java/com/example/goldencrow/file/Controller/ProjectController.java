@@ -85,20 +85,28 @@ public class ProjectController {
 
         try {
             Process process = builder.start();
-            tester.start();
-            System.out.println("여기요여기");
+
             InputStream stderr = process.getInputStream();
             InputStreamReader isr = new InputStreamReader(stderr);
             BufferedReader br = new BufferedReader(isr);
             String line = null;
 
-            System.out.println(isr);
             while ((line = br.readLine()) != null) {
                 System.out.println(line);
             }
 
             process.waitFor();
             System.out.println("Waiting ...");
+        } catch (IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (InterruptedException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            System.out.println("여기서 터짐 여기서!!");
+            Process test = tester.start();
+            test.waitFor();
         } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (InterruptedException e) {
