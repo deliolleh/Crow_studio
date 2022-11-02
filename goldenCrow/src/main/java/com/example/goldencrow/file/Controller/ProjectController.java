@@ -104,7 +104,13 @@ public class ProjectController {
 
         try {
             System.out.println("여기서 터짐 여기서!!");
-            Process test = Runtime.getRuntime().exec("cd /home/ubuntu/crow_data && django-admin startproject hello_world");
+            tester.start();
+        } catch (IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            Process test = Runtime.getRuntime().exec("/bin -c cd /home/ubuntu/crow_data && django-admin startproject hello_world");
         } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
