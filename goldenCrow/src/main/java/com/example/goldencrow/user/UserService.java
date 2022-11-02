@@ -236,7 +236,7 @@ public class UserService {
                 if(count>=2) {
                     // 1인팀이 아닌 팀이 하나라도 있을 경우
                     // 탐색을 중지하고 탈퇴 불가 처리
-                    return "you are leader";
+                    return "403";
                 }
 
             }

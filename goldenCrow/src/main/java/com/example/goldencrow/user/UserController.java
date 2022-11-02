@@ -15,6 +15,7 @@ public class UserController {
 
     private final String SUCCESS = "SUCCESS";
     private final String FAILURE = "FAILURE";
+    private final String FORBIDDEN = "FORBIDDEN";
     private final UserService userService;
     private final JwtService jwtService;
 
@@ -152,8 +153,8 @@ public class UserController {
         // 일단 성공하면 이렇게 반환될 겁니다
         if(result.equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else if(result.equals("you are leader")){
-            return new ResponseEntity<>(FAILURE, HttpStatus.FORBIDDEN);
+        } else if(result.equals("403")){
+            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
