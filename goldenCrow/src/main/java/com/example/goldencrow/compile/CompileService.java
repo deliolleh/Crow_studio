@@ -32,11 +32,11 @@ public class CompileService {
             result = sb.toString();
             p.waitFor();
             in.close();
-            System.out.println("결과: " + result);
+//            System.out.println("결과: " + result);
             p.destroy();
             return result;
         }catch(IOException e){
-            System.out.println("런이 안됨");
+//            System.out.println("런이 안됨");
             e.printStackTrace();
             return "";
         } catch (InterruptedException e) {
@@ -72,21 +72,11 @@ public class CompileService {
 
 //        return saveDockerfile(filePath, teamSeq, content);
     }
-
-    // 파일 저장
-//    public boolean saveDockerfile(String filePath, Long teamSeq, String content) {
-//        // create
-//        FileCreateDto fileCreateDto = new FileCreateDto();
-//        fileCreateDto.setFilePath(filePath);
-//        fileCreateDto.setFileTitle("Dockerfile");
-//        boolean created = fileService.createFile(fileCreateDto, 1, teamSeq);
-//        if (!created) {
-//            System.out.println("Can't createFile");
-//            return false;
-//        }
-//        // save
-//        return fileService.saveFile(filePath, content);
-//    }
+    // 해당 컨테이너 포트 찾기
+    public String portNum(String container) {
+        String[] command = {"docker", "port", container};
+        return resultString(command);
+    }
 
 
     public String pyCompile(Map<String, String> req, Long teamSeq) {
@@ -133,9 +123,10 @@ public class CompileService {
             }
             System.out.println("런 해보쟈");
             // 도커 런
-            String[] command = {"docker", "run", "-d", "--name", projectName, "-p", "3000:3000" , projectName};
+            String[] command = {"docker", "run", "-d", "--name", projectName, "-P", projectName};
             System.out.println(Arrays.toString(command));
-            return resultString(command);
+            String container = resultString(command);
+            return portNum(container);
 
         }
 
