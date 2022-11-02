@@ -74,23 +74,15 @@ public class ProjectController {
     public ResponseEntity<String> deletePjt() {
         ProcessBuilder builder = new ProcessBuilder();
         try {
-            builder.command("sh", "-c", "touch mainqwer.py");
-            builder.directory(new File("/home/ubuntu/crow_data"));
+            builder.command("sh", "-c", "django-admin startproject helloWorld");
+            builder.directory(new File("/home/ubuntu/crow_data/15"));
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         try {
-            Runtime.getRuntime().exec("/bin/bash -c cd /home/ubuntu/crow_data && touch maind.py");
-            Runtime.getRuntime().exec("/bin/bash -c cd /home/ubuntu/crow_data && sudo touch maine.py");
             builder.start();
-
         } catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
-        try {
-            Process p = Runtime.getRuntime().exec("./bin/bash -c cd /home/123asd");
-        } catch (IOException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
 
         return new ResponseEntity<>("Why?", HttpStatus.OK);
     }
