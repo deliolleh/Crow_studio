@@ -12,7 +12,7 @@ import java.util.HashMap;
 import static java.lang.System.out;
 
 @RestController
-@RequestMapping(value = "/api-file/files")
+@RequestMapping(value = "/api/files")
 public class FileController {
 
     private final FileService fileService;

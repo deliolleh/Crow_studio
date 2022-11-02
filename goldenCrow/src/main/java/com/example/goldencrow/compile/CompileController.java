@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/api-file/compile")
+@RequestMapping(value = "/api/compile")
 public class CompileController {
     private final CompileService compileService;
 
