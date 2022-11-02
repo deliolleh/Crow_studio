@@ -68,10 +68,30 @@ public class ProjectController {
 
         return new ResponseEntity<>("1", HttpStatus.ACCEPTED);
     }
+
+    public ProcessBuilder inputCommand(String cmd) {
+        ProcessBuilder builder = new ProcessBuilder();
+        try {
+            builder.command("sh", "-c", cmd);
+            builder.directory(new File("/usr/local/bin/"));
+            }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return builder;
+    }
+
+
+
     @GetMapping("/test")
     public ResponseEntity<String> deletePjt() {
-
-        String cmd = "/bin/sh -c cd /home/ubuntu/crow_data && sudo rm -r 15";
+        ProcessBuilder builder = new ProcessBuilder();
+        try {
+            builder.command("sh", "-c", "touch mainqwer.py");
+            builder.directory(new File("/home/ubuntu/crow_data"));
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
 
         try {
             Runtime.getRuntime().exec("/bin/bash -c cd /home/ubuntu/crow_data && touch maind.py");
@@ -80,7 +100,6 @@ public class ProjectController {
         } catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
         try {
             Process p = Runtime.getRuntime().exec("./bin/bash -c cd /home/123asd");
-            Process a = Runtime.getRuntime().exec(".sh -c sudo cd /home/사람살려사람");
         } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
