@@ -15,6 +15,8 @@ const Mypage = () => {
   const [isModify, setIsModify] = useState(false);
   const [userInfo, setUserInfo] = useState({});
 
+  // 주석이다
+
   useEffect(() => {
     dispatch(getMypage(userSeq))
       .unwrap()
