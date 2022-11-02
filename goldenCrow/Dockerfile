@@ -5,6 +5,7 @@ COPY build.gradle .
 COPY settings.gradle .
 COPY src src
 
+RUN pip install django
 RUN chmod +x ./gradlew
 RUN ./gradlew bootjar
 
