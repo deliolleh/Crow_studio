@@ -24,61 +24,70 @@ const SignupForm = ({ signupHandler }) => {
     password2ErrorMsg,
   } = errorMsgs; // 에러메시지 상태 할당
 
-  useEffect(() => {}, [
-    email,
-    nickname,
-    password1,
-    password2,
-    emailErrorMsg,
-    nicknameErrorMsg,
-    password1ErrorMsg,
-    password2ErrorMsg,
-  ]);
-
-  // 이메일 입력창 입력시 작동
-  const emailChangeHandler = (e) => {
-    e.preventDefault();
-    setInputs((prev) => {
-      return { ...prev, email: e.target.value };
-    });
-  };
-
-  // 닉네임 입력창 입력시 작동
-  const nicknameChangeHandler = (e) => {
-    e.preventDefault();
-    setInputs((prev) => {
-      return { ...prev, nickname: e.target.value };
-    });
-  };
-
-  // 비밀번호 입력창 입력시 작동
-  const password1ChangeHandler = (e) => {
-    e.preventDefault();
-    setInputs((prev) => {
-      return { ...prev, password1: e.target.value };
-    });
-  };
-
-  // 비밀번호 확인 입력창 입력시 작동
-  const password2ChangeHandler = (e) => {
-    e.preventDefault();
-    setInputs((prev) => {
-      return { ...prev, password2: e.target.value };
-    });
+  const inputChangeHandler = (e) => {
+    if (e.target.name === "email") {
+      setInputs((prev) => {
+        return { ...prev, email: e.target.value };
+      });
+    } else if (e.target.name === "nickname") {
+      setInputs((prev) => {
+        return { ...prev, nickname: e.target.value };
+      });
+    } else if (e.target.name === "password1") {
+      setInputs((prev) => {
+        return { ...prev, password1: e.target.value };
+      });
+    } else if (e.target.name === "password2") {
+      setInputs((prev) => {
+        return { ...prev, password2: e.target.value };
+      });
+    }
   };
 
   // 폼 제출시 작동
   const submitHandler = (e) => {
     e.preventDefault();
 
-    if (password1 !== password2) {
-      console.log("비밀번호가 서로 일치하지 않음");
+    let isInvalid = false;
+    setErrorMsgs(initialErrorState);
+    if (email.trim().length === 0) {
+      setErrorMsgs((prev) => {
+        return { ...prev, emailErrorMsg: "이메일을 입력하세요" };
+      });
+      isInvalid = true;
+    }
+    if (nickname.trim().length === 0) {
+      setErrorMsgs((prev) => {
+        return { ...prev, nicknameErrorMsg: "닉네임을 입력하세요" };
+      });
+      isInvalid = true;
+    }
+    if (password1.trim().length === 0) {
+      setErrorMsgs((prev) => {
+        return { ...prev, password1ErrorMsg: "비밀번호를 입력하세요" };
+      });
+      isInvalid = true;
+    }
+    if (password2.trim().length === 0) {
+      setErrorMsgs((prev) => {
+        return { ...prev, password2ErrorMsg: "비밀번호를 한번 더 입력하세요" };
+      });
+      isInvalid = true;
+    }
+    if (password2 !== password1) {
+      setErrorMsgs((prev) => {
+        return { ...prev, password2ErrorMsg: "비밀번호가 일치하지 않습니다" };
+      });
+      isInvalid = true;
+    }
+
+    if (isInvalid) {
       return;
     }
 
     const signupData = {
       userId: email,
-      userPassword: password1,
+      userPassword: password2,
       userNickname: nickname,
     };
     setErrorMsgs(initialErrorState);
@@ -104,7 +113,7 @@ const SignupForm = ({ signupHandler }) => {
           placeholder="이메일을 입력하세요"
           required
           value={email}
-          onChange={emailChangeHandler}
+          onChange={inputChangeHandler}
         />
         <div className="h-6 mb-2">{emailErrorMsg}</div>
       </div>
@@ -122,7 +131,7 @@ const SignupForm = ({ signupHandler }) => {
           placeholder="닉네임을 입력하세요"
           required
           value={nickname}
-          onChange={nicknameChangeHandler}
+          onChange={inputChangeHandler}
         />
         <div className="h-6 mb-2">{nicknameErrorMsg}</div>
       </div>
@@ -140,7 +149,7 @@ const SignupForm = ({ signupHandler }) => {
           placeholder="비밀번호를 입력하세요"
           required
           value={password1}
-          onChange={password1ChangeHandler}
+          onChange={inputChangeHandler}
         />
         <div className="h-6 mb-2">{password1ErrorMsg}</div>
       </div>
@@ -158,7 +167,7 @@ const SignupForm = ({ signupHandler }) => {
           placeholder="비밀번호를 한번 더 입력하세요"
           required
           value={password2}
-          onChange={password2ChangeHandler}
+          onChange={inputChangeHandler}
         />
         <div className="h-6 mb-2">{password2ErrorMsg}</div>
       </div>

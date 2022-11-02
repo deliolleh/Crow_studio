@@ -1,28 +1,36 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import { login } from "../../redux/authSlice";
+import { login } from "../../redux/userSlice";
 
 import LoginTitle from "./LoginTitle";
 import LoginForm from "./LoginForm";
 
 const Login = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const loginHandler = (loginData) => {
-    console.log("stringified loginData:", loginData);
-
     dispatch(login(loginData))
       .unwrap()
-      .then((res) => console.log("res:", res))
-      .catch((err) => console.error("err:", err));
+      .then(() => {
+        alert("로그인 성공");
+        navigate("/");
+      })
+      .catch((errorStatusCode) => {
+        if (errorStatusCode === 409) {
+          alert("존재하지 않는 이메일이나 비밀번호입니다");
+        } else {
+          alert("비상!!");
+        }
+      });
   };
 
   return (
     <section className="w-max h-max">
       <LoginTitle />
-      <LoginForm loginHandler={loginHandler} />
+      <LoginForm onLogin={loginHandler} />
       <Link to="/signup" className="block w-full text-center">
         회원가입
       </Link>

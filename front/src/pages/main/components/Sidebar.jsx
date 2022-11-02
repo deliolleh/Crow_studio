@@ -10,6 +10,8 @@ import { ReactComponent as IcSettings } from "../../../assets/icons/ic_set.svg"
 const SidebarContainer = styled.div`
   border-radius: 10px 0 0 10px;
   width: 73px;
+  min-width: 73px;
+  max-width: 73px;
   height: 100vh;
 `;
 const ListHover = styled.li`

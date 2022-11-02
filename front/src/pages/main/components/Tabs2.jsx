@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Draggable } from "react-beautiful-dnd";
+// import { Draggable } from "react-beautiful-dnd";
 
 // styled
 const TabsContainer = styled.div`
@@ -10,7 +10,7 @@ const TabsContainer = styled.div`
 `;
 
 
-const Tabs = ({ item, provided, snapshot }) => {
+const Tabs2 = ({ item, provided, snapshot }) => {
   return (
       <TabsContainer
         className="bg-component_-2_dark"
@@ -25,4 +25,4 @@ const Tabs = ({ item, provided, snapshot }) => {
   )
 }
 
-export default Tabs;
+export default Tabs2;
