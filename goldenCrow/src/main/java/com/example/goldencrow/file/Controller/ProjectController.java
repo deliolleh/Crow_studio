@@ -77,15 +77,15 @@ public class ProjectController {
         try {
             builder.command("ls");
             builder.directory(new File("./home/ubuntu/crow_data/"));
-            tester.command("django-admin", "startproject", "helloworld");
-            tester.directory(new File("./home/ubuntu/crow_data/"));
+//            tester.command("django-admin", "startproject", "helloworld");
+//            tester.directory(new File("./home/ubuntu/crow_data/"));
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         try {
             Process process = builder.start();
-            tester.start();
+//            tester.start();
             System.out.println("여기요여기");
             InputStream stderr = process.getInputStream();
             InputStreamReader isr = new InputStreamReader(stderr);
