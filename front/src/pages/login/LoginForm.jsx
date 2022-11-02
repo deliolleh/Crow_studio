@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const initialInputState = { email: "", password: "" }; // 초기 이메일, 비밀번호 상태
 const initialErrorState = { emailErrorMsg: "", passwordErrorMsg: "" };
@@ -9,27 +9,42 @@ const LoginForm = ({ onLogin }) => {
   const { email, password } = inputs; // 이메일, 비밀번호 상태 할당
   const { emailErrorMsg, passwordErrorMsg } = errorMsgs; // 에러메시지 상태 할당
 
-  useEffect(() => {}, [email, password, emailErrorMsg, passwordErrorMsg]);
-
-  // 이메일 입력창 입력시 작동
-  const emailChangeHandler = (e) => {
-    e.preventDefault();
-    setInputs((prev) => {
-      return { ...prev, email: e.target.value };
-    });
+  // inputChangeHandler
+  const inputChangeHandler = (e) => {
+    if (e.target.name === "email") {
+      setInputs((prev) => {
+        return { ...prev, email: e.target.value };
+      });
+    } else if (e.target.name === "password") {
+      setInputs((prev) => {
+        return { ...prev, password: e.target.value };
+      });
+    }
   };
 
-  // 비밀번호 입력창 입력시 작동
-  const passwordChangeHandler = (e) => {
-    e.preventDefault();
-    setInputs((prev) => {
-      return { ...prev, password: e.target.value };
-    });
-  };
-
-  // 폼 제출시 작동
+  // submitHandler
   const submitHandler = (e) => {
     e.preventDefault();
+
+    let isInvalid = false;
+    setErrorMsgs(initialErrorState);
+    // 이메일, 비밀번호 유효성 검사
+    if (email.trim().length === 0) {
+      setErrorMsgs((prev) => {
+        return { ...prev, emailErrorMsg: "이메일을 입력하세요" };
+      });
+      isInvalid = true;
+    }
+    if (password.trim().length === 0) {
+      setErrorMsgs((prev) => {
+        return { ...prev, passwordErrorMsg: "비밀번호를 입력하세요" };
+      });
+      isInvalid = true;
+    }
+    if (isInvalid) {
+      return;
+    }
+
     const loginData = { userId: email, userPassword: password };
     setErrorMsgs(initialErrorState);
     onLogin(JSON.stringify(loginData));
@@ -54,7 +69,7 @@ const LoginForm = ({ onLogin }) => {
           placeholder="이메일을 입력하세요"
           required
           value={email}
-          onChange={emailChangeHandler}
+          onChange={inputChangeHandler}
         />
         <div className="h-6 mb-2">{emailErrorMsg}</div>
       </div>
@@ -72,7 +87,7 @@ const LoginForm = ({ onLogin }) => {
           placeholder="비밀번호를 입력하세요"
           required
           value={password}
-          onChange={passwordChangeHandler}
+          onChange={inputChangeHandler}
         />
         <div className="h-6 mb-2">{passwordErrorMsg}</div>
       </div>
