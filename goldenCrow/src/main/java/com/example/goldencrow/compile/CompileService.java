@@ -84,7 +84,7 @@ public class CompileService {
     public String pyCompile(Map<String, String> req, Long teamSeq) {
         String filePath = req.get("filePath");
         int filePathIndex = filePath.lastIndexOf("/");
-        String projectName = filePath.substring(filePathIndex);
+        String projectName = filePath.substring(filePathIndex+1);
         // 퓨어파이썬일 때
         if (Objects.equals(req.get("type"), "pure")) {
 //            String command = String.format("python3 %s", filePath);
