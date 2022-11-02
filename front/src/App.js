@@ -1,10 +1,12 @@
-import React from "react";
-import { createBrowserRouter, RouterProvider, Route } from "react-router-dom";
+import React, { useEffect } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+import { getUser } from "./redux/userSlice";
 
 import ProtectedRoute from "./route/ProtectedProute";
-import PrivateRoute from "./route/PrivateRoute";
+// import PrivateRoute from "./route/PrivateRoute";
 
-import Header from "./components/Header";
 import Intro from "./pages/intro/Intro";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
@@ -48,9 +50,18 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const dispatch = useDispatch();
+  const { isLoggedIn } = useSelector((state) => state.user.value);
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem("access-token");
+    if (accessToken) {
+      dispatch(getUser());
+    }
+  }, [dispatch, isLoggedIn]);
+
   return (
     <React.Fragment>
-      <Header />
       <RouterProvider router={router} />
     </React.Fragment>
   );
