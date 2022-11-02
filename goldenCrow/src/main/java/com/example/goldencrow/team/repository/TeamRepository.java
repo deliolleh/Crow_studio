@@ -17,5 +17,7 @@ public interface TeamRepository extends JpaRepository<TeamEntity, Long> {
 
     List<TeamEntity> findAllByTeamLeader_UserSeq(Long userSeq);
 
+    /** 팀 시퀀스로 팀 조회 */
+    Optional<TeamEntity> findByTeamSeq(Long teamSeq);
 
 }
