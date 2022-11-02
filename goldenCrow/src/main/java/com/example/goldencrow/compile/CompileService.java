@@ -34,7 +34,7 @@ public class CompileService {
             in.close();
             System.out.println("결과: " + result);
             p.destroy();
-            return result;
+            return result.trim();
         }catch(IOException e){
 //            System.out.println("런이 안됨");
             e.printStackTrace();
