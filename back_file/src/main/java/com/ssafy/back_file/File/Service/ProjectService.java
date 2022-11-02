@@ -35,10 +35,10 @@ public class ProjectService {
         }
 
         if (type == 2) {
-            String command = "sudo django-admin startproject " + fileTitle + " .";
+            String command = "sudo django-admin startproject " + fileTitle;
             ProcessBuilder djangoStarter = new ProcessBuilder();
             djangoStarter.command("sh", "-c",command);
-            djangoStarter.directory(new File(newBaseUrl));
+            djangoStarter.directory(newDir);
             try {
                 djangoStarter.start();
             } catch (IOException e) {
