@@ -98,7 +98,7 @@ public class CompileService {
             System.out.println("도커파일 만들기 성공! 빌드를 해보자");
             // 도커 이미지 빌드
 //            String image = String.format("docker build -t %s .", projectName);
-            String[] image = {"docker", "build", "-t", projectName, filePath};
+            String[] image = {"docker", "build", "-t", projectName, filePath+"/"};
             try {
                 String result = "";
                 StringBuffer sb = new StringBuffer();
@@ -116,7 +116,7 @@ public class CompileService {
                 System.out.println("이미지 빌드가 안됨");
                 e.printStackTrace();
             }
-            System.out.println("이미지 빌드 됨!!!!! 런 해보쟈");
+            System.out.println("런 해보쟈");
             // 도커 런
             String[] command = {"docker", "run", "-d", "--name", projectName, "-p 3000:3000" , projectName};
             System.out.println();
