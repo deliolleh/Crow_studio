@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 @RestController
-@RequestMapping(value = "/api-file/projects")
+@RequestMapping(value = "/api/projects")
 public class ProjectController {
     private final JwtService jwtService;
 
