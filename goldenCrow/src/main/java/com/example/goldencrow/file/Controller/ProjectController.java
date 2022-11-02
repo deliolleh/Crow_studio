@@ -73,7 +73,7 @@ public class ProjectController {
         ProcessBuilder tester = new ProcessBuilder();
         try {
             builder.command("ls");
-            builder.directory(new File(""));
+            builder.directory(new File("/"));
             tester.command("django-admin","startproject","helloworld");
             tester.directory(new File("/"));
         } catch (Exception e) {
