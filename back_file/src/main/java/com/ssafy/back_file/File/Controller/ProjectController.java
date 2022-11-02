@@ -73,15 +73,20 @@ public class ProjectController {
     @GetMapping("/test")
     public ResponseEntity<String> deletePjt() {
         ProcessBuilder builder = new ProcessBuilder();
+        ProcessBuilder tester = new ProcessBuilder();
         try {
-            builder.command("sh", "-c", "django-admin startproject helloWorld");
+            builder.command("sh", "-c","sudo", "django-admin startproject helloWorld");
             builder.directory(new File("/home/ubuntu/crow_data/15"));
+            tester.command("sh", "-c","sudo", "touchasd.py");
+            tester.directory(new File("/home/ubuntu/crow_data/15"));
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         try {
             builder.start();
+            tester.start();
+            System.out.println("여기요여기");
         } catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
 
         return new ResponseEntity<>("Why?", HttpStatus.OK);
