@@ -74,7 +74,7 @@ public class ProjectController {
         try {
             builder.command("ls");
             builder.directory(new File("./home/ubuntu/crow_data/"));
-            tester.command("django-admin","startproject","helloworld");
+            tester.command("django-admin startproject helloworld");
             tester.directory(new File("./home/ubuntu/crow_data/"));
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
