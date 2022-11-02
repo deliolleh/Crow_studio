@@ -75,8 +75,8 @@ public class ProjectController {
 
 
         try {
-            builder.command("pip", "install", "django");
-            builder.directory(new File("./home/ubuntu/crow_data/"));
+//            builder.command("pip", "install", "django");
+//            builder.directory(new File("./home/ubuntu/crow_data/"));
             tester.command("django-admin", "startproject", "helloworld");
 
             tester.directory(new File("./home/ubuntu/crow_data/"));
