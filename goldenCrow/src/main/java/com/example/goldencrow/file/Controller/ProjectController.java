@@ -82,7 +82,7 @@ public class ProjectController {
 
         try {
             Process process = builder.start();
-            tester.start();
+            //tester.start();
             System.out.println("여기요여기");
             InputStream stderr = process.getInputStream();
             InputStreamReader isr = new InputStreamReader(stderr);
