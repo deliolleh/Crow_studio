@@ -6,6 +6,7 @@ import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.MemberRepository;
 import com.example.goldencrow.team.repository.TeamRepository;
 import com.example.goldencrow.user.JwtService;
+import com.example.goldencrow.user.dto.UserInfoDto;
 import com.example.goldencrow.user.entity.UserEntity;
 import com.example.goldencrow.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,10 +47,8 @@ public class TeamService {
             if(!memberEntities.isEmpty()) {
                 // 그 모든 엔티티에서 forEach를 돌리면서
                 for(MemberEntity m : memberEntities){
-                    // 팀 시퀀스를 꺼내옴
-                    Long teamSeq = m.getTeam().getTeamSeq();
                     // 해당 팀 엔티티를 뽑아서 리스트에 넣음
-                    teamDtoList.add(new TeamDto(teamRepository.findById(teamSeq).get()));
+                    teamDtoList.add(new TeamDto(m.getTeam()));
                 }
             }
 
@@ -96,6 +95,7 @@ public class TeamService {
 
     }
 
+    // 팀(명) 수정
     public String teamModify(String jwt, Long teamSeq, String teamName) {
 
         try {
@@ -120,6 +120,7 @@ public class TeamService {
 
     }
 
+    // 팀 삭제
     public String teamDelete(String jwt, Long teamSeq) {
 
         try {
@@ -132,7 +133,7 @@ public class TeamService {
                 TeamEntity teamEntity = teamEntityOptional.get();
                 teamRepository.delete(teamEntity);
 
-                // 팀이 날아가기 때문에 멤버db도 날아가고 파일db도 날아간다
+                // 팀이 날아가기 때문에 멤버db도 날아가고 파일db도 날아간다 (캐스케이드)
                 // 하지만 파일을 직접 날리긴 해야해!!
 
                 // 그래서 이쯤에서 restTemplate로 파일 날리는 api를 써야함
@@ -145,6 +146,41 @@ public class TeamService {
         } catch (Exception e) {
             e.printStackTrace();
             return "error";
+        }
+
+    }
+
+    // 팀원 목록 조회
+    public List<UserInfoDto> memberList(String jwt, Long teamSeq){
+
+        try {
+
+            List<UserInfoDto> userInfoDtoList = new ArrayList<>();
+
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+            // 내가 멤버로 속해있는지를 확인해야함
+            Optional<MemberEntity> memberEntityOptional = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(userSeq, teamSeq);
+
+            if(memberEntityOptional.isPresent()){
+                // 내가 그 팀의 멤버로 있음이 확인되었으므로
+                // 그 팀의 멤버 목록을 리스트로 받아옴
+                List<MemberEntity> memberEntityList = memberRepository.findAllByTeam_TeamSeq(teamSeq);
+
+                for(MemberEntity m : memberEntityList){
+                    userInfoDtoList.add(new UserInfoDto(m.getUser()));
+                }
+
+                return userInfoDtoList;
+
+            } else {
+                return null;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
 
     }
