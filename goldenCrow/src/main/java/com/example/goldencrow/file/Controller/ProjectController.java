@@ -73,7 +73,6 @@ public class ProjectController {
         ProcessBuilder tester = new ProcessBuilder();
 
 
-
         try {
             builder.command("ls");
             builder.directory(new File("/home/ubuntu/crow_data/"));
@@ -105,11 +104,8 @@ public class ProjectController {
 
         try {
             System.out.println("여기서 터짐 여기서!!");
-            Process test = tester.start();
-            test.waitFor();
+            Process test = Runtime.getRuntime().exec("cd /home/ubuntu/crow_data && django-admin startproject hello_world");
         } catch (IOException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (InterruptedException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
