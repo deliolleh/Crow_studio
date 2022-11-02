@@ -216,11 +216,24 @@ public class UserService {
             // jwt에서 userSeq를 뽑아내고
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
+            // 걔가 팀장인 팀이 있나 확인
+
+
+            // 그 팀들마다 팀원 수를 세아림
+
+            // 1인팀이 아닌 팀이 하나라도 있을 경우
+            // 탐색을 중지하고 탈퇴 불가 처리함
+
             // userSeq로 userEntity를 뽑아낸 다음
             UserEntity userEntity = userRepository.findById(userSeq).get();
 
-            // 해당 유저 삭제
+            // 유저 테이블에서 해당 유저 삭제
             userRepository.delete(userEntity);
+
+            // 유저가 날아가기 때문에 멤버도 알아서 날아갈 것
+            // 나혼자 팀장이자 팀원일 경우에는 팀도 날아감
+            // 다인팀의 경우 팀장이지 않을 것이므로 팀과 파일이 보존됨
+
             return "success";
 
         } catch (Exception e) {
@@ -304,6 +317,7 @@ public class UserService {
 
     }
 
+    // 사용자 검색
     public List<UserInfoDto> searchUser(String word) {
 
         List<UserEntity> userEntityList = userRepository.findAllByUserIdContainingOrUserNicknameContaining(word, word);
