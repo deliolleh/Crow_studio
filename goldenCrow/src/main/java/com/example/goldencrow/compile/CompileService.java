@@ -17,7 +17,7 @@ public class CompileService {
 
     // 실행 결과 반환 로직
     public String resultString(String[] cmd) {
-
+        System.out.println("명령어 : "+ Arrays.toString(cmd));
         try{
             StringBuffer sb = new StringBuffer();
             Process p = Runtime.getRuntime().exec(cmd);
@@ -75,7 +75,7 @@ public class CompileService {
     // 해당 컨테이너 포트 찾기
     public String portNum(String container) {
         String[] command = {"docker", "port", container};
-        System.out.println("포트 찾기 ! container id : " + container);
+        System.out.println("포트 찾기 ! container id : " + container + "!");
         return resultString(command);
     }
 
