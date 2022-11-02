@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/api-file/api-test")
+@RequestMapping(value = "/api/api-test")
 public class ApiTestController {
     private final ApiTestService apiTestService;
 

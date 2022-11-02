@@ -7,12 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 
 @RestController
-@RequestMapping(value = "/api-file/projects")
+@RequestMapping(value = "/api/projects")
 public class ProjectController {
     private final JwtService jwtService;
 
@@ -69,18 +68,38 @@ public class ProjectController {
 
 
     @GetMapping("/test")
-    public ResponseEntity<String> deletePjt() {
+    public ResponseEntity<String> deletePjt(@RequestHeader("jwt") String jwt) {
         ProcessBuilder builder = new ProcessBuilder();
+        ProcessBuilder tester = new ProcessBuilder();
         try {
-            builder.command("sh", "-c", "django-admin startproject helloWorld");
-            builder.directory(new File("/home/ubuntu/crow_data/15"));
+            builder.command("ls");
+            builder.directory(new File("./home/ubuntu/crow_data/15"));
+            tester.command("django-admin","startproject","helloworld");
+            tester.directory(new File("./home/ubuntu/crow_data/15"));
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         try {
-            builder.start();
+            Process process = builder.start();
+            //tester.start();
+            System.out.println("여기요여기");
+            InputStream stderr = process.getInputStream();
+            InputStreamReader isr = new InputStreamReader(stderr);
+            BufferedReader br = new BufferedReader(isr);
+            String line = null;
+
+            System.out.println(isr);
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+
+            }
+            process.waitFor();
+            System.out.println("Waiting ...");
         } catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
+        catch (InterruptedException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
 
         return new ResponseEntity<>("Why?", HttpStatus.OK);
     }
