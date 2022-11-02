@@ -2,13 +2,24 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import userApi from "../api/userApi";
 
+// const initialState = {
+//   isLoggedIn: false,
+//   mySeq: "",
+//   myEmail: "",
+//   myNickname: "",
+//   myImageURL: "",
+//   // myDesc: "",
+// };
+
 const initialState = {
-  isLoggedIn: false,
-  mySeq: "",
-  myEmail: "",
-  myNickname: "",
-  myImageURL: "",
-  // myDesc: "",
+  value: {
+    isLoggedIn: false,
+    mySeq: "",
+    myEmail: "",
+    myNickname: "",
+    myImageURL: "",
+    // myDesc: "",
+  },
 };
 
 export const signup = createAsyncThunk(
@@ -59,26 +70,29 @@ export const getUser = createAsyncThunk("user/getuser", async (_) => {
 export const userSlice = createSlice({
   name: "user",
   initialState,
-  // reducers: {},
+  reducers: {
+    logout: (state) => {
+      localStorage.removeItem("access-token");
+      state.value = initialState.value;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getUser.fulfilled, (state, action) => {
         const { userId, userNickname, userProfile, userSeq } = action.payload;
-        state.isLoggedIn = true;
-        state.myEmail = userId;
-        state.myNickname = userNickname;
-        state.myImageURL = userProfile;
-        state.mySeq = userSeq;
+        state.value = {
+          isLoggedIn: true,
+          myEmail: userId,
+          myNickname: userNickname,
+          myImageURL: userProfile,
+          mySeq: userSeq,
+        };
       })
       .addCase(getUser.rejected, (state) => {
-        state.isLoggedIn = false;
-        state.myEmail = "";
-        state.myNickname = "";
-        state.myImageURL = "";
-        state.mySeq = "";
+        state.value = initialState.value;
       });
   },
 });
 
-// export const {  } = authSlice.actions;
+export const { logout } = userSlice.actions;
 export default userSlice.reducer;
