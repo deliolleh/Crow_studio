@@ -17,22 +17,27 @@ public class CompileService {
 
     // 실행 결과 반환 로직
     public String resultString(String[] cmd) {
-        String result = "";
-        StringBuffer sb = new StringBuffer();
         try{
+            String result = "";
+            StringBuffer sb = new StringBuffer();
             Process p = Runtime.getRuntime().exec(cmd);
             BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String cl = null;
+            String cl;
             while((cl = in.readLine()) != null){
+                System.out.println(cl);
                 sb.append(cl);
                 sb.append("\n");
             }
             result = sb.toString();
+            p.waitFor();
             in.close();
-            return result;
+            System.out.println("결과: " + result);
+            p.destroy();
         }catch(IOException e){
             e.printStackTrace();
             return "";
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -126,7 +131,7 @@ public class CompileService {
             System.out.println("런 해보쟈");
             // 도커 런
             String[] command = {"docker", "run", "-d", "--name", projectName, "-p 3000:3000" , projectName};
-            System.out.println();
+            System.out.println(Arrays.toString(command));
             return resultString(command);
 
         }
