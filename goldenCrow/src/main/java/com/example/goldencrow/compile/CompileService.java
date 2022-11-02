@@ -130,9 +130,9 @@ public class CompileService {
             String portString = portNum(container);
             // \n 전까지의 문자열에서 : 뒤에 있는 숫자만 가져오기
             String[] portList = portString.split("\n");
-            System.out.println(portList);
+            System.out.println(Arrays.toString(portList));
             String[] realPort = portList[1].split(":");
-            System.out.println(realPort);
+            System.out.println(Arrays.toString(realPort));
             return "k7d207.p.ssafy.io:" + realPort[1];
 
         }
