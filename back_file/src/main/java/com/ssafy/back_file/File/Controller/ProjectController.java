@@ -68,22 +68,21 @@ public class ProjectController {
 
         return new ResponseEntity<>("1", HttpStatus.ACCEPTED);
     }
-    @DeleteMapping("/{teamSeq}")
-    public ResponseEntity<String> deletePjt(@PathVariable Long teamSeq) {
 
-        String cmd = "/bin/sh -c cd /home/ubuntu/crow_data && sudo rm -r 15";
 
+    @GetMapping("/test")
+    public ResponseEntity<String> deletePjt() {
+        ProcessBuilder builder = new ProcessBuilder();
         try {
-            Runtime.getRuntime().exec("/bin/bash -c cd /home/ubuntu/crow_data && touch maind.py");
-            Runtime.getRuntime().exec("/bin/bash -c cd /home/ubuntu/crow_data && sudo touch maine.py");
-
-        } catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
-        try {
-            Process p = Runtime.getRuntime().exec("./bin/bash -c cd /home/123asd");
-            Process a = Runtime.getRuntime().exec(".sh -c sudo cd /home/사람살려사람");
-        } catch (IOException e) {
+            builder.command("sh", "-c", "django-admin startproject helloWorld");
+            builder.directory(new File("/home/ubuntu/crow_data/15"));
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+
+        try {
+            builder.start();
+        } catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
 
         return new ResponseEntity<>("Why?", HttpStatus.OK);
     }

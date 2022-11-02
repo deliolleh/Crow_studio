@@ -47,10 +47,10 @@ public class EditorsService {
             } else {
                 env = "/bin/sh -c";
             }
-            String command = "black " + name;
+            String[] command = {env, "black", name};
 
             // Black 작동 => 성공
-            Runtime.getRuntime().exec(env + command);
+            Runtime.getRuntime().exec(command);
 
             response.put("data", now + "");
 
@@ -138,7 +138,6 @@ public class EditorsService {
 
                 LinkedList<String> response = new LinkedList<>();
                 ArrayList<Integer> index = new ArrayList<>();
-                HashMap<String, String> dict = new HashMap<>();
                 while ((line = reader.readLine()) != null) {
                     System.out.println(line);
                     if (line.contains("lint.py")) {
