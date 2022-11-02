@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -108,27 +107,15 @@ public class TeamController {
 
         // 자기 팀이면 ㄱㅊ
 
-        if(jwt==null){
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        // 내가 속한 것만 골라서 반환
+        List<UserInfoDto> userInfoDtoList = teamService.memberList(jwt, teamSeq);
+
+        if(userInfoDtoList==null) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        } else {
+            // 리스트가 비어있어도 잘못된 게 아니기 때문에 그건 거르지 않는다
+            return new ResponseEntity<>(userInfoDtoList, HttpStatus.OK);
         }
-
-        List<UserInfoDto> userInfoDtoList = new ArrayList<>();
-
-        // 일단 성공하면 이렇게 반환될 겁니다
-        UserInfoDto userInfoDto = new UserInfoDto();
-        userInfoDto.setUserSeq(new Long(1));
-        userInfoDto.setUserId("userIdSample");
-        userInfoDto.setUserNickname("userNicknameSample");
-        userInfoDto.setUserProfile("user/profile/Sample/jpg");
-        userInfoDtoList.add(userInfoDto);
-
-        userInfoDto.setUserSeq(new Long(2));
-        userInfoDto.setUserId("userIdSample2");
-        userInfoDto.setUserNickname("userNicknameSample2");
-        userInfoDto.setUserProfile("user/profile/Sample/jpg2");
-        userInfoDtoList.add(userInfoDto);
-
-        return new ResponseEntity<>(userInfoDtoList, HttpStatus.OK);
 
     }
 
