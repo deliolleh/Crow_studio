@@ -15,7 +15,7 @@ public class CompileService {
     private FileService fileService;
 
     // 실행 결과 반환 로직
-    public String resultString(String cmd) {
+    public String resultString(String[] cmd) {
         String result = "";
         StringBuffer sb = new StringBuffer();
         try{
@@ -105,9 +105,10 @@ public class CompileService {
                 System.out.println("이미지 빌드가 안됨");
                 e.printStackTrace();
             }
-
+            System.out.println("이미지 빌드 됨!!!!! 런 해보쟈");
             // 도커 런
-            String command = String.format("docker run -d --name %s -p 0:0 %s", projectName, projectName);
+            String[] command = {"docker", "run", "-d", "--name", projectName, "-p 3000:3000" , projectName};
+            System.out.println();
             return resultString(command);
 
         }
