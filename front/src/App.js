@@ -1,6 +1,9 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider, Route } from "react-router-dom";
 
+import ProtectedRoute from "./route/ProtectedProute";
+import PrivateRoute from "./route/PrivateRoute";
+
 import Header from "./components/Header";
 import Intro from "./pages/intro/Intro";
 import Login from "./pages/login/Login";
@@ -16,11 +19,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <Login />,
+    element: (
+      <ProtectedRoute>
+        <Login />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/signup",
-    element: <Signup />,
+    element: (
+      <ProtectedRoute>
+        <Signup />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/main",
