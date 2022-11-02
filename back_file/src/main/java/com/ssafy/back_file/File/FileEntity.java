@@ -31,8 +31,11 @@ public class FileEntity {
     private String fileTitle;
 
     private String filePath;
+
+    @CreatedDate
     private Date fileCreatedAt;
 
+    @LastModifiedDate
     private Date fileUpdatedAt;
 
     public FileEntity() {};
@@ -40,9 +43,8 @@ public class FileEntity {
     public FileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
         this.fileTitle = fileCreateDto.getFileTitle();
         this.filePath = fileCreateDto.getFilePath();
-        this.fileCreatedAt = new Date();
-        this.fileUpdatedAt = new Date();
         this.team = team;
+        this.fileCreatedAt = new Date();
     }
 
 

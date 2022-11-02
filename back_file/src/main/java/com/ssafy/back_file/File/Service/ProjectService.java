@@ -15,7 +15,14 @@ public class ProjectService {
 
     @Autowired
     private FileRepository fileRepository;
-
+    public String createDir(String path, String name){
+        String pjt = path + "/" + name;
+        File pjtDir = new File(pjt);
+        if (pjtDir.mkdir()) {
+            return pjt;
+        };
+        return "2";
+    }
     public String createProject(Long teamSeq, Integer type, String projectName) {
 
         String fileTitle = projectName;
@@ -28,16 +35,22 @@ public class ProjectService {
         }
 
         if (type == 2) {
-            String command = "django-admin startproject " + fileTitle;
+            String command = "sudo django-admin startproject " + fileTitle + " .";
+            out.println(command);
             try {
-                String[] cmd = {"/bin/sh", "-c", "cd ", newBaseUrl, " && ", command};
+                String cmd = String.format("/bin/sh -c cd %s && %s", newBaseUrl, command);
                 Process p = Runtime.getRuntime().exec(cmd);
             } catch (IOException e) {
                 return e.getMessage();
             }
             return "1";
         } else if (type == 1) {
-            File file = new File(newBaseUrl + "/" + fileTitle +".py");
+            String pjt = createDir(newBaseUrl,fileTitle);
+            if (pjt.equals("2")) {
+                return "2";
+            }
+
+            File file = new File(pjt + "/" + fileTitle +".py");
             try {
                 if(file.createNewFile()) {
                     return "1";
@@ -48,7 +61,12 @@ public class ProjectService {
                 return e.getMessage();
             }
         } else if (type == 3) {
-            File file = new File(newBaseUrl + "/main.py");
+            String pjt = createDir(newBaseUrl,fileTitle);
+            if (pjt.equals("2")) {
+                return "2";
+            }
+            File file = new File(pjt + "/main.py");
+
             String content = "from flask import Flask\n\napp=Flask(" + projectName +")\n\n@app.route(\"/\")\ndef hello_world():\n\treturn \"<p>Hello, World</p>\"";
             try {
                 FileWriter overWriteFile = new FileWriter(file, false);
@@ -61,7 +79,11 @@ public class ProjectService {
             }
             return "1";
         } else if (type == 4) {
-            File file = new File(newBaseUrl + "/main.py");
+            String pjt = createDir(newBaseUrl,fileTitle);
+            if (pjt.equals("2")) {
+                return "2";
+            }
+            File file = new File(pjt + "/main.py");
             String content = "from fastapi import FastAPI\n\napp=FastAPI()\n\n@app.get(\"/\")\nasync def root():\n\treturn {\"message\" : \"Hello, World\"}";
             try {
                 FileWriter overWriteFile = new FileWriter(file, false);
