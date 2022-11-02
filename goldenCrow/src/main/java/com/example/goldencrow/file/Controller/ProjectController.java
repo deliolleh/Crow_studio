@@ -73,10 +73,10 @@ public class ProjectController {
         ProcessBuilder builder = new ProcessBuilder();
         ProcessBuilder tester = new ProcessBuilder();
         try {
-            builder.command("sh", "-c","sudo", "django-admin startproject helloWorld");
-            builder.directory(new File("/home/ubuntu/crow_data/15/"));
-            tester.command("sh", "-c","touch touchasd.py");
-            tester.directory(new File("/home/ubuntu/crow_data/"));
+            builder.command("sh", "-c","django-admin startproject helloWorld");
+            builder.directory(new File("/home/ubuntu/crow_data/"));
+            tester.command("sh", "-c","sudo django-admin startproject helloWorld");
+            tester.directory(new File("/home/ubuntu/crow_data/15/"));
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
