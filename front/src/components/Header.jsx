@@ -1,5 +1,4 @@
 import React from "react";
-import {Link} from "react-router-dom";
 
 export default function Header({ fixed }) {
   const [navbarOpen, setNavbarOpen] = React.useState(false);
@@ -60,7 +59,7 @@ export default function Header({ fixed }) {
             </ul>
           </div>
           <div className="lg:flex flex lg:static absolute right-14 lg:item-center mt-1.5" >
-            <img className="w-7 h-7 rounded-full" src={require('../assets/images/avatar.png')} />
+            <img className="w-7 h-7 rounded-full" src={require('../assets/images/avatar.png')} alt="profile-img"/>
           </div>
         </div>
       </nav>
