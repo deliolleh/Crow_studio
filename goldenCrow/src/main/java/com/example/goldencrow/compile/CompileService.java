@@ -75,7 +75,7 @@ public class CompileService {
     // 해당 컨테이너 포트 찾기
     public String portNum(String container) {
         String[] command = {"docker", "port", container};
-        System.out.println("포트 찾기 !");
+        System.out.println("포트 찾기 ! container id : " + container);
         return resultString(command);
     }
 
