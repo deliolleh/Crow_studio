@@ -1,6 +1,9 @@
 package com.example.goldencrow.user;
 
 import com.example.goldencrow.common.CryptoUtil;
+import com.example.goldencrow.team.entity.TeamEntity;
+import com.example.goldencrow.team.repository.MemberRepository;
+import com.example.goldencrow.team.repository.TeamRepository;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import com.example.goldencrow.user.entity.UserEntity;
 import com.example.goldencrow.user.repository.UserRepository;
@@ -22,6 +25,12 @@ public class UserService {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private TeamRepository teamRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
 
     // 회원가입
     public Map<String, String> signupService(String userId, String userPassword, String userNickname){
@@ -217,12 +226,22 @@ public class UserService {
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
             // 걔가 팀장인 팀이 있나 확인
+            List<TeamEntity> teamEntityList = teamRepository.findAllByTeamLeader_UserSeq(userSeq);
 
+            for(TeamEntity t : teamEntityList){
+                // 그 팀들마다 팀원 수를 세아림
 
-            // 그 팀들마다 팀원 수를 세아림
+                int count = memberRepository.countAllByTeam(t);
 
-            // 1인팀이 아닌 팀이 하나라도 있을 경우
-            // 탐색을 중지하고 탈퇴 불가 처리함
+                if(count>=2) {
+                    // 1인팀이 아닌 팀이 하나라도 있을 경우
+                    // 탐색을 중지하고 탈퇴 불가 처리
+                    return "you are leader";
+                }
+
+            }
+
+            // 여기까지 왔다면 다인팀이면서 리더인 일은 없을 것
 
             // userSeq로 userEntity를 뽑아낸 다음
             UserEntity userEntity = userRepository.findById(userSeq).get();

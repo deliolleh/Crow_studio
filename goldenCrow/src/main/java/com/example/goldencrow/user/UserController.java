@@ -147,9 +147,13 @@ public class UserController {
     @DeleteMapping("/quit")
     public ResponseEntity<String> quitDelete(@RequestHeader("jwt") String jwt){
 
+        String result = userService.quitUser(jwt);
+
         // 일단 성공하면 이렇게 반환될 겁니다
-        if(userService.quitUser(jwt).equals("success")) {
+        if(result.equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else if(result.equals("you are leader")){
+            return new ResponseEntity<>(FAILURE, HttpStatus.FORBIDDEN);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
