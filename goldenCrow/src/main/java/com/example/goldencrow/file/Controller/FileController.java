@@ -82,7 +82,7 @@ public class FileController {
     }
 
     @PutMapping("/{teamSeq}/files")
-    public ResponseEntity<String> saveFile(@PathVariable Long teamSeq,@RequestBody HashMap<String, String> fileContent){
+    public ResponseEntity<String> saveFile(@RequestHeader("jwt") String jwt,@PathVariable Long teamSeq,@RequestBody HashMap<String, String> fileContent){
         String content = fileContent.get("fileContent");
         String filePath = fileContent.get("filePath");
 

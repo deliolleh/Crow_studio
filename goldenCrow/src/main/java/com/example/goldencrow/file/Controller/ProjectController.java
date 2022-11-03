@@ -68,7 +68,7 @@ public class ProjectController {
     }
 
 
-    @PostMapping("/test")
+    @PostMapping("/projectDeleter")
     public ResponseEntity<String> deletePjt(@RequestHeader("jwt") String jwt, @RequestBody List<Long> teamSeqs) {
         ProcessBuilder deleter = new ProcessBuilder();
         for (Long seq : teamSeqs) {
