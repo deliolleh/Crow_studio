@@ -6,7 +6,10 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 @Service
 public class EditorsService {
@@ -43,22 +46,14 @@ public class EditorsService {
 
             // windows cmd를 가리키는 변수
             // 나중에 Ubuntu할 때 맞는 변수로 바꿀 것
-            String env = "";
-            System.out.println(checkOs? "Operating in windows" : "Operating in linux");
-            if (checkOs) {
-                env = "cmd /c";
-            }
-            String command = env + " black " + name;
+            String env = checkOs ? "cmd /c" : "";
+            System.out.println(checkOs ? "Operating in windows" : "Operating in linux");
+            String command = env + " black " + path + name;
+            System.out.println(command);
 
             // Black 작동 => 성공
             Process p = Runtime.getRuntime().exec(command);
-            StringBuilder sb = new StringBuilder();
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String line;
-            while((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-            System.out.println(sb);
+            p.waitFor();
 
             response.put("data", now + "");
 
