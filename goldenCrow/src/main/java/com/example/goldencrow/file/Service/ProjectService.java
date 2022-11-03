@@ -34,13 +34,14 @@ public class ProjectService {
         String fileTitle = projectName;
 
         String baseUrl = "/home/ubuntu/crow_data/";
-
+        String newPath = "."+path+"/";
+        out.println(newPath);
         ProcessBuilder here = new ProcessBuilder("ls");
         here.directory(new File(baseUrl));
-        out.println(path);
+
         ProcessBuilder test = new ProcessBuilder("touch test.py");
-        test.directory(new File(baseUrl));
-        String newPath = "."+path+"/";
+        test.directory(new File(newPath));
+
         try{
             Process p = here.start();
 
@@ -57,8 +58,6 @@ public class ProjectService {
             System.out.println("Waiting ...");
 
             test.start();
-
-
 
         } catch (IOException e) {
             out.println(e.getMessage());
