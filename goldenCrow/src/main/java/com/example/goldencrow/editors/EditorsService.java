@@ -116,7 +116,7 @@ public class EditorsService {
         HashMap<String, Object> result = new HashMap<>();
         if (language.equals("python")) {
             try {
-                File file = new File(path + "\\lint.py");
+                File file = new File(path + "lint.py");
                 FileOutputStream lfw = new FileOutputStream(file);
                 PrintWriter writer = new PrintWriter(lfw);
                 // temp.py에 code를 입력
@@ -128,16 +128,12 @@ public class EditorsService {
 
                 // windows cmd를 가리키는 변수
                 // 나중에 Ubuntu할 때 맞는 변수로 바꿀 것
-                String env;
-                if (checkOs) {
-                    env = "cmd /c";
-                } else {
-                    env = "/bin/sh -c";
-                }
-                String filePath = path + "\\lint.py";
+                String env = checkOs ? "cmd /c" : "";
+                String filePath = path + "lint.py";
                 String command = "pylint " + filePath;
 
                 Process process = Runtime.getRuntime().exec(env + command);
+                process.waitFor();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String line;
 
