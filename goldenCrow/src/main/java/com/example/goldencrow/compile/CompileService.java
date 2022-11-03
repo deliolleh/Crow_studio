@@ -5,9 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class CompileService {
@@ -36,7 +34,6 @@ public class CompileService {
             p.destroy();
             return result.trim();
         }catch(IOException e){
-//            System.out.println("런이 안됨");
             e.printStackTrace();
             return "";
         } catch (InterruptedException e) {
@@ -49,7 +46,6 @@ public class CompileService {
     public String createDockerfile(String filePath, Long teamSeq, String type) {
         int filePathIndex = filePath.lastIndexOf("/");
         String projectName = filePath.substring(filePathIndex);
-//        String dockerfilePath = filePath + "/Dockerfile";
         String content = "";
         if (Objects.equals(type, "django")) {
             content = "FROM python:3.10\n" +
@@ -60,6 +56,16 @@ public class CompileService {
                     "CMD [\"python3\", \"manage.py\", \"runserver\", \"0.0.0.0:3000\"]\n" +
                     "EXPOSE 3000";
         }
+        else if (Objects.equals(type, "fastapi")) {
+            content = "FROM python:3.10\n" +
+                    "WORKDIR /prod\n" +
+//                    "COPY ./requirements.txt /prod/requirements.txt\n" +
+//                    "RUN pip install --no-cache-dir --upgrade -r /prod/requirements.txt\n" +
+                    "COPY ./app /prod/app\n" +
+                    "RUN apt-get update\n" +
+                    "RUN apt-get -y install libgl1-mesa-glx\n" +
+                    "CMD [\"uvicorn\", \"app.main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"3000\"]";
+        }
         File file = new File(filePath + "/Dockerfile");
         try {
             FileWriter overWriteFile = new FileWriter(file, false);
@@ -69,8 +75,6 @@ public class CompileService {
             return e.getMessage();
         }
         return "SUCCESS";
-
-//        return saveDockerfile(filePath, teamSeq, content);
     }
     // 해당 컨테이너 포트 찾기
     public String portNum(String container) {
@@ -79,71 +83,41 @@ public class CompileService {
         return resultString(command);
     }
 
-
     public String pyCompile(Map<String, String> req, Long teamSeq) {
+        List<String> types = new ArrayList<>(Arrays.asList("pure", "django", "fastapi", "flask"));
+        // 타입 이상한 거 들어오면 리턴
+        if (types.contains(req.get("type"))) { return "Type error"; }
         String filePath = req.get("filePath");
         int filePathIndex = filePath.lastIndexOf("/");
         String projectName = filePath.substring(filePathIndex+1);
         // 퓨어파이썬일 때
         if (Objects.equals(req.get("type"), "pure")) {
-//            String command = String.format("python3 %s", filePath);
             String[] command = {"python3", filePath};
             return resultString(command);
         }
-        // Django 프로젝트일 때
-        else if (Objects.equals(req.get("type"), "django")) {
+        // Django, fastapi, flask 프로젝트일 때
+        else {
             // 도커파일 추가
             String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"));
             if (!Objects.equals(dockerfile, "SUCCESS")) { return "Can't make dockerfile"; }
             System.out.println("도커파일 만들기 성공! 빌드를 해보자");
-            // 도커 이미지 빌드
-//            String image = String.format("docker build -t %s .", projectName);
-            String[] image = {"docker", "build", "-t", projectName, filePath+"/"};
-            String imageBuild = resultString(image);
-            if (imageBuild.isEmpty()) { return "Can't build docker image"; }
-//            try {
-//
-//                System.out.println("build 명령어: " + Arrays.toString(image));
-//                String result = "";
-//                StringBuffer sb = new StringBuffer();
-//                Process p = Runtime.getRuntime().exec(image);
-//                BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//                String cl;
-//                while((cl = in.readLine()) != null){
-//                    System.out.println(cl);
-//                    sb.append(cl);
-//                    sb.append("\n");
-//                }
-//                result = sb.toString();
-//                p.waitFor();
-//                in.close();
-//                System.out.println("결과: " + result);
-//                p.destroy();
-//            } catch(IOException e){
-//                System.out.println("이미지 빌드가 안됨");
-//                e.printStackTrace();
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-            System.out.println("런 해보쟈");
-            // 도커 런
-            String[] command = {"docker", "run", "-d", "--name", projectName, "-P", projectName};
-            System.out.println(Arrays.toString(command));
-            String container = resultString(command);
-            if (container.isEmpty()) { return "Can't run docker container"; }
-            String portString = portNum(container);
-            // \n 전까지의 문자열에서 : 뒤에 있는 숫자만 가져오기
-            String[] portList = portString.split("\n");
-            System.out.println(Arrays.toString(portList));
-            String[] realPort = portList[0].split(":");
-            System.out.println(Arrays.toString(realPort));
-            return "k7d207.p.ssafy.io:" + realPort[1];
-
         }
-
-        else {
-            return "not pure and not django";
-        }
-
+        // 도커 이미지 빌드
+        String[] image = {"docker", "build", "-t", projectName, filePath+"/"};
+        String imageBuild = resultString(image);
+        if (imageBuild.isEmpty()) { return "Can't build docker image"; }
+        System.out.println("런 해보쟈");
+        // 도커 런
+        String[] command = {"docker", "run", "-d", "--name", projectName, "-P", projectName};
+        System.out.println(Arrays.toString(command));
+        String container = resultString(command);
+        if (container.isEmpty()) { return "Can't run docker container"; }
+        String portString = portNum(container);
+        // \n 전까지의 문자열에서 : 뒤에 있는 숫자만 가져오기
+        String[] portList = portString.split("\n");
+        System.out.println(Arrays.toString(portList));
+        String[] realPort = portList[0].split(":");
+        System.out.println(Arrays.toString(realPort));
+        return "k7d207.p.ssafy.io:" + realPort[1];
     }
 }
