@@ -53,9 +53,10 @@ public class ProjectService {
         for (int i = 0; i < files.length; i++) {
             File dir = files[i];
             String name = names[i];
+            String thisPath = dir.getPath();
             out.println("DTo 만들기 전!!");
-            FileCreateDto newFileCreateDto = new FileCreateDto(name,dir.getPath());
-            out.println(name + dir.getPath());
+            FileCreateDto newFileCreateDto = new FileCreateDto(name,thisPath);
+            out.println(name + thisPath);
             fileService.saveFileEntity(newFileCreateDto,thisTeam);
             out.println("함수 성공!!");
             if (dir.isDirectory()) {
