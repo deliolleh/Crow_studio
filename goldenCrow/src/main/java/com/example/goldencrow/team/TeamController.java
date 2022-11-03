@@ -160,15 +160,19 @@ public class TeamController {
         // 팀 내 유저가 아니면 터질 예정임
         // 스스로는 내보낼 수 없음
 
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
-        }
-
         if(req.get("teamSeq")==null || req.get("memberSeq")==null){
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        String result = teamService.memberRemove(jwt, req.get("teamSeq"), req.get("memberSeq"));
+
+        if(result.equals("success")) {
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else if(result.equals("403")) {
+            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
 
     }
 

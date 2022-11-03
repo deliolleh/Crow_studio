@@ -32,7 +32,7 @@ public class TeamService {
     private MemberRepository memberRepository;
 
     // 팀 조회
-    public List<TeamDto> teamList(String jwt){
+    public List<TeamDto> teamList(String jwt) {
 
         try {
 
@@ -44,9 +44,9 @@ public class TeamService {
             // 그 userSeq를 가지는 멤버 엔티티를 뽑아옴
             List<MemberEntity> memberEntities = memberRepository.findAllByUser_UserSeq(userSeq);
 
-            if(!memberEntities.isEmpty()) {
+            if (!memberEntities.isEmpty()) {
                 // 그 모든 엔티티에서 forEach를 돌리면서
-                for(MemberEntity m : memberEntities){
+                for (MemberEntity m : memberEntities) {
                     // 해당 팀 엔티티를 뽑아서 리스트에 넣음
                     teamDtoList.add(new TeamDto(m.getTeam()));
                 }
@@ -72,7 +72,7 @@ public class TeamService {
 
             // 중복되는 것이 있는지 확인
             // 있으면 리턴 듀플리케이트
-            if(teamRepository.findTeamEntityByTeamLeaderAndTeamName(userEntity, teamName).isPresent()) {
+            if (teamRepository.findTeamEntityByTeamLeaderAndTeamName(userEntity, teamName).isPresent()) {
                 return "duplicate";
             }
 
@@ -104,7 +104,7 @@ public class TeamService {
 
             Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
 
-            if(teamEntityOptional.isPresent()){
+            if (teamEntityOptional.isPresent()) {
                 TeamEntity teamEntity = teamEntityOptional.get();
                 teamEntity.setTeamName(teamName);
                 teamRepository.saveAndFlush(teamEntity);
@@ -129,7 +129,7 @@ public class TeamService {
 
             Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
 
-            if(teamEntityOptional.isPresent()){
+            if (teamEntityOptional.isPresent()) {
                 TeamEntity teamEntity = teamEntityOptional.get();
                 teamRepository.delete(teamEntity);
 
@@ -151,7 +151,7 @@ public class TeamService {
     }
 
     // 팀원 목록 조회
-    public List<UserInfoDto> memberList(String jwt, Long teamSeq){
+    public List<UserInfoDto> memberList(String jwt, Long teamSeq) {
 
         try {
 
@@ -163,12 +163,12 @@ public class TeamService {
             // 내가 멤버로 속해있는지를 확인해야함
             Optional<MemberEntity> memberEntityOptional = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(userSeq, teamSeq);
 
-            if(memberEntityOptional.isPresent()){
+            if (memberEntityOptional.isPresent()) {
                 // 내가 그 팀의 멤버로 있음이 확인되었으므로
                 // 그 팀의 멤버 목록을 리스트로 받아옴
                 List<MemberEntity> memberEntityList = memberRepository.findAllByTeam_TeamSeq(teamSeq);
 
-                for(MemberEntity m : memberEntityList){
+                for (MemberEntity m : memberEntityList) {
                     userInfoDtoList.add(new UserInfoDto(m.getUser()));
                 }
 
@@ -197,19 +197,25 @@ public class TeamService {
             Optional<TeamEntity> teamEntity = teamRepository.findById(teamSeq);
 
             // 팀이 존재하는지 체크
-            if(teamEntity.isPresent()) {
+            if (teamEntity.isPresent()) {
                 // 내가 장이 맞는지 체크
-                if(teamEntity.get().getTeamLeader().getUserSeq()==userSeq) {
+                if (teamEntity.get().getTeamLeader().getUserSeq() == userSeq) {
                     // 이 멤버가 여기 원래 없는게 맞는지 체크
-                    if(!memberRepository.findByUser_UserSeqAndTeam_TeamSeq(memberSeq, teamSeq).isPresent()) {
+                    if (!memberRepository.findByUser_UserSeqAndTeam_TeamSeq(memberSeq, teamSeq).isPresent()) {
                         // 모든 조건 만족
-                        MemberEntity memberEntity = new MemberEntity(userRepository.findById(memberSeq).get(),teamEntity.get());
+                        MemberEntity memberEntity = new MemberEntity(userRepository.findById(memberSeq).get(), teamEntity.get());
                         memberRepository.saveAndFlush(memberEntity);
                         return "success";
 
-                    } else { return "error"; }
-                } else { return "403"; }
-            } else { return "error"; }
+                    } else {
+                        return "error";
+                    }
+                } else {
+                    return "403";
+                }
+            } else {
+                return "error";
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -218,8 +224,48 @@ public class TeamService {
 
     }
 
+    public String memberRemove(String jwt, Long teamSeq, Long memberSeq) {
 
+        try {
 
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+            // 자기 자신이 아닌게 맞는지 체크
+            if(userSeq==memberSeq) {
+                return "error";
+            }
+
+            // 그런 팀이 존재하는지 체크
+            Optional<TeamEntity> teamEntity = teamRepository.findById(teamSeq);
+
+            // 팀이 존재하는지 체크
+            if (teamEntity.isPresent()) {
+                // 내가 장이 맞는지 체크
+                if (teamEntity.get().getTeamLeader().getUserSeq() == userSeq) {
+                    // 이 멤버가 여기 원래 있는게 맞는지 체크
+                    if (memberRepository.findByUser_UserSeqAndTeam_TeamSeq(memberSeq, teamSeq).isPresent()) {
+                        // 모든 조건 만족
+                        MemberEntity memberEntity = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(memberSeq, teamSeq).get();
+                        memberRepository.delete(memberEntity);
+                        return "success";
+
+                    } else {
+                        return "error";
+                    }
+                } else {
+                    return "403";
+                }
+            } else {
+                return "error";
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+
+    }
 
 
 }
