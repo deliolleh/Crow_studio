@@ -37,11 +37,26 @@ public class ProjectService {
     }
 
     /**
+     * file db에 저장하는 함수
+     */
+    public boolean saveFileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
+        System.out.println("엔티티 만들기 전!");
+        System.out.println(team.getTeamName() + fileCreateDto.getFilePath());
+        FileEntity fileEntity = new FileEntity(fileCreateDto,team);
+
+        System.out.println(fileCreateDto.getFilePath()+fileCreateDto.getFileTitle());
+        fileRepository.saveAndFlush(fileEntity);
+        System.out.println("파일 저장 제대로 됨!!");
+
+        return true;
+    }
+
+    /**
      * 모든 경로 재귀적 탐색, 조회
      * type =1 은 저장
      * 2 는 조회
      */
-    public void findFilesInDIr(String path, Long teamSeq, Integer type) {
+    public void findFilesInDIr(String path, Long teamSeq) {
         File file = new File(path);
         File files[] = file.listFiles();
         Optional<TeamEntity> team = teamRepository.findByTeamSeq(teamSeq);
@@ -59,10 +74,10 @@ public class ProjectService {
             FileCreateDto newFileCreateDto = new FileCreateDto(name,thisPath);
             out.println(newFileCreateDto);
             out.println(thisTeam);
-            fileService.saveFileEntity(newFileCreateDto,thisTeam);
+            Boolean check = saveFileEntity(newFileCreateDto,thisTeam);
             out.println("함수 성공!!");
             if (dir.isDirectory()) {
-                findFilesInDIr(dir.getPath(),teamSeq,type);
+                findFilesInDIr(dir.getPath(),teamSeq);
             }
         }
     }
@@ -93,19 +108,19 @@ public class ProjectService {
                 out.println(e.getMessage());
                 return e.getMessage();
             }
-            findFilesInDIr(path,teamSeq,1);
+            findFilesInDIr(path,teamSeq);
             return "1";
         } else if (type == 1) {
             String pjt = createDir(path,fileTitle);
             if (pjt.equals("2")) {
-                findFilesInDIr(path,teamSeq,1);
+                findFilesInDIr(path,teamSeq);
                 return "2";
             }
 
             File file = new File(pjt + "/" + fileTitle +".py");
             try {
                 if(file.createNewFile()) {
-                    findFilesInDIr(path,teamSeq,1);
+                    findFilesInDIr(path,teamSeq);
                     return "1";
                 } else {
                     return "2";
@@ -130,7 +145,7 @@ public class ProjectService {
                 out.println("here!!!!!!!!!!!");
                 return e.getMessage();
             }
-            findFilesInDIr(path,teamSeq,1);
+            findFilesInDIr(path,teamSeq);
             return "1";
         } else if (type == 4) {
             String pjt = createDir(path,fileTitle);
@@ -146,7 +161,7 @@ public class ProjectService {
             } catch (IOException e) {
                 return e.getMessage();
             }
-            findFilesInDIr(path,teamSeq,1);
+            findFilesInDIr(path,teamSeq);
             return "1";
         }
         out.println("여기서 걸림");
