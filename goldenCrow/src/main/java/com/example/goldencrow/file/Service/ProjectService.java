@@ -1,6 +1,10 @@
 package com.example.goldencrow.file.Service;
 
+import com.example.goldencrow.file.FileDto.FileCreateDto;
+import com.example.goldencrow.file.FileEntity;
 import com.example.goldencrow.file.Repository.FileRepository;
+import com.example.goldencrow.team.entity.TeamEntity;
+import com.example.goldencrow.team.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.System.out;
 
@@ -16,6 +21,12 @@ public class ProjectService {
 
     @Autowired
     private FileRepository fileRepository;
+
+    @Autowired
+    private TeamRepository teamRepository;
+
+    private FileService fileService;
+
     public String createDir(String path, String name){
         String pjt = path + "/" + name;
         File pjtDir = new File(pjt);
@@ -26,25 +37,26 @@ public class ProjectService {
     }
 
     /**
-     * 모든 경로 재귀적 탐색, 조회 ㅋ
+     * 모든 경로 재귀적 탐색, 조회
+     * type =1 은 저장
+     * 2 는 조회
      */
-    public static void showFilesInDIr(String path) {
+    public void findFilesInDIr(String path, Long teamSeq, Integer type) {
         File file = new File(path);
         File files[] = file.listFiles();
+        Optional<TeamEntity> team = teamRepository.findByTeamSeq(teamSeq);
+
+        TeamEntity thisTeam = team.get();
 
         String names[] = file.list();
 
         for (int i = 0; i < files.length; i++) {
             File dir = files[i];
             String name = names[i];
+            FileCreateDto newFileCreateDto = new FileCreateDto(name,dir.getPath());
+            fileService.saveFileEntity(newFileCreateDto,thisTeam);
             if (dir.isDirectory()) {
-                out.println("folder:" + dir);
-                out.println(name);
-                showFilesInDIr(dir.getPath());
-
-            } else {
-                System.out.println("file: " + dir);
-                System.out.println(name);
+                findFilesInDIr(dir.getPath(),teamSeq,type);
             }
         }
     }
@@ -56,33 +68,36 @@ public class ProjectService {
      * 3 = flask
      * 4 = fastapi
      */
-    public String createProject(String path, Integer type, String projectName) {
+    public String createProject(String path, Integer type, String projectName, Long teamSeq) {
 
         String fileTitle = projectName;
-
 
         if (type == 2) {
 
             ProcessBuilder djangoStarter = new ProcessBuilder();
-            djangoStarter.command("django-admin", "startproject", fileTitle);
 
+            djangoStarter.command("django-admin", "startproject", fileTitle);
             djangoStarter.directory(new File(path));
+
             try {
                 djangoStarter.start();
             } catch (IOException e) {
                 out.println(e.getMessage());
                 return e.getMessage();
             }
+            findFilesInDIr(path,teamSeq,1);
             return "1";
         } else if (type == 1) {
             String pjt = createDir(path,fileTitle);
             if (pjt.equals("2")) {
+                findFilesInDIr(path,teamSeq,1);
                 return "2";
             }
 
             File file = new File(pjt + "/" + fileTitle +".py");
             try {
                 if(file.createNewFile()) {
+                    findFilesInDIr(path,teamSeq,1);
                     return "1";
                 } else {
                     return "2";
@@ -107,6 +122,7 @@ public class ProjectService {
                 out.println("here!!!!!!!!!!!");
                 return e.getMessage();
             }
+            findFilesInDIr(path,teamSeq,1);
             return "1";
         } else if (type == 4) {
             String pjt = createDir(path,fileTitle);
@@ -122,6 +138,7 @@ public class ProjectService {
             } catch (IOException e) {
                 return e.getMessage();
             }
+            findFilesInDIr(path,teamSeq,1);
             return "1";
         }
         out.println("여기서 걸림");

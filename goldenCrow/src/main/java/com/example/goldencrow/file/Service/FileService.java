@@ -37,6 +37,14 @@ public class FileService {
     @Autowired
     private JwtService jwtService;
 
+    /**
+     * file db에 저장하는 함수
+     */
+    public void saveFileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
+        FileEntity fileEntity = new FileEntity(fileCreateDto,team);
+        fileRepository.saveAndFlush(fileEntity);
+    }
+
     /** 파일 생성 로직
      * 파일이 성공적으로 생성되면 true
      * 아니면 false 반환*/
