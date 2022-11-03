@@ -3,6 +3,10 @@ import React, { useState } from "react";
 const initialInputState = { email: "", password: "" }; // 초기 이메일, 비밀번호 상태
 const initialErrorState = { emailErrorMsg: "", passwordErrorMsg: "" };
 
+const emailRegEx =
+  /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
+// const passwordRegEx = /^[A-Za-z0-9]{8,20}$/;
+
 const LoginForm = ({ onLogin }) => {
   const [inputs, setInputs] = useState(initialInputState); // 초기 입력
   const [errorMsgs, setErrorMsgs] = useState(initialErrorState); // 초기 에러메시지
@@ -34,7 +38,13 @@ const LoginForm = ({ onLogin }) => {
         return { ...prev, emailErrorMsg: "이메일을 입력하세요" };
       });
       isInvalid = true;
+    } else if (!emailRegEx.test(email)) {
+      setErrorMsgs((prev) => {
+        return { ...prev, emailErrorMsg: "이메일 형식이 올바르지 않습니다" };
+      });
+      isInvalid = true;
     }
+
     if (password.trim().length === 0) {
       setErrorMsgs((prev) => {
         return { ...prev, passwordErrorMsg: "비밀번호를 입력하세요" };
