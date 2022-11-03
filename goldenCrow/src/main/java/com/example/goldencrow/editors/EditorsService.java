@@ -84,7 +84,7 @@ public class EditorsService {
             type = ".txt";
         }
 
-        String name = path + "\\format" + fileName + type;
+        String name = path + "format" + fileName + type;
 
 
         try {
