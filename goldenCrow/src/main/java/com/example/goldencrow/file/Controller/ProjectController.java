@@ -41,7 +41,7 @@ public class ProjectController {
         for (int i = 0; i < files.length; i++) {
             File dir = files[i];
             String name = names[i];
-            if (file.isDirectory()) {
+            if (dir.isDirectory()) {
                 showFilesInDIr(dir.getPath());
 
             } else {
