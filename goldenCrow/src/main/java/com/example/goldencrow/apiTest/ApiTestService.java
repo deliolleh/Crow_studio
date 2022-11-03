@@ -30,6 +30,23 @@ public class ApiTestService {
 
     public RestTemplate restTemplate = restTemplate();
 
+    /**
+     * Use variables in ApiTestDto, operating RestTemplate and return result.
+     * <br>
+     * ApiTestDto의 변수들을 이용해, RestTemaplate 통해 Api 통신을 하고 결과를 반환한다
+     * @param apiTestDto
+     * @return If Success Communication, return HashMap with
+     * <br>
+     * data: result.get("body") / time: api response time
+     * <br>
+     * If failed, return HashMap with data: "ERROR"
+     * <br>
+     * API가 성공적으로 작동하면
+     * <br>
+     * data: API 결과물의 Body, time: API 통신시간으로 구성된 HashMap을 반환합니다
+     * <br>
+     * 실패하면, data: "ERROR"의 HashMap을 반환합니다
+     */
     public Map<String, Object> apiTest(ApiTestDto apiTestDto) {
         String api = apiTestDto.getApi();
         String type = apiTestDto.getType();

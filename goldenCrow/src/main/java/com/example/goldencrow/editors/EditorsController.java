@@ -17,6 +17,14 @@ public class EditorsController {
         this.editorsService = editorsService;
     }
 
+    /**
+     * Formatting code
+     * @param language Python, javascript, JAVA...
+     * @param rawText Code from editor
+     * @return If success,
+     * <br>Hashmap - "data": formatting code file name
+     * <br>Nothing if failed
+     */
     @PostMapping("/format/{language}")
     public ResponseEntity<Map<String, String>> fileFormat(@PathVariable String language,
                                                           @RequestBody Map<String, String> rawText) {
@@ -32,6 +40,14 @@ public class EditorsController {
         }
     }
 
+    /**
+     * Get reformatted Code
+     * @param language Python, javascript, JAVA...
+     * @param rawData name: fileName get by fileFormat
+     * @return If success,
+     * <br>Hashmap - "data": formatted code
+     * <br>Nothing if failed
+     */
     @GetMapping("/format/{language}")
     public ResponseEntity<Map<String, String>> formatResult(@PathVariable String language, @RequestBody HashMap<String, String> rawData) {
         String name = rawData.get("name"); // format 파일을 만든 시간
@@ -43,8 +59,14 @@ public class EditorsController {
         }
     }
 
+    /**
+     * Check Your Code, Not Change
+     * @param language Python, javascript, JAVA...
+     * @param rawText Code from editor
+     * @return data: show what is problem / LinkedList
+     * <br> index: problems index / ArrayList
+     */
     @PostMapping("/lint/{language}")
-
     public ResponseEntity<Map<String, Object>> fileLint(@PathVariable String language, @RequestBody Map<String, String> rawText) {
         String code = rawText.get("text");
 
