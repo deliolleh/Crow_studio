@@ -96,4 +96,15 @@ public class FileController {
         }
     }
 
+    @PostMapping("/profileDeleter")
+    public ResponseEntity<String> deleteTest(@RequestHeader("Authorization") String jwt, @RequestParam Integer type, @RequestBody HashMap<String, String> filePath) {
+        String path = filePath.get("filePath");
+        boolean check = fileService.deleteProfile(path,type);
+        if (check == true) {
+            return new ResponseEntity<>("Ij",HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Nomp", HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
