@@ -41,9 +41,7 @@ public class ProjectService {
         if (!newDir.mkdirs()) {
             out.println("여기서 터짐!!!");
             return "2";
-        }
-
-        if (type == 2) {
+        } else if (type == 2) {
             ProcessBuilder djangoStarter = new ProcessBuilder();
             djangoStarter.command(String.format("django-admin startproject %s",fileTitle));
             out.println(fileTitle);
