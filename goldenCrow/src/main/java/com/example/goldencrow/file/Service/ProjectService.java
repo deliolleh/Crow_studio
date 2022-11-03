@@ -40,7 +40,7 @@ public class ProjectService {
             ProcessBuilder djangoStarter = new ProcessBuilder();
             djangoStarter.command(String.format("django-admin startproject %s",fileTitle));
             out.println(fileTitle);
-            djangoStarter.directory(new File(path));
+            djangoStarter.directory(new File(path+"/"));
             try {
                 out.println("여기까진 와요!");
                 djangoStarter.start();
