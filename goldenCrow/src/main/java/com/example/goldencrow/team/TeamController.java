@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value="/api/team")
+@RequestMapping(value="/api/teams")
 public class TeamController {
 
     private final String SUCCESS = "SUCCESS";
