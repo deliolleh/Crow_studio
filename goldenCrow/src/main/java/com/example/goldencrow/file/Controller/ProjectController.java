@@ -33,13 +33,15 @@ public class ProjectController {
     public static void showFilesInDIr(String path) {
         File file = new File(path);
         File files[] = file.listFiles();
-        System.out.println(files);
+        System.out.println(files.length);
+        out.println("여기야 여기!!!!!");
+        out.println(files[0]);
         String names[] = file.list();
 
         for (int i = 0; i < files.length; i++) {
             File dir = files[i];
             String name = names[i];
-            if (file.isDirectory()) {
+            if (dir.isDirectory()) {
                 showFilesInDIr(dir.getPath());
 
             } else {
@@ -71,7 +73,7 @@ public class ProjectController {
 
     @GetMapping("/")
     public ResponseEntity<String> pjtRead(@RequestHeader("Authorization") String jwt) {
-        String baseUrl = "/home/ubuntu/crow_data/999";
+        String baseUrl = "/home/ubuntu/crow_data/999/";
         showFilesInDIr(baseUrl);
 
         return new ResponseEntity<>("1", HttpStatus.ACCEPTED);
@@ -80,20 +82,10 @@ public class ProjectController {
 
     @PostMapping("/projectDeleter")
     public ResponseEntity<String> deletePjt(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,List<Long>> teamSeqs) {
-
-        ProcessBuilder deleter = new ProcessBuilder();
-        for (Long seq : teamSeqs.get("teamSeqs")) {
-            deleter.command("rm","-r",String.valueOf(seq));
-            deleter.directory(new File("/home/ubuntu/crow_data"));
-
-            try {
-                deleter.start();
-            } catch (IOException e) {
-                return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
-            }
+        String check = projectService.deleteProject(teamSeqs.get("teamSeqs"));
+        if (check.equals("fail!")) {
+            return new ResponseEntity<>(check,HttpStatus.BAD_REQUEST);
         }
-
         return new ResponseEntity<>("성공!",HttpStatus.OK);
-
     }
 }
