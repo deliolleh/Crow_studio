@@ -32,7 +32,9 @@ public class ProjectService {
     public String createProject(String path, Integer type, String projectName) {
 
         String fileTitle = projectName;
-        String baseUrl = "home/ubuntu/crow_data";
+
+        String baseUrl = "/home/ubuntu/crow_data/";
+
         ProcessBuilder here = new ProcessBuilder("ls");
         here.directory(new File(baseUrl));
         out.println(path);
@@ -40,8 +42,8 @@ public class ProjectService {
         test.directory(new File(baseUrl));
         String newPath = "."+path+"/";
         try{
-            test.start();
             Process p = here.start();
+
             InputStream stderr = p.getInputStream();
             InputStreamReader isr = new InputStreamReader(stderr);
             BufferedReader br = new BufferedReader(isr);
@@ -53,6 +55,10 @@ public class ProjectService {
 
             p.waitFor();
             System.out.println("Waiting ...");
+
+            test.start();
+
+
 
         } catch (IOException e) {
             out.println(e.getMessage());
@@ -66,7 +72,7 @@ public class ProjectService {
             ProcessBuilder djangoStarter = new ProcessBuilder();
             djangoStarter.command(String.format("django-admin startproject %s",fileTitle));
             out.println(fileTitle);
-            djangoStarter.directory(new File(path+"/"));
+            djangoStarter.directory(new File(path));
             try {
                 django.start();
                 out.println("여기까진 와요!");

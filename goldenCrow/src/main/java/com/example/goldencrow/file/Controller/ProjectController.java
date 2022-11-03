@@ -53,7 +53,7 @@ public class ProjectController {
     public ResponseEntity<String> teamProjectCreate(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> projectName) {
         String pjt = projectName.get("projectName");
         String baseUrl = "/home/ubuntu/crow_data";
-        String newBaseUrl = baseUrl + "/" + String.valueOf(teamSeq);
+        String newBaseUrl = baseUrl + "/" + String.valueOf(teamSeq)+"/";
         File newDir = new File(newBaseUrl);
 
         if (!newDir.mkdirs()) {
