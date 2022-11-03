@@ -83,7 +83,7 @@ public class FileService {
 
         if (type == 1) {
             ProcessBuilder pb = new ProcessBuilder();
-            pb.command("sudo","rm","-r",filePath);
+            pb.command("rm","-r",filePath);
 
             try{
                 pb.start();

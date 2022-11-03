@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.System.out;
@@ -40,21 +42,38 @@ public class ProjectService {
      * file db에 저장하는 함수
      */
     public boolean saveFileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
-        System.out.println("엔티티 만들기 전!");
-        System.out.println(team.getTeamName() + fileCreateDto.getFilePath());
         FileEntity fileEntity = new FileEntity(fileCreateDto,team);
 
         System.out.println(fileCreateDto.getFilePath()+fileCreateDto.getFileTitle());
-        fileRepository.saveAndFlush(fileEntity);
+
         System.out.println("파일 저장 제대로 됨!!");
 
         return true;
     }
 
+    public Map<String,List<String>> readDirectory(String rootPath, String rootName, Map<String,List<String>> visit){
+        File file = new File(rootPath);
+        File files[] = file.listFiles();
+        String names[] = file.list();
+
+        for (int i = 0; i < files.length; i++) {
+            File dir = files[i];
+            String name = names[i];
+            String thisPath = dir.getPath();
+
+            if (dir.isDirectory()) {
+                List<String> newValue = new ArrayList<>();
+                visit.put(thisPath,newValue);
+                readDirectory(thisPath,name,visit);
+            } else {
+                visit.get(rootName).add(name);
+            }
+        }
+        return visit;
+    }
+
     /**
-     * 모든 경로 재귀적 탐색, 조회
-     * type =1 은 저장
-     * 2 는 조회
+     * 모든 경로 재귀적 탐색, 조회 후 파일 등록
      */
     public void saveFilesInDIr(String path, Long teamSeq) {
         File file = new File(path);
@@ -69,13 +88,10 @@ public class ProjectService {
             File dir = files[i];
             String name = names[i];
             String thisPath = dir.getPath();
-            out.println(name);
-            out.println(thisPath);
             FileCreateDto newFileCreateDto = new FileCreateDto(name,thisPath);
-            out.println(newFileCreateDto);
-            out.println(thisTeam);
+
             Boolean check = saveFileEntity(newFileCreateDto,thisTeam);
-            out.println("함수 성공!!");
+
             if (dir.isDirectory()) {
                 saveFilesInDIr(dir.getPath(),teamSeq);
             }
