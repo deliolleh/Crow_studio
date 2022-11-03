@@ -50,12 +50,13 @@ public class ProjectController {
     @PostMapping("/{teamSeq}")
     public ResponseEntity<String> teamProjectCreate(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> projectName) {
         String pjt = projectName.get("projectName");
-        if (projectService.createProject(teamSeq, type, pjt) == "1") {
+        String check = projectService.createProject(teamSeq, type, pjt);
+        if (check.equals("1")) {
             return new ResponseEntity<>("프로젝트 생성 성공했습니다.", HttpStatus.OK);
-        } else if (projectService.createProject(teamSeq, type, pjt) == "2") {
+        } else if (check.equals("2")) {
             return new ResponseEntity<>("이미 동일한 프로젝트가 존재합니다.", HttpStatus.BAD_REQUEST);
         } else {
-            return new ResponseEntity<>(projectService.createProject(teamSeq, type, pjt), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(check, HttpStatus.BAD_REQUEST);
         }
     }
 
