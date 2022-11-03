@@ -37,7 +37,7 @@ public class ProjectService {
         out.println(path);
         ProcessBuilder test = new ProcessBuilder("touch test.py");
         test.directory(new File(path + "/"));
-
+        String newPath = "."+path+"/";
         try{
             test.start();
             Process p = here.start();
