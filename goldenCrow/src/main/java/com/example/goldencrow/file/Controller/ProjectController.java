@@ -72,8 +72,16 @@ public class ProjectController {
 
     @GetMapping("/")
     public ResponseEntity<String> pjtRead(@RequestHeader("Authorization") String jwt) {
-        String baseUrl = "/home/ubuntu/crow_data/999";
-        showFilesInDIr(baseUrl);
+//        String baseUrl = "/home/ubuntu/crow_data/999";
+//        showFilesInDIr(baseUrl);
+        ProcessBuilder pro = new ProcessBuilder("django-admin startproject sadfs");
+        pro.directory(new File("/home/ubuntu/crow_data/"));
+
+        try {
+            pro.start();
+        } catch (IOException e) {
+            out.println(e.getMessage());
+        }
 
         return new ResponseEntity<>("1", HttpStatus.ACCEPTED);
     }
@@ -84,7 +92,7 @@ public class ProjectController {
     public ResponseEntity<String> deletePjt(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,List<Long>> teamSeqs) {
 
         ProcessBuilder deleter = new ProcessBuilder();
-        for (Long seq : teamSeqs.get(teamSeqs)) {
+        for (Long seq : teamSeqs.get("teamSeqs")) {
             deleter.command("rm","-r",String.valueOf(seq));
             deleter.directory(new File("/home/ubuntu/crow_data"));
 
