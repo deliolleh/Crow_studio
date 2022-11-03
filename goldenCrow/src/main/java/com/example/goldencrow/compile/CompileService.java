@@ -86,7 +86,7 @@ public class CompileService {
     public String pyCompile(Map<String, String> req, Long teamSeq) {
         List<String> types = new ArrayList<>(Arrays.asList("pure", "django", "fastapi", "flask"));
         // 타입 이상한 거 들어오면 리턴
-        if (types.contains(req.get("type"))) { return "Type error"; }
+        if (!types.contains(req.get("type"))) { return "Type error"; }
         String filePath = req.get("filePath");
         int filePathIndex = filePath.lastIndexOf("/");
         String projectName = filePath.substring(filePathIndex+1);
