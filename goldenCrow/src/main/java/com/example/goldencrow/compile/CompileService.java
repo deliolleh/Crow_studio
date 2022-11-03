@@ -62,7 +62,7 @@ public class CompileService {
 //                    "COPY ./requirements.txt /prod/requirements.txt\n" +
 //                    "RUN pip install --no-cache-dir --upgrade -r /prod/requirements.txt\n" +
 //                    "COPY ./" + projectName + " /prod/" + projectName + "\n" +
-                    "COPY . ." +
+                    "COPY . .\n" +
                     "CMD [\"uvicorn\", \"" + projectName + ".main:" + projectName + "\", \"--host\", \"0.0.0.0\", \"--port\", \"3000\"]";
         }
         File file = new File(filePath + "/Dockerfile");
