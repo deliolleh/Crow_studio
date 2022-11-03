@@ -45,8 +45,8 @@ public class FileController {
      * 파일 삭제 요청
      */
     @DeleteMapping("/{teamSeq}")
-    public ResponseEntity<String> userFileDelete(@RequestHeader("jwt") String jwt,@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
-        if (fileService.deleteFile(filePath.get("filePath"), teamSeq)) {
+    public ResponseEntity<String> userFileDelete(@RequestHeader("jwt") String jwt,@PathVariable Long teamSeq, @RequestParam Integer type,@RequestBody HashMap<String, String> filePath) {
+        if (fileService.deleteFile(filePath.get("filePath"), type,teamSeq)) {
             return new ResponseEntity<>("파일 삭제를 성공했습니다.", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("파일 삭제를 실패했습니다.", HttpStatus.BAD_REQUEST);

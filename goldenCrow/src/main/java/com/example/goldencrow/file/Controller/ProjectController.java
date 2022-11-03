@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/projects")
@@ -67,54 +68,23 @@ public class ProjectController {
     }
 
 
-    @GetMapping("/test")
-    public ResponseEntity<String> deletePjt(@RequestHeader("jwt") String jwt) {
-        ProcessBuilder builder = new ProcessBuilder();
-        ProcessBuilder tester = new ProcessBuilder();
+    @PostMapping("/test")
+    public ResponseEntity<String> deletePjt(@RequestHeader("jwt") String jwt, @RequestBody List<Long> teamSeqs) {
+        ProcessBuilder deleter = new ProcessBuilder();
+        for (Long seq : teamSeqs) {
+            deleter.command("rm","-r",String.valueOf(seq));
+            deleter.directory(new File("/home/ubuntu/crow_data"));
 
-
-        try {
-            builder.command("ls");
-            builder.directory(new File("/home/ubuntu/crow_data/"));
-            tester.command("django-admin", "startproject", "helloworld");
-            tester.directory(new File("/home/ubuntu/crow_data/"));
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-
-        try {
-            Process process = builder.start();
-
-            InputStream stderr = process.getInputStream();
-            InputStreamReader isr = new InputStreamReader(stderr);
-            BufferedReader br = new BufferedReader(isr);
-            String line = null;
-
-            while ((line = br.readLine()) != null) {
-                System.out.println(line);
+            try {
+                deleter.start();
+            } catch (IOException e) {
+                return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
             }
-
-            process.waitFor();
-            System.out.println("Waiting ...");
-        } catch (IOException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (InterruptedException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        try {
-            System.out.println("여기서 터짐 여기서!!");
-            tester.start();
-        } catch (IOException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>("성공!",HttpStatus.OK);
 
-        try {
-            Process test = Runtime.getRuntime().exec("/bin -c cd /home/ubuntu/crow_data && django-admin startproject hello_world");
-        } catch (IOException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
 
-        return new ResponseEntity<>("Why?", HttpStatus.OK);
+
     }
 }

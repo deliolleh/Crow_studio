@@ -23,6 +23,14 @@ public class ProjectService {
         };
         return "2";
     }
+
+    /**
+     * 프로젝트 이니셜 파일 생성
+     * type 1 = pure python
+     * 2 = django
+     * 3 = flask
+     * 4 = fastapi
+     */
     public String createProject(Long teamSeq, Integer type, String projectName) {
 
         String fileTitle = projectName;
@@ -36,7 +44,7 @@ public class ProjectService {
 
         if (type == 2) {
             ProcessBuilder djangoStarter = new ProcessBuilder();
-            djangoStarter.command("sh", "-c", String.format("django-admin startproject %s",fileTitle));
+            djangoStarter.command(String.format("django-admin startproject %s",fileTitle));
             djangoStarter.directory(newDir);
             try {
                 djangoStarter.start();
