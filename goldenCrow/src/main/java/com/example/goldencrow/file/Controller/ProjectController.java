@@ -48,7 +48,7 @@ public class ProjectController {
     }
 
     @PostMapping("/{teamSeq}")
-    public ResponseEntity<String> teamProjectCreate(@RequestHeader("jwt") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> projectName) {
+    public ResponseEntity<String> teamProjectCreate(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> projectName) {
         String pjt = projectName.get("projectName");
         if (projectService.createProject(teamSeq, type, pjt) == "1") {
             return new ResponseEntity<>("프로젝트 생성 성공했습니다.", HttpStatus.OK);
@@ -60,7 +60,7 @@ public class ProjectController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<String> pjtRead(@RequestHeader("jwt") String jwt) {
+    public ResponseEntity<String> pjtRead(@RequestHeader("Authorization") String jwt) {
         String baseUrl = "/home/ubuntu/crow_data/999";
         showFilesInDIr(baseUrl);
 
@@ -69,7 +69,9 @@ public class ProjectController {
 
 
     @PostMapping("/projectDeleter")
-    public ResponseEntity<String> deletePjt(@RequestHeader("jwt") String jwt, @RequestBody List<Long> teamSeqs) {
+
+    public ResponseEntity<String> deletePjt(@RequestHeader("Authorization") String jwt, @RequestBody List<Long> teamSeqs) {
+
         ProcessBuilder deleter = new ProcessBuilder();
         for (Long seq : teamSeqs) {
             deleter.command("rm","-r",String.valueOf(seq));
