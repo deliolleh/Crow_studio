@@ -81,10 +81,10 @@ public class ProjectController {
 
     @PostMapping("/projectDeleter")
 
-    public ResponseEntity<String> deletePjt(@RequestHeader("Authorization") String jwt, @RequestBody List<Long> teamSeqs) {
+    public ResponseEntity<String> deletePjt(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,List<Long>> teamSeqs) {
 
         ProcessBuilder deleter = new ProcessBuilder();
-        for (Long seq : teamSeqs) {
+        for (Long seq : teamSeqs.get(teamSeqs)) {
             deleter.command("rm","-r",String.valueOf(seq));
             deleter.directory(new File("/home/ubuntu/crow_data"));
 
