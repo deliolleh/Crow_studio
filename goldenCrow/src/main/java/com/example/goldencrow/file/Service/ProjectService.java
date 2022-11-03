@@ -26,6 +26,30 @@ public class ProjectService {
     }
 
     /**
+     * 모든 경로 재귀적 탐색, 조회 ㅋ
+     */
+    public static void showFilesInDIr(String path) {
+        File file = new File(path);
+        File files[] = file.listFiles();
+
+        String names[] = file.list();
+
+        for (int i = 0; i < files.length; i++) {
+            File dir = files[i];
+            String name = names[i];
+            if (dir.isDirectory()) {
+                out.println("folder:" + dir);
+                out.println(name);
+                showFilesInDIr(dir.getPath());
+
+            } else {
+                System.out.println("file: " + dir);
+                System.out.println(name);
+            }
+        }
+    }
+
+    /**
      * 프로젝트 이니셜 파일 생성
      * type 1 = pure python
      * 2 = django

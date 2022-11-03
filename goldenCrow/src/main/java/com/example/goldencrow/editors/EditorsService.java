@@ -117,6 +117,7 @@ public class EditorsService {
         if (language.equals("python")) {
             try {
                 File file = new File(path + "lint.py");
+                System.out.println("lint.py 생성");
                 FileOutputStream lfw = new FileOutputStream(file);
                 PrintWriter writer = new PrintWriter(lfw);
                 // temp.py에 code를 입력
@@ -131,9 +132,9 @@ public class EditorsService {
                 String env = checkOs ? "cmd /c" : "";
                 String filePath = path + "lint.py";
                 String command = "pylint " + filePath;
+                System.out.println(command);
 
                 Process process = Runtime.getRuntime().exec(env + command);
-                process.waitFor();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String line;
 
@@ -149,9 +150,9 @@ public class EditorsService {
                     }
                 }
 
+                reader.close();
                 result.put("data", response);
                 result.put("index", index);
-                reader.close();
 
                 try {
                     File deleteFile = new File(filePath);
