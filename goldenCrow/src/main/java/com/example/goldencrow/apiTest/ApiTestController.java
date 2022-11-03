@@ -1,12 +1,11 @@
 package com.example.goldencrow.apiTest;
 
+import com.example.goldencrow.apiTest.dto.ApiTestDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -19,9 +18,13 @@ public class ApiTestController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Map<String, Object>> apiTest(@RequestBody Map<String, Object> req) {
-        Map<String, Object> res = apiTestService.apiTest(req);
-        return new ResponseEntity<>(res, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> apiTest(@RequestBody ApiTestDto apiTestDto) {
+        Map<String, Object> result = apiTestService.apiTest(apiTestDto);
+        if (result.get("data").equals("ERROR")) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
     }
 
 }
