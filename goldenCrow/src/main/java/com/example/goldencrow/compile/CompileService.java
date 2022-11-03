@@ -45,7 +45,7 @@ public class CompileService {
     // 도커파일 생성
     public String createDockerfile(String filePath, Long teamSeq, String type) {
         int filePathIndex = filePath.lastIndexOf("/");
-        String projectName = filePath.substring(filePathIndex);
+        String projectName = filePath.substring(filePathIndex + 1);
         String content = "";
         if (Objects.equals(type, "django")) {
             content = "FROM python:3.10\n" +
