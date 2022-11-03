@@ -7,6 +7,15 @@ import org.springframework.util.MultiValueMap;
 
 import java.util.HashMap;
 
+/**
+ * api: Request api address
+ * <br>
+ * type: GET, POST, PUT, DELETE...
+ * <br>
+ * request: RequestBody
+ * <br>
+ * header: ex) Authorization, Content-Type...
+ */
 @Data
 @NoArgsConstructor
 public class ApiTestDto {
