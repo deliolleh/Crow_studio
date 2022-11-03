@@ -224,6 +224,7 @@ public class TeamService {
 
     }
 
+    // 팀원 제거
     public String memberRemove(String jwt, Long teamSeq, Long memberSeq) {
 
         try {
@@ -248,6 +249,52 @@ public class TeamService {
                         // 모든 조건 만족
                         MemberEntity memberEntity = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(memberSeq, teamSeq).get();
                         memberRepository.delete(memberEntity);
+                        return "success";
+
+                    } else {
+                        return "error";
+                    }
+                } else {
+                    return "403";
+                }
+            } else {
+                return "error";
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+
+    }
+
+    // 팀장 위임
+    public String memberBeLeader(String jwt, Long teamSeq, Long memberSeq){
+
+        try {
+
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+            // 자기 자신이 아닌게 맞는지 체크
+            if(userSeq==memberSeq) {
+                return "error";
+            }
+
+            // 그런 팀이 존재하는지 체크
+            Optional<TeamEntity> teamEntityOptional = teamRepository.findById(teamSeq);
+
+            // 팀이 존재하는지 체크
+            if (teamEntityOptional.isPresent()) {
+                // 내가 장이 맞는지 체크
+                if (teamEntityOptional.get().getTeamLeader().getUserSeq() == userSeq) {
+                    // 이 멤버가 여기 원래 있는게 맞는지 체크
+                    if (memberRepository.findByUser_UserSeqAndTeam_TeamSeq(memberSeq, teamSeq).isPresent()) {
+                        // 모든 조건 만족
+                        // 팀 레포지토리의 팀장을 바꾼다
+                        TeamEntity teamEntity = teamEntityOptional.get();
+                        teamEntity.setTeamLeader(userRepository.findById(memberSeq).get());
+                        teamRepository.saveAndFlush(teamEntity);
                         return "success";
 
                     } else {
