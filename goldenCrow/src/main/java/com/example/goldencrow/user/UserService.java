@@ -234,8 +234,17 @@ public class UserService {
             // jwt에서 userSeq를 뽑아내고
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
-            // 유저엔티티 수정
+            // 기존에 있던 프로필 사진 정보 조회
             UserEntity userEntity = userRepository.findById(userSeq).get();
+            String pastProfile = userEntity.getUserProfile();
+
+            if(pastProfile!=null){
+                // null 이 아니라는 것은 기존에 업로드한 이미지가 있다는 뜻
+                // 그 주소로 가서 파일 삭제
+                Files.delete(Paths.get(pastProfile));
+                System.out.println("기존 정보 삭제 완료");
+            }
+
             userEntity.setUserProfile(null);
             userRepository.saveAndFlush(userEntity);
 
