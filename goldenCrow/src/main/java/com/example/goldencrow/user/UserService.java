@@ -135,7 +135,7 @@ public class UserService {
     }
 
     // 닉네임수정
-    public String editNicknameService(String jwt, Map<String, String> req){
+    public String editNicknameService(String jwt, String userNickname){
 
         // jwt 체크는 인터셉터에서 해서 넘어왔을테니까
 
@@ -148,7 +148,7 @@ public class UserService {
             UserEntity userEntity = userRepository.findById(userSeq).get();
 
             // userEntity의 닉네임 부분을 req에서 꺼내온 값으로 수정
-            userEntity.setUserNickname(req.get("userNickname"));
+            userEntity.setUserNickname(userNickname);
 
             // saveAndFlush
             userRepository.saveAndFlush(userEntity);
@@ -220,7 +220,7 @@ public class UserService {
             System.out.println("db에 저장 완료");
 
             // 성공 여부 반환
-            return "success";
+            return filePath;
 
         } catch (Exception e) {
             e.printStackTrace();
