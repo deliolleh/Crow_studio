@@ -66,10 +66,10 @@ public class ProjectService {
         }
 
         if (type == 2) {
-            ProcessBuilder django = new ProcessBuilder(String.format("django-admin startproject %s",fileTitle));
+            ProcessBuilder django = new ProcessBuilder("django-admin", "startproject",fileTitle);
             django.directory(new File(baseUrl));
             ProcessBuilder djangoStarter = new ProcessBuilder();
-            djangoStarter.command(String.format("django-admin startproject %s",fileTitle));
+            djangoStarter.command("django-admin", "startproject", fileTitle);
             out.println(fileTitle);
             djangoStarter.directory(new File(path));
             try {

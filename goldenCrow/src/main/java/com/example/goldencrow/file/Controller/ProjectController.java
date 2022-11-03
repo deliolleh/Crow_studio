@@ -74,7 +74,7 @@ public class ProjectController {
     public ResponseEntity<String> pjtRead(@RequestHeader("Authorization") String jwt) {
 //        String baseUrl = "/home/ubuntu/crow_data/999";
 //        showFilesInDIr(baseUrl);
-        ProcessBuilder pro = new ProcessBuilder("django-admin startproject sadfs");
+        ProcessBuilder pro = new ProcessBuilder("django-admin", "startproject", "sadfs");
         pro.directory(new File("/home/ubuntu/crow_data/"));
 
         try {
