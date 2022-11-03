@@ -56,7 +56,7 @@ public class ProjectService {
      * type =1 은 저장
      * 2 는 조회
      */
-    public void findFilesInDIr(String path, Long teamSeq) {
+    public void saveFilesInDIr(String path, Long teamSeq) {
         File file = new File(path);
         File files[] = file.listFiles();
         Optional<TeamEntity> team = teamRepository.findByTeamSeq(teamSeq);
@@ -77,7 +77,7 @@ public class ProjectService {
             Boolean check = saveFileEntity(newFileCreateDto,thisTeam);
             out.println("함수 성공!!");
             if (dir.isDirectory()) {
-                findFilesInDIr(dir.getPath(),teamSeq);
+                saveFilesInDIr(dir.getPath(),teamSeq);
             }
         }
     }
@@ -108,19 +108,19 @@ public class ProjectService {
                 out.println(e.getMessage());
                 return e.getMessage();
             }
-            findFilesInDIr(path,teamSeq);
+            saveFilesInDIr(path,teamSeq);
             return "1";
         } else if (type == 1) {
             String pjt = createDir(path,fileTitle);
             if (pjt.equals("2")) {
-                findFilesInDIr(path,teamSeq);
+                saveFilesInDIr(path,teamSeq);
                 return "2";
             }
 
             File file = new File(pjt + "/" + fileTitle +".py");
             try {
                 if(file.createNewFile()) {
-                    findFilesInDIr(path,teamSeq);
+                    saveFilesInDIr(path,teamSeq);
                     return "1";
                 } else {
                     return "2";
@@ -145,7 +145,7 @@ public class ProjectService {
                 out.println("here!!!!!!!!!!!");
                 return e.getMessage();
             }
-            findFilesInDIr(path,teamSeq);
+            saveFilesInDIr(path,teamSeq);
             return "1";
         } else if (type == 4) {
             String pjt = createDir(path,fileTitle);
@@ -161,7 +161,7 @@ public class ProjectService {
             } catch (IOException e) {
                 return e.getMessage();
             }
-            findFilesInDIr(path,teamSeq);
+            saveFilesInDIr(path,teamSeq);
             return "1";
         }
         out.println("여기서 걸림");
