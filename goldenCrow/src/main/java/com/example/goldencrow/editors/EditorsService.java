@@ -51,7 +51,14 @@ public class EditorsService {
             String command = env + " black " + name;
 
             // Black 작동 => 성공
-            Runtime.getRuntime().exec(command);
+            Process p = Runtime.getRuntime().exec(command);
+            StringBuilder sb = new StringBuilder();
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line;
+            while((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            System.out.println(sb);
 
             response.put("data", now + "");
 
