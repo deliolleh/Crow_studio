@@ -45,7 +45,7 @@ public class ProjectController {
                 showFilesInDIr(dir.getPath());
 
             } else {
-                System.out.println("file: " + file);
+                System.out.println("file: " + dir);
                 System.out.println(name);
             }
         }
