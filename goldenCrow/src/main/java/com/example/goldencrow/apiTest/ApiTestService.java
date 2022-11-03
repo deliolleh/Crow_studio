@@ -4,6 +4,8 @@ import com.example.goldencrow.apiTest.dto.ApiTestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -11,13 +13,22 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class ApiTestService {
 
-    public RestTemplate restTemplate = new RestTemplate();
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplateBuilder()
+                .setConnectTimeout(Duration.ofSeconds(5))
+                .setReadTimeout(Duration.ofSeconds(5))
+                .build();
+    }
+
+    public RestTemplate restTemplate = restTemplate();
 
     public Map<String, Object> apiTest(ApiTestDto apiTestDto) {
         String api = apiTestDto.getApi();
