@@ -42,6 +42,7 @@ public class FileService {
      */
     public void saveFileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
         FileEntity fileEntity = new FileEntity(fileCreateDto,team);
+        System.out.println(fileCreateDto.getFilePath()+fileCreateDto.getFileTitle());
         fileRepository.saveAndFlush(fileEntity);
     }
 
