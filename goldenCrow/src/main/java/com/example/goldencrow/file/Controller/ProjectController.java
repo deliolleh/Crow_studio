@@ -11,7 +11,6 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.example.goldencrow.file.Service.ProjectService.showFilesInDIr;
 import static java.lang.System.out;
 
 @RestController
@@ -43,7 +42,7 @@ public class ProjectController {
         if (!newDir.mkdirs()) {
             return new ResponseEntity<>("이미 프로젝트가 존재합니다.", HttpStatus.NOT_ACCEPTABLE);
         }
-        String check = projectService.createProject(newBaseUrl, type, pjt);
+        String check = projectService.createProject(newBaseUrl, type, pjt, teamSeq);
         if (check.equals("1")) {
             return new ResponseEntity<>("프로젝트 생성 성공했습니다.", HttpStatus.OK);
         } else if (check.equals("2")) {
@@ -53,10 +52,11 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/")
-    public ResponseEntity<String> pjtRead(@RequestHeader("Authorization") String jwt) {
-        String baseUrl = "/home/ubuntu/crow_data/999/";
-        showFilesInDIr(baseUrl);
+    @GetMapping("/{teamSeq}")
+    public ResponseEntity<String> pjtRead(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
+        String baseUrl = "/home/ubuntu/crow_data/";
+        String newBaseUrl = baseUrl + String.valueOf(teamSeq);
+        //projectService.findFilesInDIr(baseUrl,teamSeq);
 
         return new ResponseEntity<>("1", HttpStatus.ACCEPTED);
     }
