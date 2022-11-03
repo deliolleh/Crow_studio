@@ -102,9 +102,11 @@ public class UserController {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
+        String userNickname = req.get("userNickname");
+
         // 일단 성공하면 이렇게 반환될 겁니다
-        if(userService.editNicknameService(jwt, req).equals("success")) {
-            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        if(userService.editNicknameService(jwt, userNickname).equals("success")) {
+            return new ResponseEntity<>(userNickname, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
@@ -119,11 +121,13 @@ public class UserController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
-        // 일단 성공하면 이렇게 반환될 겁니다
-        if(userService.editProfileService(jwt, multipartFile).equals("success")) {
-            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else {
+        String result = userService.editProfileService(jwt, multipartFile);
+
+        // 실패시!!! 이렇게 반환될 겁니다
+        if(result.equals("error")) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.OK);
         }
 
     }
