@@ -5,6 +5,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Tab, Panel, helpers, ExtraButton } from "@react-tabtab-next/tabtab";
 
 // components
+import Header from "../../components/Header";
 import Sidebar from "./components/Sidebar";
 import Directory from "./components/Directory";
 // import Git from "./components/Git";
@@ -13,7 +14,7 @@ import Directory from "./components/Directory";
 import CustomTabs from "./components/CustomTabs";
 // tabtab dummy data
 import Tabs2 from "./components/Tabs2";
-import { makeData } from "../main/components/makeData";
+import { MakeEditorData, MakeConsoleData } from "../main/components/makeData";
 
 // svg
 import { ReactComponent as IcAdd } from "../../assets/icons/ic_add.svg";
@@ -126,8 +127,8 @@ const Main = () => {
   // tabtab
   const [activeTab, setActiveTab] = useState(0);
   const [activeTab2, setActiveTab2] = useState(0);
-  const [tabs, setTabs] = useState(makeData(2, 'Some Tab'));
-  const [tabs2, setTabs2] = useState(makeData(2, 'Some Tab2'));
+  const [editorTabs, setEditorTabs] = useState(MakeEditorData(2, 'Editor Tab'));
+  const [consoleTabs, setConsoleTabs] = useState(MakeConsoleData(1, 'Console Tab'));
   // // customArrowAuto 설정해보고 싶었는데 통하지 않았습니다,,
   // const [customArrowAuto, setCustomArrowAuto] = useState(false)
   // const [ containerWidthSize, setContainerWidthSize ] = useState(0);
@@ -158,20 +159,20 @@ const Main = () => {
   // }
 
   const closableTabItems = useMemo(() => {
-    return tabs.map((tab, index) => {
+    return editorTabs.map((tab, index) => {
       return (
         <Tab closable key={index}>
           {tab.title}
         </Tab>
       );
     });
-  }, [tabs]);
+  }, [editorTabs]);
 
   const panelItems = useMemo(() => {
-    return tabs.map((tab, index) => {
+    return editorTabs.map((tab, index) => {
       return <Panel key={index}>{tab.content}</Panel>;
     });
-  }, [tabs]);
+  }, [editorTabs]);
 
   
   const handleTabChange = useCallback((index) => {
@@ -181,25 +182,25 @@ const Main = () => {
   
   const handleTabSequenceChange = useCallback(({oldIndex, newIndex}) => {
     console.log({oldIndex, newIndex});
-    setTabs((tab) => helpers.simpleSwitch(tabs, oldIndex, newIndex));
+    setEditorTabs((tab) => helpers.simpleSwitch(editorTabs, oldIndex, newIndex));
     setActiveTab(newIndex)
   }, []);
   
   const closableTabItems2 = useMemo(() => {
-    return tabs2.map((tab, index) => {
+    return consoleTabs.map((tab, index) => {
       return (
         <Tab closable key={index}>
           {tab.title}
         </Tab>
       );
     });
-  }, [tabs2]);
+  }, [consoleTabs]);
 
   const panelItems2 = useMemo(() => {
-    return tabs2.map((tab, index) => {
+    return consoleTabs.map((tab, index) => {
       return <Panel key={index}>{tab.content}</Panel>;
     });
-  }, [tabs2]);
+  }, [consoleTabs]);
 
   const handleTabChange2 = useCallback((index) => {
     console.log('select tab', index);
@@ -208,12 +209,13 @@ const Main = () => {
 
   const handleTabSequenceChange2 = useCallback(({oldIndex, newIndex}) => {
     console.log({oldIndex, newIndex});
-    setTabs2((tab) => helpers.simpleSwitch(tabs2, oldIndex, newIndex));
+    setConsoleTabs((tab) => helpers.simpleSwitch(consoleTabs, oldIndex, newIndex));
     setActiveTab2(newIndex)
   }, []);
 
   return (
     <>
+      <Header />
       <div className="flex">
         <div ref={ sizeRef } className="flex">
           <Sidebar />
@@ -257,12 +259,14 @@ const Main = () => {
                             item.id === "one" ? 
                             (i) => {
                             console.log('close', i);
-                            setTabs((prev) => prev.filter((_, idx) => idx !== i));}
+                            setEditorTabs((prev) => prev.filter((_, idx) => idx !== i));}
                             : (i) => {
                               console.log('close', i);
-                              setTabs2((prev) => prev.filter((_, idx) => idx !== i));
+                              setConsoleTabs((prev) => prev.filter((_, idx) => idx !== i));
                           }}
-                          activeIndex={activeTab}
+                          activeIndex={
+                            item.id === "one" ? activeTab : activeTab2
+                          }
                           panelItems={
                             item.id === "one" ? panelItems : panelItems2
                           }
@@ -279,26 +283,26 @@ const Main = () => {
                             item.id === "one" ? 
                             <ExtraButton
                               onClick={(e) => {
-                                setTabs((prev) => {
+                                setEditorTabs((prev) => {
                                   const newTabs = [...prev];
-                                  const newItem = makeData(1, 'New Tab ' + (newTabs.length + 1), false)[0];
+                                  const newItem = MakeEditorData(1, 'New Tab ' + (newTabs.length + 1), false)[0];
                                   newTabs.push(newItem);
                                   return newTabs;
                                 });
-                                setActiveTab(tabs.length);
+                                setActiveTab(editorTabs.length);
                               }}
                             >
                               <IcAdd style={{ width: "10px", height: "10px", }} alt="add-icon" />
                             </ExtraButton>
                             : <ExtraButton
                             onClick={(e) => {
-                              setTabs2((prev) => {
+                              setConsoleTabs((prev) => {
                                 const newTabs = [...prev];
-                                const newItem = makeData(1, 'New Tab ' + (newTabs.length + 1), false)[0];
+                                const newItem = MakeConsoleData(1, 'New Tab ' + (newTabs.length + 1), false)[0];
                                 newTabs.push(newItem);
                                 return newTabs;
                               });
-                              setActiveTab2(tabs2.length);
+                              setActiveTab2(consoleTabs.length);
                             }}
                           >
                             <IcAdd style={{ width: "10px", height: "10px", }} alt="add-icon" />

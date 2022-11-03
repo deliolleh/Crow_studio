@@ -58,9 +58,11 @@ ActionButton = styled(ActionButton)`
 `;
 
 Panel = styled(Panel)`
-  padding: 2px;
+  padding: 0;
   background-color: #3C3C3C;
-  height: 100%;
-`;
+  height: calc(100vh - 31px);
+  border-radius: 0 0 10px 10px;
+  `;
+  // height: 100%;
 
 export { TabList, ActionButton, Tab, Panel };
