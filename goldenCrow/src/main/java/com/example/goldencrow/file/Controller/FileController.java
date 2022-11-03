@@ -31,7 +31,7 @@ public class FileController {
      */
 
     @PostMapping("/{teamSeq}")
-    public ResponseEntity<String> userFileCreate(@RequestHeader("jwt") String jwt,@RequestParam Integer type,@PathVariable Long teamSeq, @RequestBody FileCreateDto fileCreateDto) {
+    public ResponseEntity<String> userFileCreate(@RequestHeader("Authorization") String jwt,@RequestParam Integer type,@PathVariable Long teamSeq, @RequestBody FileCreateDto fileCreateDto) {
         if (fileService.createFile(fileCreateDto, type, teamSeq)) {
             String newFilePath = fileCreateDto.getFilePath()  + "/" + fileCreateDto.getFileTitle();
             return new ResponseEntity<>(newFilePath, HttpStatus.OK);
@@ -45,7 +45,7 @@ public class FileController {
      * 파일 삭제 요청
      */
     @DeleteMapping("/{teamSeq}")
-    public ResponseEntity<String> userFileDelete(@RequestHeader("jwt") String jwt,@PathVariable Long teamSeq, @RequestParam Integer type,@RequestBody HashMap<String, String> filePath) {
+    public ResponseEntity<String> userFileDelete(@RequestHeader("Authorization") String jwt,@PathVariable Long teamSeq, @RequestParam Integer type,@RequestBody HashMap<String, String> filePath) {
         if (fileService.deleteFile(filePath.get("filePath"), type,teamSeq)) {
             return new ResponseEntity<>("파일 삭제를 성공했습니다.", HttpStatus.OK);
         } else {
@@ -76,13 +76,14 @@ public class FileController {
 
 
     @GetMapping("/{teamSeq}")
-    public ResponseEntity<String> getDirectory(@RequestHeader("jwt") String jwt, @PathVariable Long teamSeq) {
+    public ResponseEntity<String> getDirectory(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
         out.println(jwtService.JWTtoUserSeq(jwt));
         return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
     @PutMapping("/{teamSeq}/files")
-    public ResponseEntity<String> saveFile(@RequestHeader("jwt") String jwt,@PathVariable Long teamSeq,@RequestBody HashMap<String, String> fileContent){
+    public ResponseEntity<String> saveFile(@RequestHeader("Authorization") String jwt,@PathVariable Long teamSeq,@RequestBody HashMap<String, String> fileContent){
+
         String content = fileContent.get("fileContent");
         String filePath = fileContent.get("filePath");
 

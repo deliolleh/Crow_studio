@@ -39,16 +39,19 @@ public class ProjectService {
         File newDir = new File(newBaseUrl);
 
         if (!newDir.mkdirs()) {
+            out.println("여기서 터짐!!!");
             return "2";
         }
 
         if (type == 2) {
             ProcessBuilder djangoStarter = new ProcessBuilder();
             djangoStarter.command(String.format("django-admin startproject %s",fileTitle));
-            djangoStarter.directory(newDir);
+            out.println(fileTitle);
+            djangoStarter.directory(new File(newBaseUrl));
             try {
                 djangoStarter.start();
             } catch (IOException e) {
+                out.println(e.getMessage());
                 return e.getMessage();
             }
             return "1";
