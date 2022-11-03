@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-
-import { getMypage } from "../../redux/userSlice";
+import { useSelector } from "react-redux";
 
 import Profile from "./Profile";
 import Project from "./Project";
@@ -10,18 +8,8 @@ import Modify from "./Modify";
 
 const Mypage = () => {
   const { userSeq } = useParams();
-  const dispatch = useDispatch();
-  const { mySeq, myNickname } = useSelector((state) => state.user.value);
+  const { mySeq } = useSelector((state) => state.user.value);
   const [isModify, setIsModify] = useState(false);
-  const [userInfo, setUserInfo] = useState({});
-
-  useEffect(() => {
-    dispatch(getMypage(userSeq))
-      .unwrap()
-      .then((res) => {
-        setUserInfo(res);
-      });
-  }, [dispatch, userSeq]);
 
   const modifyHandler = (isOpen) => {
     setIsModify(isOpen);
@@ -29,15 +17,12 @@ const Mypage = () => {
 
   return (
     <section className="flex">
-      <Profile
-        isMe={+userSeq === mySeq}
-        userInfo={userInfo}
-        openModify={modifyHandler}
-      />
+      {/* 프로필 */}
+      <Profile userSeq={userSeq} openModify={modifyHandler} />
+      {/* 프로젝트 */}
       {!isModify && <Project />}
-      {isModify && +userSeq === mySeq && (
-        <Modify userInfo={{ myNickname }} closeModify={modifyHandler} />
-      )}
+      {/* 회원정보수정 */}
+      {isModify && +userSeq === mySeq && <Modify closeModify={modifyHandler} />}
     </section>
   );
 };
