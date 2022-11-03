@@ -53,18 +53,17 @@ public class ProjectController {
     public ResponseEntity<String> teamProjectCreate(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> projectName) {
         String pjt = projectName.get("projectName");
         String baseUrl = "/home/ubuntu/crow_data";
-        String newBaseUrl = baseUrl + "/" + String.valueOf(teamSeq);
+        String newBaseUrl = baseUrl + "/" + String.valueOf(teamSeq)+"/";
         File newDir = new File(newBaseUrl);
 
         if (!newDir.mkdirs()) {
-            out.println("여기서 터짐!!!");
             return new ResponseEntity<>("이미 프로젝트가 존재합니다.", HttpStatus.NOT_ACCEPTABLE);
         }
         String check = projectService.createProject(newBaseUrl, type, pjt);
         if (check.equals("1")) {
             return new ResponseEntity<>("프로젝트 생성 성공했습니다.", HttpStatus.OK);
         } else if (check.equals("2")) {
-            return new ResponseEntity<>("이미 동일한 프로젝트가 존재합니다.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("프로젝트 생성에 실패했습니다.", HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(check, HttpStatus.BAD_REQUEST);
         }
@@ -72,19 +71,26 @@ public class ProjectController {
 
     @GetMapping("/")
     public ResponseEntity<String> pjtRead(@RequestHeader("Authorization") String jwt) {
-        String baseUrl = "/home/ubuntu/crow_data/999";
-        showFilesInDIr(baseUrl);
+//        String baseUrl = "/home/ubuntu/crow_data/999";
+//        showFilesInDIr(baseUrl);
+        ProcessBuilder pro = new ProcessBuilder("django-admin", "startproject", "sadfs");
+        pro.directory(new File("/home/ubuntu/crow_data/"));
+
+        try {
+            pro.start();
+        } catch (IOException e) {
+            out.println(e.getMessage());
+        }
 
         return new ResponseEntity<>("1", HttpStatus.ACCEPTED);
     }
 
 
     @PostMapping("/projectDeleter")
-
-    public ResponseEntity<String> deletePjt(@RequestHeader("Authorization") String jwt, @RequestBody List<Long> teamSeqs) {
+    public ResponseEntity<String> deletePjt(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,List<Long>> teamSeqs) {
 
         ProcessBuilder deleter = new ProcessBuilder();
-        for (Long seq : teamSeqs) {
+        for (Long seq : teamSeqs.get("teamSeqs")) {
             deleter.command("rm","-r",String.valueOf(seq));
             deleter.directory(new File("/home/ubuntu/crow_data"));
 
