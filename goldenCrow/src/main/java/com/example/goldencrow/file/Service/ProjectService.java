@@ -53,9 +53,11 @@ public class ProjectService {
         for (int i = 0; i < files.length; i++) {
             File dir = files[i];
             String name = names[i];
-            out.println(name + dir.getPath() + thisTeam.getTeamSeq());
+            out.println("DTo 만들기 전!!");
             FileCreateDto newFileCreateDto = new FileCreateDto(name,dir.getPath());
+            out.println(name + dir.getPath());
             fileService.saveFileEntity(newFileCreateDto,thisTeam);
+            out.println("함수 성공!!");
             if (dir.isDirectory()) {
                 findFilesInDIr(dir.getPath(),teamSeq,type);
             }
