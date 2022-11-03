@@ -33,7 +33,9 @@ public class ProjectController {
     public static void showFilesInDIr(String path) {
         File file = new File(path);
         File files[] = file.listFiles();
-        System.out.println(files);
+        System.out.println(files.length);
+        out.println("여기야 여기!!!!!");
+        out.println(files[0]);
         String names[] = file.list();
 
         for (int i = 0; i < files.length; i++) {
@@ -71,7 +73,7 @@ public class ProjectController {
 
     @GetMapping("/")
     public ResponseEntity<String> pjtRead(@RequestHeader("Authorization") String jwt) {
-        String baseUrl = "/home/ubuntu/crow_data/999";
+        String baseUrl = "/home/ubuntu/crow_data/999/";
         showFilesInDIr(baseUrl);
 
         return new ResponseEntity<>("1", HttpStatus.ACCEPTED);
