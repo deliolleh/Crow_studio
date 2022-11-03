@@ -338,10 +338,9 @@ public class TeamService {
                 Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
                 if(!teamEntityOptional.isPresent()){
                     // 내가 리더가 아니라면
-                    // 팀 엔티티를 수정해야 함
-                    TeamEntity teamEntity = teamEntityOptional.get();
-                    teamEntity.setTeamLeader(userRepository.findById(userSeq).get());
-                    teamRepository.saveAndFlush(teamEntity);
+                    // 그 멤버 엔티티만 찾아서 삭제하면 됨
+                    MemberEntity memberEntity = memberEntityOptional.get();
+                    memberRepository.delete(memberEntity);
                     return "success";
                 } else {
                     // 저 팀이 있다는 건 내가 팀 리더란 소리이므로
