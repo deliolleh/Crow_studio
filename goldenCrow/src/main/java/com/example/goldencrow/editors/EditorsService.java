@@ -10,13 +10,14 @@ import java.util.*;
 
 @Service
 public class EditorsService {
-    String path = System.getProperty("user.dir");
 
     boolean checkOs = System.getProperty("os.name").toLowerCase().contains("window");
+    String path = checkOs ? System.getProperty("user.dir") + "\\" : "/home/ubuntu/crow_data/temp/";
 
     public HashMap<String, String> Formatting(String language, String code) {
         long now = new Date().getTime();
         HashMap<String, String> response = new HashMap<>();
+        System.out.println(path);
 
         String type;
         if (language.equals("python")) {
@@ -29,7 +30,8 @@ public class EditorsService {
 
             String name = "format" + now + type;
             // temp.py 파일 생성
-            File file = new File(path + "\\" + name);
+            File file = new File(path + name);
+            System.out.println("파일생성 성공");
             FileOutputStream ffw = new FileOutputStream(file);
             PrintWriter writer = new PrintWriter(ffw);
             // temp.py에 code를 입력
@@ -41,12 +43,10 @@ public class EditorsService {
 
             // windows cmd를 가리키는 변수
             // 나중에 Ubuntu할 때 맞는 변수로 바꿀 것
-            String env;
-            System.out.println(checkOs);
+            String env = "";
+            System.out.println(checkOs? "Operating in windows" : "Operating in linux");
             if (checkOs) {
                 env = "cmd /c";
-            } else {
-                env = "/bin/sh -c";
             }
             String command = env + " black " + name;
 
@@ -108,7 +108,9 @@ public class EditorsService {
         Path filePath = Paths.get(name);
         try {
             Files.deleteIfExists(filePath);
+            System.out.println("Delete file complete");
         } catch (Exception e) {
+            System.out.println("Deleting file fail");
             e.printStackTrace();
         }
 
