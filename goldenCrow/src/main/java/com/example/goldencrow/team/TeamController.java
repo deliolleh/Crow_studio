@@ -208,11 +208,15 @@ public class TeamController {
         // 리더면 못 나갈 예정임
         // 원래 내 팀이 아니었어도 못 나갈 예정임
 
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
-        }
+        String result = teamService.memberQuit(jwt, teamSeq);
 
-        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        if(result.equals("success")) {
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else if(result.equals("403")) {
+            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
 
     }
 

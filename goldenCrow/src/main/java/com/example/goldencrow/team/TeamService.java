@@ -314,5 +314,41 @@ public class TeamService {
 
     }
 
+    // 팀 탈퇴
+    public String memberQuit(String jwt, Long teamSeq) {
+
+        try {
+
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+            // 저 팀 시퀀스를 가지고 내가 속한 멤버가 있는지 확인
+            Optional<MemberEntity> memberEntityOptional = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(userSeq, teamSeq);
+
+            if(memberEntityOptional.isPresent()){
+                // 있다면 그 팀 리더가 내가 아닌 게 맞는지 확인
+                Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
+                if(!teamEntityOptional.isPresent()){
+                    // 내가 리더가 아니라면
+                    // 팀 엔티티를 수정해야 함
+                    TeamEntity teamEntity = teamEntityOptional.get();
+                    teamEntity.setTeamLeader(userRepository.findById(userSeq).get());
+                    teamRepository.saveAndFlush(teamEntity);
+                    return "success";
+                } else {
+                    // 저 팀이 있다는 건 내가 팀 리더란 소리이므로
+                    return "403";
+                }
+            } else {
+                return "error";
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+
+    }
+
 
 }
