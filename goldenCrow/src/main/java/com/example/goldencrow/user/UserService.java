@@ -1,6 +1,7 @@
 package com.example.goldencrow.user;
 
 import com.example.goldencrow.common.CryptoUtil;
+import com.example.goldencrow.file.Service.FileService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.MemberRepository;
 import com.example.goldencrow.team.repository.TeamRepository;
@@ -11,26 +12,33 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    final String BASE_PATH = "/home/ubuntu/crow_data/userprofile/";
 
     @Autowired
-    private JwtService jwtService;
+    private UserRepository userRepository;
 
     @Autowired
     private TeamRepository teamRepository;
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private FileService fileService;
 
     // 회원가입
     public Map<String, String> signupService(String userId, String userPassword, String userNickname){
@@ -157,7 +165,7 @@ public class UserService {
     }
 
     // 프로필사진 수정
-    public String editProfileService(String jwt, Map<String, String> req){
+    public String editProfileService(String jwt, MultipartFile multipartFile){
 
         // jwt 체크는 인터셉터에서 해서 넘어왔을테니까
 
@@ -165,14 +173,50 @@ public class UserService {
             // jwt에서 userSeq를 뽑아내고
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
-            // userSeq로 userEntity를 뽑아낸 다음
+            // 기존에 있던 프로필 사진 정보 조회
             UserEntity userEntity = userRepository.findById(userSeq).get();
+            String pastProfile = userEntity.getUserProfile();
 
-            // userEntity의 프로필 부분을 req에서 꺼내온 값으로 수정
-            userEntity.setUserProfile(req.get("userProfile"));
+            if(pastProfile!=null){
+                // null 이 아니라는 것은 기존에 업로드한 이미지가 있다는 뜻
+                // 그 주소로 가서 파일 삭제
+                Files.delete(Paths.get(pastProfile));
+                System.out.println("기존 정보 삭제 완료");
+            }
 
-            // saveAndFlush
+            // 이제 지난 흔적이 없음
+
+            // 유저시퀀스 + 지금 시간 + 입력받은 파일명으로 서버에 저장
+            long now = new Date().getTime();
+            String fileName = userSeq + "_" + now + "_" + multipartFile.getName();
+            String filePath = BASE_PATH + fileName;
+
+            // 밖으로 내보낼 아웃풋스트림 만들고
+            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+            // 입력받은 파일을 하나씩 읽을 인풋스트림
+            InputStream inputStream = multipartFile.getInputStream();
+
+            // 읽어들인 글자의 수
+            int readCount = 0;
+
+            // 한번에 읽을 만큼의 바이트를 지정
+            // 1024, 2048 등의 크기가 일반적
+            byte[] buffer = new byte[1024];
+
+            // 끝까지 읽기
+            while((readCount = inputStream.read(buffer))!=-1) {
+                fileOutputStream.write(buffer, 0, readCount);
+            }
+
+            // 파일 스트림 닫기
+            inputStream.close();
+            fileOutputStream.close();
+            System.out.println("서버에 저장 완료");
+
+            // 방금 넣은 파일의 주소를 db에 저장
+            userEntity.setUserProfile(filePath);
             userRepository.saveAndFlush(userEntity);
+            System.out.println("db에 저장 완료");
 
             // 성공 여부 반환
             return "success";
@@ -182,6 +226,35 @@ public class UserService {
             return "error";
         }
 
+    }
+
+    // 프로필사진 삭제
+    public String deleteProfileService(String jwt) {
+        try {
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+            // 기존에 있던 프로필 사진 정보 조회
+            UserEntity userEntity = userRepository.findById(userSeq).get();
+            String pastProfile = userEntity.getUserProfile();
+
+            if(pastProfile!=null){
+                // null 이 아니라는 것은 기존에 업로드한 이미지가 있다는 뜻
+                // 그 주소로 가서 파일 삭제
+                Files.delete(Paths.get(pastProfile));
+                System.out.println("기존 정보 삭제 완료");
+            }
+
+            userEntity.setUserProfile(null);
+            userRepository.saveAndFlush(userEntity);
+
+            // 성공 여부 반환
+            return "success";
+
+        } catch (Exception e){
+            e.printStackTrace();
+            return "error";
+        }
     }
 
     // 비밀번호 수정

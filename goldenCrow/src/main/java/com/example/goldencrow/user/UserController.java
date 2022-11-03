@@ -4,6 +4,7 @@ import com.example.goldencrow.user.dto.UserInfoDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -112,14 +113,27 @@ public class UserController {
 
     // 프로필사진 수정
     @PutMapping("/edit/profile")
-    public ResponseEntity<String> editProfilePut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
+    public ResponseEntity<String> editProfilePut(@RequestHeader("Authorization") String jwt, @RequestBody MultipartFile multipartFile) {
 
-        if(req.get("userProfile")==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        if (multipartFile.isEmpty()) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
         // 일단 성공하면 이렇게 반환될 겁니다
-        if(userService.editProfileService(jwt, req).equals("success")) {
+        if(userService.editProfileService(jwt, multipartFile).equals("success")) {
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    // 프로필사진 삭제
+    @DeleteMapping("/edit/profile")
+    public ResponseEntity<String> deleteProfileDelete(@RequestHeader("Authorization") String jwt){
+
+        // 일단 성공하면 이렇게 반환될 겁니다
+        if(userService.deleteProfileService(jwt).equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
