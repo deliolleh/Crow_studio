@@ -6,6 +6,8 @@ import com.example.goldencrow.file.FileEntity;
 import com.example.goldencrow.file.Repository.FileRepository;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
+import com.example.goldencrow.user.JwtService;
+import com.example.goldencrow.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +24,19 @@ import java.util.Optional;
 
 @Service
 public class FileService {
+
     @Autowired
     private TeamRepository teamRepository;
 
     @Autowired
     private FileRepository fileRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private JwtService jwtService;
+
     /** 파일 생성 로직
      * 파일이 성공적으로 생성되면 true
      * 아니면 false 반환*/
@@ -136,6 +146,5 @@ public class FileService {
         fileRepository.saveAndFlush(nFile);
         return true;
     }
-
 
 }
