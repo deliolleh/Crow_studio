@@ -4,9 +4,7 @@ import com.example.goldencrow.file.Repository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 import static java.lang.System.out;
 
@@ -34,14 +32,43 @@ public class ProjectService {
     public String createProject(String path, Integer type, String projectName) {
 
         String fileTitle = projectName;
+        String baseUrl = "/home/ubuntu/crow_data";
+        ProcessBuilder here = new ProcessBuilder("ls");
+        here.directory(new File(baseUrl));
+        out.println(path);
+        ProcessBuilder test = new ProcessBuilder("touch test.py");
+        test.directory(new File(baseUrl));
+        String newPath = "."+path+"/";
+        try{
+            test.start();
+            Process p = here.start();
+            InputStream stderr = p.getInputStream();
+            InputStreamReader isr = new InputStreamReader(stderr);
+            BufferedReader br = new BufferedReader(isr);
+            String line = null;
 
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+
+            p.waitFor();
+            System.out.println("Waiting ...");
+
+        } catch (IOException e) {
+            out.println(e.getMessage());
+        } catch (InterruptedException e) {
+            out.println(e.getMessage());
+        }
 
         if (type == 2) {
+            ProcessBuilder django = new ProcessBuilder(String.format("django-admin startproject %s",fileTitle));
+            django.directory(new File(baseUrl));
             ProcessBuilder djangoStarter = new ProcessBuilder();
             djangoStarter.command(String.format("django-admin startproject %s",fileTitle));
             out.println(fileTitle);
             djangoStarter.directory(new File(path+"/"));
             try {
+                django.start();
                 out.println("여기까진 와요!");
                 djangoStarter.start();
             } catch (IOException e) {
