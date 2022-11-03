@@ -84,7 +84,6 @@ public class FileService {
         if (type == 1) {
             ProcessBuilder pb = new ProcessBuilder();
             pb.command("sudo","rm","-r",filePath);
-            pb.directory(new File(String.format("/home/ubuntu/crow_data/%d",file.getTeam().getTeamSeq())));
 
             try{
                 pb.start();
