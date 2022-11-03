@@ -21,6 +21,7 @@ pipeline {
                                     -v /home/ubuntu/crow_data:/home/ubuntu/crow_data \
                                     -v /var/run/docker.sock:/var/run/docker.sock \
                                     -v /usr/bin/docker:/usr/bin/docker \
+                                    -v /usr/bin/django-admin:/usr/bin/django-admin \
                                     goldencrow'
                         }
                 }
