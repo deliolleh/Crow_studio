@@ -88,6 +88,7 @@ public class FileService {
             try{
                 pb.start();
             } catch (IOException e) {
+                System.out.println(e.getMessage());
                 return false;
             }
 
