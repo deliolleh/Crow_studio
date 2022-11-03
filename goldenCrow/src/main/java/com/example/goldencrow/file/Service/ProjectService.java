@@ -32,7 +32,7 @@ public class ProjectService {
     public String createProject(String path, Integer type, String projectName) {
 
         String fileTitle = projectName;
-        String baseUrl = "/home/ubuntu/crow_data";
+        String baseUrl = "home/ubuntu/crow_data";
         ProcessBuilder here = new ProcessBuilder("ls");
         here.directory(new File(baseUrl));
         out.println(path);
