@@ -40,7 +40,7 @@ public class FileService {
     /**
      * file db에 저장하는 함수
      */
-    public void saveFileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
+    public boolean saveFileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
         System.out.println("엔티티 만들기 전!");
         System.out.println(team.getTeamName() + fileCreateDto.getFilePath());
         FileEntity fileEntity = new FileEntity(fileCreateDto,team);
@@ -48,6 +48,8 @@ public class FileService {
         System.out.println(fileCreateDto.getFilePath()+fileCreateDto.getFileTitle());
         fileRepository.saveAndFlush(fileEntity);
         System.out.println("파일 저장 제대로 됨!!");
+
+        return true;
     }
 
     /** 파일 생성 로직
