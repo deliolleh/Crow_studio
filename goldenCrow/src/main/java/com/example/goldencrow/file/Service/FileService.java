@@ -106,30 +106,6 @@ public class FileService {
         return true;
     }
 
-    public boolean deleteProfile(String path, Integer type) {
-        if (type == 1) {
-            ProcessBuilder pb = new ProcessBuilder();
-            pb.command("sudo","rm","-r",path);
-            pb.directory(new File(path));
-
-            try{
-                pb.start();
-            } catch (IOException e) {
-                return false;
-            }
-
-        } else {
-            Path path1 = Paths.get(path);
-            try {
-                Files.delete(path1);
-            } catch (NoSuchFileException e) {
-                return false;
-            } catch (IOException e) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     public boolean saveFile(String filePath, String content) {
         File oldFile = new File(filePath);
