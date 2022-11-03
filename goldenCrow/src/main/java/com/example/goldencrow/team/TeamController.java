@@ -77,10 +77,12 @@ public class TeamController {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
-        String result = teamService.teamModify(jwt, teamSeq, req.get("teamName"));
+        String teamName = req.get("teamName");
+
+        String result = teamService.teamModify(jwt, teamSeq, teamName);
 
         if(result.equals("success")){
-            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+            return new ResponseEntity<>(teamName, HttpStatus.OK);
         } else if(result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
         } else {
