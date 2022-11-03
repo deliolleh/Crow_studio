@@ -53,7 +53,7 @@ public class ProjectService {
         for (int i = 0; i < files.length; i++) {
             File dir = files[i];
             String name = names[i];
-            out.println(name + dir.getPath());
+            out.println(name + dir.getPath() + thisTeam.getTeamSeq());
             FileCreateDto newFileCreateDto = new FileCreateDto(name,dir.getPath());
             fileService.saveFileEntity(newFileCreateDto,thisTeam);
             if (dir.isDirectory()) {
