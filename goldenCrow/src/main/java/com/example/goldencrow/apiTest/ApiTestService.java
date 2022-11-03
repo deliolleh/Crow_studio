@@ -1,22 +1,71 @@
 package com.example.goldencrow.apiTest;
 
+import com.example.goldencrow.apiTest.dto.ApiTestDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class ApiTestService {
-    public Map<String, Object> apiTest(Map<String, Object> req) {
-        String status = "200 OK (status)";
-        String time = String.format("request : %s, %s api %s 응답시간 결과", req.get("request"), req.get("api"), req.get("type"));
-        Map<String, Object> response = new HashMap<>();
-        response.put("응답 받을 키 1", "응답 받은 내용 1");
-        response.put("응답 받을 키 2", "응답 받은 내용 2");
-        Map<String, Object> res = new HashMap<>();
-        res.put("status", status);
-        res.put("time", time);
-        res.put("response", response);
-        return res;
+
+    public RestTemplate restTemplate = new RestTemplate();
+
+    public Map<String, Object> apiTest(ApiTestDto apiTestDto) {
+        String api = apiTestDto.getApi();
+        String type = apiTestDto.getType();
+        JSONObject objRequest = apiTestDto.getRequest();
+        JSONObject objHeaders = apiTestDto.getHeader();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, String> mapHeader = objectMapper.convertValue(objHeaders, Map.class);
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.setAll(mapHeader);
+
+        HttpEntity<String> requestOne = new HttpEntity<>(objRequest.toJSONString(), headers);
+
+        Map<String, Object> result = new HashMap<>();
+
+        try {
+            Object response;
+            long beforeTime = System.currentTimeMillis();
+            switch (type.toUpperCase()) {
+                case "GET":
+//                result = restTemplate.getForObject(api, Object.class, requestOne);
+                    response = restTemplate.exchange(api, HttpMethod.GET, requestOne, Object.class);
+                    break;
+
+                case "POST":
+//                result = restTemplate.postForObject(api, requestOne, Object.class);
+                    response = restTemplate.exchange(api, HttpMethod.POST, requestOne, Object.class);
+                    break;
+
+                case "PUT":
+                    response = restTemplate.exchange(api, HttpMethod.PUT, requestOne, Object.class);
+                    break;
+
+                default:
+                    response = restTemplate.exchange(api, HttpMethod.DELETE, requestOne, Object.class);
+                    break;
+            }
+            long afterTime = System.currentTimeMillis();
+            long diffTime = afterTime - beforeTime;
+            HashMap<String,Object> body = new ObjectMapper().convertValue(response, HashMap.class);
+            result.put("data", body.get("body"));
+            result.put("time", diffTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("data", "ERROR");
+        }
+
+        return result;
     }
 }
