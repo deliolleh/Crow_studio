@@ -24,8 +24,10 @@ pipeline {
                                     -v /usr/bin/django-admin:/usr/bin/django-admin \
                                     -v /usr/bin/black:/usr/bin/black \
                                     -v /usr/bin/pylint:/usr/bin/pylint \
+                                    -v /usr/bin/uvicorn:/usr/bin/uvicorn \
                                     -v /usr/lib/python3/dist-packages/:/usr/lib/python3/dist-packages/ \
                                     -v /usr/lib/python3.9/distutils/:/usr/lib/python3.9/distutils/ \
+                                    -v /usr/lib/python3.8/distutils/:/usr/lib/python3.8/distutils/ \
                                     goldencrow'
                         }
                 }
