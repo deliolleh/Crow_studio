@@ -2,15 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import userApi from "../api/userApi";
 
-// const initialState = {
-//   isLoggedIn: false,
-//   mySeq: "",
-//   myEmail: "",
-//   myNickname: "",
-//   myImageURL: "",
-//   // myDesc: "",
-// };
-
 const initialState = {
   value: {
     isLoggedIn: false,
@@ -18,7 +9,6 @@ const initialState = {
     myEmail: "",
     myNickname: "",
     myImageURL: "",
-    // myDesc: "",
   },
 };
 
@@ -27,7 +17,6 @@ export const signup = createAsyncThunk(
   async (signupData, { rejectWithValue, dispatch }) => {
     try {
       const response = await userApi.signup(signupData);
-      // localStorage.setItem("access-token", `jwt ${response.data.jwt}`);
       localStorage.setItem("access-token", `${response.data.jwt}`);
       dispatch(getUser());
       return response.data;
@@ -45,7 +34,6 @@ export const login = createAsyncThunk(
   async (loginData, { rejectWithValue, dispatch }) => {
     try {
       const response = await userApi.login(loginData);
-      // localStorage.setItem("access-token", `jwt ${response.data.jwt}`);
       localStorage.setItem("access-token", `${response.data.jwt}`);
       dispatch(getUser());
       return response.data;
@@ -80,6 +68,20 @@ export const getMypage = createAsyncThunk("user/getMypage", async (userSeq) => {
   }
 });
 
+export const modifyNickname = createAsyncThunk(
+  "user/modifyNickname",
+  async (nicknameData) => {
+    try {
+      const response = await userApi.putNickname(nicknameData);
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+    }
+  }
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -103,6 +105,9 @@ export const userSlice = createSlice({
       })
       .addCase(getUser.rejected, (state) => {
         state.value = initialState.value;
+      })
+      .addCase(modifyNickname.fulfilled, (state, action) => {
+        state.value.myNickname = action.payload;
       });
   },
 });

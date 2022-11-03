@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { getUser } from "./redux/userSlice";
 
-import ProtectedRoute from "./route/ProtectedProute";
+import ProtectedRoute from "./route/ProtectedRroute";
 // import PrivateRoute from "./route/PrivateRoute";
 
 import Intro from "./pages/intro/Intro";
