@@ -58,13 +58,11 @@ public class CompileService {
         }
         else if (Objects.equals(type, "fastapi")) {
             content = "FROM python:3.10\n" +
-                    "WORKDIR /prod\n" +
+                    "WORKDIR " + filePath + "\n" +
 //                    "COPY ./requirements.txt /prod/requirements.txt\n" +
 //                    "RUN pip install --no-cache-dir --upgrade -r /prod/requirements.txt\n" +
-                    "COPY ./app /prod/app\n" +
-                    "RUN apt-get update\n" +
-                    "RUN apt-get -y install libgl1-mesa-glx\n" +
-                    "CMD [\"uvicorn\", \"app.main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"3000\"]";
+                    "COPY ./" + projectName + " /prod/" + projectName + "\n" +
+                    "CMD [\"uvicorn\", \"" + projectName + ".main:" + projectName + "\", \"--host\", \"0.0.0.0\", \"--port\", \"3000\"]";
         }
         File file = new File(filePath + "/Dockerfile");
         try {
