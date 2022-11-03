@@ -26,7 +26,7 @@ public class ForumController {
 
     // 게시글 등록
     @PostMapping("")
-    public ResponseEntity<String> ForumUpload(@RequestHeader("jwt") String jwt, @RequestBody ForumDto forumDto) {
+    public ResponseEntity<String> ForumUpload(@RequestHeader("Authorization") String jwt, @RequestBody ForumDto forumDto) {
         if (jwt.isEmpty()) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         } else {
@@ -66,7 +66,7 @@ public class ForumController {
     }
 
     @PutMapping("/{boardSeq}")
-    public ResponseEntity<String> forumUpdate(@PathVariable Long boardSeq, @RequestHeader("jwt") String jwt, @RequestBody ForumDto forumDto) {
+    public ResponseEntity<String> forumUpdate(@PathVariable Long boardSeq, @RequestHeader("Authorization") String jwt, @RequestBody ForumDto forumDto) {
         if (jwt.isEmpty()) {
             return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
         } else {
@@ -88,7 +88,7 @@ public class ForumController {
 
     @DeleteMapping("/{boardSeq}")
     public ResponseEntity<String> forumDelete(@PathVariable Long boardSeq,
-                                              @RequestHeader("jwt") String jwt) {
+                                              @RequestHeader("Authorization") String jwt) {
         if (jwt.isEmpty()) {
             return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
         } else {
