@@ -71,16 +71,8 @@ public class ProjectController {
 
     @GetMapping("/")
     public ResponseEntity<String> pjtRead(@RequestHeader("Authorization") String jwt) {
-//        String baseUrl = "/home/ubuntu/crow_data/999";
-//        showFilesInDIr(baseUrl);
-        ProcessBuilder pro = new ProcessBuilder("django-admin", "startproject", "sadfs");
-        pro.directory(new File("/home/ubuntu/crow_data/"));
-
-        try {
-            pro.start();
-        } catch (IOException e) {
-            out.println(e.getMessage());
-        }
+        String baseUrl = "/home/ubuntu/crow_data/999";
+        showFilesInDIr(baseUrl);
 
         return new ResponseEntity<>("1", HttpStatus.ACCEPTED);
     }
@@ -102,8 +94,6 @@ public class ProjectController {
         }
 
         return new ResponseEntity<>("성공!",HttpStatus.OK);
-
-
 
     }
 }
