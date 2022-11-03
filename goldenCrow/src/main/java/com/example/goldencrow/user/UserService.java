@@ -1,7 +1,7 @@
 package com.example.goldencrow.user;
 
 import com.example.goldencrow.common.CryptoUtil;
-import com.example.goldencrow.file.Service.FileService;
+import com.example.goldencrow.file.Service.ProjectService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.MemberRepository;
 import com.example.goldencrow.team.repository.TeamRepository;
@@ -38,7 +38,7 @@ public class UserService {
     private JwtService jwtService;
 
     @Autowired
-    private FileService fileService;
+    private ProjectService projectService;
 
     // 회원가입
     public Map<String, String> signupService(String userId, String userPassword, String userNickname){
@@ -301,6 +301,7 @@ public class UserService {
 
             // 걔가 팀장인 팀이 있나 확인
             List<TeamEntity> teamEntityList = teamRepository.findAllByTeamLeader_UserSeq(userSeq);
+            List<Long> teamSeqList = new ArrayList<>();
 
             for(TeamEntity t : teamEntityList){
                 // 그 팀들마다 팀원 수를 세아림
@@ -311,11 +312,21 @@ public class UserService {
                     // 1인팀이 아닌 팀이 하나라도 있을 경우
                     // 탐색을 중지하고 탈퇴 불가 처리
                     return "403";
+                } else {
+                    teamSeqList.add(t.getTeamSeq());
                 }
 
             }
 
             // 여기까지 왔다면 다인팀이면서 리더인 일은 없을 것
+
+            // 그렇다면 내가 리더인 팀은 전부 단일팀이라는 의미
+            // 탈퇴 시에 서버에서 삭제해주어야 함
+
+            if(projectService.deleteProject(teamSeqList).equals("fail!")){
+                return "error";
+            }
+
 
             // userSeq로 userEntity를 뽑아낸 다음
             UserEntity userEntity = userRepository.findById(userSeq).get();
@@ -323,8 +334,8 @@ public class UserService {
             // 유저 테이블에서 해당 유저 삭제
             userRepository.delete(userEntity);
 
-            // 유저가 날아가기 때문에 멤버도 알아서 날아갈 것
-            // 나혼자 팀장이자 팀원일 경우에는 팀도 날아감
+            // 유저가 날아가기 때문에 멤버도 db에서 알아서 날아갈 것
+            // 나혼자 팀장이자 팀원일 경우에는 팀도 db에서 날아감 (서버에선 아까 지움)
             // 다인팀의 경우 팀장이지 않을 것이므로 팀과 파일이 보존됨
 
             return "success";

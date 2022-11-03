@@ -1,5 +1,6 @@
 package com.example.goldencrow.team;
 
+import com.example.goldencrow.file.Service.ProjectService;
 import com.example.goldencrow.team.dto.TeamDto;
 import com.example.goldencrow.team.entity.MemberEntity;
 import com.example.goldencrow.team.entity.TeamEntity;
@@ -30,6 +31,9 @@ public class TeamService {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private ProjectService projectService;
 
     // 팀 조회
     public List<TeamDto> teamList(String jwt) {
@@ -134,9 +138,13 @@ public class TeamService {
                 teamRepository.delete(teamEntity);
 
                 // 팀이 날아가기 때문에 멤버db도 날아가고 파일db도 날아간다 (캐스케이드)
-                // 하지만 파일을 직접 날리긴 해야해!!
 
-                // 그래서 이쯤에서 restTemplate로 파일 날리는 api를 써야함
+                // 하지만 파일을 직접 날리긴 해야해!!
+                List<Long> teamSeqList = new ArrayList<>();
+                teamSeqList.add(teamSeq);
+                if(projectService.deleteProject(teamSeqList).equals("fail!")) {
+                    return "error";
+                }
 
                 return "success";
             } else {
