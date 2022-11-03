@@ -188,7 +188,8 @@ public class UserService {
 
             // 유저시퀀스 + 지금 시간 + 입력받은 파일명으로 서버에 저장
             long now = new Date().getTime();
-            String fileName = userSeq + "_" + now + "_" + multipartFile.getName();
+            System.out.println(now);
+            String fileName = userSeq + "_" + now + ".jpg";
             String filePath = BASE_PATH + fileName;
 
             // 밖으로 내보낼 아웃풋스트림 만들고
