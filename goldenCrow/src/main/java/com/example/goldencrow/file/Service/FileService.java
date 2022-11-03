@@ -61,7 +61,7 @@ public class FileService {
         }
     }
     /** 파일 삭제  */
-    public boolean deleteFile(String filePath, Long teamSeq) {
+    public boolean deleteFile(String filePath,Integer type, Long teamSeq) {
         Path path = Paths.get(filePath);
         if (!fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq,filePath).isPresent()) {
             return false;
@@ -69,13 +69,29 @@ public class FileService {
 
         FileEntity file = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq,filePath).get();
 
-        try {
-            Files.delete(path);
-        } catch (NoSuchFileException e) {
-            return false;
-        } catch (IOException e) {
-            return false;
+        if (type == 1) {
+            ProcessBuilder pb = new ProcessBuilder();
+            pb.command("sudo","rm","-r",file.getFilePath());
+            pb.directory(new File(String.format("/home/ubuntu/crow_data/%d",file.getTeam().getTeamSeq())));
+
+            try{
+                pb.start();
+            } catch (IOException e) {
+                return false;
+            }
+
+        } else {
+
+            try {
+                Files.delete(path);
+            } catch (NoSuchFileException e) {
+                return false;
+            } catch (IOException e) {
+                return false;
+            }
+
         }
+
         fileRepository.delete(file);
         return true;
     }
