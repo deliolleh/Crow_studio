@@ -41,8 +41,10 @@ public class FileService {
      * file db에 저장하는 함수
      */
     public void saveFileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
+        System.out.println("엔티티 만들기 전!");
+        System.out.println(team.getTeamName() + fileCreateDto.getFilePath());
         FileEntity fileEntity = new FileEntity(fileCreateDto,team);
-        System.out.println(team + team.getTeamName());
+
         System.out.println(fileCreateDto.getFilePath()+fileCreateDto.getFileTitle());
         fileRepository.saveAndFlush(fileEntity);
         System.out.println("파일 저장 제대로 됨!!");
