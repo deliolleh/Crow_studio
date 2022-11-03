@@ -33,48 +33,14 @@ public class ProjectService {
 
         String fileTitle = projectName;
 
-        String baseUrl = "/home/ubuntu/crow_data/";
-        String newPath = "."+path+"/";
-        out.println(newPath);
-        ProcessBuilder here = new ProcessBuilder("ls");
-        here.directory(new File(baseUrl));
-
-        ProcessBuilder test = new ProcessBuilder("touch test.py");
-        test.directory(new File(newPath));
-
-        try{
-            Process p = here.start();
-
-            InputStream stderr = p.getInputStream();
-            InputStreamReader isr = new InputStreamReader(stderr);
-            BufferedReader br = new BufferedReader(isr);
-            String line = null;
-
-            while ((line = br.readLine()) != null) {
-                System.out.println(line);
-            }
-
-            p.waitFor();
-            System.out.println("Waiting ...");
-
-            test.start();
-
-        } catch (IOException e) {
-            out.println(e.getMessage());
-        } catch (InterruptedException e) {
-            out.println(e.getMessage());
-        }
 
         if (type == 2) {
-            ProcessBuilder django = new ProcessBuilder("django-admin", "startproject",fileTitle);
-            django.directory(new File(baseUrl));
+
             ProcessBuilder djangoStarter = new ProcessBuilder();
             djangoStarter.command("django-admin", "startproject", fileTitle);
-            out.println(fileTitle);
+
             djangoStarter.directory(new File(path));
             try {
-                django.start();
-                out.println("여기까진 와요!");
                 djangoStarter.start();
             } catch (IOException e) {
                 out.println(e.getMessage());

@@ -71,7 +71,7 @@ public class FileService {
 
         if (type == 1) {
             ProcessBuilder pb = new ProcessBuilder();
-            pb.command("sudo","rm","-r",file.getFilePath());
+            pb.command("sudo","rm","-r",filePath);
             pb.directory(new File(String.format("/home/ubuntu/crow_data/%d",file.getTeam().getTeamSeq())));
 
             try{
@@ -93,6 +93,31 @@ public class FileService {
         }
 
         fileRepository.delete(file);
+        return true;
+    }
+
+    public boolean deleteProfile(String path, Integer type) {
+        if (type == 1) {
+            ProcessBuilder pb = new ProcessBuilder();
+            pb.command("sudo","rm","-r",path);
+            pb.directory(new File(path));
+
+            try{
+                pb.start();
+            } catch (IOException e) {
+                return false;
+            }
+
+        } else {
+            Path path1 = Paths.get(path);
+            try {
+                Files.delete(path1);
+            } catch (NoSuchFileException e) {
+                return false;
+            } catch (IOException e) {
+                return false;
+            }
+        }
         return true;
     }
 
