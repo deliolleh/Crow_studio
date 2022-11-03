@@ -11,6 +11,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.example.goldencrow.file.Service.ProjectService.showFilesInDIr;
 import static java.lang.System.out;
 
 @RestController
@@ -30,26 +31,7 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    public static void showFilesInDIr(String path) {
-        File file = new File(path);
-        File files[] = file.listFiles();
-        System.out.println(files.length);
-        out.println("여기야 여기!!!!!");
-        out.println(files[0]);
-        String names[] = file.list();
 
-        for (int i = 0; i < files.length; i++) {
-            File dir = files[i];
-            String name = names[i];
-            if (dir.isDirectory()) {
-                showFilesInDIr(dir.getPath());
-
-            } else {
-                System.out.println("file: " + dir);
-                System.out.println(name);
-            }
-        }
-    }
 
     @PostMapping("/{teamSeq}")
     public ResponseEntity<String> teamProjectCreate(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> projectName) {
