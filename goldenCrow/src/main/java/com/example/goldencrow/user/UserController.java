@@ -76,7 +76,7 @@ public class UserController {
 
     // 회원정보 조회
     @GetMapping("/info")
-    public ResponseEntity<UserInfoDto> infoGet(@RequestHeader("jwt") String jwt) {
+    public ResponseEntity<UserInfoDto> infoGet(@RequestHeader("Authorization") String jwt) {
 
         // 일단 성공하면 이렇게 반환될 겁니다
         UserInfoDto userInfoDto = userService.infoService(jwt);
@@ -95,7 +95,7 @@ public class UserController {
 
     // 닉네임 수정
     @PutMapping("/edit/nickname")
-    public ResponseEntity<String> editNicknamePut(@RequestHeader("jwt") String jwt, @RequestBody Map<String, String> req) {
+    public ResponseEntity<String> editNicknamePut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
 
         if(req.get("userNickname")==null){
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -112,7 +112,7 @@ public class UserController {
 
     // 프로필사진 수정
     @PutMapping("/edit/profile")
-    public ResponseEntity<String> editProfilePut(@RequestHeader("jwt") String jwt, @RequestBody Map<String, String> req) {
+    public ResponseEntity<String> editProfilePut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
 
         if(req.get("userProfile")==null){
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -129,7 +129,7 @@ public class UserController {
 
     // 비밀번호 수정
     @PutMapping("/edit/password")
-    public ResponseEntity<String> editPasswordPut(@RequestHeader("jwt") String jwt, @RequestBody Map<String, String> req) {
+    public ResponseEntity<String> editPasswordPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
 
         if(req.get("userPassword")==null || req.get("userNewPassword")==null){
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -146,7 +146,7 @@ public class UserController {
 
     // 회원탈퇴
     @DeleteMapping("/quit")
-    public ResponseEntity<String> quitDelete(@RequestHeader("jwt") String jwt){
+    public ResponseEntity<String> quitDelete(@RequestHeader("Authorization") String jwt){
 
         String result = userService.quitUser(jwt);
 
@@ -163,7 +163,7 @@ public class UserController {
 
     // 개인 환경 세팅 저장
     @PutMapping("/personal")
-    public ResponseEntity<String> personalPost(@RequestHeader("jwt") String jwt, @RequestBody UserInfoDto req){
+    public ResponseEntity<String> personalPost(@RequestHeader("Authorization") String jwt, @RequestBody UserInfoDto req){
 
         // 일단 성공하면 이렇게 반환될 겁니다
         if(userService.personalPost(jwt, req).equals("success")) {
@@ -176,7 +176,7 @@ public class UserController {
 
     // 개인 환경 세팅 조회
     @GetMapping("/personal")
-    public ResponseEntity<UserInfoDto> personalGet(@RequestHeader("jwt") String jwt){
+    public ResponseEntity<UserInfoDto> personalGet(@RequestHeader("Authorization") String jwt){
 
         UserInfoDto userInfoDto = userService.personalGet(jwt);
 
