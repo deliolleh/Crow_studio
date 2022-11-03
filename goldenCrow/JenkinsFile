@@ -21,11 +21,11 @@ pipeline {
                                     -v /home/ubuntu/crow_data:/home/ubuntu/crow_data \
                                     -v /var/run/docker.sock:/var/run/docker.sock \
                                     -v /usr/bin/docker:/usr/bin/docker \
-                                    -v /usr/local/bin/django-admin:/usr/local/bin/django-admin \
+                                    -v /usr/local/bin/django-admin:/usr/bin/django-admin \
                                     -v /usr/bin/black:/usr/bin/black \
-                                    -v /usr/local/bin/pylint:/usr/local/bin/pylint \
+                                    -v /usr/local/bin/pylint:/usr/bin/pylint \
                                     -v /usr/bin/uvicorn:/usr/bin/uvicorn \
-                                    -v /usr/local/lib/python3.8/dist-packages:/usr/local/lib/python3.8/dist-packages \
+                                    -v /usr/local/lib/python3.8/dist-packages:/usr/lib/python3.8/dist-packages \
                                     -v /usr/lib/python3.9/distutils/:/usr/lib/python3.9/distutils/ \
                                     -v /usr/lib/python3.8/distutils/:/usr/lib/python3.8/distutils/ \
                                     goldencrow'
