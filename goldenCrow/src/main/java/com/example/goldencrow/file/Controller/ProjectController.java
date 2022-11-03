@@ -8,8 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.System.out;
 
@@ -53,12 +55,19 @@ public class ProjectController {
     }
 
     @GetMapping("/{teamSeq}")
-    public ResponseEntity<String> pjtRead(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
-        String baseUrl = "/home/ubuntu/crow_data/";
-        String newBaseUrl = baseUrl + String.valueOf(teamSeq);
-        //projectService.findFilesInDIr(baseUrl,teamSeq);
+    public ResponseEntity<Map<String,List<String>>> pjtRead(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
+        String baseUrl = "/home/ubuntu/crow_data/"+String.valueOf(teamSeq);
+        File teamPjt = new File(baseUrl);
+        String[] names = teamPjt.list();
+        String rootName = names[0];
+        String newUrl = baseUrl+ "/" + rootName;
+        out.println(rootName);
+        Map<String,List<String>> visit = new HashMap<>();
+        List<String> newValue = new ArrayList<>();
+        visit.put(rootName, newValue);
+        projectService.readDirectory(newUrl,rootName,visit);
 
-        return new ResponseEntity<>("1", HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(visit, HttpStatus.ACCEPTED);
     }
 
 
