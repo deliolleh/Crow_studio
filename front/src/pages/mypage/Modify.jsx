@@ -1,7 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 
-const Modify = ({ closeModify }) => {
+const initialErrorState = { nicknameErrorMsg: "", passwordErrorMsg: "" };
+
+const Modify = ({ closeModify, userInfo }) => {
   const clickModifyClose = () => closeModify(false);
+  const [inputValue, setInputValue] = useState({
+    nickname: userInfo.myNickname,
+  });
+  const { nickname } = inputValue;
+  const [errorMsgs, setErrorMsgs] = useState(initialErrorState);
+  const { nicknameErrorMsg } = errorMsgs;
+
+  const inputChangeHandler = (e) => {
+    if (e.target.name === "nickname") {
+      setInputValue((prev) => {
+        return { ...prev, nickname: e.target.value };
+      });
+    }
+  };
 
   return (
     <div className="w-fit h-96 px-8 flex flex-col justify-center border border-primary_-2_dark rounded-md">
@@ -15,11 +31,13 @@ const Modify = ({ closeModify }) => {
         </button>
       </div>
 
+      {/* Profile Image */}
       <div className="w-96 mb-6">
         <div className="text-primary_dark text-sm">프로필 사진</div>
         <div className="w-20 h-20 bg-point_purple rounded-full"></div>
       </div>
 
+      {/* Nickname */}
       <div className="w-96">
         <label htmlFor="nickname" className="text-primary_dark text-sm">
           닉네임
@@ -31,23 +49,10 @@ const Modify = ({ closeModify }) => {
           className="w-full text-white bg-component_item_bg_+1_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
           placeholder="닉네임을 입력하세요"
           required
+          value={nickname}
+          onChange={inputChangeHandler}
         />
-        <div className="h-6 mb-2">에러메시지</div>
-      </div>
-
-      <div className="w-96">
-        <label htmlFor="status" className="text-primary_dark text-sm">
-          상태 메시지
-        </label>
-        <input
-          type="text"
-          id="status"
-          name="status"
-          className="w-full text-white bg-component_item_bg_+1_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
-          placeholder="상태 메시지를 입력하세요"
-          required
-        />
-        <div className="h-6 mb-2">{}</div>
+        <div className="h-6 mb-2">{nicknameErrorMsg}</div>
       </div>
     </div>
   );

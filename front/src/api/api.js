@@ -12,11 +12,10 @@ const headers = {
 const api = axios.create({ baseURL, headers });
 
 api.interceptors.request.use((config) => {
-  if (!config.headers.jwt) {
+  if (!config.headers.Authorization) {
     const accessToken = localStorage.getItem("access-token");
     if (accessToken) {
-      // config.headers.Authorization = accessToken;
-      config.headers.jwt = accessToken.slice(4);
+      config.headers.Authorization = accessToken;
     }
   }
   return config;

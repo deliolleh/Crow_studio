@@ -11,11 +11,9 @@ import Modify from "./Modify";
 const Mypage = () => {
   const { userSeq } = useParams();
   const dispatch = useDispatch();
-  const { mySeq } = useSelector((state) => state.user.value);
+  const { mySeq, myNickname } = useSelector((state) => state.user.value);
   const [isModify, setIsModify] = useState(false);
   const [userInfo, setUserInfo] = useState({});
-
-  // 주석이다
 
   useEffect(() => {
     dispatch(getMypage(userSeq))
@@ -37,7 +35,9 @@ const Mypage = () => {
         openModify={modifyHandler}
       />
       {!isModify && <Project />}
-      {isModify && <Modify closeModify={modifyHandler} />}
+      {isModify && +userSeq === mySeq && (
+        <Modify userInfo={{ myNickname }} closeModify={modifyHandler} />
+      )}
     </section>
   );
 };
