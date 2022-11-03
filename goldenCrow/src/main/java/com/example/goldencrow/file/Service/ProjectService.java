@@ -32,11 +32,12 @@ public class ProjectService {
     public String createProject(String path, Integer type, String projectName) {
 
         String fileTitle = projectName;
+        String baseUrl = "/home/ubuntu/crow_data";
         ProcessBuilder here = new ProcessBuilder("ls");
-        here.directory(new File(path+"/"));
+        here.directory(new File(baseUrl));
         out.println(path);
         ProcessBuilder test = new ProcessBuilder("touch test.py");
-        test.directory(new File(path + "/"));
+        test.directory(new File(baseUrl));
         String newPath = "."+path+"/";
         try{
             test.start();
@@ -60,11 +61,14 @@ public class ProjectService {
         }
 
         if (type == 2) {
+            ProcessBuilder django = new ProcessBuilder(String.format("django-admin startproject %s",fileTitle));
+            django.directory(new File(baseUrl));
             ProcessBuilder djangoStarter = new ProcessBuilder();
             djangoStarter.command(String.format("django-admin startproject %s",fileTitle));
             out.println(fileTitle);
             djangoStarter.directory(new File(path+"/"));
             try {
+                django.start();
                 out.println("여기까진 와요!");
                 djangoStarter.start();
             } catch (IOException e) {
