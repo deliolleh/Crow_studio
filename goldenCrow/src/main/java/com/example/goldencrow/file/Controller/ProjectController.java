@@ -82,20 +82,10 @@ public class ProjectController {
 
     @PostMapping("/projectDeleter")
     public ResponseEntity<String> deletePjt(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,List<Long>> teamSeqs) {
-
-        ProcessBuilder deleter = new ProcessBuilder();
-        for (Long seq : teamSeqs.get("teamSeqs")) {
-            deleter.command("rm","-r",String.valueOf(seq));
-            deleter.directory(new File("/home/ubuntu/crow_data"));
-
-            try {
-                deleter.start();
-            } catch (IOException e) {
-                return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
-            }
+        String check = projectService.deleteProject(teamSeqs.get("teamSeqs"));
+        if (check.equals("fail!")) {
+            return new ResponseEntity<>(check,HttpStatus.BAD_REQUEST);
         }
-
         return new ResponseEntity<>("성공!",HttpStatus.OK);
-
     }
 }

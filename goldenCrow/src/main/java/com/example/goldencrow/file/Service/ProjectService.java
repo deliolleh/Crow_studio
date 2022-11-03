@@ -2,9 +2,12 @@ package com.example.goldencrow.file.Service;
 
 import com.example.goldencrow.file.Repository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.util.List;
 
 import static java.lang.System.out;
 
@@ -99,6 +102,21 @@ public class ProjectService {
         }
         out.println("여기서 걸림");
         return "2";
+    }
+
+    public String deleteProject(List<Long> teamSeqs){
+        ProcessBuilder deleter = new ProcessBuilder();
+        for (Long seq : teamSeqs) {
+            deleter.command("rm", "-r", String.valueOf(seq));
+            deleter.directory(new File("/home/ubuntu/crow_data"));
+
+            try {
+                deleter.start();
+            } catch (IOException e) {
+                return "fail!";
+            }
+        }
+        return "Success";
     }
 
     public String saveProject(){
