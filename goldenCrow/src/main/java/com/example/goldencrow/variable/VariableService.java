@@ -58,9 +58,7 @@ public class VariableService {
             converts.add(camel.toString());
             converts.add(pascal.toString());
             converts.add(snake.toString());
-            System.out.println(camel);
-            System.out.println(pascal);
-            System.out.println(snake);
+            System.out.println(camel + " " + pascal + " " + snake);
 //            String word2 = word.replace("[a,e,i,o,u, A, E, I, O, U]", "");
 
         }
