@@ -34,7 +34,7 @@ public class TeamController {
     // 팀 목록 조회 GET
     // -
     @GetMapping("")
-    public ResponseEntity<List<TeamDto>> teamListGet(@RequestHeader("jwt") String jwt){
+    public ResponseEntity<List<TeamDto>> teamListGet(@RequestHeader("Authorization") String jwt){
 
         // 내가 속한 것만 골라서 반환
         List<TeamDto> teamDtoList = teamService.teamList(jwt);
@@ -51,7 +51,7 @@ public class TeamController {
     // 팀 생성 POST
     // create
     @PostMapping("/create")
-    public ResponseEntity<String> teamCreatePost(@RequestHeader("jwt") String jwt, @RequestBody Map<String, String> req) {
+    public ResponseEntity<String> teamCreatePost(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
 
         if(req.get("teamName")==null) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -68,7 +68,7 @@ public class TeamController {
     // 팀 수정 PUT
     // modify
     @PutMapping("/modify/{teamSeq}")
-    public ResponseEntity<String> teamModifyPut(@RequestHeader("jwt") String jwt, @PathVariable Long teamSeq, @RequestBody Map<String, String> req){
+    public ResponseEntity<String> teamModifyPut(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody Map<String, String> req){
 
         // 리더 권한 없으면 터질 예정임
         // 이전 이름과 같아도 수정함
@@ -92,7 +92,7 @@ public class TeamController {
     // 팀 삭제 DELETE
     // delete/{teamSeq}
     @DeleteMapping("/delete/{teamSeq}")
-    public ResponseEntity<String> teamDelete(@RequestHeader("jwt") String jwt, @PathVariable Long teamSeq){
+    public ResponseEntity<String> teamDelete(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq){
 
         // 리더 권한 없으면 터질 예정임
         // 이후 팀 파일과 이것저것 싹 날아감
@@ -112,7 +112,7 @@ public class TeamController {
     // 팀원 목록 조회 GET
     // member/{teamSeq}
     @GetMapping("/member/{teamSeq}")
-    public ResponseEntity<List<UserInfoDto>> memberListGet(@RequestHeader("jwt") String jwt, @PathVariable Long teamSeq){
+    public ResponseEntity<List<UserInfoDto>> memberListGet(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq){
 
         // 자기 팀이면 ㄱㅊ
 
@@ -131,7 +131,7 @@ public class TeamController {
     // 팀원 추가 PUT
     // add
     @PutMapping("/add")
-    public ResponseEntity<String> memberAddPut(@RequestHeader("jwt") String jwt, @RequestBody Map<String, Long> req){
+    public ResponseEntity<String> memberAddPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req){
 
         // 리더 권한 없으면 터질 예정임
         // 이미 팀 내 유저면 터질 예정임
@@ -154,57 +154,69 @@ public class TeamController {
     // 팀원 삭제 DELETE
     // remove
     @DeleteMapping("/remove")
-    public ResponseEntity<String> memberRemoveDelete(@RequestHeader("jwt") String jwt, @RequestBody Map<String, Long> req){
+    public ResponseEntity<String> memberRemoveDelete(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req){
 
-        // 리더 권한 없으면 터질 예정임
-        // 팀 내 유저가 아니면 터질 예정임
-        // 스스로는 내보낼 수 없음
-
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
-        }
+        // 리더 권한 없으면 터질 예정임 403
+        // 팀 내 유저가 아니면 터질 예정임 error
+        // 스스로는 내보낼 수 없음 error
 
         if(req.get("teamSeq")==null || req.get("memberSeq")==null){
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        String result = teamService.memberRemove(jwt, req.get("teamSeq"), req.get("memberSeq"));
+
+        if(result.equals("success")) {
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else if(result.equals("403")) {
+            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
 
     }
 
     // 팀장 위임 PUT
     // beLeader
     @PutMapping("/beLeader")
-    public ResponseEntity<String> memberBeLeaderPut(@RequestHeader("jwt") String jwt, @RequestBody Map<String, Long> req){
+    public ResponseEntity<String> memberBeLeaderPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req){
 
-        // 리더 권한 없으면 터질 예정임
-        // 팀 내 유저가 아니면 터질 예정임
-
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
-        }
+        // 리더 권한 없으면 터질 예정임 403
+        // 팀 내 유저가 아니면 터질 예정임 error
 
         if(req.get("teamSeq")==null || req.get("memberSeq")==null){
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        String result = teamService.memberBeLeader(jwt, req.get("teamSeq"), req.get("memberSeq"));
+
+        if(result.equals("success")) {
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else if(result.equals("403")) {
+            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
 
     }
 
     // 팀 탈퇴 DELETE
     // quit/{teamSeq}
     @DeleteMapping("/quit/{teamSeq}")
-    public ResponseEntity<String> memberQuitDelete(@RequestHeader("jwt") String jwt, @PathVariable Long teamSeq){
+    public ResponseEntity<String> memberQuitDelete(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq){
 
         // 리더면 못 나갈 예정임
         // 원래 내 팀이 아니었어도 못 나갈 예정임
 
-        if(jwt==null){
-            return new ResponseEntity<>(FAILURE, HttpStatus.UNAUTHORIZED);
-        }
+        String result = teamService.memberQuit(jwt, teamSeq);
 
-        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        if(result.equals("success")) {
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else if(result.equals("403")) {
+            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
 
     }
 

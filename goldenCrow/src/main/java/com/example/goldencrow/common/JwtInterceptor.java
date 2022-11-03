@@ -22,7 +22,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        String jwt = request.getHeader("jwt");
+        String jwt = request.getHeader("Authorization");
         System.out.println("Interceptor Called");
 
         try {
