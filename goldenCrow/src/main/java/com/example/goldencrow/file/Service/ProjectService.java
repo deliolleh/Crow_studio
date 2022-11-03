@@ -53,6 +53,7 @@ public class ProjectService {
         for (int i = 0; i < files.length; i++) {
             File dir = files[i];
             String name = names[i];
+            out.println(name + dir.getPath());
             FileCreateDto newFileCreateDto = new FileCreateDto(name,dir.getPath());
             fileService.saveFileEntity(newFileCreateDto,thisTeam);
             if (dir.isDirectory()) {
@@ -75,11 +76,13 @@ public class ProjectService {
         if (type == 2) {
 
             ProcessBuilder djangoStarter = new ProcessBuilder();
-
+            out.println("여기옴!!");
+            out.println(fileTitle);
             djangoStarter.command("django-admin", "startproject", fileTitle);
             djangoStarter.directory(new File(path));
 
             try {
+                out.println("여기도!!!!");
                 djangoStarter.start();
             } catch (IOException e) {
                 out.println(e.getMessage());
