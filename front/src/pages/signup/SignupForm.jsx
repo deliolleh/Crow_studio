@@ -13,6 +13,9 @@ const initialErrorState = {
   passwordErrorMsg: "",
 };
 
+const emailRegEx =
+  /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
+
 const SignupForm = ({ signupHandler }) => {
   const [inputs, setInputs] = useState(initialInputState); // 초기 입력
   const [errorMsgs, setErrorMsgs] = useState(initialErrorState); // 초기 에러메시지
@@ -53,6 +56,11 @@ const SignupForm = ({ signupHandler }) => {
     if (email.trim().length === 0) {
       setErrorMsgs((prev) => {
         return { ...prev, emailErrorMsg: "이메일을 입력하세요" };
+      });
+      isInvalid = true;
+    } else if (!emailRegEx.test(email)) {
+      setErrorMsgs((prev) => {
+        return { ...prev, emailErrorMsg: "이메일 형식이 올바르지 않습니다" };
       });
       isInvalid = true;
     }
