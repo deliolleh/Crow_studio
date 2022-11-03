@@ -27,7 +27,8 @@ export const signup = createAsyncThunk(
   async (signupData, { rejectWithValue, dispatch }) => {
     try {
       const response = await userApi.signup(signupData);
-      localStorage.setItem("access-token", `jwt ${response.data.jwt}`);
+      // localStorage.setItem("access-token", `jwt ${response.data.jwt}`);
+      localStorage.setItem("access-token", `${response.data.jwt}`);
       dispatch(getUser());
       return response.data;
     } catch (err) {
@@ -44,7 +45,8 @@ export const login = createAsyncThunk(
   async (loginData, { rejectWithValue, dispatch }) => {
     try {
       const response = await userApi.login(loginData);
-      localStorage.setItem("access-token", `jwt ${response.data.jwt}`);
+      // localStorage.setItem("access-token", `jwt ${response.data.jwt}`);
+      localStorage.setItem("access-token", `${response.data.jwt}`);
       dispatch(getUser());
       return response.data;
     } catch (err) {
