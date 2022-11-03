@@ -35,8 +35,11 @@ public class ProjectService {
         ProcessBuilder here = new ProcessBuilder("ls");
         here.directory(new File(path+"/"));
         out.println(path);
+        ProcessBuilder test = new ProcessBuilder("touch test.py");
+        test.directory(new File(path + "/"));
 
         try{
+            test.start();
             Process p = here.start();
             InputStream stderr = p.getInputStream();
             InputStreamReader isr = new InputStreamReader(stderr);
@@ -55,6 +58,7 @@ public class ProjectService {
         } catch (InterruptedException e) {
             out.println(e.getMessage());
         }
+
         if (type == 2) {
             ProcessBuilder djangoStarter = new ProcessBuilder();
             djangoStarter.command(String.format("django-admin startproject %s",fileTitle));
