@@ -39,16 +39,20 @@ public class ProjectService {
         File newDir = new File(newBaseUrl);
 
         if (!newDir.mkdirs()) {
+            out.println("여기서 터짐!!!");
             return "2";
         }
 
         if (type == 2) {
             ProcessBuilder djangoStarter = new ProcessBuilder();
             djangoStarter.command(String.format("django-admin startproject %s",fileTitle));
-            djangoStarter.directory(newDir);
+            out.println(fileTitle);
+            djangoStarter.directory(new File(newBaseUrl));
             try {
+                out.println("여기까진 와요!");
                 djangoStarter.start();
             } catch (IOException e) {
+                out.println(e.getMessage());
                 return e.getMessage();
             }
             return "1";
@@ -102,6 +106,7 @@ public class ProjectService {
             }
             return "1";
         }
+        out.println("여기서 걸림");
         return "2";
     }
 
