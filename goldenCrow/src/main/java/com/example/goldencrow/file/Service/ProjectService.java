@@ -4,9 +4,7 @@ import com.example.goldencrow.file.Repository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 import static java.lang.System.out;
 
@@ -34,8 +32,29 @@ public class ProjectService {
     public String createProject(String path, Integer type, String projectName) {
 
         String fileTitle = projectName;
+        ProcessBuilder here = new ProcessBuilder("ls");
+        here.directory(new File(path+"/"));
+        out.println(path);
 
+        try{
+            Process p = here.start();
+            InputStream stderr = p.getInputStream();
+            InputStreamReader isr = new InputStreamReader(stderr);
+            BufferedReader br = new BufferedReader(isr);
+            String line = null;
 
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+
+            p.waitFor();
+            System.out.println("Waiting ...");
+
+        } catch (IOException e) {
+            out.println(e.getMessage());
+        } catch (InterruptedException e) {
+            out.println(e.getMessage());
+        }
         if (type == 2) {
             ProcessBuilder djangoStarter = new ProcessBuilder();
             djangoStarter.command(String.format("django-admin startproject %s",fileTitle));
