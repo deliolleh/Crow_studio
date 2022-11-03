@@ -16,7 +16,7 @@ public class CompileController {
     }
 
     @PostMapping("/py/{teamSeq}")
-    public ResponseEntity<String> pyCompile(@RequestBody Map<String, String> req, @PathVariable Long teamSeq) {
+    public ResponseEntity<String> pyCompile(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req, @PathVariable Long teamSeq) {
         String res = compileService.pyCompile(req, teamSeq);
         return new ResponseEntity<>(res, HttpStatus.OK);
 
