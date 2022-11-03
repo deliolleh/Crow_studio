@@ -44,7 +44,6 @@ const LoginForm = ({ onLogin }) => {
       });
       isInvalid = true;
     }
-
     if (password.trim().length === 0) {
       setErrorMsgs((prev) => {
         return { ...prev, passwordErrorMsg: "비밀번호를 입력하세요" };
