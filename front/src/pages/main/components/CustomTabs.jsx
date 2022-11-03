@@ -21,15 +21,13 @@ const CustomTabs = memo(({ item, provided, snapshot, closableTabItems, panelItem
       {...provided.draggableProps}
       {...provided.dragHandleProps}
     >
-      <div>{item.id}</div>
-      <div>{item.content}</div>
       <Tabs customStyle={customStyle} {...rest}>
-        <DragTabList
-          style={{ display: "flex", alignItems: "center" }}
-        >
+        <DragTabList className="flex items-center">
           {closableTabItems}
         </DragTabList>
-        <PanelList>{panelItems}</PanelList>
+        <PanelList>
+          {panelItems}
+        </PanelList>
       </Tabs>
     </TabsContainer>
   );

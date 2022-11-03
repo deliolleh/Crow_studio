@@ -22,14 +22,14 @@ const Header = () => {
   };
 
   return (
-    <nav className="flex flex-wrap items-center justify-between px-2 py-3 bg-component_item_bg_dark m-3 rounded-lg">
+    <nav className="flex flex-wrap items-center justify-between px-2 py-1 bg-component_item_bg_dark m-3 rounded-lg">
       <div className="w-screen lg:flex-row flex-col relative px-4 flex justify-between">
         {/* 로고, 아이콘 */}
         <div className="relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
           <div className="flex items-center">
             <div className="text-point_purple pr-3">Logo</div>
             <Link
-              className="text-sm font-bold leading-relaxed inline-block mr-16 py-2 whitespace-nowrap uppercase text-white"
+              className="text-xl font-bold leading-relaxed inline-block mr-16 py-2 whitespace-nowrap uppercase text-white"
               to="/"
             >
               까마귀공방
@@ -54,7 +54,7 @@ const Header = () => {
           <ul className="flex flex-col lg:flex-row list-none">
             <li className="nav-item">
               <Link
-                className="px-0.5 py-2 flex items-center justify-end text-sm leading-snug text-white hover:opacity-75"
+                className="px-0.5 py-2 flex items-center justify-end text-lg leading-snug text-white hover:opacity-75"
                 to="/"
               >
                 <span className="ml-1.5">홈</span>
@@ -62,7 +62,7 @@ const Header = () => {
             </li>
             <li className="nav-item">
               <Link
-                className="px-0.5 py-2 flex items-center justify-end text-sm leading-snug text-white hover:opacity-75"
+                className="px-0.5 py-2 flex items-center justify-end text-lg leading-snug text-white hover:opacity-75"
                 to="/"
               >
                 <span className="ml-7">포럼</span>
@@ -70,7 +70,7 @@ const Header = () => {
             </li>
             <li className="nav-item">
               <Link
-                className="px-0.5 py-2 flex items-center justify-end text-sm leading-snug text-white hover:opacity-75"
+                className="px-0.5 py-2 flex items-center justify-end text-lg leading-snug text-white hover:opacity-75"
                 to="/"
               >
                 <span className="ml-7">프로젝트</span>
