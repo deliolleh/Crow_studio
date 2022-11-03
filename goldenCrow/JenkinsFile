@@ -22,7 +22,7 @@ pipeline {
                                     -v /var/run/docker.sock:/var/run/docker.sock \
                                     -v /usr/bin/docker:/usr/bin/docker \
                                     -v /usr/bin/django-admin:/usr/bin/django-admin \
-                                    -v /usr/lib/python3/dist-packages/django/:/usr/lib/python3/dist-packages/django/ \
+                                    -v /usr/lib/python3/dist-packages/:/usr/lib/python3/dist-packages/ \
                                     goldencrow'
                         }
                 }
