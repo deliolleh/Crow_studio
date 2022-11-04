@@ -6,6 +6,8 @@ const userApi = {
   getUser: () => api.get("/users/info"),
   getMypage: (userSeq) => api.get(`/users/mypage/${userSeq}`),
   putNickname: (nicknameData) => api.put("users/edit/nickname", nicknameData),
+  putPassword: (passwordData) => api.put("users/edit/password", passwordData),
+  deleteQuit: () => api.delete("users/quit"),
 };
 
 export default userApi;
