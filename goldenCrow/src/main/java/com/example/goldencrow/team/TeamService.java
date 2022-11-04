@@ -1,6 +1,7 @@
 package com.example.goldencrow.team;
 
 import com.example.goldencrow.file.Service.ProjectService;
+import com.example.goldencrow.team.dto.MemberDto;
 import com.example.goldencrow.team.dto.TeamDto;
 import com.example.goldencrow.team.entity.MemberEntity;
 import com.example.goldencrow.team.entity.TeamEntity;
@@ -13,9 +14,7 @@ import com.example.goldencrow.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class TeamService {
@@ -35,12 +34,12 @@ public class TeamService {
     @Autowired
     private ProjectService projectService;
 
-    // 팀 조회
+    // 팀 목록 조회
     public List<TeamDto> teamList(String jwt) {
 
         try {
 
-            List<TeamDto> teamDtoList = new ArrayList<>();
+            List<TeamDto> listTeamDto = new ArrayList<>();
 
             // jwt에서 userSeq를 뽑아내고
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
@@ -50,13 +49,38 @@ public class TeamService {
 
             if (!memberEntities.isEmpty()) {
                 // 그 모든 엔티티에서 forEach를 돌리면서
+
                 for (MemberEntity m : memberEntities) {
-                    // 해당 팀 엔티티를 뽑아서 리스트에 넣음
-                    teamDtoList.add(new TeamDto(m.getTeam()));
+
+                    // 내가 속한 하나의 팀까지 접근함
+                    TeamEntity teamEntity = m.getTeam();
+
+                    // 그 팀의 리더가 누군지 체크
+                    Long leaderSeq = teamEntity.getTeamLeader().getUserSeq();
+
+                    // 그 팀에 속한 멤버 리스트를 만들어서
+                    List<MemberDto> memberDtoList = new ArrayList<>();
+
+                    // 그 멤버들의 dto로 채우고
+                    List<MemberEntity> memberEntityList = memberRepository.findAllByTeam_TeamSeq(teamEntity.getTeamSeq());
+                    for(MemberEntity mm : memberEntityList) {
+                        // 리더와 다를 때만 넣어준다
+                        if(mm.getUser().getUserSeq()!=leaderSeq){
+                            memberDtoList.add(new MemberDto(mm));
+                        }
+                    }
+
+                    // 팀 dto를 만들어서
+                    // 아까 채운 멤버 리스트를 팀dto에 채워
+                    TeamDto teamDto = new TeamDto(teamEntity);
+                    teamDto.setMemberDtoList(memberDtoList);
+
+                    // 그리고 그 팀 dto를 리스트에 넣음
+                    listTeamDto.add(teamDto);
                 }
             }
 
-            return teamDtoList;
+            return listTeamDto;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,8 +89,59 @@ public class TeamService {
 
     }
 
+    // 팀 하나 조회
+    public TeamDto teamGet(String jwt, Long teamSeq) {
+
+        try {
+
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+            // 그 userSeq와 teamSeq를 가지는 멤버를 뽑아옴
+            Optional<MemberEntity> memberEntityOptional = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(userSeq, teamSeq);
+
+            if(memberEntityOptional.isPresent()) {
+                // 존재할 경우 : 팀 내부를 볼 권한이 있다
+
+                // 그럼...
+                TeamEntity teamEntity = memberEntityOptional.get().getTeam();
+
+                // 그 팀의 리더가 누군지 체크
+                Long leaderSeq = teamEntity.getTeamLeader().getUserSeq();
+
+                // 그 팀에 속한 멤버 리스트를 만들어서
+                List<MemberDto> memberDtoList = new ArrayList<>();
+
+                // 팀 시퀀스에 해당하는 멤버 리스트를 다 뽑아와서
+                List<MemberEntity> memberEntityList = memberRepository.findAllByTeam_TeamSeq(teamSeq);
+                for(MemberEntity mm : memberEntityList) {
+                    // 리더와 다를 때만 넣어준다
+                    if(mm.getUser().getUserSeq()!=leaderSeq){
+                        memberDtoList.add(new MemberDto(mm));
+                    }
+                }
+
+                // 팀 dto를 만들어서
+                // 아까 채운 멤버 리스트를 팀dto에 채워
+                TeamDto teamDto = new TeamDto(teamEntity);
+                teamDto.setMemberDtoList(memberDtoList);
+                return teamDto;
+
+            } else {
+                // 아닐 경우 : 없다
+                return null;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     // 팀 생성
-    public String teamCreate(String jwt, String teamName) {
+    public Map<String, Long> teamCreate(String jwt, String teamName) {
+
+        Map<String, Long> res = new HashMap<>();
 
         try {
             // jwt에서 userSeq를 뽑아내고
@@ -77,7 +152,7 @@ public class TeamService {
             // 중복되는 것이 있는지 확인
             // 있으면 리턴 듀플리케이트
             if (teamRepository.findTeamEntityByTeamLeaderAndTeamName(userEntity, teamName).isPresent()) {
-                return "duplicate";
+                return null;
             }
 
             // 이 사람을 팀장으로 하는 팀 생성하고 저장
@@ -90,11 +165,12 @@ public class TeamService {
             memberRepository.saveAndFlush(memberEntity);
 
             // 성공 여부 반환
-            return "success";
+            res.put("teamSeq", savedTeamEntity.getTeamSeq());
+            return res;
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "error";
+            return null;
         }
 
     }
