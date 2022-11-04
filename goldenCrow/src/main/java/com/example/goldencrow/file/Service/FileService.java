@@ -12,15 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Optional;
+
+import static java.lang.System.out;
 
 @Service
 public class FileService {
@@ -75,12 +75,14 @@ public class FileService {
     /** 파일 삭제  */
     public boolean deleteFile(String filePath,Integer type, Long teamSeq) {
         Path path = Paths.get(filePath);
+
+        // 만약 이게 DB에 없는 파일 경로나 그렇다면 실패!
         if (!fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq,filePath).isPresent()) {
             return false;
         }
-
+        
         FileEntity file = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq,filePath).get();
-
+        // 디렉토리라면
         if (type == 1) {
             ProcessBuilder pb = new ProcessBuilder();
             pb.command("rm","-r",filePath);
@@ -91,7 +93,7 @@ public class FileService {
                 System.out.println(e.getMessage());
                 return false;
             }
-
+        // 파일 이라면
         } else {
 
             try {
@@ -108,7 +110,12 @@ public class FileService {
         return true;
     }
 
-
+    /**
+     * 파일 저장 기존 파일을 삭제하고 새로운 파일을 덮어씌우는 형태
+     * @param filePath
+     * @param content
+     * @return
+     */
     public boolean saveFile(String filePath, String content) {
         File oldFile = new File(filePath);
         oldFile.delete();
@@ -148,6 +155,29 @@ public class FileService {
         nFile.setFileTitle(newFileName);
         fileRepository.saveAndFlush(nFile);
         return true;
+    }
+
+    public String readFile(String filePath) {
+        BufferedReader br = null;
+
+        try {
+            br = new BufferedReader(new FileReader(filePath));
+            String line = null;
+            String content = "";
+            while ((line = br.readLine()) != null) {
+                content += line + "\n";
+            }
+        } catch (Exception e) {
+            return e.getMessage();
+        } finally {
+            try {
+                if(br != null)
+                    br.close();
+            } catch (IOException e) {
+                //
+            }
+        }
+        return "content";
     }
 
 }
