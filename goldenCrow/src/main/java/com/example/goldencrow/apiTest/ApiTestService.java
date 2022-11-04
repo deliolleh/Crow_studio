@@ -3,7 +3,6 @@ package com.example.goldencrow.apiTest;
 import com.example.goldencrow.apiTest.dto.ApiTestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpEntity;
