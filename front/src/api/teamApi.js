@@ -1,7 +1,8 @@
 import api from "./api";
 
 const teamApi = {
-  getTeam: () => api.get("/teams"),
+  getTeams: () => api.get("/teams"),
+  getTeam: (teamSeq) => api.get(`/teams/${teamSeq}`),
   createTeam: (teamName) => api.post("/teams/create", teamName),
   modifyTeamName: (teamSeq, teamName) => api.put(`/teams/${teamSeq}`, teamName),
   deleteTeam: (teamSeq) => api.delete(`/team/delete/${teamSeq}`),
