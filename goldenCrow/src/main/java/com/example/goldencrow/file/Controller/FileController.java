@@ -102,8 +102,9 @@ public class FileController {
 
     @PostMapping("/files")
     public ResponseEntity<String> readFile(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,String> path) {
-
-        return new ResponseEntity<>("Hello",HttpStatus.OK);
+        String content = fileService.readFile(path.get("filePath"));
+        return new ResponseEntity<>(content,HttpStatus.OK);
     }
+
 
 }
