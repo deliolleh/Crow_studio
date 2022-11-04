@@ -13,6 +13,7 @@ import Signup from "./pages/signup/Signup";
 import Main from "./pages/main/Main";
 import Mypage from "./pages/mypage/Mypage";
 import ProjectCreate from "./pages/project-create/ProjectCreate";
+import Team from "./pages/team/Team";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
   {
     path: "/project/create",
     element: <ProjectCreate />,
+  },
+  {
+    path: "/team",
+    element: <Team />,
   },
 ]);
 
