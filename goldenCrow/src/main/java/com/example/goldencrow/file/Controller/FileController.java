@@ -112,8 +112,9 @@ public class FileController {
             bw = new BufferedWriter(new FileWriter(filePath.replace(oldFileName,tmpFileName)));
             String line;
             while ((line = br.readLine()) != null) {
-                out.println(line);
+
                 if (line.contains("ALLOWED_HOSTS = []"))
+                    out.println("herehere!!!");
                     line = line.replace("ALLOWED_HOSTS = []", "ALLOWED_HOSTS = [k7d207.p.ssafy.io]");
                 bw.write(line+"\n");
             }
