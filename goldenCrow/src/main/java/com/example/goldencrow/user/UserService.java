@@ -281,7 +281,7 @@ public class UserService {
                 return "success";
 
             } else {
-                return "error";
+                return "409";
             }
 
         } catch (Exception e) {
