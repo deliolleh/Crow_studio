@@ -17,7 +17,9 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static java.lang.System.out;
@@ -157,9 +159,11 @@ public class FileService {
         return true;
     }
 
-    public String readFile(String filePath) {
+    public List<String> readFile(String filePath) {
         BufferedReader br = null;
         String content = "";
+
+        List res = new ArrayList<>();
 
         try {
             br = new BufferedReader(new FileReader(filePath));
@@ -170,16 +174,22 @@ public class FileService {
             }
 
         } catch (Exception e) {
-            return e.getMessage();
+            res.add("Failed");
+            res.add(e.getMessage());
+            return res;
         } finally {
             try {
                 if(br != null)
                     br.close();
             } catch (IOException e) {
-                //
+                res.add("Failed");
+                res.add(e.getMessage());
+                return res;
             }
         }
-        return content;
+        res.add("Success");
+        res.add(content);
+        return res;
     }
 
 }
