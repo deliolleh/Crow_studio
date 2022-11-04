@@ -112,8 +112,9 @@ public class ProjectService {
             String name = names[i];
             String thisPath = dir.getPath();
             FileCreateDto newFileCreateDto = new FileCreateDto(name,thisPath);
-
+            out.println(thisPath + name);
             Boolean check = saveFileEntity(newFileCreateDto,thisTeam);
+            out.println("저장 결과!"+check);
 
             if (dir.isDirectory()) {
                 saveFilesInDIr(thisPath,teamSeq);
@@ -146,6 +147,8 @@ public class ProjectService {
             }
             String newPath = path + "/" + fileTitle + "/" +fileTitle + "/" + "settings.py";
             String change = changeSetting(newPath);
+            out.println("체인지!"+change);
+
             saveFilesInDIr(path,teamSeq);
             return "1";
         } else if (type == 1) {
@@ -225,7 +228,14 @@ public class ProjectService {
         return "true";
     }
 
+
+    /**
+     *
+     * @param filePath - 파일 이름까지 붙어있는 filePath줘야 함
+     * @return
+     */
     public String changeSetting (String filePath) {
+        out.println(filePath);
         String oldFileName = "settings.py";
         String tmpFileName = "tmp_settings.py";
         String newFilePath = filePath.replace(oldFileName,tmpFileName);
