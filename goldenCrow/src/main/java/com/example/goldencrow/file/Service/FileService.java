@@ -159,14 +159,16 @@ public class FileService {
 
     public String readFile(String filePath) {
         BufferedReader br = null;
+        String content = "";
 
         try {
             br = new BufferedReader(new FileReader(filePath));
             String line = null;
-            String content = "";
+
             while ((line = br.readLine()) != null) {
                 content += line + "\n";
             }
+
         } catch (Exception e) {
             return e.getMessage();
         } finally {
@@ -177,7 +179,7 @@ public class FileService {
                 //
             }
         }
-        return "content";
+        return content;
     }
 
 }
