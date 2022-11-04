@@ -63,21 +63,21 @@ public class FileController {
      * @param
      * @return
      */
-    @PutMapping("/{teamSeq}/files")
-    public ResponseEntity<String> fileNameUpdate(@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
-        String newFilePath = filePath.get("filePath");
-        String renameFilePath = filePath.get("filePath") + "\\" + filePath.get("newFileName");
-        File targetFile = new File(newFilePath);
-        File reNameFile = new File(renameFilePath);
-
-        boolean result = targetFile.renameTo(reNameFile);
-
-        if (result) {
-            return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.BAD_REQUEST);
-        }
-    }
+//    @PutMapping("/{teamSeq}/files")
+//    public ResponseEntity<String> fileNameUpdate(@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
+//        String newFilePath = filePath.get("filePath");
+//        String renameFilePath = filePath.get("filePath") + "\\" + filePath.get("newFileName");
+//        File targetFile = new File(newFilePath);
+//        File reNameFile = new File(renameFilePath);
+//
+//        boolean result = targetFile.renameTo(reNameFile);
+//
+//        if (result) {
+//            return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.BAD_REQUEST);
+//        }
+//    }
 
 
     @GetMapping("/{teamSeq}")
