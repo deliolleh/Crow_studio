@@ -101,10 +101,10 @@ public class FileController {
     }
 
     @PostMapping("/files")
-    public ResponseEntity<String> readFile(@RequestHeader("Authorization") String jwt, @RequestBody String filePath) {
+    public ResponseEntity<String> readFile(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,String> path) {
         String oldFileName = "settings.py";
         String tmpFileName = "tmp_settings.py";
-
+        String filePath = path.get("filePath");
         BufferedReader br = null;
         BufferedWriter bw = null;
         try {
