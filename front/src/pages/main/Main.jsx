@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useLoading } from "@rest-hooks/hooks";
 import styled from "styled-components";
 import SplitPane from "react-split-pane";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -6,15 +7,15 @@ import { Tab, Panel, helpers, ExtraButton } from "@react-tabtab-next/tabtab";
 
 // components
 import Header from "../../components/Header";
-import Sidebar from "./components/Sidebar";
-import Directory from "./components/Directory";
-// import Git from "./components/Git";
-// import Team from "./components/Team";
-// import Settings from "./components/Settings";
-import CustomTabs from "./components/CustomTabs";
+import Sidebar from "./components/sidebar/Sidebar";
+import Directory from "./components/sidebar/Directory";
+import Git from "./components/sidebar/Git";
+import Team from "./components/sidebar/Team";
+import Settings from "./components/sidebar/Settings";
+import CustomTabs from "./components/tabs/CustomTabs";
+
 // tabtab dummy data
-import Tabs2 from "./components/Tabs2";
-import { MakeEditorData, MakeConsoleData } from "../main/components/makeData";
+import { MakeEditorData, MakeConsoleData } from "../main/components/tabs/makeData";
 
 // svg
 import { ReactComponent as IcAdd } from "../../assets/icons/ic_add.svg";
@@ -33,8 +34,19 @@ const SidebarItems = styled.div`
 //   grid-gap: 8px;
 // `;
 
-// beautiful-dnd
+// split-pane width size useCallback ver.
+const useGettingWidth = () => {
+  const [ sidebarSize, setSideBarSize ] = useState(0);
+  const sizeRef = useCallback((node) => {
+    if (node !== null) {
+      setSideBarSize(node.getBoundingClientRect().width);
+      console.log("sidebarSize: " + sidebarSize)
+    }
+  }, []);
+  return [sidebarSize, sizeRef];
+};
 
+// beautiful-dnd
 // fake data simple ver.
 const elements = [
   { id: "one", content: "one" },
@@ -73,20 +85,33 @@ const elements = [
 //   );
 
 const Main = () => {
+  // sidebar click event
+  const [com, setCom] = useState("디렉토리");
+
+  const showComponentHandler = (x) => {
+    setCom(x);
+  }
+
   // split pane size
+  // useRef ver.
   const sizeRef = useRef();
-  const [ sideBarSize, setSideBarSize ] = useState(0);
+  const [ sidebarSize, setSidebarSize ] = useState(0);
 
   useEffect(() => {
-    setSideBarSize(sizeRef.current.getBoundingClientRect().width);
+    setSidebarSize(sizeRef.current.getBoundingClientRect().width);
     // setSideBarSize(sizeRef.current.offsetWidth);
-    console.log("sideBarSize: " + sideBarSize)
+    console.log("sidebarSize: " + sidebarSize)
     console.log("sizeRef.current.getBoundingClientRect().width: " + sizeRef.current.getBoundingClientRect().width)
-  }, [sideBarSize])
+  }, [sidebarSize])
+
+  // useCallback ver.
+  // const [ sidebarSize, sizeRef ] = useGettingWidth();
+  // const [ lazySidebarSize, lazySizeRef ] = useGettingWidth();
+  // const loading = useLoading(); 
 
   // Beautiful-dnd
   // simple ver.
-  const [items, setItems] = useState(elements);
+  const [ items, setItems ] = useState(elements);
 
   const onDragEnd = (result) => {
     const newItems = Array.from(items);
@@ -217,25 +242,34 @@ const Main = () => {
     <>
       <Header />
       <div className="flex">
+        {/* useRef ver. */}
         <div ref={ sizeRef } className="flex">
-          <Sidebar />
-          <SidebarItems>
-            <Directory />
-            {/* <Git />
-            <Team />
-            <Settings /> */}
-          </SidebarItems>
+          <Sidebar onClickIcon={showComponentHandler} com={com} />
+          {com === "" && (<SidebarItems style={{ width: "0px", margin: '0px'}} />)}
+          {com === "디렉토리" && (<SidebarItems><Directory /></SidebarItems>)}
+          {com === "깃" && (<SidebarItems><Git /></SidebarItems>)}
+          {com === "팀" && (<SidebarItems><Team /></SidebarItems>)}
+          {com === "세팅" && (<SidebarItems><Settings /></SidebarItems>)}
         </div>
+        {/* useCallback ver. */}
+        {/* {!loading && <div ref={ lazySizeRef } className="flex">
+          <Sidebar onClickIcon={showComponentHandler} com={com} />
+          {com === "" && (<SidebarItems style={{ width: "0px", margin: '0px'}} />)}
+          {com === "디렉토리" && (<SidebarItems><Directory /></SidebarItems>)}
+          {com === "깃" && (<SidebarItems><Git /></SidebarItems>)}
+          {com === "팀" && (<SidebarItems><Team /></SidebarItems>)}
+          {com === "세팅" && (<SidebarItems><Settings /></SidebarItems>)}
+        </div>} */}
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided) => (
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                style={{ display: "flex", width: `calc(100vw - ${sideBarSize}px - 30px)`, }}
+                style={ com === "" ? { display: "flex",  width: `calc(100vw - 115px)`, } : { display: "flex", width: `calc(100vw - ${sidebarSize}px - 30px)`, }}
               >
                 <SplitPane
-                  style={{ position: 'static', overflow: 'auto', width: `calc(100vw - ${sideBarSize}px - 30px)`,}}
+                  style={ com === "" ? { position: 'static', overflow: 'auto', width: `calc(100vw - 115px)`,} : { position: 'static', overflow: 'auto', width: `calc(100vw - ${sidebarSize}px - 30px)`,}}
                   split="vertical"
                   defaultSize="50%"
                 >

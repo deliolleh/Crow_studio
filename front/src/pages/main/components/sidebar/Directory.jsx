@@ -3,9 +3,9 @@ import styled from "styled-components";
 import { Menu, Transition } from '@headlessui/react';
 
 // import svg
-import { ReactComponent as IcNewFile } from "../../../assets/icons/ic_new_file.svg";
-import { ReactComponent as IcNewDir } from "../../../assets/icons/ic_new_dir.svg";
-import { ReactComponent as IcToggle } from "../../../assets/icons/ic_toggle.svg";
+import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
+import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
+import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
 // styled
 const DirectoryContainer = styled.div`

@@ -3,8 +3,8 @@ import styled from "styled-components";
 import { Menu, Transition } from '@headlessui/react';
 
 // import svg
-import { ReactComponent as IcAddTeam } from "../../../assets/icons/ic_addTeam.svg";
-import { ReactComponent as IcToggle } from "../../../assets/icons/ic_toggle.svg";
+import { ReactComponent as IcAddTeam } from "../../../../assets/icons/ic_addTeam.svg";
+import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
 // styled
 const TeamContainer = styled.div`
@@ -124,28 +124,28 @@ const Team = () => {
           <div className="pl-1">
             <div className="text-primary_dark text-sm font-bold ">팀장</div>
             <div className="flex items-center text-sm mb-2">
-              <img className="rounded-full flex my-2 mr-4" style={{ width: 45, height: 45 }} src={require('../../../assets/images/avatar.png')} alt="Profile"/>
+              <img className="rounded-full flex my-2 mr-4" style={{ width: 45, height: 45 }} src={require('../../../../assets/images/avatar.png')} alt="Profile"/>
               <div>박자연</div>
             </div>
             <div className="text-primary_dark text-sm font-bold">팀원</div>
             <div className="flex items-center text-sm">
-              <img className="rounded-full flex mt-2 mb-0.5 mr-4" style={{ width: 45, height: 45 }} src={require('../../../assets/images/avatar.png')} alt="Profile"/>
+              <img className="rounded-full flex mt-2 mb-0.5 mr-4" style={{ width: 45, height: 45 }} src={require('../../../../assets/images/avatar.png')} alt="Profile"/>
               <div>김수빈</div>
             </div>
             <div className="flex items-center text-sm">
-              <img className="rounded-full flex mt-2 mb-0.5 mr-4" style={{ width: 45, height: 45 }} src={require('../../../assets/images/avatar.png')} alt="Profile"/>
+              <img className="rounded-full flex mt-2 mb-0.5 mr-4" style={{ width: 45, height: 45 }} src={require('../../../../assets/images/avatar.png')} alt="Profile"/>
               <div>우영택</div>
             </div>
             <div className="flex items-center text-sm">
-              <img className="rounded-full flex mt-2 mb-0.5 mr-4" style={{ width: 45, height: 45 }} src={require('../../../assets/images/avatar.png')} alt="Profile"/>
+              <img className="rounded-full flex mt-2 mb-0.5 mr-4" style={{ width: 45, height: 45 }} src={require('../../../../assets/images/avatar.png')} alt="Profile"/>
               <div>이주영</div>
             </div>
             <div className="flex items-center text-sm">
-              <img className="rounded-full flex mt-2 mb-0.5 mr-4" style={{ width: 45, height: 45 }} src={require('../../../assets/images/avatar.png')} alt="Profile"/>
+              <img className="rounded-full flex mt-2 mb-0.5 mr-4" style={{ width: 45, height: 45 }} src={require('../../../../assets/images/avatar.png')} alt="Profile"/>
               <div>한재혁</div>
             </div>
             <div className="flex items-center text-sm">
-              <img className="rounded-full flex mt-2 mb-0.5 mr-4" style={{ width: 45, height: 45 }} src={require('../../../assets/images/avatar.png')} alt="Profile"/>
+              <img className="rounded-full flex mt-2 mb-0.5 mr-4" style={{ width: 45, height: 45 }} src={require('../../../../assets/images/avatar.png')} alt="Profile"/>
               <div>함희주</div>
             </div>
           </div>
