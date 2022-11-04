@@ -145,7 +145,7 @@ public class ProjectService {
                 out.println(e.getMessage());
                 return e.getMessage();
             }
-            String newPath = path + "/" + fileTitle + "/" +fileTitle + "/" + "settings.py";
+            String newPath = path + fileTitle + "/" +fileTitle + "/" + "settings.py";
             String change = changeSetting(newPath);
             out.println("체인지!"+change);
 
@@ -241,6 +241,7 @@ public class ProjectService {
         String newFilePath = filePath.replace(oldFileName,tmpFileName);
         BufferedReader br = null;
         BufferedWriter bw = null;
+        out.println("여기 호스트 바꾸는 거!" +  newFilePath);
         try {
             br = new BufferedReader(new FileReader(filePath));
             bw = new BufferedWriter(new FileWriter(newFilePath));
@@ -271,9 +272,10 @@ public class ProjectService {
                 //
             }
         }
-
+        String newPath = filePath.replace(oldFileName,"");
+        out.println(newPath);
         ProcessBuilder pro = new ProcessBuilder("mv",tmpFileName,oldFileName);
-        pro.directory(new File(filePath.replace(oldFileName,"")));
+        pro.directory(new File(newPath));
 
         try {
             pro.start();
