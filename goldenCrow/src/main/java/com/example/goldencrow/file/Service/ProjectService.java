@@ -106,6 +106,8 @@ public class ProjectService {
         TeamEntity thisTeam = team.get();
 
         String names[] = file.list();
+        out.println("여기는 와요! 여긴!");
+        out.println(path + "여기는 저장 아아 여긴 저장");
 
         for (int i = 0; i < files.length; i++) {
             File dir = files[i];
@@ -140,13 +142,11 @@ public class ProjectService {
             djangoStarter.directory(new File(path));
 
             try {
-                djangoStarter.start();
-                djangoStarter.wait();
+                djangoStarter.start().waitFor();
             } catch (IOException e) {
                 out.println(e.getMessage());
                 return e.getMessage();
             } catch (InterruptedException e) {
-                out.println(e.getMessage());
                 return e.getMessage();
             }
 
