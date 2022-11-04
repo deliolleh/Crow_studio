@@ -137,13 +137,9 @@ public class UserController {
     @DeleteMapping("/edit/profile")
     public ResponseEntity<String> deleteProfileDelete(@RequestHeader("Authorization") String jwt){
 
-        String result = userService.deleteProfileService(jwt);
-
         // 일단 성공하면 이렇게 반환될 겁니다
-        if(result.equals("success")) {
+        if(userService.deleteProfileService(jwt).equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else if(result.equals("409")){
-            return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
@@ -158,9 +154,13 @@ public class UserController {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
+        String result = userService.editPasswordService(jwt, req);
+
         // 일단 성공하면 이렇게 반환될 겁니다
-        if(userService.editPasswordService(jwt, req).equals("success")) {
+        if(result.equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else if(result.equals("409")){
+            return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
@@ -244,6 +244,5 @@ public class UserController {
     }
 
     // 리프레시 토큰으로 액세스토큰 요청
-
 
 }
