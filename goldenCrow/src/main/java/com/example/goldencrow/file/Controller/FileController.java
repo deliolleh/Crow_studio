@@ -7,8 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -103,13 +102,44 @@ public class FileController {
 
     @PostMapping("/files")
     public ResponseEntity<String> readFile(@RequestHeader("Authorization") String jwt, @RequestBody String filePath) {
+        String oldFileName = "settings.py";
+        String tmpFileName = "tmp_settings.py";
+
+        BufferedReader br = null;
+        BufferedWriter bw = null;
         try {
-            List<String> lines = Files.readAllLines(Paths.get("/home/ubuntu/crow_data/10000/helloWorld/helloWorld/settings.py"));
-            out.println(lines);
-        } catch (IOException e) {
-            out.println(e.getMessage());
+            br = new BufferedReader(new FileReader(filePath));
+            bw = new BufferedWriter(new FileWriter(filePath.replace(oldFileName,tmpFileName)));
+            String line;
+            while ((line = br.readLine()) != null) {
+                out.println(line);
+                if (line.contains("1313131"))
+                    line = line.replace("1313131", ""+System.currentTimeMillis());
+                bw.write(line+"\n");
+            }
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+        } finally {
+            try {
+                if(br != null)
+                    br.close();
+            } catch (IOException e) {
+                //
+            }
+            try {
+                if(bw != null)
+                    bw.close();
+            } catch (IOException e) {
+                //
+            }
         }
+        // Once everything is complete, delete old file..
+        File oldFile = new File(oldFileName);
+        oldFile.delete();
+
+        // And rename tmp file's name to old file name
+        File newFile = new File(tmpFileName);
+        newFile.renameTo(oldFile);
 
         return new ResponseEntity<>("Hello",HttpStatus.OK);
     }
