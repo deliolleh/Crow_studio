@@ -83,7 +83,7 @@ public class ProjectService {
             here.add(thisPath);
             if (dir.isDirectory()) {
                 List<List<String>> newValue = new ArrayList<>();
-
+                visit.get(root).add(here);
                 visit.put(here,newValue);
                 readDirectory(thisPath,name,visit);
             } else {
