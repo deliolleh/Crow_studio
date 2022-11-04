@@ -113,7 +113,7 @@ public class CompileService {
         else {
             // 도커파일 추가
             String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"));
-            if (!Objects.equals(dockerfile, "SUCCESS")) { return "Can't make dockerfile"; }
+            if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
             System.out.println("도커파일 만들기 성공! 빌드를 해보자");
         }
         // 도커 이미지 빌드
