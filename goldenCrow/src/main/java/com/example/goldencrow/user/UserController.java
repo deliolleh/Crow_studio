@@ -17,6 +17,7 @@ public class UserController {
     private final String SUCCESS = "SUCCESS";
     private final String FAILURE = "FAILURE";
     private final String FORBIDDEN = "FORBIDDEN";
+    private final String CONFLICT = "CONFLICT";
     private final UserService userService;
     private final JwtService jwtService;
 
@@ -136,9 +137,13 @@ public class UserController {
     @DeleteMapping("/edit/profile")
     public ResponseEntity<String> deleteProfileDelete(@RequestHeader("Authorization") String jwt){
 
+        String result = userService.deleteProfileService(jwt);
+
         // 일단 성공하면 이렇게 반환될 겁니다
-        if(userService.deleteProfileService(jwt).equals("success")) {
+        if(result.equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        } else if(result.equals("409")){
+            return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
