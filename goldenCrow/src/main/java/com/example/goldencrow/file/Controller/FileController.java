@@ -7,7 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 
 import static java.lang.System.out;
 
@@ -58,21 +63,21 @@ public class FileController {
      * @param
      * @return
      */
-//    @PutMapping("/{teamSeq}/files")
-//    public ResponseEntity<String> fileNameUpdate(@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
-//        String newFilePath = filePath.get("filePath");
-//        String renameFilePath = filePath.get("filePath") + "\\" + filePath.get("newFileName");
-//        File targetFile = new File(newFilePath);
-//        File reNameFile = new File(renameFilePath);
-//
-//        boolean result = targetFile.renameTo(reNameFile);
-//
-//        if (result) {
-//            return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.BAD_REQUEST);
-//        }
-//    }
+    @PutMapping("/{teamSeq}/files")
+    public ResponseEntity<String> fileNameUpdate(@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
+        String newFilePath = filePath.get("filePath");
+        String renameFilePath = filePath.get("filePath") + "\\" + filePath.get("newFileName");
+        File targetFile = new File(newFilePath);
+        File reNameFile = new File(renameFilePath);
+
+        boolean result = targetFile.renameTo(reNameFile);
+
+        if (result) {
+            return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.BAD_REQUEST);
+        }
+    }
 
 
     @GetMapping("/{teamSeq}")
@@ -94,6 +99,19 @@ public class FileController {
         } else {
             return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/files")
+    public ResponseEntity<String> readFile(@RequestHeader("Authorization") String jwt, @RequestBody String filePath) {
+        try {
+            List<String> lines = Files.readAllLines(Paths.get("/home/ubuntu/crow_data/10000/helloWorld/helloWorld/settings.py"));
+            out.println(lines);
+        } catch (IOException e) {
+            out.println(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>("Hello",HttpStatus.OK);
     }
 
 }
