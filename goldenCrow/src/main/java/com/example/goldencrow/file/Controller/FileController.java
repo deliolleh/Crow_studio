@@ -113,8 +113,8 @@ public class FileController {
             String line;
             while ((line = br.readLine()) != null) {
                 out.println(line);
-                if (line.contains("1313131"))
-                    line = line.replace("1313131", ""+System.currentTimeMillis());
+                if (line.contains("ALLOWED_HOSTS = []"))
+                    line = line.replace("ALLOWED_HOSTS = []", "ALLOWED_HOSTS = [k7d207.p.ssafy.io]");
                 bw.write(line+"\n");
             }
         } catch (Exception e) {
