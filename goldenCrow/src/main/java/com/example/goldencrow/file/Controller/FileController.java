@@ -113,10 +113,12 @@ public class FileController {
             String line;
             while ((line = br.readLine()) != null) {
 
-                if (line.contains("ALLOWED_HOSTS = []"))
+                if (line.contains("ALLOWED_HOSTS = []")) {
                     out.println(line);
                     line = line.replace("ALLOWED_HOSTS = []", "ALLOWED_HOSTS = [k7d207.p.ssafy.io]");
-                out.println(line);
+                    out.println(line);
+                }
+
                 bw.write(line+"\n");
             }
         } catch (Exception e) {
