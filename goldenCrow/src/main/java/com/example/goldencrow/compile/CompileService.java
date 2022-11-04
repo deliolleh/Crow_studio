@@ -57,9 +57,9 @@ public class CompileService {
         if (!existTeam.isPresent()) { return "Can't Search team"; }
         // teamSeq랑 filePath에 있는 숫자랑 같은지 확인
         String[] pathList = filePath.split("/");
-        if (Long.parseLong(pathList[3]) != teamSeq) { return "Wrong file Path"; }
+        if (Long.parseLong(pathList[4]) != teamSeq) { return "Wrong file Path"; }
 //        int filePathIndex = filePath.lastIndexOf("/");
-        String projectName = pathList[4];
+        String projectName = pathList[5];
         String content = "";
         if (Objects.equals(type, "django")) {
             content = "FROM python:3.10\n" +
