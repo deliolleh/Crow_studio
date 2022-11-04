@@ -19,6 +19,9 @@ pipeline {
                                 sh 'docker run -d --name goldencrow -u root --privileged \
                                     -p 8080:8080 \
                                     -v /home/ubuntu/crow_data:/home/ubuntu/crow_data \
+                                    -v /var/run/docker.sock:/var/run/docker.sock \
+                                    -v /usr/bin:/usr/bin \
+                                    -v /usr/lib:/usr/lib \
                                     goldencrow'
                         }
                 }

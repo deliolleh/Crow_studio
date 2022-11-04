@@ -112,8 +112,9 @@ public class ProjectService {
             String name = names[i];
             String thisPath = dir.getPath();
             FileCreateDto newFileCreateDto = new FileCreateDto(name,thisPath);
-
+            out.println(thisPath + name);
             Boolean check = saveFileEntity(newFileCreateDto,thisTeam);
+            out.println("저장 결과!"+check);
 
             if (dir.isDirectory()) {
                 saveFilesInDIr(thisPath,teamSeq);
@@ -135,18 +136,19 @@ public class ProjectService {
         if (type == 2) {
 
             ProcessBuilder djangoStarter = new ProcessBuilder();
-            out.println("여기옴!!");
-            out.println(fileTitle);
             djangoStarter.command("django-admin", "startproject", fileTitle);
             djangoStarter.directory(new File(path));
 
             try {
-                out.println("여기도!!!!");
                 djangoStarter.start();
             } catch (IOException e) {
                 out.println(e.getMessage());
                 return e.getMessage();
             }
+            String newPath = path + fileTitle + "/" +fileTitle + "/" + "settings.py";
+            String change = changeSetting(newPath);
+            out.println("체인지!"+change);
+
             saveFilesInDIr(path,teamSeq);
             return "1";
         } else if (type == 1) {
@@ -224,5 +226,62 @@ public class ProjectService {
 
     public String saveProject(){
         return "true";
+    }
+
+
+    /**
+     *
+     * @param filePath - 파일 이름까지 붙어있는 filePath줘야 함
+     * @return
+     */
+    public String changeSetting (String filePath) {
+        out.println(filePath);
+        String oldFileName = "settings.py";
+        String tmpFileName = "tmp_settings.py";
+        String newFilePath = filePath.replace(oldFileName,tmpFileName);
+        BufferedReader br = null;
+        BufferedWriter bw = null;
+        out.println("여기 호스트 바꾸는 거!" +  newFilePath);
+        try {
+            br = new BufferedReader(new FileReader(filePath));
+            bw = new BufferedWriter(new FileWriter(newFilePath));
+            String line;
+            while ((line = br.readLine()) != null) {
+
+                if (line.contains("ALLOWED_HOSTS = []")) {
+                    out.println(line);
+                    line = line.replace("ALLOWED_HOSTS = []", "ALLOWED_HOSTS = [\"k7d207.p.ssafy.io\"]");
+                    out.println(line);
+                }
+
+                bw.write(line+"\n");
+            }
+        } catch (Exception e) {
+            return e.getMessage();
+        } finally {
+            try {
+                if(br != null)
+                    br.close();
+            } catch (IOException e) {
+                //
+            }
+            try {
+                if(bw != null)
+                    bw.close();
+            } catch (IOException e) {
+                //
+            }
+        }
+        String newPath = filePath.replace(oldFileName,"");
+        out.println(newPath);
+        ProcessBuilder pro = new ProcessBuilder("mv",tmpFileName,oldFileName);
+        pro.directory(new File(newPath));
+
+        try {
+            pro.start();
+        } catch (IOException e) {
+            return  e.getMessage();
+        }
+        return "1";
     }
 }

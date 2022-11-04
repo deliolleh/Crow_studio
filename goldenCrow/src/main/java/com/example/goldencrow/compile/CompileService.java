@@ -1,6 +1,8 @@
 package com.example.goldencrow.compile;
 
 import com.example.goldencrow.file.Service.FileService;
+import com.example.goldencrow.team.entity.TeamEntity;
+import com.example.goldencrow.team.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,9 @@ public class CompileService {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private TeamRepository teamRepository;
 
     // 실행 결과 반환 로직
     public String resultString(String[] cmd) {
@@ -44,8 +49,17 @@ public class CompileService {
 
     // 도커파일 생성
     public String createDockerfile(String filePath, Long teamSeq, String type) {
-        int filePathIndex = filePath.lastIndexOf("/");
-        String projectName = filePath.substring(filePathIndex + 1);
+        // filePath가 /home/ubuntu/crow_data/로 시작하는지 확인
+        boolean rightPath = filePath.startsWith("/home/ubuntu/crow_data/");
+        if (!rightPath) { return "Wrong file path"; }
+        // teamSeq가 있는지 확인
+        Optional<TeamEntity> existTeam = teamRepository.findByTeamSeq(teamSeq);
+        if (!existTeam.isPresent()) { return "Can't Search team"; }
+        // teamSeq랑 filePath에 있는 숫자랑 같은지 확인
+        String[] pathList = filePath.split("/");
+        if (Long.parseLong(pathList[4]) != teamSeq) { return "Wrong file Path"; }
+//        int filePathIndex = filePath.lastIndexOf("/");
+        String projectName = pathList[5];
         String content = "";
         if (Objects.equals(type, "django")) {
             content = "FROM python:3.10\n" +
@@ -63,8 +77,17 @@ public class CompileService {
 //                    "RUN pip install --no-cache-dir --upgrade -r /prod/requirements.txt\n" +
 //                    "COPY ./" + projectName + " /prod/" + projectName + "\n" +
                     "COPY . .\n" +
-//                    "CMD [\"uvicorn\", \"" + projectName + ".main:" + projectName + "\", \"--host\", \"0.0.0.0\", \"--port\", \"3000\"]";
-                    "CMD [\"uvicorn\", \"" + projectName + ".main:" + projectName + "\"]";
+                    "CMD [\"uvicorn\", \"" + projectName + ".main:" + projectName + "\", \"--host\", \"0.0.0.0\", \"--port\", \"3001\"]";
+//                    "CMD [\"uvicorn\", \"" + projectName + ".main:" + projectName + "\"]";
+        }
+        else if (Objects.equals(type, "flask")) {
+            content = "FROM python:3.10\n" +
+                    "COPY . /app\n" +
+                    "WORKDIR /app\n" +
+//                    "COPY requirements.txt requirements.txt\n" +7
+//                    "RUN pip3 install -r requirements.txt\n" +
+//                    "COPY . .\n" +
+                    "CMD [ \"python3\", \"-m\" , \"flask\", \"run\", \"--host=0.0.0.0\", \"--port\", \"3002\"]";
         }
         File file = new File(filePath + "/Dockerfile");
         try {
@@ -99,7 +122,7 @@ public class CompileService {
         else {
             // 도커파일 추가
             String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"));
-            if (!Objects.equals(dockerfile, "SUCCESS")) { return "Can't make dockerfile"; }
+            if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
             System.out.println("도커파일 만들기 성공! 빌드를 해보자");
         }
         // 도커 이미지 빌드
