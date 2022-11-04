@@ -37,13 +37,29 @@ public class TeamController {
     public ResponseEntity<List<TeamDto>> teamListGet(@RequestHeader("Authorization") String jwt){
 
         // 내가 속한 것만 골라서 반환
-        List<TeamDto> teamDtoList = teamService.teamList(jwt);
+        List<TeamDto> listTeamDto = teamService.teamList(jwt);
 
-        if(teamDtoList==null) {
+        if(listTeamDto ==null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         } else {
             // 리스트가 비어있어도 잘못된 게 아니기 때문에 그건 거르지 않는다
-            return new ResponseEntity<>(teamDtoList, HttpStatus.OK);
+            return new ResponseEntity<>(listTeamDto, HttpStatus.OK);
+        }
+
+    }
+
+    // 팀 하나 조회 (GET)
+    // /{seq}
+    @GetMapping("/{teamSeq}")
+    public ResponseEntity<TeamDto> teamGet(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
+
+        TeamDto result = teamService.teamGet(jwt, teamSeq);
+
+        // null일 경우 문제가 있다는 것
+        if(result==null){
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.OK);
         }
 
     }
@@ -51,16 +67,18 @@ public class TeamController {
     // 팀 생성 POST
     // create
     @PostMapping("/create")
-    public ResponseEntity<String> teamCreatePost(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
+    public ResponseEntity<Map<String, Long>> teamCreatePost(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
 
         if(req.get("teamName")==null) {
-            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
-        if(teamService.teamCreate(jwt, req.get("teamName")).equals("success")) {
-            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        Map<String, Long> res = teamService.teamCreate(jwt, req.get("teamName"));
+
+        if(res==null) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         } else {
-            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
 
     }
