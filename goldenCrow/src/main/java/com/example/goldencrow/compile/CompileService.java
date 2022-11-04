@@ -1,6 +1,8 @@
 package com.example.goldencrow.compile;
 
 import com.example.goldencrow.file.Service.FileService;
+import com.example.goldencrow.team.entity.TeamEntity;
+import com.example.goldencrow.team.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,9 @@ public class CompileService {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private TeamRepository teamRepository;
 
     // 실행 결과 반환 로직
     public String resultString(String[] cmd) {
@@ -44,8 +49,17 @@ public class CompileService {
 
     // 도커파일 생성
     public String createDockerfile(String filePath, Long teamSeq, String type) {
-        int filePathIndex = filePath.lastIndexOf("/");
-        String projectName = filePath.substring(filePathIndex + 1);
+        // filePath가 /home/ubuntu/crow_data/로 시작하는지 확인
+        boolean rightPath = filePath.startsWith("/home/ubuntu/crow_data/");
+        if (!rightPath) { return "Wrong file path"; }
+        // teamSeq가 있는지 확인
+        Optional<TeamEntity> existTeam = teamRepository.findByTeamSeq(teamSeq);
+        if (!existTeam.isPresent()) { return "Can't Search team"; }
+        // teamSeq랑 filePath에 있는 숫자랑 같은지 확인
+        String[] pathList = filePath.split("/");
+        if (Long.parseLong(pathList[3]) != teamSeq) { return "Wrong file Path"; }
+//        int filePathIndex = filePath.lastIndexOf("/");
+        String projectName = pathList[4];
         String content = "";
         if (Objects.equals(type, "django")) {
             content = "FROM python:3.10\n" +
