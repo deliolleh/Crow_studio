@@ -140,12 +140,12 @@ public class FileController {
         }
 
 
-        ProcessBuilder p = new ProcessBuilder("rm",filePath);
-        try{
-            p.start();
-        } catch (IOException e) {
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS);
-        }
+//        ProcessBuilder p = new ProcessBuilder("rm",filePath);
+//        try{
+//            p.start();
+//        } catch (IOException e) {
+//            return new ResponseEntity<>(e.getMessage(),HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS);
+//        }
 
         ProcessBuilder pro = new ProcessBuilder("mv",tmpFileName,oldFileName);
         pro.directory(new File(filePath.replace(oldFileName,"")));
