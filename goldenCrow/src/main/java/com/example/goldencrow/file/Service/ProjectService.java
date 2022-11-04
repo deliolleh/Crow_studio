@@ -29,6 +29,9 @@ public class ProjectService {
 
     private FileService fileService;
 
+    /**
+     * 디렉토리 만들어주는 함수
+     */
     public String createDir(String path, String name){
         String pjt = path + "/" + name;
         File pjtDir = new File(pjt);
@@ -43,7 +46,7 @@ public class ProjectService {
      */
     public boolean saveFileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
         FileEntity fileEntity = new FileEntity(fileCreateDto,team);
-
+        fileRepository.saveAndFlush(fileEntity);
         System.out.println(fileCreateDto.getFilePath()+fileCreateDto.getFileTitle());
 
         System.out.println("파일 저장 제대로 됨!!");
@@ -93,7 +96,7 @@ public class ProjectService {
             Boolean check = saveFileEntity(newFileCreateDto,thisTeam);
 
             if (dir.isDirectory()) {
-                saveFilesInDIr(dir.getPath(),teamSeq);
+                saveFilesInDIr(thisPath,teamSeq);
             }
         }
     }
