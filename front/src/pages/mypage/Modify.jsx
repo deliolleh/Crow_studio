@@ -12,11 +12,11 @@ const Modify = ({ closeModify }) => {
   const closeModifyHandler = () => closeModify(false);
 
   const submitNicknameHandler = (nicknameData) =>
-    dispatch(modifyNickname(nicknameData)).catch(console.error);
+    dispatch(modifyNickname(nicknameData)).unwrap().catch(console.error);
 
   const submitPasswordHandler = (passwordData) => {
     dispatch(modifyPassword(passwordData))
-      .then(() => alert("비밀번호 변경 성공"))
+      .unwrap()
       .catch((errorStatusCode) => {
         if (errorStatusCode === 409) {
           alert("현재 비밀번호가 틀립니다");
