@@ -141,10 +141,15 @@ public class ProjectService {
 
             try {
                 djangoStarter.start();
+                djangoStarter.wait();
             } catch (IOException e) {
                 out.println(e.getMessage());
                 return e.getMessage();
+            } catch (InterruptedException e) {
+                out.println(e.getMessage());
+                return e.getMessage();
             }
+
             String newPath = path + fileTitle + "/" +fileTitle + "/" + "settings.py";
             String change = changeSetting(newPath);
             out.println("체인지!"+change);
