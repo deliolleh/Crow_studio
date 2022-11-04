@@ -37,14 +37,7 @@ public class FileService {
     @Autowired
     private JwtService jwtService;
 
-    /**
-     * file db에 저장하는 함수
-     */
-    public void saveFileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
-        FileEntity fileEntity = new FileEntity(fileCreateDto,team);
-        System.out.println(fileCreateDto.getFilePath()+fileCreateDto.getFileTitle());
-        fileRepository.saveAndFlush(fileEntity);
-    }
+
 
     /** 파일 생성 로직
      * 파일이 성공적으로 생성되면 true
@@ -90,12 +83,12 @@ public class FileService {
 
         if (type == 1) {
             ProcessBuilder pb = new ProcessBuilder();
-            pb.command("sudo","rm","-r",filePath);
-            pb.directory(new File(String.format("/home/ubuntu/crow_data/%d",file.getTeam().getTeamSeq())));
+            pb.command("rm","-r",filePath);
 
             try{
                 pb.start();
             } catch (IOException e) {
+                System.out.println(e.getMessage());
                 return false;
             }
 
