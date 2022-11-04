@@ -82,6 +82,38 @@ export const modifyNickname = createAsyncThunk(
   }
 );
 
+export const modifyPassword = createAsyncThunk(
+  "user/modifyPassword",
+  async (passwordData, { rejectWithValue }) => {
+    try {
+      const response = await userApi.putPassword(passwordData);
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+      return rejectWithValue(err.response.status);
+    }
+  }
+);
+
+export const userQuit = createAsyncThunk(
+  "user/userQuit",
+  async (_, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await userApi.userQuit();
+      dispatch(logout());
+      // 회원탈퇴후 인트로 페이지로 리다이렉트시키기
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+      // return rejectWithValue(err.response.status);
+    }
+  }
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
