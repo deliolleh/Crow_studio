@@ -55,16 +55,19 @@ public class ProjectController {
     }
 
     @GetMapping("/{teamSeq}")
-    public ResponseEntity<Map<String,List<String>>> pjtRead(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
+    public ResponseEntity<Map<List<String>,List<List<String>>>> pjtRead(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
         String baseUrl = "/home/ubuntu/crow_data/"+String.valueOf(teamSeq);
         File teamPjt = new File(baseUrl);
         String[] names = teamPjt.list();
         String rootName = names[0];
         String newUrl = baseUrl+ "/" + rootName;
-        out.println(rootName);
-        Map<String,List<String>> visit = new HashMap<>();
-        List<String> newValue = new ArrayList<>();
-        visit.put(rootName, newValue);
+
+        Map<List<String>,List<List<String>>> visit = new HashMap<>();
+        List<List<String>> newValue = new ArrayList<>();
+        List<String> root = new ArrayList<>();
+        root.add(rootName);
+        root.add(newUrl);
+        visit.put(root,newValue);
         projectService.readDirectory(newUrl,rootName,visit);
 
         return new ResponseEntity<>(visit, HttpStatus.ACCEPTED);

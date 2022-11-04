@@ -30,7 +30,10 @@ public class ProjectService {
     private FileService fileService;
 
     /**
-     * 디렉토리 만들어주는 함수
+     * 디렉토리 만들어주기
+     * @param path
+     * @param name
+     * @return Dir or "2"
      */
     public String createDir(String path, String name){
         String pjt = path + "/" + name;
@@ -42,7 +45,10 @@ public class ProjectService {
     }
 
     /**
-     * file db에 저장하는 함수
+     * 파일 DB에 저장하는 함수
+     * @param fileCreateDto
+     * @param team
+     * @return Boolean
      */
     public boolean saveFileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
         FileEntity fileEntity = new FileEntity(fileCreateDto,team);
@@ -54,29 +60,43 @@ public class ProjectService {
         return true;
     }
 
-    public Map<String,List<String>> readDirectory(String rootPath, String rootName, Map<String,List<String>> visit){
+    /**
+     * 파일 경로를 모두 찾아서 HashMap으로 반환해주는 함수
+     * @param rootPath
+     * @param rootName
+     * @param visit
+     * @return 
+     */
+    public Map<List<String>,List<List<String>>> readDirectory(String rootPath, String rootName, Map<List<String>,List<List<String>>> visit){
         File file = new File(rootPath);
         File files[] = file.listFiles();
         String names[] = file.list();
-
+        List<String> root = new ArrayList<>();
+        root.add(rootName);
+        root.add(rootPath);
         for (int i = 0; i < files.length; i++) {
             File dir = files[i];
             String name = names[i];
             String thisPath = dir.getPath();
-
+            List<String> here = new ArrayList<>();
+            here.add(name);
+            here.add(thisPath);
             if (dir.isDirectory()) {
-                List<String> newValue = new ArrayList<>();
-                visit.put(thisPath,newValue);
+                List<List<String>> newValue = new ArrayList<>();
+                visit.get(root).add(here);
+                visit.put(here,newValue);
                 readDirectory(thisPath,name,visit);
             } else {
-                visit.get(rootName).add(name);
+                visit.get(root).add(here);
             }
         }
         return visit;
     }
 
     /**
-     * 모든 경로 재귀적 탐색, 조회 후 파일 등록
+     * 모든 경로를 재귀적으로 찾고, db에 저장
+     * @param path
+     * @param teamSeq
      */
     public void saveFilesInDIr(String path, Long teamSeq) {
         File file = new File(path);
