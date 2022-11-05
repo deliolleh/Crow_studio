@@ -6,6 +6,7 @@ import {
   getTeam,
   createTeam,
   modifyTeamName,
+  deleteTeam,
   // deleteTeam,
   // getMembers,
   // addMember,
@@ -42,6 +43,7 @@ const Team = () => {
   useEffect(() => {
     dispatch(getTeams()).unwrap().then(console.log).catch(console.error);
     // dispatch(getTeam(6)).unwrap().then(console.log).catch(console.error);
+    // dispatch(deleteTeam(7)).unwrap().then(console.log).catch(console.error);
   }, [dispatch]);
 
   return (
