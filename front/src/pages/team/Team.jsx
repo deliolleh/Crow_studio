@@ -8,7 +8,7 @@ import {
   modifyTeamName,
   deleteTeam,
   getMembers,
-  // addMember,
+  addMember,
   // deleteMember,
   // delegateLeader,
   // resignTeam,
@@ -43,7 +43,11 @@ const Team = () => {
     dispatch(getTeams()).unwrap().then(console.log).catch(console.error);
     // dispatch(getTeam(6)).unwrap().then(console.log).catch(console.error);
     // dispatch(deleteTeam(7)).unwrap().then(console.log).catch(console.error);
-    dispatch(getMembers(6)).unwrap().then(console.log).catch(console.error);
+    dispatch(getMembers(3)).unwrap().then(console.log).catch(console.error);
+    // dispatch(addMember(JSON.stringify({ teamSeq: 3, memberSeq: 4 })))
+    //   .unwrap()
+    //   .then(console.log)
+    //   .catch(console.error);
   }, [dispatch]);
 
   return (
