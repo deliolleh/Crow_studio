@@ -7,8 +7,7 @@ import {
   createTeam,
   modifyTeamName,
   deleteTeam,
-  // deleteTeam,
-  // getMembers,
+  getMembers,
   // addMember,
   // deleteMember,
   // delegateLeader,
@@ -44,6 +43,7 @@ const Team = () => {
     dispatch(getTeams()).unwrap().then(console.log).catch(console.error);
     // dispatch(getTeam(6)).unwrap().then(console.log).catch(console.error);
     // dispatch(deleteTeam(7)).unwrap().then(console.log).catch(console.error);
+    dispatch(getMembers(6)).unwrap().then(console.log).catch(console.error);
   }, [dispatch]);
 
   return (
