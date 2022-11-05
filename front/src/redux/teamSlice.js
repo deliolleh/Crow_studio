@@ -55,7 +55,10 @@ export const modifyTeamName = createAsyncThunk(
   "team/modifyTeamName",
   async ({ teamSeq, teamName }, { rejectWithValue }) => {
     try {
-      const response = await teamApi.modifyTeamName(teamSeq, teamName);
+      const response = await teamApi.modifyTeamName(
+        teamSeq,
+        JSON.stringify({ teamName })
+      );
       return response.data;
     } catch (err) {
       if (!err.response) {

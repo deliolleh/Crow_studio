@@ -4,7 +4,8 @@ const teamApi = {
   getTeams: () => api.get("/teams"),
   getTeam: (teamSeq) => api.get(`/teams/${teamSeq}`),
   createTeam: (teamName) => api.post("/teams/create", teamName),
-  modifyTeamName: (teamSeq, teamName) => api.put(`/teams/${teamSeq}`, teamName),
+  modifyTeamName: (teamSeq, teamName) =>
+    api.put(`/teams/modify/${teamSeq}`, teamName),
   deleteTeam: (teamSeq) => api.delete(`/team/delete/${teamSeq}`),
   getMembers: (teamSeq) => api.get(`/team/member/${teamSeq}`),
   addMember: (addData) => api.put("/team/add", addData),
