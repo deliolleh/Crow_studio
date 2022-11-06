@@ -274,8 +274,6 @@ public class TeamService {
 
             List<UserInfoDto> userInfoDtoList = new ArrayList<>();
 
-            Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
-
             // jwt에서 userSeq를 뽑아내고
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
@@ -438,6 +436,12 @@ public class TeamService {
 
         try {
 
+            Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
+
+            if(!teamEntityFoundCheck.isPresent()) {
+                return "404";
+            }
+
             // jwt에서 userSeq를 뽑아내고
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
@@ -458,7 +462,7 @@ public class TeamService {
                     return "403";
                 }
             } else {
-                return "error";
+                return "409";
             }
 
         } catch (Exception e) {

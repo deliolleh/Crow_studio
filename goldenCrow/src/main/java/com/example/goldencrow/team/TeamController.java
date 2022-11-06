@@ -229,7 +229,7 @@ public class TeamController {
 
         // 리더 권한 없으면 터질 예정임 403
         // 팀 내 유저가 아니면 터질 예정임 409
-        // 스스로는 내보낼 수 없음 409
+        // 스스로는 팀장으로 바꿀 수 없다 409
         // 그런 팀 없음 404
 
         if(req.get("teamSeq")==null || req.get("memberSeq")==null){
@@ -257,8 +257,9 @@ public class TeamController {
     @DeleteMapping("/quit/{teamSeq}")
     public ResponseEntity<String> memberQuitDelete(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq){
 
-        // 리더면 못 나갈 예정임
-        // 원래 내 팀이 아니었어도 못 나갈 예정임
+        // 리더면 못 나갈 예정임 403 감히
+        // 원래 내 팀이 아님 409
+        // 그런 팀이 없음 404
 
         String result = teamService.memberQuit(jwt, teamSeq);
 
@@ -266,6 +267,10 @@ public class TeamController {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else if(result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
+        } else if(result.equals("404")){
+            return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
+        } else if(result.equals("409")) {
+            return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
