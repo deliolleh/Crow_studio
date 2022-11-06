@@ -181,7 +181,7 @@ public class ProjectService {
             }
             File file = new File(pjt + "/main.py");
 
-            String content = "from flask import Flask\n\napp=Flask(" + projectName +")\n\n@app.route(\"/\")\ndef hello_world():\n\treturn \"<p>Hello, World</p>\"";
+            String content = "from flask import Flask\n\napp=Flask(__name__)\n\n@app.route(\"/\")\ndef hello_world():\n\treturn \"<p>Hello, World</p>\"";
             try {
                 FileWriter overWriteFile = new FileWriter(file, false);
                 overWriteFile.write(content);
