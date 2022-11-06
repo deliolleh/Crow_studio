@@ -194,6 +194,13 @@ public class TeamService {
             // jwt에서 userSeq를 뽑아내고
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
+            Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
+
+            if(!teamEntityFoundCheck.isPresent()) {
+                // 그런 팀 없다
+                return "404";
+            }
+
             Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
 
             if (teamEntityOptional.isPresent()) {

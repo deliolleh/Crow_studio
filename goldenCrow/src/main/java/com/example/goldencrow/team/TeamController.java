@@ -19,6 +19,7 @@ public class TeamController {
     private final String FAILURE = "FAILURE";
     private final String FORBIDDEN = "FORBIDDEN";
     private final String CONFLICT = "CONFLICT";
+    private final String NOT_FOUND = "NOT FOUND";
 
     private final UserService userService;
 
@@ -113,6 +114,8 @@ public class TeamController {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
         } else if(result.equals("409")){
             return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
+        } else if(result.equals("404")){
+            return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
