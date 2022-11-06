@@ -198,7 +198,8 @@ public class ProjectService {
             if (pjt.equals("2")) {
                 return "2";
             }
-            File file = new File(pjt + "/main.py");
+            String pjt1 = createDir(pjt,fileTitle);
+            File file = new File(pjt1 + "/main.py");
             String content = "from fastapi import FastAPI\n\napp=FastAPI()\n\n@app.get(\"/\")\nasync def root():\n\treturn {\"message\" : \"Hello, World\"}";
             try {
                 FileWriter overWriteFile = new FileWriter(file, false);
