@@ -48,6 +48,9 @@ public class CompileService {
     }
 
     // 도커파일 생성
+    /*
+    filePath = /home/ubuntu/crow_data/{teamSeq}/{projectName}
+    */
     public String createDockerfile(String filePath, Long teamSeq, String type) {
         // filePath가 /home/ubuntu/crow_data/로 시작하는지 확인
         boolean rightPath = filePath.startsWith("/home/ubuntu/crow_data/");
@@ -73,6 +76,10 @@ public class CompileService {
         else if (Objects.equals(type, "fastapi")) {
             content = "FROM python:3.10\n" +
                     "WORKDIR " + filePath + "\n" +
+                    "RUN python3 -m venv venv\n" +
+                    "RUN source ./venv/bin/activate\n" +
+                    "RUN pip3 install uvicorn[standard]\n" +
+                    "RUN pip3 install fastapi\n" +
 //                    "COPY ./requirements.txt /prod/requirements.txt\n" +
 //                    "RUN pip install --no-cache-dir --upgrade -r /prod/requirements.txt\n" +
 //                    "COPY ./" + projectName + " /prod/" + projectName + "\n" +
@@ -82,8 +89,8 @@ public class CompileService {
         }
         else if (Objects.equals(type, "flask")) {
             content = "FROM python:3.10\n" +
-                    "COPY . /app\n" +
-                    "WORKDIR /app\n" +
+                    "WORKDIR " + filePath + "\n" +
+                    "COPY . .\n" +
 //                    "COPY requirements.txt requirements.txt\n" +7
 //                    "RUN pip3 install -r requirements.txt\n" +
 //                    "COPY . .\n" +
