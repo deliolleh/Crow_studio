@@ -84,7 +84,8 @@ public class CompileService {
 //                    "RUN pip install --no-cache-dir --upgrade -r /prod/requirements.txt\n" +
 //                    "COPY ./" + projectName + " /prod/" + projectName + "\n" +
                     "COPY . .\n" +
-                    "CMD [\"uvicorn\", \"" + projectName + ".main:app" + "\", \"--host\", \"0.0.0.0\", \"--port\", \"3001\"]";
+                    "EXPOSE 8000\n" +
+                    "CMD [\"uvicorn\", \"" + projectName + ".main:app" + "\", \"--host\", \"0.0.0.0\"]";
 //                    "CMD [\"uvicorn\", \"" + projectName + ".main:" + projectName + "\"]";
         }
         else if (Objects.equals(type, "flask")) {
@@ -95,7 +96,8 @@ public class CompileService {
 //                    "COPY requirements.txt requirements.txt\n" +7
 //                    "RUN pip3 install -r requirements.txt\n" +
 //                    "COPY . .\n" +
-                    "CMD [ \"python3\" , \"main.py\", \"run\", \"--host=0.0.0.0\", \"--port\", \"3002\"]";
+                    "EXPOSE 5000\n" +
+                    "CMD [ \"python3\" , \"main.py\", \"run\", \"--host=0.0.0.0\"]";
         }
         File file = new File(filePath + "/Dockerfile");
         try {
