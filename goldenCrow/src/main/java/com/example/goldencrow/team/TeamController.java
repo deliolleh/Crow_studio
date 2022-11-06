@@ -53,13 +53,15 @@ public class TeamController {
     @GetMapping("/{teamSeq}")
     public ResponseEntity<TeamDto> teamGet(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
 
-        TeamDto result = teamService.teamGet(jwt, teamSeq);
+        TeamDto res = teamService.teamGet(jwt, teamSeq);
 
         // null일 경우 문제가 있다는 것
-        if(result==null){
+        if(res==null){
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        } else if (res.getTeamName().equals("403")){
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         } else {
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            return new ResponseEntity<>(res, HttpStatus.OK);
         }
 
     }

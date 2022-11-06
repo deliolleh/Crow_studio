@@ -97,6 +97,12 @@ public class TeamService {
             // jwt에서 userSeq를 뽑아내고
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
+            Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeq(teamSeq);
+
+            if(!teamEntityOptional.isPresent()) {
+                return null;
+            }
+
             // 그 userSeq와 teamSeq를 가지는 멤버를 뽑아옴
             Optional<MemberEntity> memberEntityOptional = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(userSeq, teamSeq);
 
@@ -104,7 +110,7 @@ public class TeamService {
                 // 존재할 경우 : 팀 내부를 볼 권한이 있다
 
                 // 그럼...
-                TeamEntity teamEntity = memberEntityOptional.get().getTeam();
+                TeamEntity teamEntity = teamEntityOptional.get();
 
                 // 그 팀의 리더가 누군지 체크
                 Long leaderSeq = teamEntity.getTeamLeader().getUserSeq();
@@ -129,7 +135,9 @@ public class TeamService {
 
             } else {
                 // 아닐 경우 : 없다
-                return null;
+                TeamDto teamDto = new TeamDto();
+                teamDto.setTeamName("403");
+                return teamDto;
             }
 
         } catch (Exception e) {
