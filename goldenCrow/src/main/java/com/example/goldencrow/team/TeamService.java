@@ -100,7 +100,9 @@ public class TeamService {
             Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeq(teamSeq);
 
             if(!teamEntityOptional.isPresent()) {
-                return null;
+                TeamDto teamDto = new TeamDto();
+                teamDto.setTeamName("400");
+                return teamDto;
             }
 
             // 그 userSeq와 teamSeq를 가지는 멤버를 뽑아옴
