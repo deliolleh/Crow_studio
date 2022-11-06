@@ -71,16 +71,24 @@ const Header = () => {
             <li className="nav-item">
               <Link
                 className="px-0.5 py-2 flex items-center justify-end text-lg leading-snug text-white hover:opacity-75"
-                to="/"
+                to="/main"
               >
                 <span className="ml-7">프로젝트</span>
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className="px-0.5 py-2 flex items-center justify-end text-lg leading-snug text-white hover:opacity-75"
+                to="/project/create"
+              >
+                <span className="ml-7">+</span>
               </Link>
             </li>
           </ul>
         </div>
 
         {/* 프로필 */}
-        <div className="lg:flex flex lg:static absolute right-14 lg:item-center mt-1.5">
+        <div className="lg:flex flex lg:static absolute right-14 lg:item-center mt-2.5">
           {/* 프로필 이미지 */}
           <div
             className="w-7 h-7 rounded-full cursor-pointer"
@@ -99,7 +107,7 @@ const Header = () => {
 
           {/* 드롭다운 */}
           {dropdownOpen && (
-            <div className="absolute flex flex-col gap-2 top-10 right-5 p-2 bg-component_item_bg_+2_dark rounded-md">
+            <div className="absolute flex flex-col gap-2 w-40 lg:top-12 lg:right-4 top-9 right-0 px-3 py-2 bg-component_item_bg_+2_dark rounded-md text-right text-white z-10">
               {isLoggedIn ? (
                 <React.Fragment>
                   <Link to={`/mypage/${mySeq}`}>마이페이지</Link>
