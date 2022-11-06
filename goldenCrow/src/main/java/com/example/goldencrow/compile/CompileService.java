@@ -75,7 +75,7 @@ public class CompileService {
         }
         else if (Objects.equals(type, "fastapi")) {
             content = "FROM python:3.10\n" +
-                    "WORKDIR " + pathList[0] + "/" + pathList[1] + "/" + pathList[2] + "/" + pathList[3] + "/" + pathList[4] + "\n" +
+                    "WORKDIR " + filePath + "\n" +
                     "RUN python3 -m venv venv\n" +
                     "RUN . ./venv/bin/activate\n" +
                     "RUN pip3 install uvicorn[standard]\n" +
@@ -91,6 +91,7 @@ public class CompileService {
             content = "FROM python:3.10\n" +
                     "WORKDIR " + filePath + "\n" +
                     "COPY . .\n" +
+                    "RUN pip3 install Flask" +
 //                    "COPY requirements.txt requirements.txt\n" +7
 //                    "RUN pip3 install -r requirements.txt\n" +
 //                    "COPY . .\n" +
