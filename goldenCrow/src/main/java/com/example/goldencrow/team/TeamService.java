@@ -197,6 +197,14 @@ public class TeamService {
             Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
 
             if (teamEntityOptional.isPresent()) {
+
+                Optional<TeamEntity> teamEntityConflictCheck = teamRepository.findTeamEntityByTeamLeaderAndTeamName(userRepository.findByUserSeq(userSeq), teamName);
+
+                if(teamEntityConflictCheck.isPresent()) {
+                    // 중복되는 팀 리더와 팀 명이 있음
+                    return "409";
+                }
+
                 TeamEntity teamEntity = teamEntityOptional.get();
                 teamEntity.setTeamName(teamName);
                 teamRepository.saveAndFlush(teamEntity);
