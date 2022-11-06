@@ -95,6 +95,7 @@ public class CompileService {
 //                    "COPY requirements.txt requirements.txt\n" +7
 //                    "RUN pip3 install -r requirements.txt\n" +
 //                    "COPY . .\n" +
+                    "EXPOSE 5000" +
                     "CMD [ \"python3\" , \"main.py\", \"run\", \"--host=0.0.0.0\"]";
         }
         File file = new File(filePath + "/Dockerfile");
