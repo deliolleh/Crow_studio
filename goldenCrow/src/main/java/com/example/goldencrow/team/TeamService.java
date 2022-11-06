@@ -3,6 +3,7 @@ package com.example.goldencrow.team;
 import com.example.goldencrow.file.Service.ProjectService;
 import com.example.goldencrow.team.dto.MemberDto;
 import com.example.goldencrow.team.dto.TeamDto;
+import com.example.goldencrow.team.dto.UserInfoListDto;
 import com.example.goldencrow.team.entity.MemberEntity;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.MemberRepository;
@@ -268,9 +269,17 @@ public class TeamService {
     }
 
     // 팀원 목록 조회
-    public List<UserInfoDto> memberList(String jwt, Long teamSeq) {
+    public UserInfoListDto memberList(String jwt, Long teamSeq) {
 
         try {
+
+            Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
+
+            if(!teamEntityFoundCheck.isPresent()) {
+                UserInfoListDto userInfoListDto = new UserInfoListDto();
+                userInfoListDto.setResult("404");
+                return userInfoListDto;
+            }
 
             List<UserInfoDto> userInfoDtoList = new ArrayList<>();
 
@@ -289,15 +298,21 @@ public class TeamService {
                     userInfoDtoList.add(new UserInfoDto(m.getUser()));
                 }
 
-                return userInfoDtoList;
+                UserInfoListDto userInfoListDto = new UserInfoListDto(userInfoDtoList);
+
+                return userInfoListDto;
 
             } else {
-                return null;
+                UserInfoListDto userInfoListDto = new UserInfoListDto();
+                userInfoListDto.setResult("403");
+                return userInfoListDto;
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            UserInfoListDto userInfoListDto = new UserInfoListDto();
+            userInfoListDto.setResult("error");
+            return userInfoListDto;
         }
 
     }
