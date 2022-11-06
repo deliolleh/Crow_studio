@@ -75,11 +75,11 @@ public class CompileService {
         }
         else if (Objects.equals(type, "fastapi")) {
             content = "FROM python:3.10\n" +
-                    "python3 -m venv venv\n" +
-                    "source ./venv/bin/activate\n" +
+                    "WORKDIR " + filePath + "\n" +
+                    "RUN python3 -m venv venv\n" +
+                    "RUN source ./venv/bin/activate\n" +
                     "RUN pip3 install uvicorn[standard]\n" +
                     "RUN pip3 install fastapi\n" +
-                    "WORKDIR " + filePath + "\n" +
 //                    "COPY ./requirements.txt /prod/requirements.txt\n" +
 //                    "RUN pip install --no-cache-dir --upgrade -r /prod/requirements.txt\n" +
 //                    "COPY ./" + projectName + " /prod/" + projectName + "\n" +
