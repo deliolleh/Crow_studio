@@ -13,6 +13,31 @@ body {
   box-sizing: border-box;
 }
 
+/* scrollbar custom */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: #2B2C2B;
+  border-radius: 10px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 10px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+/* 스크롤바들이 만나는 하단 모서리 */
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 .Pane1, .Pane2 {
   overflow: auto;
   position: static;

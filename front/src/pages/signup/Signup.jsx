@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 
 import { signup } from "../../redux/userSlice";
 
+import Header from "../../components/Header";
 import SignupTitle from "./SignupTitle";
 import SignupForm from "./SignupForm";
 
@@ -28,13 +29,16 @@ const Signup = () => {
   };
 
   return (
-    <section className="w-max h-max">
-      <SignupTitle />
-      <SignupForm signupHandler={signupHandler} />
-      <Link to="/login" className="block w-full text-center">
-        계정이 있으신가요? 로그인하기
-      </Link>
-    </section>
+    <div className="flex flex-col">
+      <Header />
+      <section className="w-screen h-screen flex flex-col justify-center overflow-auto">
+        <SignupTitle />
+        <SignupForm signupHandler={signupHandler} />
+        <Link to="/login" className="block w-full text-center">
+          계정이 있으신가요? 로그인하기
+        </Link>
+      </section>
+    </div>
   );
 };
 
