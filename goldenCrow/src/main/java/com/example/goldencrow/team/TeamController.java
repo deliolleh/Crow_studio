@@ -198,8 +198,9 @@ public class TeamController {
     public ResponseEntity<String> memberRemoveDelete(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req){
 
         // 리더 권한 없으면 터질 예정임 403
-        // 팀 내 유저가 아니면 터질 예정임 error
-        // 스스로는 내보낼 수 없음 error
+        // 팀 내 유저가 아니면 터질 예정임 409
+        // 스스로는 내보낼 수 없음 409
+        // 그런 팀 없음 404
 
         if(req.get("teamSeq")==null || req.get("memberSeq")==null){
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -211,6 +212,10 @@ public class TeamController {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else if(result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
+        } else if(result.equals("404")){
+            return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
+        } else if(result.equals("409")) {
+            return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
@@ -223,7 +228,9 @@ public class TeamController {
     public ResponseEntity<String> memberBeLeaderPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req){
 
         // 리더 권한 없으면 터질 예정임 403
-        // 팀 내 유저가 아니면 터질 예정임 error
+        // 팀 내 유저가 아니면 터질 예정임 409
+        // 스스로는 내보낼 수 없음 409
+        // 그런 팀 없음 404
 
         if(req.get("teamSeq")==null || req.get("memberSeq")==null){
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -235,6 +242,10 @@ public class TeamController {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else if(result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
+        } else if(result.equals("404")){
+            return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
+        } else if(result.equals("409")) {
+            return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }

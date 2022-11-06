@@ -353,7 +353,7 @@ public class TeamService {
 
             // 자기 자신이 아닌게 맞는지 체크
             if(userSeq==memberSeq) {
-                return "error";
+                return "409";
             }
 
             // 그런 팀이 존재하는지 체크
@@ -371,13 +371,13 @@ public class TeamService {
                         return "success";
 
                     } else {
-                        return "error";
+                        return "409";
                     }
                 } else {
                     return "403";
                 }
             } else {
-                return "error";
+                return "404";
             }
 
         } catch (Exception e) {
@@ -397,7 +397,7 @@ public class TeamService {
 
             // 자기 자신이 아닌게 맞는지 체크
             if(userSeq==memberSeq) {
-                return "error";
+                return "409";
             }
 
             // 그런 팀이 존재하는지 체크
@@ -417,13 +417,13 @@ public class TeamService {
                         return "success";
 
                     } else {
-                        return "error";
+                        return "409";
                     }
                 } else {
                     return "403";
                 }
             } else {
-                return "error";
+                return "404";
             }
 
         } catch (Exception e) {
