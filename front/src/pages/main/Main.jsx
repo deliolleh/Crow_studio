@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import { useLoading } from "@rest-hooks/hooks";
 import styled from "styled-components";
 import SplitPane from "react-split-pane";
@@ -11,11 +17,16 @@ import Sidebar from "./components/sidebar/Sidebar";
 import Directory from "./components/sidebar/Directory";
 import Git from "./components/sidebar/Git";
 import Team from "./components/sidebar/Team";
+import Api from "./components/sidebar/Api";
+import VariableName from "./components/sidebar/VariableName";
 import Settings from "./components/sidebar/Settings";
 import CustomTabs from "./components/tabs/CustomTabs";
 
 // tabtab dummy data
-import { MakeEditorData, MakeConsoleData } from "../main/components/tabs/makeData";
+import {
+  MakeEditorData,
+  MakeConsoleData,
+} from "../main/components/tabs/makeData";
 
 // svg
 import { ReactComponent as IcAdd } from "../../assets/icons/ic_add.svg";
@@ -36,11 +47,11 @@ const SidebarItems = styled.div`
 
 // split-pane width size useCallback ver.
 const useGettingWidth = () => {
-  const [ sidebarSize, setSideBarSize ] = useState(0);
+  const [sidebarSize, setSideBarSize] = useState(0);
   const sizeRef = useCallback((node) => {
     if (node !== null) {
       setSideBarSize(node.getBoundingClientRect().width);
-      console.log("sidebarSize: " + sidebarSize)
+      console.log("sidebarSize: " + sidebarSize);
     }
   }, []);
   return [sidebarSize, sizeRef];
@@ -90,28 +101,31 @@ const Main = () => {
 
   const showComponentHandler = (x) => {
     setCom(x);
-  }
+  };
 
   // split pane size
   // useRef ver.
   const sizeRef = useRef();
-  const [ sidebarSize, setSidebarSize ] = useState(0);
+  const [sidebarSize, setSidebarSize] = useState(0);
 
   useEffect(() => {
     setSidebarSize(sizeRef.current.getBoundingClientRect().width);
     // setSideBarSize(sizeRef.current.offsetWidth);
-    console.log("sidebarSize: " + sidebarSize)
-    console.log("sizeRef.current.getBoundingClientRect().width: " + sizeRef.current.getBoundingClientRect().width)
-  }, [sidebarSize])
+    console.log("sidebarSize: " + sidebarSize);
+    console.log(
+      "sizeRef.current.getBoundingClientRect().width: " +
+        sizeRef.current.getBoundingClientRect().width
+    );
+  }, [sidebarSize]);
 
   // useCallback ver.
   // const [ sidebarSize, sizeRef ] = useGettingWidth();
   // const [ lazySidebarSize, lazySizeRef ] = useGettingWidth();
-  // const loading = useLoading(); 
+  // const loading = useLoading();
 
   // Beautiful-dnd
   // simple ver.
-  const [ items, setItems ] = useState(elements);
+  const [items, setItems] = useState(elements);
 
   const onDragEnd = (result) => {
     const newItems = Array.from(items);
@@ -152,8 +166,10 @@ const Main = () => {
   // tabtab
   const [activeTab, setActiveTab] = useState(0);
   const [activeTab2, setActiveTab2] = useState(0);
-  const [editorTabs, setEditorTabs] = useState(MakeEditorData(2, 'Editor Tab'));
-  const [consoleTabs, setConsoleTabs] = useState(MakeConsoleData(1, 'Console Tab'));
+  const [editorTabs, setEditorTabs] = useState(MakeEditorData(2, "Editor Tab"));
+  const [consoleTabs, setConsoleTabs] = useState(
+    MakeConsoleData(1, "Console Tab")
+  );
   // // customArrowAuto 설정해보고 싶었는데 통하지 않았습니다,,
   // const [customArrowAuto, setCustomArrowAuto] = useState(false)
   // const [ containerWidthSize, setContainerWidthSize ] = useState(0);
@@ -199,18 +215,19 @@ const Main = () => {
     });
   }, [editorTabs]);
 
-  
   const handleTabChange = useCallback((index) => {
-    console.log('select tab', index);
+    console.log("select tab", index);
     setActiveTab(index);
   }, []);
-  
-  const handleTabSequenceChange = useCallback(({oldIndex, newIndex}) => {
-    console.log({oldIndex, newIndex});
-    setEditorTabs((tab) => helpers.simpleSwitch(editorTabs, oldIndex, newIndex));
-    setActiveTab(newIndex)
+
+  const handleTabSequenceChange = useCallback(({ oldIndex, newIndex }) => {
+    console.log({ oldIndex, newIndex });
+    setEditorTabs((tab) =>
+      helpers.simpleSwitch(editorTabs, oldIndex, newIndex)
+    );
+    setActiveTab(newIndex);
   }, []);
-  
+
   const closableTabItems2 = useMemo(() => {
     return consoleTabs.map((tab, index) => {
       return (
@@ -228,14 +245,16 @@ const Main = () => {
   }, [consoleTabs]);
 
   const handleTabChange2 = useCallback((index) => {
-    console.log('select tab', index);
+    console.log("select tab", index);
     setActiveTab2(index);
   }, []);
 
-  const handleTabSequenceChange2 = useCallback(({oldIndex, newIndex}) => {
-    console.log({oldIndex, newIndex});
-    setConsoleTabs((tab) => helpers.simpleSwitch(consoleTabs, oldIndex, newIndex));
-    setActiveTab2(newIndex)
+  const handleTabSequenceChange2 = useCallback(({ oldIndex, newIndex }) => {
+    console.log({ oldIndex, newIndex });
+    setConsoleTabs((tab) =>
+      helpers.simpleSwitch(consoleTabs, oldIndex, newIndex)
+    );
+    setActiveTab2(newIndex);
   }, []);
 
   return (
@@ -243,13 +262,41 @@ const Main = () => {
       <Header />
       <div className="flex">
         {/* useRef ver. */}
-        <div ref={ sizeRef } className="flex">
+        <div ref={sizeRef} className="flex">
           <Sidebar onClickIcon={showComponentHandler} com={com} />
-          {com === "" && (<SidebarItems style={{ width: "0px", margin: '0px'}} />)}
-          {com === "디렉토리" && (<SidebarItems><Directory /></SidebarItems>)}
-          {com === "깃" && (<SidebarItems><Git /></SidebarItems>)}
-          {com === "팀" && (<SidebarItems><Team /></SidebarItems>)}
-          {com === "세팅" && (<SidebarItems><Settings /></SidebarItems>)}
+          {com === "" && (
+            <SidebarItems style={{ width: "0px", margin: "0px" }} />
+          )}
+          {com === "디렉토리" && (
+            <SidebarItems>
+              <Directory />
+            </SidebarItems>
+          )}
+          {com === "깃" && (
+            <SidebarItems>
+              <Git />
+            </SidebarItems>
+          )}
+          {com === "팀" && (
+            <SidebarItems>
+              <Team />
+            </SidebarItems>
+          )}
+          {com === "api" && (
+            <SidebarItems>
+              <Api />
+            </SidebarItems>
+          )}
+          {com === "변수명" && (
+            <SidebarItems>
+              <VariableName />
+            </SidebarItems>
+          )}
+          {com === "세팅" && (
+            <SidebarItems>
+              <Settings />
+            </SidebarItems>
+          )}
         </div>
         {/* useCallback ver. */}
         {/* {!loading && <div ref={ lazySizeRef } className="flex">
@@ -266,15 +313,38 @@ const Main = () => {
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                style={ com === "" ? { display: "flex",  width: `calc(100vw - 115px)`, } : { display: "flex", width: `calc(100vw - ${sidebarSize}px - 30px)`, }}
+                style={
+                  com === ""
+                    ? { display: "flex", width: `calc(100vw - 108px)` }
+                    : {
+                        display: "flex",
+                        width: `calc(100vw - ${sidebarSize}px - 23px)`,
+                      }
+                }
               >
                 <SplitPane
-                  style={ com === "" ? { position: 'static', overflow: 'auto', width: `calc(100vw - 115px)`,} : { position: 'static', overflow: 'auto', width: `calc(100vw - ${sidebarSize}px - 30px)`,}}
+                  style={
+                    com === ""
+                      ? {
+                          position: "static",
+                          overflow: "auto",
+                          width: `calc(100vw - 108px)`,
+                        }
+                      : {
+                          position: "static",
+                          overflow: "auto",
+                          width: `calc(100vw - ${sidebarSize}px - 23px)`,
+                        }
+                  }
                   split="vertical"
                   defaultSize="50%"
                 >
                   {items.map((item, index) => (
-                    <Draggable key={item.id} draggableId={item.id} index={index}>
+                    <Draggable
+                      key={item.id}
+                      draggableId={item.id}
+                      index={index}
+                    >
                       {(provided, snapshot) => (
                         // <Tabs2
                         //   provided={provided}
@@ -290,14 +360,20 @@ const Main = () => {
                           showModalButton={false}
                           showArrowButton={true}
                           onTabClose={
-                            item.id === "one" ? 
-                            (i) => {
-                            console.log('close', i);
-                            setEditorTabs((prev) => prev.filter((_, idx) => idx !== i));}
-                            : (i) => {
-                              console.log('close', i);
-                              setConsoleTabs((prev) => prev.filter((_, idx) => idx !== i));
-                          }}
+                            item.id === "one"
+                              ? (i) => {
+                                  console.log("close", i);
+                                  setEditorTabs((prev) =>
+                                    prev.filter((_, idx) => idx !== i)
+                                  );
+                                }
+                              : (i) => {
+                                  console.log("close", i);
+                                  setConsoleTabs((prev) =>
+                                    prev.filter((_, idx) => idx !== i)
+                                  );
+                                }
+                          }
                           activeIndex={
                             item.id === "one" ? activeTab : activeTab2
                           }
@@ -305,42 +381,64 @@ const Main = () => {
                             item.id === "one" ? panelItems : panelItems2
                           }
                           closableTabItems={
-                            item.id === "one" ? closableTabItems : closableTabItems2
+                            item.id === "one"
+                              ? closableTabItems
+                              : closableTabItems2
                           }
                           onTabChange={
-                            item.id === "one" ? handleTabChange : handleTabChange2
+                            item.id === "one"
+                              ? handleTabChange
+                              : handleTabChange2
                           }
                           onTabSequenceChange={
-                            item.id === "one" ? handleTabSequenceChange : handleTabSequenceChange2
+                            item.id === "one"
+                              ? handleTabSequenceChange
+                              : handleTabSequenceChange2
                           }
                           ExtraButton={
-                            item.id === "one" ? 
-                            <ExtraButton
-                              onClick={(e) => {
-                                setEditorTabs((prev) => {
-                                  const newTabs = [...prev];
-                                  const newItem = MakeEditorData(1, 'New Tab ' + (newTabs.length + 1), false)[0];
-                                  newTabs.push(newItem);
-                                  return newTabs;
-                                });
-                                setActiveTab(editorTabs.length);
-                              }}
-                            >
-                              <IcAdd style={{ width: "10px", height: "10px", }} alt="add-icon" />
-                            </ExtraButton>
-                            : <ExtraButton
-                            onClick={(e) => {
-                              setConsoleTabs((prev) => {
-                                const newTabs = [...prev];
-                                const newItem = MakeConsoleData(1, 'New Tab ' + (newTabs.length + 1), false)[0];
-                                newTabs.push(newItem);
-                                return newTabs;
-                              });
-                              setActiveTab2(consoleTabs.length);
-                            }}
-                          >
-                            <IcAdd style={{ width: "10px", height: "10px", }} alt="add-icon" />
-                          </ExtraButton>
+                            item.id === "one" ? (
+                              <ExtraButton
+                                onClick={(e) => {
+                                  setEditorTabs((prev) => {
+                                    const newTabs = [...prev];
+                                    const newItem = MakeEditorData(
+                                      1,
+                                      "New Tab " + (newTabs.length + 1),
+                                      false
+                                    )[0];
+                                    newTabs.push(newItem);
+                                    return newTabs;
+                                  });
+                                  setActiveTab(editorTabs.length);
+                                }}
+                              >
+                                <IcAdd
+                                  style={{ width: "10px", height: "10px" }}
+                                  alt="add-icon"
+                                />
+                              </ExtraButton>
+                            ) : (
+                              <ExtraButton
+                                onClick={(e) => {
+                                  setConsoleTabs((prev) => {
+                                    const newTabs = [...prev];
+                                    const newItem = MakeConsoleData(
+                                      1,
+                                      "New Tab " + (newTabs.length + 1),
+                                      false
+                                    )[0];
+                                    newTabs.push(newItem);
+                                    return newTabs;
+                                  });
+                                  setActiveTab2(consoleTabs.length);
+                                }}
+                              >
+                                <IcAdd
+                                  style={{ width: "10px", height: "10px" }}
+                                  alt="add-icon"
+                                />
+                              </ExtraButton>
+                            )
                           }
                         />
                       )}
