@@ -84,7 +84,7 @@ public class CompileService {
 //                    "RUN pip install --no-cache-dir --upgrade -r /prod/requirements.txt\n" +
 //                    "COPY ./" + projectName + " /prod/" + projectName + "\n" +
                     "COPY . .\n" +
-                    "CMD [\"uvicorn\", \"" + projectName + ".main:" + projectName + "\", \"--host\", \"0.0.0.0\", \"--port\", \"3001\"]";
+                    "CMD [\"uvicorn\", \"" + projectName + ".main:app" + "\", \"--host\", \"0.0.0.0\", \"--port\", \"3001\"]";
 //                    "CMD [\"uvicorn\", \"" + projectName + ".main:" + projectName + "\"]";
         }
         else if (Objects.equals(type, "flask")) {
