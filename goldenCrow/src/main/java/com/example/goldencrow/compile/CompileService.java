@@ -77,7 +77,7 @@ public class CompileService {
             content = "FROM python:3.10\n" +
                     "WORKDIR " + filePath + "\n" +
                     "RUN python3 -m venv venv\n" +
-                    "RUN source ./venv/bin/activate\n" +
+                    "RUN . ./venv/bin/activate\n" +
                     "RUN pip3 install uvicorn[standard]\n" +
                     "RUN pip3 install fastapi\n" +
 //                    "COPY ./requirements.txt /prod/requirements.txt\n" +
