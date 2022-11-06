@@ -75,7 +75,7 @@ public class CompileService {
         }
         else if (Objects.equals(type, "fastapi")) {
             content = "FROM python:3.10\n" +
-                    "WORKDIR " + filePath + "\n" +
+                    "WORKDIR " + pathList[0] + "/" + pathList[1] + "/" + pathList[2] + "/" + pathList[3] + "/" + pathList[4] + "\n" +
                     "RUN python3 -m venv venv\n" +
                     "RUN . ./venv/bin/activate\n" +
                     "RUN pip3 install uvicorn[standard]\n" +
@@ -84,7 +84,7 @@ public class CompileService {
 //                    "RUN pip install --no-cache-dir --upgrade -r /prod/requirements.txt\n" +
 //                    "COPY ./" + projectName + " /prod/" + projectName + "\n" +
                     "COPY . .\n" +
-                    "CMD [\"uvicorn\", \"" + filePath + ".main:app" + "\", \"--host\", \"0.0.0.0\", \"--port\", \"3001\"]";
+                    "CMD [\"uvicorn\", \"" + projectName + ".main:app" + "\", \"--host\", \"0.0.0.0\", \"--port\", \"3001\"]";
 //                    "CMD [\"uvicorn\", \"" + projectName + ".main:" + projectName + "\"]";
         }
         else if (Objects.equals(type, "flask")) {
