@@ -144,6 +144,7 @@ public class CompileService {
         String container = resultString(command);
         if (container.isEmpty()) { return "Can't run docker container"; }
         String portString = portNum(container);
+        if (portString.isEmpty()) { return "런 시켰는데 컨테이너가 안돌아가서 포트를 찾을 수가 없음"; }
         // \n 전까지의 문자열에서 : 뒤에 있는 숫자만 가져오기
         String[] portList = portString.split("\n");
         System.out.println(Arrays.toString(portList));
