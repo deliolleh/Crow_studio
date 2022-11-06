@@ -136,6 +136,10 @@ public class TeamController {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else if(result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
+        } else if(result.equals("400")){
+            return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
+        } else if(result.equals("501")){
+            return new ResponseEntity<>("file delete Error", HttpStatus.OK);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
@@ -179,6 +183,10 @@ public class TeamController {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else if(result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
+        } else if(result.equals("404")){
+            return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
+        } else if(result.equals("409")) {
+            return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
