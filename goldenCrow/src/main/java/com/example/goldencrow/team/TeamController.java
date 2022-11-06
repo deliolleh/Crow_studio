@@ -1,6 +1,7 @@
 package com.example.goldencrow.team;
 
 import com.example.goldencrow.team.dto.TeamDto;
+import com.example.goldencrow.team.dto.UserInfoListDto;
 import com.example.goldencrow.user.JwtService;
 import com.example.goldencrow.user.UserService;
 import com.example.goldencrow.user.dto.UserInfoDto;
@@ -151,16 +152,22 @@ public class TeamController {
     @GetMapping("/member/{teamSeq}")
     public ResponseEntity<List<UserInfoDto>> memberListGet(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq){
 
-        // 자기 팀이면 ㄱㅊ
+        // 우리 팀이 아니면 403
+        // 그런 팀이 없으면 404
 
         // 내가 속한 것만 골라서 반환
-        List<UserInfoDto> userInfoDtoList = teamService.memberList(jwt, teamSeq);
+        UserInfoListDto res = teamService.memberList(jwt, teamSeq);
+        String result = res.getResult();
 
-        if(userInfoDtoList==null) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        } else {
+        if(result.equals("success")) {
             // 리스트가 비어있어도 잘못된 게 아니기 때문에 그건 거르지 않는다
-            return new ResponseEntity<>(userInfoDtoList, HttpStatus.OK);
+            return new ResponseEntity<>(res.getUserInfoDtoList(), HttpStatus.OK);
+        } else if(result.equals("403")) {
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        } else if(result.equals("404")) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
     }
