@@ -162,7 +162,8 @@ public class TeamService {
             // 중복되는 것이 있는지 확인
             // 있으면 리턴 듀플리케이트
             if (teamRepository.findTeamEntityByTeamLeaderAndTeamName(userEntity, teamName).isPresent()) {
-                return null;
+                res.put("result", new Long(409));
+                return res;
             }
 
             // 이 사람을 팀장으로 하는 팀 생성하고 저장
@@ -175,6 +176,7 @@ public class TeamService {
             memberRepository.saveAndFlush(memberEntity);
 
             // 성공 여부 반환
+            res.put("result", new Long(200));
             res.put("teamSeq", savedTeamEntity.getTeamSeq());
             return res;
 

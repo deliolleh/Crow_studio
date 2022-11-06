@@ -82,6 +82,8 @@ public class TeamController {
 
         if(res==null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        } else if(res.get("result")==409){
+            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
         } else {
             return new ResponseEntity<>(res, HttpStatus.OK);
         }
