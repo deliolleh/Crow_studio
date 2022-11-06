@@ -97,6 +97,14 @@ public class TeamService {
             // jwt에서 userSeq를 뽑아내고
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
+            Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeq(teamSeq);
+
+            if(!teamEntityOptional.isPresent()) {
+                TeamDto teamDto = new TeamDto();
+                teamDto.setTeamName("400");
+                return teamDto;
+            }
+
             // 그 userSeq와 teamSeq를 가지는 멤버를 뽑아옴
             Optional<MemberEntity> memberEntityOptional = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(userSeq, teamSeq);
 
@@ -104,7 +112,7 @@ public class TeamService {
                 // 존재할 경우 : 팀 내부를 볼 권한이 있다
 
                 // 그럼...
-                TeamEntity teamEntity = memberEntityOptional.get().getTeam();
+                TeamEntity teamEntity = teamEntityOptional.get();
 
                 // 그 팀의 리더가 누군지 체크
                 Long leaderSeq = teamEntity.getTeamLeader().getUserSeq();
@@ -129,7 +137,9 @@ public class TeamService {
 
             } else {
                 // 아닐 경우 : 없다
-                return null;
+                TeamDto teamDto = new TeamDto();
+                teamDto.setTeamName("403");
+                return teamDto;
             }
 
         } catch (Exception e) {
@@ -152,7 +162,8 @@ public class TeamService {
             // 중복되는 것이 있는지 확인
             // 있으면 리턴 듀플리케이트
             if (teamRepository.findTeamEntityByTeamLeaderAndTeamName(userEntity, teamName).isPresent()) {
-                return null;
+                res.put("result", new Long(409));
+                return res;
             }
 
             // 이 사람을 팀장으로 하는 팀 생성하고 저장
@@ -165,6 +176,7 @@ public class TeamService {
             memberRepository.saveAndFlush(memberEntity);
 
             // 성공 여부 반환
+            res.put("result", new Long(200));
             res.put("teamSeq", savedTeamEntity.getTeamSeq());
             return res;
 
@@ -182,9 +194,24 @@ public class TeamService {
             // jwt에서 userSeq를 뽑아내고
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
+            Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
+
+            if(!teamEntityFoundCheck.isPresent()) {
+                // 그런 팀 없다
+                return "404";
+            }
+
             Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
 
             if (teamEntityOptional.isPresent()) {
+
+                Optional<TeamEntity> teamEntityConflictCheck = teamRepository.findTeamEntityByTeamLeaderAndTeamName(userRepository.findByUserSeq(userSeq), teamName);
+
+                if(teamEntityConflictCheck.isPresent()) {
+                    // 중복되는 팀 리더와 팀 명이 있음
+                    return "409";
+                }
+
                 TeamEntity teamEntity = teamEntityOptional.get();
                 teamEntity.setTeamName(teamName);
                 teamRepository.saveAndFlush(teamEntity);
@@ -207,6 +234,12 @@ public class TeamService {
             // jwt에서 userSeq를 뽑아내고
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
+            Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
+
+            if(!teamEntityFoundCheck.isPresent()) {
+                return "404";
+            }
+
             Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
 
             if (teamEntityOptional.isPresent()) {
@@ -219,7 +252,7 @@ public class TeamService {
                 List<Long> teamSeqList = new ArrayList<>();
                 teamSeqList.add(teamSeq);
                 if(projectService.deleteProject(teamSeqList).equals("fail!")) {
-                    return "error";
+                    return "501";
                 }
 
                 return "success";
@@ -292,13 +325,13 @@ public class TeamService {
                         return "success";
 
                     } else {
-                        return "error";
+                        return "409";
                     }
                 } else {
                     return "403";
                 }
             } else {
-                return "error";
+                return "404";
             }
 
         } catch (Exception e) {
@@ -318,7 +351,7 @@ public class TeamService {
 
             // 자기 자신이 아닌게 맞는지 체크
             if(userSeq==memberSeq) {
-                return "error";
+                return "409";
             }
 
             // 그런 팀이 존재하는지 체크
@@ -336,13 +369,13 @@ public class TeamService {
                         return "success";
 
                     } else {
-                        return "error";
+                        return "409";
                     }
                 } else {
                     return "403";
                 }
             } else {
-                return "error";
+                return "404";
             }
 
         } catch (Exception e) {
@@ -362,7 +395,7 @@ public class TeamService {
 
             // 자기 자신이 아닌게 맞는지 체크
             if(userSeq==memberSeq) {
-                return "error";
+                return "409";
             }
 
             // 그런 팀이 존재하는지 체크
@@ -382,13 +415,13 @@ public class TeamService {
                         return "success";
 
                     } else {
-                        return "error";
+                        return "409";
                     }
                 } else {
                     return "403";
                 }
             } else {
-                return "error";
+                return "404";
             }
 
         } catch (Exception e) {
@@ -402,6 +435,12 @@ public class TeamService {
     public String memberQuit(String jwt, Long teamSeq) {
 
         try {
+
+            Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
+
+            if(!teamEntityFoundCheck.isPresent()) {
+                return "404";
+            }
 
             // jwt에서 userSeq를 뽑아내고
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
@@ -423,7 +462,7 @@ public class TeamService {
                     return "403";
                 }
             } else {
-                return "error";
+                return "409";
             }
 
         } catch (Exception e) {
