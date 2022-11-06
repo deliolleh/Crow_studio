@@ -91,11 +91,11 @@ public class CompileService {
             content = "FROM python:3.10\n" +
                     "WORKDIR " + filePath + "\n" +
                     "COPY . .\n" +
-                    "RUN pip3 install Flask" +
+                    "RUN pip3 install Flask\n" +
 //                    "COPY requirements.txt requirements.txt\n" +7
 //                    "RUN pip3 install -r requirements.txt\n" +
 //                    "COPY . .\n" +
-                    "CMD [ \"python3\", \"-m\" , \"main\", \"run\", \"--host=0.0.0.0\", \"--port\", \"3002\"]";
+                    "CMD [ \"python3\" , \"main\", \"run\", \"--host=0.0.0.0\", \"--port\", \"3002\"]";
         }
         File file = new File(filePath + "/Dockerfile");
         try {
