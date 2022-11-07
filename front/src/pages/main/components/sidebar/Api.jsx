@@ -15,7 +15,7 @@ const Api = () => {
           className="flex justify-between items-center"
           style={{ padding: 15 }}
         >
-          <div className="text-xl font-bold text-white my-1">Api</div>
+          <div className="text-xl font-bold text-white my-1">Api TestS</div>
         </div>
         <hr className="bg-component_dark border-0 m-0" style={{ height: 3 }} />
         <div style={{ padding: 15 }}>
