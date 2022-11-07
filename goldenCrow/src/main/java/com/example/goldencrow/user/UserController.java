@@ -168,6 +168,24 @@ public class UserController {
 
     }
 
+//    // 깃 정보 수정
+//    public ResponseEntity<String> editGitPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req){
+//
+//        if(req.get("userGitId")==null || req.get("userGitPassword")==null){
+//            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+//        }
+//
+//        String result = userService.editGitService(jwt, req);
+//
+//        // 일단 성공하면 이렇게 반환될 겁니다
+//        if(result.equals("success")) {
+//            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+//        }
+//
+//    }
+
     // 회원탈퇴
     @DeleteMapping("/quit")
     public ResponseEntity<String> quitDelete(@RequestHeader("Authorization") String jwt){
