@@ -49,13 +49,13 @@ public class FileService {
 
         Optional<TeamEntity> team = teamRepository.findByTeamSeq(teamSeq);
         File newFile = new File(newFilePath);
-        FileCreateDto newFileCreateDto = new FileCreateDto(fileCreateDto.getFileTitle(),newFilePath);
-        FileEntity fileEntity = new FileEntity(newFileCreateDto,team.get());
+//        FileCreateDto newFileCreateDto = new FileCreateDto(fileCreateDto.getFileTitle(),newFilePath);
+//        FileEntity fileEntity = new FileEntity(newFileCreateDto,team.get());
 
         try{
-            if (type == 1){
+            if (type == 2){
                 if(newFile.createNewFile()) {
-                    fileRepository.saveAndFlush(fileEntity);
+                    //fileRepository.saveAndFlush(fileEntity);
                     return true;
                 } else {
                     System.out.println("here");
@@ -63,7 +63,7 @@ public class FileService {
                 }
             } else {
                 if (newFile.mkdir()) {
-                    fileRepository.saveAndFlush(fileEntity);
+                    //fileRepository.saveAndFlush(fileEntity);
                     return true;
                 } else {
                     return false;
@@ -79,11 +79,11 @@ public class FileService {
         Path path = Paths.get(filePath);
 
         // 만약 이게 DB에 없는 파일 경로나 그렇다면 실패!
-        if (!fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq,filePath).isPresent()) {
-            return false;
-        }
+//        if (!fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq,filePath).isPresent()) {
+//            return false;
+//        }
         
-        FileEntity file = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq,filePath).get();
+//        FileEntity file = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq,filePath).get();
         // 디렉토리라면
         if (type == 1) {
             ProcessBuilder pb = new ProcessBuilder();
@@ -108,7 +108,7 @@ public class FileService {
 
         }
 
-        fileRepository.delete(file);
+        //ileRepository.delete(file);
         return true;
     }
 
@@ -122,7 +122,7 @@ public class FileService {
         File oldFile = new File(filePath);
         oldFile.delete();
         File newFile = new File(filePath);
-        Date newUpdatedAt = new Date();
+
         try {
             FileWriter overWriteFile = new FileWriter(newFile, false);
             overWriteFile.write(content);
@@ -133,30 +133,34 @@ public class FileService {
 
         return true;
     }
-    @Transactional
-    public boolean updateFileUpdatedAt(Long teamSeq, String filePath){
-        boolean isPossible = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq, filePath).isPresent();
-        if (!isPossible) {
-            return false;
-        }
-        FileEntity nFile = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq, filePath).get();
-        nFile.setFileUpdatedAt(new Date());
-        fileRepository.saveAndFlush(nFile);
-        return true;
-    }
+//    @Transactional
+//    public boolean updateFileUpdatedAt(Long teamSeq, String filePath){
+//        boolean isPossible = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq, filePath).isPresent();
+//        if (!isPossible) {
+//            return false;
+//        }
+//        FileEntity nFile = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq, filePath).get();
+//        nFile.setFileUpdatedAt(new Date());
+//        fileRepository.saveAndFlush(nFile);
+//        return true;
+//    }
 
-    @Transactional
-    public boolean updateFileNameUpdatedAt(Long teamSeq, String filePath, String newFileName) {
-        boolean isPossible = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq, filePath).isPresent();
+    /**
+     * 파일 updatedat 업데이트 함수 안씁니다.
+     * @param filePath
+     * @return
+     */
+    public boolean updateFileName(String filePath, String newFileName,String oldFileName) {
+        String newFilePath = filePath;
+        String renameFilePath = filePath.replace(oldFileName, newFileName);
+        File targetFile = new File(newFilePath);
+        File reNameFile = new File(renameFilePath);
 
-        if (!isPossible) {
-            return false;
-        }
-        FileEntity nFile = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq, filePath).get();
-        nFile.setFileUpdatedAt(new Date());
-        nFile.setFileTitle(newFileName);
-        fileRepository.saveAndFlush(nFile);
-        return true;
+        return targetFile.renameTo(reNameFile);
+        //FileEntity nFile = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq, filePath).get();
+//        nFile.setFileUpdatedAt(new Date());
+//        nFile.setFileTitle(newFileName);
+//        fileRepository.saveAndFlush(nFile);
     }
 
     public List<String> readFile(String filePath) {

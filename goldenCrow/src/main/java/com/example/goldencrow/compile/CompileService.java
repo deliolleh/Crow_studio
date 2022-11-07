@@ -77,24 +77,24 @@ public class CompileService {
             content = "FROM python:3.10\n" +
                     "WORKDIR " + filePath + "\n" +
                     "RUN python3 -m venv venv\n" +
-                    "RUN source ./venv/bin/activate\n" +
+                    "RUN . ./venv/bin/activate\n" +
                     "RUN pip3 install uvicorn[standard]\n" +
                     "RUN pip3 install fastapi\n" +
 //                    "COPY ./requirements.txt /prod/requirements.txt\n" +
 //                    "RUN pip install --no-cache-dir --upgrade -r /prod/requirements.txt\n" +
-//                    "COPY ./" + projectName + " /prod/" + projectName + "\n" +
                     "COPY . .\n" +
-                    "CMD [\"uvicorn\", \"" + projectName + ".main:" + projectName + "\", \"--host\", \"0.0.0.0\", \"--port\", \"3001\"]";
-//                    "CMD [\"uvicorn\", \"" + projectName + ".main:" + projectName + "\"]";
+                    "EXPOSE 8000\n" +
+                    "CMD [\"uvicorn\", \"" + projectName + ".main:app" + "\", \"--host\", \"0.0.0.0\"]";
         }
         else if (Objects.equals(type, "flask")) {
             content = "FROM python:3.10\n" +
                     "WORKDIR " + filePath + "\n" +
                     "COPY . .\n" +
+                    "RUN pip3 install Flask\n" +
 //                    "COPY requirements.txt requirements.txt\n" +7
 //                    "RUN pip3 install -r requirements.txt\n" +
-//                    "COPY . .\n" +
-                    "CMD [ \"python3\", \"-m\" , \"flask\", \"run\", \"--host=0.0.0.0\", \"--port\", \"3002\"]";
+                    "EXPOSE 5000\n" +
+                    "CMD [ \"python3\" , \"main.py\", \"run\", \"--host=0.0.0.0\"]";
         }
         File file = new File(filePath + "/Dockerfile");
         try {
@@ -119,11 +119,18 @@ public class CompileService {
         if (!types.contains(req.get("type"))) { return "Type error"; }
         String filePath = req.get("filePath");
         int filePathIndex = filePath.lastIndexOf("/");
-        String projectName = filePath.substring(filePathIndex+1);
+        String conAndImgName = filePath.substring(filePathIndex+1) + teamSeq.toString();
         // 퓨어파이썬일 때
         if (Objects.equals(req.get("type"), "pure")) {
             String[] command = {"python3", filePath};
-            return resultString(command);
+            if (req.get("input").isEmpty()) {
+                return resultString(command);
+            }
+//            System.out.println(resultString(command));
+            resultString(command);
+            String[] inputCmd = req.get("input").split("\n");
+            return resultString(inputCmd);
+//            return resultString(command);
         }
         // Django, fastapi, flask 프로젝트일 때
         else {
@@ -133,21 +140,45 @@ public class CompileService {
             System.out.println("도커파일 만들기 성공! 빌드를 해보자");
         }
         // 도커 이미지 빌드
-        String[] image = {"docker", "build", "-t", projectName, filePath+"/"};
+        String[] image = {"docker", "build", "-t", conAndImgName, filePath+"/"};
         String imageBuild = resultString(image);
         if (imageBuild.isEmpty()) { return "Can't build docker image"; }
         System.out.println("런 해보쟈");
         // 도커 런
-        String[] command = {"docker", "run", "-d", "--name", projectName, "-P", projectName};
+        String[] command = {"docker", "run", "-d", "--name", conAndImgName, "-P", conAndImgName};
         System.out.println(Arrays.toString(command));
         String container = resultString(command);
         if (container.isEmpty()) { return "Can't run docker container"; }
         String portString = portNum(container);
+        if (portString.isEmpty()) { return "런 시켰는데 컨테이너가 안돌아가서 포트를 찾을 수가 없음"; }
         // \n 전까지의 문자열에서 : 뒤에 있는 숫자만 가져오기
         String[] portList = portString.split("\n");
         System.out.println(Arrays.toString(portList));
         String[] realPort = portList[0].split(":");
         System.out.println(Arrays.toString(realPort));
         return "k7d207.p.ssafy.io:" + realPort[1];
+    }
+
+    public String pyCompileStop(Map<String, String> req) {
+        String conAndImgName = req.get("projectName") + req.get("teamSeq");
+        // 도커 컨테이너 stop
+        String[] containerStop = {"docker", "stop", conAndImgName};
+        String stopedCon = resultString(containerStop);
+        System.out.println("멈춘 컨테이너명 : " + stopedCon);
+        if (stopedCon.isEmpty() || stopedCon.equals(conAndImgName) ) { return "Can't stop conatiner " + conAndImgName; }
+
+        // 도커 컨테이너 rm
+        String[] containerRm = {"docker", "rm", conAndImgName};
+        String rmCon = resultString(containerRm);
+        System.out.println("삭제한 컨테이너명 : " + rmCon);
+        if (rmCon.isEmpty() || rmCon.equals(conAndImgName)) { return "Can't remove conatiner " + conAndImgName; }
+
+        // 도커 이미지 rmi
+        String[] imageRm = {"docker", "rmi", conAndImgName};
+        String rmImg = resultString(imageRm);
+        System.out.println("삭제한 이미지명 : " + rmImg);
+        if (rmImg.isEmpty() || rmImg.equals(conAndImgName)) { return "Can't remove image " + conAndImgName; }
+
+        return "SUCCESS";
     }
 }
