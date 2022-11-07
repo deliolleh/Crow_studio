@@ -124,8 +124,7 @@ public class CompileService {
         // 퓨어파이썬일 때
         if (Objects.equals(req.get("type"), "pure")) {
             if (req.get("input").isEmpty()) {
-                System.out.println("input 없음 !");
-                String[] command = {"python3", filePath+projectName+".py"};
+                String[] command = {"python3", filePath+"/"+projectName+".py"};
                 System.out.println(Arrays.toString(command));
                 return resultString(command);
             }
