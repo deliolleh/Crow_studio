@@ -172,6 +172,35 @@ public class GitService {
         return "Success";
     }
 
+    /**
+     * 깃 커밋 함수
+     * 깃 애드 후 성공한다면 깃 커밋
+     * @param message
+     * @param gitPath
+     * @param filePath
+     * @return
+     */
+    public String gitCommit(String message, String gitPath, String filePath) {
+        String check = gitAdd(gitPath,filePath);
+
+        if (!check.equals("Success")) {
+            return check;
+        }
+
+        ProcessBuilder command = new ProcessBuilder("git","commit","-m",message);
+        command.directory(new File(gitPath));
+
+        try {
+            command.start().waitFor();
+        } catch (IOException e) {
+            return e.getMessage();
+        } catch (InterruptedException e) {
+            return e.getMessage();
+        }
+
+        return "Success";
+    }
+
 
 
 }
