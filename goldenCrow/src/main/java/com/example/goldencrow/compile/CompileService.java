@@ -20,7 +20,7 @@ public class CompileService {
 
     // 실행 결과 반환 로직
     public String resultString(String[] cmd) {
-        System.out.println("명령어 : "+ Arrays.toString(cmd));
+//        System.out.println("명령어 : "+ Arrays.toString(cmd));
         try{
             StringBuffer sb = new StringBuffer();
             Process p = Runtime.getRuntime().exec(cmd);
@@ -51,7 +51,7 @@ public class CompileService {
     /*
     filePath = /home/ubuntu/crow_data/{teamSeq}/{projectName}
     */
-    public String createDockerfile(String filePath, Long teamSeq, String type) {
+    public String createDockerfile(String filePath, Long teamSeq, String type, String input) {
         // filePath가 /home/ubuntu/crow_data/로 시작하는지 확인
         boolean rightPath = filePath.startsWith("/home/ubuntu/crow_data/");
         if (!rightPath) { return "Wrong file path"; }
@@ -64,7 +64,19 @@ public class CompileService {
 //        int filePathIndex = filePath.lastIndexOf("/");
         String projectName = pathList[5];
         String content = "";
-        if (Objects.equals(type, "django")) {
+        if (Objects.equals(type, "pure") && input.isEmpty()) {
+            content = "FROM python:3.10\n" +
+                    "WORKDIR " + filePath + "\n" +
+                    "COPY . .\n" +
+                    "CMD [\"python3\", \"" +"./"+ projectName+".py\"]\n";
+        }
+        else if ((Objects.equals(type, "pure") && !input.isEmpty())) {
+            content = "FROM python:3.10\n" +
+                    "WORKDIR " + filePath + "\n" +
+                    "COPY . .\n" +
+                    "CMD [\"echo\", \""+ input +"\", \"|\", \"python3\", \"" +"./"+ projectName+".py\"]\n";
+        }
+        else if (Objects.equals(type, "django")) {
             content = "FROM python:3.10\n" +
                     "RUN pip3 install django\n" +
                     "WORKDIR " + filePath + "\n" +
@@ -122,23 +134,41 @@ public class CompileService {
         String conAndImgName = filePath.substring(filePathIndex+1) + teamSeq.toString();
         // 퓨어파이썬일 때
         if (Objects.equals(req.get("type"), "pure")) {
-            String[] command = {"python3", filePath};
-            if (req.get("input").isEmpty()) {
-                return resultString(command);
-            }
+            // 도커파일 추가
+            String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
+            if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
+            String[] command = {"docker", "run", conAndImgName};
+            return resultString(command);
+//            if (req.get("input").isEmpty()) {
+//                // 도커파일 추가
+//                String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
+//                if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
+//                String[] command = {"docker", "run", conAndImgName};
+//                return resultString(command);
+//            }
+//            else {
+//                String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
+//                if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
+//                String[] command = {"docker", "run", conAndImgName};
+//                return resultString(command);
+//            }
 //            System.out.println(resultString(command));
-            resultString(command);
-            String[] inputCmd = req.get("input").split("\n");
-            return resultString(inputCmd);
+//            resultString(command);
+//            String[] inputCmd = req.get("input").split("\n");
+//            return resultString(inputCmd);
 //            return resultString(command);
         }
         // Django, fastapi, flask 프로젝트일 때
         else {
             // 도커파일 추가
-            String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"));
+            String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
             if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
             System.out.println("도커파일 만들기 성공! 빌드를 해보자");
         }
+         // 도커파일 추가
+//        String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), );
+//        if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
+//        System.out.println("도커파일 만들기 성공! 빌드를 해보자");
         // 도커 이미지 빌드
         String[] image = {"docker", "build", "-t", conAndImgName, filePath+"/"};
         String imageBuild = resultString(image);
@@ -146,7 +176,7 @@ public class CompileService {
         System.out.println("런 해보쟈");
         // 도커 런
         String[] command = {"docker", "run", "-d", "--name", conAndImgName, "-P", conAndImgName};
-        System.out.println(Arrays.toString(command));
+//        System.out.println(Arrays.toString(command));
         String container = resultString(command);
         if (container.isEmpty()) { return "Can't run docker container"; }
         String portString = portNum(container);
