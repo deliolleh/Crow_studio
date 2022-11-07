@@ -20,6 +20,8 @@ public class GitService {
     @Autowired
     private TeamRepository teamRepository;
 
+    String baseUrl = "/home/ubuntu/crow_data";
+
     public GitService(ProjectService projectService) {
         this.projectService = projectService;
     }
@@ -85,8 +87,8 @@ public class GitService {
     }
 
     /**
-     * 팀과 파일을 입력받음
      * 팀에서 리더의 닉네임, 이메일을 받아 git config에 등록
+     * 팀과 파일을 입력받음
      * @param file
      * @param team
      * @return
@@ -109,6 +111,36 @@ public class GitService {
         } catch (IOException e) {
             return e.getMessage();
         }
+        return "Success";
+    }
+
+    /**
+     * 깃 스위치 해주는 함순
+     * @param teamSeq
+     * @param projectName
+     * @param branchName
+     * @return
+     */
+    public String gitSwitch(Long teamSeq, String projectName, String branchName, Integer type) {
+        String filePath = baseUrl + "/" + String.valueOf(teamSeq) + "/" + projectName;
+        File targetFile = new File(filePath);
+        System.out.println(filePath);
+        ProcessBuilder command = new ProcessBuilder();
+        File gitFile = targetFile.listFiles()[0];
+        if (type == 1) {
+            command.command("git","switch",branchName);
+        } else {
+            command.command("git","switch","-c",branchName);
+        }
+
+        command.directory(gitFile);
+
+        try {
+            command.start();
+        } catch (IOException e) {
+            return e.getMessage();
+        }
+
         return "Success";
     }
 }
