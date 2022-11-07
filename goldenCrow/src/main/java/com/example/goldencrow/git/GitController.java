@@ -59,16 +59,16 @@ public class GitController {
         return commitResult;
     }
 
-    @PostMapping("/{userSeq}/git-push")
-    public String gitPush(@RequestHeader("Authorization") String jwt,@PathVariable Long userSeq, @RequestBody HashMap<String, String> gitFile) {
-        String message = gitFile.get("message");
-        String gitPath = gitFile.get("gitPath");
-        String filePath = gitFile.get("filePath");
-        String branchName = gitFile.get("branchName");
-        String email = gitFile.get("email");
-        String pass = gitFile.get("pass")
-        String pushCheck = gitService.gitPush(branchName,message,gitPath,filePath,userSeq,email,pass);
-
-        return pushCheck;
-    }
+//    @PostMapping("/{userSeq}/git-push")
+//    public String gitPush(@RequestHeader("Authorization") String jwt,@PathVariable Long userSeq, @RequestBody HashMap<String, String> gitFile) {
+//        String message = gitFile.get("message");
+//        String gitPath = gitFile.get("gitPath");
+//        String filePath = gitFile.get("filePath");
+//        String branchName = gitFile.get("branchName");
+//        String email = gitFile.get("email");
+//        String pass = gitFile.get("pass")
+//        String pushCheck = gitService.gitPush(branchName,message,gitPath,filePath,userSeq,email,pass);
+//
+//        return pushCheck;
+//    }
 }
