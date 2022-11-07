@@ -4,6 +4,7 @@ import com.example.goldencrow.file.Service.ProjectService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
 import com.example.goldencrow.user.entity.UserEntity;
+import com.example.goldencrow.user.repository.UserRepository;
 import com.google.cloud.storage.Acl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,9 @@ public class GitService {
 
     @Autowired
     private TeamRepository teamRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     String baseUrl = "/home/ubuntu/crow_data";
 
@@ -201,6 +205,57 @@ public class GitService {
         return "Success";
     }
 
+    /**
+     * 깃 푸쉬 함수
+     * 깃 커밋 후 성공한다면 푸쉬함.
+     * @param branchName
+     * @param message
+     * @param gitPath
+     * @param filePath
+     * @return
+     */
+    public String gitPush(String branchName, String message, String gitPath, String filePath, Long userSeq, String email, String pass) {
+        String check = gitCommit(message,gitPath,filePath);
+        if (!check.equals("Success")) {
+            return check;
+        }
 
+        ProcessBuilder command = new ProcessBuilder("git","push","origin",branchName);
+        command.directory(new File(gitPath));
+
+        try {
+            command.start().waitFor();
+        } catch (IOException e) {
+            return e.getMessage();
+        } catch (InterruptedException e) {
+            return e.getMessage();
+        }
+
+//        UserEntity user = userRepository.findByUserSeq(userSeq);
+//        String email = user.getUserGitId();
+//        String pass = user.getUserPassWord();
+
+        ProcessBuilder setEmail = new ProcessBuilder(email);
+
+        try {
+            setEmail.start().waitFor();
+        } catch (IOException e) {
+            return e.getMessage();
+        } catch (InterruptedException e) {
+            return e.getMessage();
+        }
+
+        ProcessBuilder setPass = new ProcessBuilder(pass);
+
+        try {
+            setPass.start().waitFor();
+        } catch (IOException e) {
+            return e.getMessage();
+        } catch (InterruptedException e) {
+            return e.getMessage();
+        }
+
+        return "Success";
+    }
 
 }
