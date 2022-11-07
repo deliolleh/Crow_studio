@@ -304,29 +304,36 @@ public class UserService {
 
     }
 
-//    // 깃 아이디, 패스워드 등록
-//    public String editGitService(String jwt, Map<String, String> req) {
-//
-//        // jwt 체크는 인터셉터에서 해서 넘어왔을테니까
-//
-//        try {
-//            // jwt에서 userSeq를 뽑아내고
-//            Long userSeq = jwtService.JWTtoUserSeq(jwt);
-//
-//            // userSeq로 userEntity를 뽑아낸 다음
-//            UserEntity userEntity = userRepository.findById(userSeq).get();
-//
-//                // userEntity의 비밀번호 부분을 req에서 꺼내온 값으로 수정
-//                userEntity.setUserPassWord(CryptoUtil.Sha256.hash(req.get("userNewPassword")));
-//                userRepository.saveAndFlush(userEntity);
-//                return "success";
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return "error";
-//        }
-//
-//    }
+    // 깃 아이디, 패스워드 등록
+    public String editGitService(String jwt, Map<String, String> req) {
+
+        // jwt 체크는 인터셉터에서 해서 넘어왔을테니까
+
+        try {
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+            // userSeq로 userEntity를 뽑아낸 다음
+            UserEntity userEntity = userRepository.findById(userSeq).get();
+
+            String userGitId = req.get("userGitId");
+            String userGitPassword = req.get("userGitId");
+            byte[] tempPassword = userGitPassword.getBytes(StandardCharsets.UTF_8);
+            String userGitPasswordSaved = encoder.encodeToString(tempPassword);
+
+            userEntity.setUserGitId(userGitId);
+            userEntity.setUserGitPassword(userGitPasswordSaved);
+
+            userRepository.saveAndFlush(userEntity);
+
+            return "success";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+
+    }
 
     // 회원탈퇴
     public String quitUser(String jwt) {
