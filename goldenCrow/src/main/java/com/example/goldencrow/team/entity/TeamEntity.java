@@ -31,7 +31,7 @@ public class TeamEntity {
     public TeamEntity() {
     }
 
-    public TeamEntity(UserEntity userEntity, String teamName, String teamGit) {
+    public TeamEntity(UserEntity userEntity, String teamName) {
         this.teamLeader = userEntity;
         this.teamName = teamName;
 
