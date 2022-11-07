@@ -35,7 +35,7 @@ public class CompileService {
             result = sb.toString();
             p.waitFor();
             in.close();
-            System.out.println("결과: " + result);
+//            System.out.println("결과: " + result);
             p.destroy();
             return result.trim();
         }catch(IOException e){
