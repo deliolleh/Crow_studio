@@ -74,7 +74,7 @@ public class CompileService {
             content = "FROM python:3.10\n" +
                     "WORKDIR " + filePath + "\n" +
                     "COPY . .\n" +
-                    "CMD [\"echo\","+ input +"\"python3\", \"" +"./"+ projectName+".py\"]\n";
+                    "CMD [\"echo\", \""+ input +"\", \"python3\", \"" +"./"+ projectName+".py\"]\n";
         }
         else if (Objects.equals(type, "django")) {
             content = "FROM python:3.10\n" +
@@ -134,19 +134,24 @@ public class CompileService {
         String conAndImgName = filePath.substring(filePathIndex+1) + teamSeq.toString();
         // 퓨어파이썬일 때
         if (Objects.equals(req.get("type"), "pure")) {
-            if (req.get("input").isEmpty()) {
-                // 도커파일 추가
-                String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
-                if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
-                String[] command = {"docker", "run", conAndImgName};
-                return resultString(command);
-            }
-            else {
-                String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
-                if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
-                String[] command = {"docker", "run", conAndImgName};
-                return resultString(command);
-            }
+            // 도커파일 추가
+            String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
+            if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
+            String[] command = {"docker", "run", conAndImgName};
+            return resultString(command);
+//            if (req.get("input").isEmpty()) {
+//                // 도커파일 추가
+//                String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
+//                if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
+//                String[] command = {"docker", "run", conAndImgName};
+//                return resultString(command);
+//            }
+//            else {
+//                String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
+//                if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
+//                String[] command = {"docker", "run", conAndImgName};
+//                return resultString(command);
+//            }
 //            System.out.println(resultString(command));
 //            resultString(command);
 //            String[] inputCmd = req.get("input").split("\n");
