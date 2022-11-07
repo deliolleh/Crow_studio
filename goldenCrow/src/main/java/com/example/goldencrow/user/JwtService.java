@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.time.Duration;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +23,6 @@ public class JwtService {
 
     @Value("${secret.jwt.key}")
     private String SECRET_KEY;
-    private final Base64.Encoder encoder = Base64.getEncoder();
-    private final Base64.Decoder decoder = Base64.getDecoder();
 
     private long accessTokenValidTime = Duration.ofDays(30).toMillis(); // 만료시간 30일
     private long refreshTokenValidTime = Duration.ofDays(100).toMillis(); // 만료시간 100일

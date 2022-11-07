@@ -5,6 +5,7 @@ import com.example.goldencrow.file.Service.ProjectService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.MemberRepository;
 import com.example.goldencrow.team.repository.TeamRepository;
+import com.example.goldencrow.user.dto.MyInfoDto;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import com.example.goldencrow.user.entity.UserEntity;
 import com.example.goldencrow.user.repository.UserRepository;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -24,6 +26,9 @@ import java.util.*;
 public class UserService {
 
     final String BASE_PATH = "/home/ubuntu/crow_data/userprofile/";
+
+    private final Base64.Encoder encoder = Base64.getEncoder();
+    private final Base64.Decoder decoder = Base64.getDecoder();
 
     @Autowired
     private UserRepository userRepository;
@@ -116,21 +121,29 @@ public class UserService {
     }
 
     // 회원정보조회
-    public UserInfoDto infoService(String jwt){
+    public MyInfoDto infoService(String jwt){
 
-        UserInfoDto userInfoDto = new UserInfoDto();
+        MyInfoDto myInfoDto = new MyInfoDto();
 
         try {
             UserEntity userEntity = userRepository.findById(jwtService.JWTtoUserSeq(jwt)).get();
-            userInfoDto = new UserInfoDto(userEntity);
-            userInfoDto.setResult(UserInfoDto.Result.SUCCESS);
+            myInfoDto = new MyInfoDto(userEntity);
+
+            if(userEntity.getUserGitPassword()==null) {
+                myInfoDto.setUserGitPassword("");
+            } else {
+                byte[] decoded = decoder.decode(userEntity.getUserGitPassword());
+                myInfoDto.setUserGitPassword(new String(decoded, StandardCharsets.UTF_8));
+            }
+
+            myInfoDto.setResult(UserInfoDto.Result.SUCCESS);
 
         } catch (Exception e) {
-            userInfoDto.setResult(UserInfoDto.Result.FAILURE);
+            myInfoDto.setResult(UserInfoDto.Result.FAILURE);
             throw new RuntimeException(e);
         }
 
-        return userInfoDto;
+        return myInfoDto;
 
     }
 
