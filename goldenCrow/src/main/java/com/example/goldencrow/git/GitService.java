@@ -36,17 +36,17 @@ public class GitService {
 
         // 팀 시퀀스 디렉토리 만들기
         String newFilePath = projectService.createDir("/home/ubuntu/crow_data",String.valueOf(teamSeq));
-        File teamFolder = new File(newFilePath);
-        if (!teamFolder.mkdir()) {
-            return "폴더 생성에 실패했습니다.";
+        if (newFilePath.equals("2")) {
+            return "폴더 생성에 실패했습니다";
         }
 
         // 프로젝트 이름 디렉토리 만들기
         String pjt = projectService.createDir(newFilePath,projectName);
-        File newProjectFolder = new File(pjt);
-        if (!newProjectFolder.mkdir()) {
+        if (pjt.equals("2")) {
             return "폴더 생성에 실패했습니다";
         }
+        File newProjectFolder = new File(pjt);
+
         
         // 프로젝트 디렉토리에서 명령어 실행
         command.directory(new File(pjt));

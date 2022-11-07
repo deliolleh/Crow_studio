@@ -37,7 +37,9 @@ public class ProjectService {
      */
     public String createDir(String path, String name){
         String pjt = path + "/" + name;
+        out.println(pjt);
         File pjtDir = new File(pjt);
+        out.println(pjtDir);
         if (pjtDir.mkdir()) {
             return pjt;
         };
