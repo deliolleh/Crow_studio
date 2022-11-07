@@ -59,9 +59,11 @@ public class GitService {
         command.directory(new File(pjt));
 
         try {
-            command.start();
+            command.start().waitFor();
         } catch (IOException e) {
             // 에러난다면 에러를 리턴
+            return e.getMessage();
+        } catch (InterruptedException e) {
             return e.getMessage();
         }
 
