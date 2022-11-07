@@ -1,5 +1,6 @@
 package com.example.goldencrow.user;
 
+import com.example.goldencrow.user.dto.MyInfoDto;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,17 +79,17 @@ public class UserController {
 
     // 회원정보 조회
     @GetMapping("/info")
-    public ResponseEntity<UserInfoDto> infoGet(@RequestHeader("Authorization") String jwt) {
+    public ResponseEntity<MyInfoDto> infoGet(@RequestHeader("Authorization") String jwt) {
 
         // 일단 성공하면 이렇게 반환될 겁니다
-        UserInfoDto userInfoDto = userService.infoService(jwt);
-        UserInfoDto.Result result = userInfoDto.getResult();
+        MyInfoDto myInfoDto = userService.infoService(jwt);
+        UserInfoDto.Result result = myInfoDto.getResult();
 
         if(result==UserInfoDto.Result.EXPIRE) {
             // 액세스 토큰 재발급 요청하세요...
-            return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
+            return new ResponseEntity<>(myInfoDto, HttpStatus.OK);
         } else if(result== UserInfoDto.Result.SUCCESS) {
-            return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
+            return new ResponseEntity<>(myInfoDto, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
