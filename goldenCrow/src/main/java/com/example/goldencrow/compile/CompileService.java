@@ -123,7 +123,12 @@ public class CompileService {
         // 퓨어파이썬일 때
         if (Objects.equals(req.get("type"), "pure")) {
             String[] command = {"python3", filePath};
-            return resultString(command);
+            if (req.get("input").isEmpty()) {
+                return resultString(command);
+            }
+            System.out.println(resultString(command));
+            String[] inputCmd = req.get("input").split("\n");
+            return resultString(inputCmd);
         }
         // Django, fastapi, flask 프로젝트일 때
         else {
