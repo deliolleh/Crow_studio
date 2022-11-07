@@ -178,8 +178,8 @@ public class CompileService {
         // 도커 이미지 rmi
         String[] imageRm = {"docker", "rmi", conAndImgName};
         String rmImg = resultString(imageRm);
-        System.out.println("삭제한 이미지명 : " + rmImg);
-        if (rmImg.isEmpty() || !rmImg.equals(conAndImgName)) { return "Can't remove image " + conAndImgName; }
+//        System.out.println("삭제한 이미지명 : " + rmImg);
+        if (rmImg.isEmpty() || rmImg.startsWith("Error")) { return "Can't remove image " + conAndImgName; }
 
         return "SUCCESS";
     }
