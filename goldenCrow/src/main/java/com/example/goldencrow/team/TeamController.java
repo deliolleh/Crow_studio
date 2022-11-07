@@ -81,7 +81,7 @@ public class TeamController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
-        Map<String, Long> res = teamService.teamCreate(jwt, req.get("teamName"));
+        Map<String, Long> res = teamService.teamCreate(jwt, req.get("teamName"), req.get("teamGit"));
 
         if(res==null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -93,10 +93,10 @@ public class TeamController {
 
     }
 
-    // 팀 수정 PUT
-    // modify
-    @PutMapping("/modify/{teamSeq}")
-    public ResponseEntity<String> teamModifyPut(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody Map<String, String> req){
+    // 팀 이름 수정 PUT
+    // modifyName
+    @PutMapping("/modify/name/{teamSeq}")
+    public ResponseEntity<String> teamModifyNamePut(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody Map<String, String> req){
 
         // 리더 권한 없으면 터질 예정임
         // 이전 이름과 같아도 수정함
@@ -107,7 +107,7 @@ public class TeamController {
 
         String teamName = req.get("teamName");
 
-        String result = teamService.teamModify(jwt, teamSeq, teamName);
+        String result = teamService.teamModifyName(jwt, teamSeq, teamName);
 
         if(result.equals("success")){
             return new ResponseEntity<>(teamName, HttpStatus.OK);
@@ -122,6 +122,35 @@ public class TeamController {
         }
 
     }
+
+    // 팀 깃 수정 PUT
+    // modifyGit
+    @PutMapping("/modify/git/{teaSeq}")
+    public ResponseEntity<String> teamModifyGitPut(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
+
+        // 리더 권한 없으면 터질 예정임
+        // 이전 주소과 같아도 수정함
+
+        if(req.get("teamGit")==null){
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
+
+        String teamGit = req.get("teamGit");
+
+        String result = teamService.teamModifyGit(jwt, teamSeq, teamGit);
+
+        if(result.equals("success")){
+            return new ResponseEntity<>(teamGit, HttpStatus.OK);
+        } else if(result.equals("403")) {
+            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
+        } else if(result.equals("404")){
+            return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
 
     // 팀 삭제 DELETE
     // delete/{teamSeq}

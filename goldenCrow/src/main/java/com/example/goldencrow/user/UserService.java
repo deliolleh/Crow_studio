@@ -304,6 +304,20 @@ public class UserService {
 
     }
 
+//    // 깃 아이디, 패스워드 등록
+//    public String editGitService(String jwt, Map<String, String> req) {
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//    }
+
     // 회원탈퇴
     public String quitUser(String jwt) {
 

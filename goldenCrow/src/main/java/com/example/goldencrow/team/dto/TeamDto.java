@@ -15,6 +15,8 @@ public class TeamDto {
     private String teamLeaderNickname;
     private String teamLeaderProfile;
 
+    private String teamGit;
+
     private List<MemberDto> memberDtoList;
 
     public TeamDto() {
@@ -28,6 +30,12 @@ public class TeamDto {
         this.teamLeaderSeq = userEntity.getUserSeq();
         this.teamLeaderNickname = userEntity.getUserNickname();
         this.teamLeaderProfile = userEntity.getUserProfile();
+
+        if(team.getTeamGit()==null) {
+            this.teamGit = "";
+        } else {
+            this.teamGit = team.getTeamGit();
+        }
 
         // 멤버 리스트는 따로 넣어줘야 함
     }
