@@ -85,7 +85,6 @@ public class CompileService {
                     "COPY . .\n" +
                     "EXPOSE 8000\n" +
                     "CMD [\"uvicorn\", \"" + projectName + ".main:app" + "\", \"--host\", \"0.0.0.0\"]";
-//                    "CMD [\"uvicorn\", \"" + projectName + ".main:" + projectName + "\"]";
         }
         else if (Objects.equals(type, "flask")) {
             content = "FROM python:3.10\n" +
