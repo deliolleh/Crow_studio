@@ -120,7 +120,7 @@ public class CompileService {
         String filePath = req.get("filePath");
         int filePathIndex = filePath.lastIndexOf("/");
         String projectName = filePath.substring(filePathIndex+1);
-        String conAndImgName = projectName + teamSeq.toString();
+        String conAndImgName = (projectName + teamSeq.toString()).toLowerCase();
         // 퓨어파이썬일 때
         if (Objects.equals(req.get("type"), "pure")) {
             if (req.get("input").isEmpty()) {
