@@ -25,12 +25,16 @@ public class TeamEntity {
     @JoinColumn(name="teamLeaderSeq", referencedColumnName = "userSeq")
     private UserEntity teamLeader;
 
+    @Column
+    private String teamGit;
+
     public TeamEntity() {
     }
 
-    public TeamEntity(UserEntity userEntity, String teamName) {
+    public TeamEntity(UserEntity userEntity, String teamName, String teamGit) {
         this.teamLeader = userEntity;
         this.teamName = teamName;
+        this.teamGit = teamGit;
         // User들은 서비스에서 등록하자~
     }
 }
