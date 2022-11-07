@@ -62,21 +62,17 @@ public class FileController {
      * @param
      * @return
      */
-//    @PutMapping("/{teamSeq}/files")
-//    public ResponseEntity<String> fileNameUpdate(@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
-//        String newFilePath = filePath.get("filePath");
-//        String renameFilePath = filePath.get("filePath") + "\\" + filePath.get("newFileName");
-//        File targetFile = new File(newFilePath);
-//        File reNameFile = new File(renameFilePath);
-//
-//        boolean result = targetFile.renameTo(reNameFile);
-//
-//        if (result) {
-//            return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.BAD_REQUEST);
-//        }
-//    }
+    @PutMapping("/{fileTitle}")
+    public ResponseEntity<String> fileNameUpdate(@PathVariable String fileTitle, @RequestBody HashMap<String, String> filePath) {
+
+        boolean result = fileService.updateFileName(filePath.get("filePath"),fileTitle,filePath.get("oldFileName"));
+
+        if (result) {
+            return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.BAD_REQUEST);
+        }
+    }
 
 
     @GetMapping("/{teamSeq}")
@@ -92,8 +88,8 @@ public class FileController {
         String filePath = fileContent.get("filePath");
 
         boolean result = fileService.saveFile(filePath,content);
-        boolean result2 = fileService.updateFileUpdatedAt(teamSeq,filePath);
-        if (result && result2) {
+        // boolean result2 = fileService.updateFileUpdatedAt(teamSeq,filePath);
+        if (result) {
             return new ResponseEntity<>("Success", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
