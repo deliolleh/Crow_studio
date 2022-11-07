@@ -120,7 +120,7 @@ public class CompileService {
         if (!types.contains(req.get("type"))) { return "Type error"; }
         String filePath = req.get("filePath");
         int filePathIndex = filePath.lastIndexOf("/");
-        String projectName = filePath.substring(filePathIndex+1);
+        String conAndImgName = filePath.substring(filePathIndex+1) + teamSeq.toString();
         // 퓨어파이썬일 때
         if (Objects.equals(req.get("type"), "pure")) {
             String[] command = {"python3", filePath};
@@ -134,12 +134,12 @@ public class CompileService {
             System.out.println("도커파일 만들기 성공! 빌드를 해보자");
         }
         // 도커 이미지 빌드
-        String[] image = {"docker", "build", "-t", projectName, filePath+"/"};
+        String[] image = {"docker", "build", "-t", conAndImgName, filePath+"/"};
         String imageBuild = resultString(image);
         if (imageBuild.isEmpty()) { return "Can't build docker image"; }
         System.out.println("런 해보쟈");
         // 도커 런
-        String[] command = {"docker", "run", "-d", "--name", projectName, "-P", projectName};
+        String[] command = {"docker", "run", "-d", "--name", conAndImgName, "-P", conAndImgName};
         System.out.println(Arrays.toString(command));
         String container = resultString(command);
         if (container.isEmpty()) { return "Can't run docker container"; }
