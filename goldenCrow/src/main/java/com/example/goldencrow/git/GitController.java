@@ -37,7 +37,15 @@ public class GitController {
         if (!cloneResult.equals("Success")) {
             return cloneResult;
         }
-
         return "클론에 성공했습니다";
+    }
+
+    @PostMapping("/{teamSeq}")
+    public String gitSwitch (@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> gitProject) {
+        String switchResult = gitService.gitSwitch(teamSeq,gitProject.get("projectName"),gitProject.get("branchName"),type);
+        if (!switchResult.equals("Success")) {
+            return switchResult;
+        }
+        return "깃 스위치에 성공했습니다!";
     }
 }
