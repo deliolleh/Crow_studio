@@ -167,19 +167,19 @@ public class CompileService {
         String[] containerStop = {"docker", "stop", conAndImgName};
         String stopedCon = resultString(containerStop);
         System.out.println("멈춘 컨테이너명 : " + stopedCon);
-        if (stopedCon.isEmpty() || stopedCon.equals(conAndImgName) ) { return "Can't stop conatiner " + conAndImgName; }
+        if (stopedCon.isEmpty() || !stopedCon.equals(conAndImgName) ) { return "Can't stop conatiner " + conAndImgName; }
 
         // 도커 컨테이너 rm
         String[] containerRm = {"docker", "rm", conAndImgName};
         String rmCon = resultString(containerRm);
         System.out.println("삭제한 컨테이너명 : " + rmCon);
-        if (rmCon.isEmpty() || rmCon.equals(conAndImgName)) { return "Can't remove conatiner " + conAndImgName; }
+        if (rmCon.isEmpty() || !rmCon.equals(conAndImgName)) { return "Can't remove conatiner " + conAndImgName; }
 
         // 도커 이미지 rmi
         String[] imageRm = {"docker", "rmi", conAndImgName};
         String rmImg = resultString(imageRm);
         System.out.println("삭제한 이미지명 : " + rmImg);
-        if (rmImg.isEmpty() || rmImg.equals(conAndImgName)) { return "Can't remove image " + conAndImgName; }
+        if (rmImg.isEmpty() || !rmImg.equals(conAndImgName)) { return "Can't remove image " + conAndImgName; }
 
         return "SUCCESS";
     }
