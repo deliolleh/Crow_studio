@@ -4,6 +4,7 @@ import com.example.goldencrow.file.Service.ProjectService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
 import com.example.goldencrow.user.entity.UserEntity;
+import com.google.cloud.storage.Acl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,10 @@ public class GitService {
 
     @Autowired
     private TeamRepository teamRepository;
+
+    public GitService(ProjectService projectService) {
+        this.projectService = projectService;
+    }
 
     /**
      * git clone 함수
