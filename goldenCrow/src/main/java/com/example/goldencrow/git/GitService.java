@@ -35,7 +35,9 @@ public class GitService {
         ProcessBuilder command = new ProcessBuilder("git", "clone", url);
 
         // 팀 시퀀스 디렉토리 만들기
-        String newFilePath = projectService.createDir("/home/ubuntu/crow_data",String.valueOf(teamSeq));
+        String teamFolder = String.valueOf(teamSeq);
+        String newFilePath = projectService.createDir("/home/ubuntu/crow_data",teamFolder);
+
         if (newFilePath.equals("2")) {
             return "폴더 생성에 실패했습니다";
         }
