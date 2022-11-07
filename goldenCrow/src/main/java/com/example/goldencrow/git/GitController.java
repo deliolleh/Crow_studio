@@ -40,12 +40,22 @@ public class GitController {
         return "클론에 성공했습니다";
     }
 
-    @PostMapping("/{teamSeq}/branch")
+    @PostMapping("/{teamSeq}/git-switch")
     public String gitSwitch (@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> gitProject) {
         String switchResult = gitService.gitSwitch(teamSeq,gitProject.get("projectName"),gitProject.get("branchName"),type);
         if (!switchResult.equals("Success")) {
             return switchResult;
         }
         return "깃 스위치에 성공했습니다!";
+    }
+
+    @PostMapping("/{teamSeq}/git-commit")
+    public String gitCommit(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String, String> gitFile) {
+        String message = gitFile.get("message");
+        String gitPath = gitFile.get("gitPath");
+        String filePath = gitFile.get("filePath");
+        String commitResult = gitService.gitCommit(message,gitPath,filePath);
+
+        return commitResult;
     }
 }

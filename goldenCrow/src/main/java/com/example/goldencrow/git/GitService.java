@@ -115,7 +115,7 @@ public class GitService {
     }
 
     /**
-     * 깃 스위치 해주는 함순
+     * 깃 스위치 해주는 함수
      * @param teamSeq
      * @param projectName
      * @param branchName
@@ -143,4 +143,35 @@ public class GitService {
 
         return "Success";
     }
+
+    /**
+     * git add 함수
+     * @param gitPath
+     * @param filePath
+     * @return
+     */
+    public String gitAdd(String gitPath, String filePath) {
+        ProcessBuilder command = new ProcessBuilder();
+
+        // filePath를 입력했다면, 해당 파일만 add 아니라면 "."
+        if (filePath.equals("all")) {
+            command.command("git","add",".");
+        } else {
+            command.command("git","add",filePath);
+        }
+        command.directory(new File(gitPath));
+
+        try {
+            command.start().waitFor();
+        } catch (IOException e) {
+            return e.getMessage();
+        } catch (InterruptedException e) {
+            return e.getMessage();
+        }
+
+        return "Success";
+    }
+
+
+
 }
