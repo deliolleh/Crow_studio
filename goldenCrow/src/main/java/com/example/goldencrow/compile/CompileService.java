@@ -51,7 +51,7 @@ public class CompileService {
     /*
     filePath = /home/ubuntu/crow_data/{teamSeq}/{projectName}
     */
-    public String createDockerfile(String filePath, Long teamSeq, String type, String input) {
+    public String createDockerfile(String filePath, Long teamSeq, String type) {
         // filePath가 /home/ubuntu/crow_data/로 시작하는지 확인
         boolean rightPath = filePath.startsWith("/home/ubuntu/crow_data/");
         if (!rightPath) { return "Wrong file path"; }
@@ -64,19 +64,6 @@ public class CompileService {
 //        int filePathIndex = filePath.lastIndexOf("/");
         String projectName = pathList[5];
         String content = "";
-//        if (Objects.equals(type, "pure") && input.isEmpty()) {
-//            content = "FROM python:3.10\n" +
-//                    "WORKDIR " + filePath + "\n" +
-//                    "COPY . .\n" +
-//                    "CMD [\"python3\", \"" +"./"+ projectName+".py\"]\n";
-//        }
-//        else if ((Objects.equals(type, "pure") && !input.isEmpty())) {
-//            content = "FROM python:3.10\n" +
-//                    "WORKDIR " + filePath + "\n" +
-//                    "COPY . .\n" +
-//                    "CMD [\"python3\", \"" +"./"+ projectName+".py\"]\n";
-////                    "CMD [\"echo\", \""+ input +"\"]\n";
-//        }
         if (Objects.equals(type, "django")) {
             content = "FROM python:3.10\n" +
                     "RUN pip3 install django\n" +
@@ -145,34 +132,11 @@ public class CompileService {
                 System.out.println(Arrays.toString(command));
                 return resultString(command);
             }
-            // 도커파일 추가
-//            String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
-//            if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
-//            String[] command = {"docker", "run", conAndImgName};
-//            return resultString(command);
-//            if (req.get("input").isEmpty()) {
-//                // 도커파일 추가
-//                String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
-//                if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
-//                String[] command = {"docker", "run", conAndImgName};
-//                return resultString(command);
-//            }
-//            else {
-//                String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
-//                if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
-//                String[] command = {"docker", "run", conAndImgName};
-//                return resultString(command);
-//            }
-//            System.out.println(resultString(command));
-//            resultString(command);
-//            String[] inputCmd = req.get("input").split("\n");
-//            return resultString(inputCmd);
-//            return resultString(command);
         }
         // Django, fastapi, flask 프로젝트일 때
         else {
             // 도커파일 추가
-            String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
+            String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"));
             if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
             System.out.println("도커파일 만들기 성공! 빌드를 해보자");
         }
