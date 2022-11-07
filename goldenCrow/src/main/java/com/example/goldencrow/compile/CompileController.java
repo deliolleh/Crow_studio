@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/api/compile")
@@ -20,6 +21,13 @@ public class CompileController {
         String res = compileService.pyCompile(req, teamSeq);
         return new ResponseEntity<>(res, HttpStatus.OK);
 
+    }
+
+    @PostMapping("/py/stop")
+    public ResponseEntity<String> pyCompileStop(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req){
+        String res = compileService.pyCompileStop(req);
+        if (Objects.equals(res, "SUCCESS")) { return new ResponseEntity<>(res, HttpStatus.OK); }
+        else { return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST); }
     }
 
 

@@ -82,7 +82,6 @@ public class CompileService {
                     "RUN pip3 install fastapi\n" +
 //                    "COPY ./requirements.txt /prod/requirements.txt\n" +
 //                    "RUN pip install --no-cache-dir --upgrade -r /prod/requirements.txt\n" +
-//                    "COPY ./" + projectName + " /prod/" + projectName + "\n" +
                     "COPY . .\n" +
                     "EXPOSE 8000\n" +
                     "CMD [\"uvicorn\", \"" + projectName + ".main:app" + "\", \"--host\", \"0.0.0.0\"]";
@@ -95,7 +94,6 @@ public class CompileService {
                     "RUN pip3 install Flask\n" +
 //                    "COPY requirements.txt requirements.txt\n" +7
 //                    "RUN pip3 install -r requirements.txt\n" +
-//                    "COPY . .\n" +
                     "EXPOSE 5000\n" +
                     "CMD [ \"python3\" , \"main.py\", \"run\", \"--host=0.0.0.0\"]";
         }
@@ -153,5 +151,28 @@ public class CompileService {
         String[] realPort = portList[0].split(":");
         System.out.println(Arrays.toString(realPort));
         return "k7d207.p.ssafy.io:" + realPort[1];
+    }
+
+    public String pyCompileStop(Map<String, String> req) {
+        String conAndImgName = req.get("projectName") + req.get("teamSeq");
+        // 도커 컨테이너 stop
+        String[] containerStop = {"docker", "stop", conAndImgName};
+        String stopedCon = resultString(containerStop);
+        System.out.println("멈춘 컨테이너명 : " + stopedCon);
+        if (stopedCon.isEmpty() || stopedCon.equals(conAndImgName) ) { return "Can't stop conatiner " + conAndImgName; }
+
+        // 도커 컨테이너 rm
+        String[] containerRm = {"docker", "rm", conAndImgName};
+        String rmCon = resultString(containerRm);
+        System.out.println("삭제한 컨테이너명 : " + rmCon);
+        if (rmCon.isEmpty() || rmCon.equals(conAndImgName)) { return "Can't remove conatiner " + conAndImgName; }
+
+        // 도커 이미지 rmi
+        String[] imageRm = {"docker", "rmi", conAndImgName};
+        String rmImg = resultString(imageRm);
+        System.out.println("삭제한 이미지명 : " + rmImg);
+        if (rmImg.isEmpty() || rmImg.equals(conAndImgName)) { return "Can't remove image " + conAndImgName; }
+
+        return "SUCCESS";
     }
 }
