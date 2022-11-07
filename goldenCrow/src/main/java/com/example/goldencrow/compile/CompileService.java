@@ -64,20 +64,20 @@ public class CompileService {
 //        int filePathIndex = filePath.lastIndexOf("/");
         String projectName = pathList[5];
         String content = "";
-        if (Objects.equals(type, "pure") && input.isEmpty()) {
-            content = "FROM python:3.10\n" +
-                    "WORKDIR " + filePath + "\n" +
-                    "COPY . .\n" +
-                    "CMD [\"python3\", \"" +"./"+ projectName+".py\"]\n";
-        }
-        else if ((Objects.equals(type, "pure") && !input.isEmpty())) {
-            content = "FROM python:3.10\n" +
-                    "WORKDIR " + filePath + "\n" +
-                    "COPY . .\n" +
-                    "CMD [\"python3\", \"" +"./"+ projectName+".py\"]\n";
-//                    "CMD [\"echo\", \""+ input +"\"]\n";
-        }
-        else if (Objects.equals(type, "django")) {
+//        if (Objects.equals(type, "pure") && input.isEmpty()) {
+//            content = "FROM python:3.10\n" +
+//                    "WORKDIR " + filePath + "\n" +
+//                    "COPY . .\n" +
+//                    "CMD [\"python3\", \"" +"./"+ projectName+".py\"]\n";
+//        }
+//        else if ((Objects.equals(type, "pure") && !input.isEmpty())) {
+//            content = "FROM python:3.10\n" +
+//                    "WORKDIR " + filePath + "\n" +
+//                    "COPY . .\n" +
+//                    "CMD [\"python3\", \"" +"./"+ projectName+".py\"]\n";
+////                    "CMD [\"echo\", \""+ input +"\"]\n";
+//        }
+        if (Objects.equals(type, "django")) {
             content = "FROM python:3.10\n" +
                     "RUN pip3 install django\n" +
                     "WORKDIR " + filePath + "\n" +
@@ -132,14 +132,23 @@ public class CompileService {
         if (!types.contains(req.get("type"))) { return "Type error"; }
         String filePath = req.get("filePath");
         int filePathIndex = filePath.lastIndexOf("/");
-        String conAndImgName = filePath.substring(filePathIndex+1) + teamSeq.toString();
+        String projectName = filePath.substring(filePathIndex+1);
+        String conAndImgName = projectName + teamSeq.toString();
         // 퓨어파이썬일 때
         if (Objects.equals(req.get("type"), "pure")) {
+            if (req.get("input").isEmpty()) {
+                String[] command = {"python3", filePath+projectName+".py"};
+                return resultString(command);
+            }
+            else {
+                String[] command = {"echo", req.get("input"), "|", "python3", filePath+projectName+".py"};
+                return resultString(command);
+            }
             // 도커파일 추가
-            String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
-            if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
-            String[] command = {"docker", "run", conAndImgName};
-            return resultString(command);
+//            String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
+//            if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
+//            String[] command = {"docker", "run", conAndImgName};
+//            return resultString(command);
 //            if (req.get("input").isEmpty()) {
 //                // 도커파일 추가
 //                String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
@@ -166,10 +175,6 @@ public class CompileService {
             if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
             System.out.println("도커파일 만들기 성공! 빌드를 해보자");
         }
-         // 도커파일 추가
-//        String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), );
-//        if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
-//        System.out.println("도커파일 만들기 성공! 빌드를 해보자");
         // 도커 이미지 빌드
         String[] image = {"docker", "build", "-t", conAndImgName, filePath+"/"};
         String imageBuild = resultString(image);
