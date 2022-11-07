@@ -156,7 +156,7 @@ public class CompileService {
         System.out.println("런 해보쟈");
         // 도커 런
         String[] command1 = {"docker", "run", conAndImgName};
-        String result = resultString(command1)
+        String result = resultString(command1);
         if (Objects.equals(req.get("type"), "pure")) {
             if (req.get("input").isEmpty()) { return result; }
             else {
