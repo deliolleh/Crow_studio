@@ -19,7 +19,8 @@ public class CompileController {
     @PostMapping("/py/{teamSeq}")
     public ResponseEntity<String> pyCompile(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req, @PathVariable Long teamSeq) {
         String res = compileService.pyCompile(req, teamSeq);
-        return new ResponseEntity<>(res, HttpStatus.OK);
+        if (res.startsWith("k7d207")) { return new ResponseEntity<>(res, HttpStatus.OK); }
+        else { return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST); }
 
     }
 
