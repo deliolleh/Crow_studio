@@ -141,7 +141,7 @@ public class CompileService {
                 return resultString(command);
             }
             else {
-                String[] command = {"/bin/sh", "-c", "echo" + "\"" + req.get("input") + "\" | python3"+ filePath+"/"+projectName+".py"};
+                String[] command = {"/bin/sh", "-c", "echo " + "\"" + req.get("input") + "\" | python3"+ filePath+"/"+projectName+".py"};
                 System.out.println(Arrays.toString(command));
                 return resultString(command);
             }
