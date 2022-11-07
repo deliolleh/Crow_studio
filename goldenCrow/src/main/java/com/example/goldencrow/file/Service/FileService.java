@@ -53,7 +53,7 @@ public class FileService {
 //        FileEntity fileEntity = new FileEntity(newFileCreateDto,team.get());
 
         try{
-            if (type == 1){
+            if (type == 2){
                 if(newFile.createNewFile()) {
                     //fileRepository.saveAndFlush(fileEntity);
                     return true;
