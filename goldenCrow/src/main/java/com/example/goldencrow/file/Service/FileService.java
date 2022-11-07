@@ -79,9 +79,9 @@ public class FileService {
         Path path = Paths.get(filePath);
 
         // 만약 이게 DB에 없는 파일 경로나 그렇다면 실패!
-        if (!fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq,filePath).isPresent()) {
-            return false;
-        }
+//        if (!fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq,filePath).isPresent()) {
+//            return false;
+//        }
         
 //        FileEntity file = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq,filePath).get();
         // 디렉토리라면
