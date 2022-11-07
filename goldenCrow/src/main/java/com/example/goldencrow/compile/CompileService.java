@@ -162,7 +162,7 @@ public class CompileService {
     }
 
     public String pyCompileStop(Map<String, String> req) {
-        String conAndImgName = req.get("projectName") + req.get("teamSeq");
+        String conAndImgName = (req.get("projectName") + req.get("teamSeq")).toLowerCase();
         // 도커 컨테이너 stop
         String[] containerStop = {"docker", "stop", conAndImgName};
         String stopedCon = resultString(containerStop);
