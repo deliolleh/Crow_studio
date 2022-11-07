@@ -155,16 +155,18 @@ public class CompileService {
         if (imageBuild.isEmpty()) { return "Can't build docker image"; }
         System.out.println("런 해보쟈");
         // 도커 런
-        String[] command = {"docker", "run", "-d", "--name", conAndImgName, "-P", conAndImgName};
-//        System.out.println(Arrays.toString(command));
-        String container = resultString(command);
+        String[] command1 = {"docker", "run", conAndImgName};
+        String result = resultString(command1)
         if (Objects.equals(req.get("type"), "pure")) {
-            if (req.get("input").isEmpty()) { return container; }
+            if (req.get("input").isEmpty()) { return result; }
             else {
                 String[] inputList = req.get("input").split("\n");
                 return resultString(inputList);
             }
         }
+        String[] command = {"docker", "run", "-d", "--name", conAndImgName, "-P", conAndImgName};
+//        System.out.println(Arrays.toString(command));
+        String container = resultString(command);
         if (container.isEmpty()) { return "Can't run docker container"; }
         String portString = portNum(container);
         if (portString.isEmpty()) { return "런 시켰는데 컨테이너가 안돌아가서 포트를 찾을 수가 없음"; }
