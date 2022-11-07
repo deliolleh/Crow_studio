@@ -74,7 +74,8 @@ public class CompileService {
             content = "FROM python:3.10\n" +
                     "WORKDIR " + filePath + "\n" +
                     "COPY . .\n" +
-                    "CMD [\"echo\", \""+ input +"\", \"|\", \"python3\", \"" +"./"+ projectName+".py\"]\n";
+                    "CMD [\"echo\", \""+ input +"\"]\n" +
+                    "CMD [\"python3\", \"" +"./"+ projectName+".py\"]\n";
         }
         else if (Objects.equals(type, "django")) {
             content = "FROM python:3.10\n" +
