@@ -141,7 +141,7 @@ public class CompileService {
                 return resultString(command);
             }
             else {
-                String[] command = {"echo", req.get("input"), "|", "python3", filePath+projectName+".py"};
+                String[] command = {"echo", "\"" + req.get("input") + "\"", "|", "python3", filePath+projectName+".py"};
                 return resultString(command);
             }
             // 도커파일 추가
