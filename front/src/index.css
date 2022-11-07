@@ -16,6 +16,10 @@ body {
   box-sizing: border-box;
 }
 
+hr {
+  height: 3px;
+}
+
 /* scrollbar custom */
 /* width */
 ::-webkit-scrollbar {
