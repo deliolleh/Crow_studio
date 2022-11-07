@@ -50,15 +50,15 @@ public class ProjectService {
      * @param team
      * @return Boolean
      */
-    public boolean saveFileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
-        FileEntity fileEntity = new FileEntity(fileCreateDto,team);
-        fileRepository.saveAndFlush(fileEntity);
-        System.out.println(fileCreateDto.getFilePath()+fileCreateDto.getFileTitle());
-
-        System.out.println("파일 저장 제대로 됨!!");
-
-        return true;
-    }
+//    public boolean saveFileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
+//        FileEntity fileEntity = new FileEntity(fileCreateDto,team);
+//        fileRepository.saveAndFlush(fileEntity);
+//        System.out.println(fileCreateDto.getFilePath()+fileCreateDto.getFileTitle());
+//
+//        System.out.println("파일 저장 제대로 됨!!");
+//
+//        return true;
+//    }
 
     /**
      * 파일 경로를 모두 찾아서 HashMap으로 반환해주는 함수
@@ -98,31 +98,31 @@ public class ProjectService {
      * @param path
      * @param teamSeq
      */
-    public void saveFilesInDIr(String path, Long teamSeq) {
-        File file = new File(path);
-        File files[] = file.listFiles();
-        Optional<TeamEntity> team = teamRepository.findByTeamSeq(teamSeq);
-
-        TeamEntity thisTeam = team.get();
-
-        String names[] = file.list();
-        out.println("여기는 와요! 여긴!");
-        out.println(path + "여기는 저장 아아 여긴 저장");
-
-        for (int i = 0; i < files.length; i++) {
-            File dir = files[i];
-            String name = names[i];
-            String thisPath = dir.getPath();
-            FileCreateDto newFileCreateDto = new FileCreateDto(name,thisPath);
-            out.println(thisPath + name);
-            Boolean check = saveFileEntity(newFileCreateDto,thisTeam);
-            out.println("저장 결과!"+check);
-
-            if (dir.isDirectory()) {
-                saveFilesInDIr(thisPath,teamSeq);
-            }
-        }
-    }
+//    public void saveFilesInDIr(String path, Long teamSeq) {
+//        File file = new File(path);
+//        File files[] = file.listFiles();
+//        Optional<TeamEntity> team = teamRepository.findByTeamSeq(teamSeq);
+//
+//        TeamEntity thisTeam = team.get();
+//
+//        String names[] = file.list();
+//        out.println("여기는 와요! 여긴!");
+//        out.println(path + "여기는 저장 아아 여긴 저장");
+//
+//        for (int i = 0; i < files.length; i++) {
+//            File dir = files[i];
+//            String name = names[i];
+//            String thisPath = dir.getPath();
+//            FileCreateDto newFileCreateDto = new FileCreateDto(name,thisPath);
+//            out.println(thisPath + name);
+//            Boolean check = saveFileEntity(newFileCreateDto,thisTeam);
+//            out.println("저장 결과!"+check);
+//
+//            if (dir.isDirectory()) {
+//                saveFilesInDIr(thisPath,teamSeq);
+//            }
+//        }
+//    }
 
     /**
      * 프로젝트 이니셜 파일 생성
@@ -152,21 +152,20 @@ public class ProjectService {
 
             String newPath = path + fileTitle + "/" +fileTitle + "/" + "settings.py";
             String change = changeSetting(newPath);
-            out.println("체인지!"+change);
 
-            saveFilesInDIr(path,teamSeq);
+//            saveFilesInDIr(path,teamSeq);
             return "1";
         } else if (type == 1) {
             String pjt = createDir(path,fileTitle);
             if (pjt.equals("2")) {
-                saveFilesInDIr(path,teamSeq);
+//                saveFilesInDIr(path,teamSeq);
                 return "2";
             }
 
             File file = new File(pjt + "/" + fileTitle +".py");
             try {
                 if(file.createNewFile()) {
-                    saveFilesInDIr(path,teamSeq);
+//                    saveFilesInDIr(path,teamSeq);
                     return "1";
                 } else {
                     return "2";
@@ -192,7 +191,7 @@ public class ProjectService {
                 out.println("here!!!!!!!!!!!");
                 return e.getMessage();
             }
-            saveFilesInDIr(path,teamSeq);
+//            saveFilesInDIr(path,teamSeq);
             return "1";
         } else if (type == 4) {
             String pjt = createDir(path,fileTitle);
@@ -209,7 +208,7 @@ public class ProjectService {
             } catch (IOException e) {
                 return e.getMessage();
             }
-            saveFilesInDIr(path,teamSeq);
+//            saveFilesInDIr(path,teamSeq);
             return "1";
         }
         out.println("여기서 걸림");
