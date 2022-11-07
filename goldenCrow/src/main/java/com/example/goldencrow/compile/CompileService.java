@@ -66,7 +66,9 @@ public class CompileService {
         String content = "";
         if (Objects.equals(type, "pure")) {
             content = "FROM python:3.10\n" +
-                    "CMD [\"python3\", \"" + filePath +"/"+ projectName+".py\"]\n";
+                    "WORKDIR" + filePath + "\n" +
+                    "COPY . .\n" +
+                    "CMD [\"python3\", \"" +"./"+ projectName+".py\"]\n";
         }
         else if (Objects.equals(type, "django")) {
             content = "FROM python:3.10\n" +
