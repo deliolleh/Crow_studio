@@ -31,10 +31,10 @@ public class TeamEntity {
     public TeamEntity() {
     }
 
-    public TeamEntity(UserEntity userEntity, String teamName, String teamGit) {
+    public TeamEntity(UserEntity userEntity, String teamName) {
         this.teamLeader = userEntity;
         this.teamName = teamName;
-        this.teamGit = teamGit;
+
         // User들은 서비스에서 등록하자~
     }
 }

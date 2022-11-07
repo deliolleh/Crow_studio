@@ -150,7 +150,7 @@ public class TeamService {
     }
 
     // 팀 생성
-    public Map<String, Long> teamCreate(String jwt, String teamName) {
+    public Map<String, Long> teamCreate(String jwt, String teamName, String teamGit) {
 
         Map<String, Long> res = new HashMap<>();
 
@@ -188,8 +188,8 @@ public class TeamService {
 
     }
 
-    // 팀(명) 수정
-    public String teamModify(String jwt, Long teamSeq, String teamName) {
+    // 팀명 수정
+    public String teamModifyName(String jwt, Long teamSeq, String teamName) {
 
         try {
             // jwt에서 userSeq를 뽑아내고
@@ -215,6 +215,39 @@ public class TeamService {
 
                 TeamEntity teamEntity = teamEntityOptional.get();
                 teamEntity.setTeamName(teamName);
+                teamRepository.saveAndFlush(teamEntity);
+                return "success";
+            } else {
+                return "403";
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+
+    }
+
+    // 팀 깃 수정
+    public String teamModifyGit(String jwt, Long teamSeq, String teamGit) {
+
+        try {
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+            Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
+
+            if(!teamEntityFoundCheck.isPresent()) {
+                // 그런 팀 없다
+                return "404";
+            }
+
+            Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
+
+            if (teamEntityOptional.isPresent()) {
+                // 내가 리더면
+                TeamEntity teamEntity = teamEntityOptional.get();
+                teamEntity.setTeamGit(teamGit);
                 teamRepository.saveAndFlush(teamEntity);
                 return "success";
             } else {
