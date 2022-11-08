@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "./redux/userSlice";
 
 import ProtectedRoute from "./route/ProtectedRoute";
-// import PrivateRoute from "./route/PrivateRoute";
+import PrivateRoute from "./route/PrivateRoute";
 
 import Intro from "./pages/intro/Intro";
 import Login from "./pages/login/Login";
@@ -51,17 +51,25 @@ const router = createBrowserRouter([
   },
   {
     path: "/team",
-    element: <Team />,
+    element: (
+      <PrivateRoute>
+        <Team />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/team/create",
-    element: <TeamCreate />,
+    element: (
+      <PrivateRoute>
+        <TeamCreate />
+      </PrivateRoute>
+    ),
   },
 ]);
 
 function App() {
   const dispatch = useDispatch();
-  const { isLoggedIn } = useSelector((state) => state.user.value);
+  const isLoggedIn = useSelector((state) => state.user.value.isLoggedIn);
 
   useEffect(() => {
     const accessToken = localStorage.getItem("access-token");
