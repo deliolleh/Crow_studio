@@ -228,6 +228,7 @@ public class GitService {
         command.directory(new File(gitPath));
 
         try {
+            System.out.println("여기야 여기");
             Process p = command.start();
             String forPrint;
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
