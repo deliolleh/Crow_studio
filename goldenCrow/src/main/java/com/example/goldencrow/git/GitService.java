@@ -124,12 +124,11 @@ public class GitService {
 
     /**
      * 깃 스위치 해주는 함수
-     * @param teamSeq
      * @param gitPath
      * @param branchName
      * @return
      */
-    public String gitSwitch(Long teamSeq, String gitPath, String branchName, Integer type) {
+    public String gitSwitch(String gitPath, String branchName, Integer type) {
 
         File targetFile = new File(gitPath);
 
@@ -230,18 +229,23 @@ public class GitService {
             return check;
         }
 
-        ProcessBuilder command = new ProcessBuilder("git","push","origin",branchName);
+        ProcessBuilder command = new ProcessBuilder("/bin/sh","-c","git push origin " + branchName,"|",email,"|",pass);
         command.directory(new File(gitPath));
-
+        String[] cosa = {"/bin/sh","-c","git push origin " + branchName};
         try {
             System.out.println("여기야 여기");
-            Process p = command.start();
+            System.out.println(cosa);
+            Process p = Runtime.getRuntime().exec(cosa);
             String forPrint;
+
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            p.waitFor();
+            System.out.println(br.readLine());
             while ((forPrint = br.readLine()) != null) {
                 System.out.println(forPrint);
+                System.out.println(br);
             }
-            p.waitFor();
+
         } catch (IOException e) {
             return e.getMessage();
         } catch (InterruptedException e) {
@@ -252,25 +256,25 @@ public class GitService {
 //        String email = user.getUserGitId();
 //        String pass = user.getUserPassWord();
 
-        ProcessBuilder setEmail = new ProcessBuilder(email);
-
-        try {
-            setEmail.start().waitFor();;
-        } catch (IOException e) {
-            return e.getMessage();
-        } catch (InterruptedException e) {
-            return e.getMessage();
-        }
-
-        ProcessBuilder setPass = new ProcessBuilder(pass);
-
-        try {
-            setPass.start().waitFor();
-        } catch (IOException e) {
-            return e.getMessage();
-        } catch (InterruptedException e) {
-            return e.getMessage();
-        }
+//        ProcessBuilder setEmail = new ProcessBuilder(email);
+//
+//        try {
+//            setEmail.start().waitFor();;
+//        } catch (IOException e) {
+//            return e.getMessage();
+//        } catch (InterruptedException e) {
+//            return e.getMessage();
+//        }
+//
+//        ProcessBuilder setPass = new ProcessBuilder(pass);
+//
+//        try {
+//            setPass.start().waitFor();
+//        } catch (IOException e) {
+//            return e.getMessage();
+//        } catch (InterruptedException e) {
+//            return e.getMessage();
+//        }
 
         return "Success";
     }

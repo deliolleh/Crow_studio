@@ -18,6 +18,7 @@ public class EditorsService {
     String path = checkOs ? System.getProperty("user.dir") + "\\" : "/home/ubuntu/crow_data/temp/";
 
     public HashMap<String, String> Formatting(String language, String code) {
+        System.out.println("Format Service in");
         long now = new Date().getTime();
         HashMap<String, String> response = new HashMap<>();
         System.out.println(path);
@@ -46,9 +47,9 @@ public class EditorsService {
 
             // windows cmd를 가리키는 변수
             // 나중에 Ubuntu할 때 맞는 변수로 바꿀 것
-            String env = checkOs ? "cmd /c" : "";
+            String env = checkOs ? "cmd /c " : "";
             System.out.println(checkOs ? "Operating in windows" : "Operating in linux");
-            String command = env + " black " + path + name;
+            String command = env + "black " + path + name;
             System.out.println(command);
 
             // Black 작동 => 성공
@@ -88,7 +89,8 @@ public class EditorsService {
             String str;
             while ((str = reader.readLine()) != null) {
 //                System.out.println(str);
-                sb.append(str);
+                String temp = str + "\n";
+                sb.append(temp);
             }
 
             response.put("data", sb.toString());
