@@ -30,23 +30,24 @@ public class SchedulerService {
 //        String[] containerCmd = {"/bin/sh", "-c", "docker", "container", "ls", "|", "grep", "'crowstudio'"};
 //        String[] containerCmd = {"/bin/sh", "-c", "docker", "ps", "|", "grep", "'crowstudio'"};
 //        String[] containerCmd = {"docker", "container", "ls", "--filter=name=crowstudio", "-q"}; // 이거 됨 !!!
-        String[] containerCmd = {"docker", "container", "ls", "--filter=name=crowstudio", "-q"};
+        String[] containerCmd = {"docker", "container", "ls", "--filter=name="+filteringName, "-q"};
         String[] containerList = compileService.resultString(containerCmd).split("(\r\n|\r|\n|\n\r)");
-        System.out.println("continaerList : " + Arrays.toString(containerList));
-        for (String container:
-             containerList) {
-            String[] stopCmd = {"docker", "stop", container};
-            System.out.println(Arrays.toString(stopCmd));
-            System.out.println("docker stop 시작 !");
-            compileService.resultString(stopCmd);
-            System.out.println("docker stop 됐다 !");
+        System.out.println("containerList : " + Arrays.toString(containerList));
+        if (containerList.length != 0) {
+            for (String container:
+                    containerList) {
+                String[] stopCmd = {"docker", "stop", container};
+                System.out.println(Arrays.toString(stopCmd));
+                System.out.println("docker stop 시작 !");
+                compileService.resultString(stopCmd);
+                System.out.println("docker stop 됐다 !");
+            }
         }
-//        String[] stopCmd = {"docker", "stop", containerList};
-//        System.out.println(Arrays.toString(stopCmd));
-//        System.out.println("docker stop 시작 !");
-//        compileService.resultString(stopCmd);
-//        System.out.println("docker stop 됐다 !");
 
+        String[] rmImgCmd = {"docker", "image", "prune", "-a", "-f"};
+        System.out.println("docker images 삭제 시작 !");
+        compileService.resultString(rmImgCmd);
+        System.out.println("docker images 삭제 됐다 !");
 //        String[] rmImgCmd = {"/bin/sh", "-c", "docker", "rmi", "$(docker", "images", filteringName +"*", "-q)"};
 //        System.out.println("docker images 삭제 시작 !");
 //        compileService.resultString(rmImgCmd);
