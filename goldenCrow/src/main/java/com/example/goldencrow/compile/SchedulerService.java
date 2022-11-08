@@ -12,7 +12,7 @@ public class SchedulerService {
     @Autowired
     private CompileService compileService;
 
-    @Scheduled(cron = "0 25 * * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void run() {
         System.out.println("hi i'm working");
         // 모든 컨테이너 닫기
@@ -26,9 +26,10 @@ public class SchedulerService {
         * docker rmi $(docker images -f "dangling=true" -q)
         * */
         String filteringName = "crowstudio_";
-        String[] containerCmd = {"docker", "container", "ls", "--filter='name="+ filteringName +"'", "-q"};
+        String[] containerCmd = {"docker", "container", "ls", "--filter='name=" + filteringName +"'", "-q"};
         String containerList = compileService.resultString(containerCmd);
-        if (containerList == null) { return; }
+        if (containerList == null) {
+            System.out.println("container 못찾음"); return; }
         System.out.println(containerList);
         String[] stopCmd = {"docker", "stop", containerList};
         System.out.println("docker stop 시작 !");
