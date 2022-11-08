@@ -11,11 +11,11 @@ import { useNavigate } from "react-router-dom";
 
 const TeamDetail = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [inputs, setInputs] = useState(initialInputState);
-  const [errorMsgs, setErrorMsgs] = useState(initialErrorState);
-  const { teamName } = inputs;
-  const { teamNameErrMsg } = errorMsgs;
+  // const navigate = useNavigate();
+  // const [inputs, setInputs] = useState(initialInputState);
+  // const [errorMsgs, setErrorMsgs] = useState(initialErrorState);
+  // const { teamName } = inputs;
+  // const { teamNameErrMsg } = errorMsgs;
 
   //
   // const inputChangeHandler = (e) => {
