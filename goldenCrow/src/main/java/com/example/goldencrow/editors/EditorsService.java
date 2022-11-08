@@ -18,6 +18,7 @@ public class EditorsService {
     String path = checkOs ? System.getProperty("user.dir") + "\\" : "/home/ubuntu/crow_data/temp/";
 
     public HashMap<String, String> Formatting(String language, String code) {
+        System.out.println("Format Service in");
         long now = new Date().getTime();
         HashMap<String, String> response = new HashMap<>();
         System.out.println(path);
