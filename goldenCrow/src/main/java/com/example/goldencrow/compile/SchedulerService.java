@@ -26,8 +26,8 @@ public class SchedulerService {
         * docker rmi $(docker images -f "dangling=true" -q)
         * */
         String filteringName = "crowstudio_";
-//        String[] containerCmd = {"/bin/sh", "-c", "docker", "container", "ls", "--filter=\"name=crowstudio\"", "-q"};
-        String[] containerCmd = {"docker", "container", "ls", "-q", "--filter='name=crowstudio'"};
+//        String[] containerCmd = {"docker", "container", "ls", "--filter=\"name=crowstudio\"", "-q"}; // filtering이 문제임 왜 안돼 진자ㅠㅠㅠㅠㅠㅠㅠㅠ
+        String[] containerCmd = {"/bin/sh", "-c", "docker", "container", "ls", "| grep crowstudio"};
         String containerList = compileService.resultString(containerCmd);
         if (containerList == null) {
             System.out.println("container 못찾음"); return; }
