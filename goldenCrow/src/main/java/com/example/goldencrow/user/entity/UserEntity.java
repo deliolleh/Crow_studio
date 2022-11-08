@@ -33,10 +33,10 @@ public class UserEntity {
     private String userProfile;
 
     @Column
-    private String userGitId;
+    private String userGitUsername;
 
     @Column
-    private String userGitPassword;
+    private String userGitToken;
 
     @Column
     private String userRefresh;

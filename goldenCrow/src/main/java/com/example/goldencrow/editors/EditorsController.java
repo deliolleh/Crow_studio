@@ -29,7 +29,7 @@ public class EditorsController {
     public ResponseEntity<Map<String, String>> fileFormat(@PathVariable String language,
                                                           @RequestBody Map<String, String> rawText) {
         String code = rawText.get("text");
-
+        System.out.println("get text");
         HashMap<String, String> response = editorsService.Formatting(language, code);
         if (response.get("data").equals("null")) {
             System.out.println("formatting Fail");

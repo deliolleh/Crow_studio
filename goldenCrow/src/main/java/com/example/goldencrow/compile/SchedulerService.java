@@ -26,15 +26,19 @@ public class SchedulerService {
         * docker rmi $(docker images -f "dangling=true" -q)
         * */
         String filteringName = "crowstudio_";
-        String[] stopCmd = {"docker", "stop", "$(docker", "container", "ls", "--filter='name="+ filteringName +"'", "-q)"};
+        String[] containerCmd = {"docker", "container", "ls", "--filter='name="+ filteringName +"'", "-q"};
+        String containerList = compileService.resultString(containerCmd);
+        if (containerList == null) { return; }
+        String[] stopCmd = {"docker", "stop", containerList};
         System.out.println("docker stop 시작 !");
         compileService.resultString(stopCmd);
+
         System.out.println("docker stop 됐다 !");
-        String[] rmImgCmd = {"docker", "rmi", "$(docker", "images", filteringName +"*", "-q)"};
+        String[] rmImgCmd = {"/bin/sh", "-c", "docker", "rmi", "$(docker", "images", filteringName +"*", "-q)"};
         System.out.println("docker images 삭제 시작 !");
         compileService.resultString(rmImgCmd);
         System.out.println("docker images 삭제 됐다 !");
-        String[] rmNoneCmd = {"docker", "rmi", "$(docker", "images", "-f" ,"\"dangling=true\"", "-q)"};
+        String[] rmNoneCmd = {"/bin/sh", "-c", "docker", "rmi", "$(docker", "images", "-f" ,"\"dangling=true\"", "-q)"};
         System.out.println("none image 삭제 시작 !");
         compileService.resultString(rmNoneCmd);
         System.out.println("none image 삭제 됐다 !");

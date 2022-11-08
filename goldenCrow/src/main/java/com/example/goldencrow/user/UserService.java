@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -129,11 +128,10 @@ public class UserService {
             UserEntity userEntity = userRepository.findById(jwtService.JWTtoUserSeq(jwt)).get();
             myInfoDto = new MyInfoDto(userEntity);
 
-            if(userEntity.getUserGitPassword()==null) {
-                myInfoDto.setUserGitPassword("");
+            if(userEntity.getUserGitToken()==null) {
+                myInfoDto.setUserGitToken("");
             } else {
-                byte[] decoded = decoder.decode(userEntity.getUserGitPassword());
-                myInfoDto.setUserGitPassword(new String(decoded, StandardCharsets.UTF_8));
+                myInfoDto.setUserGitToken(userEntity.getUserGitToken());
             }
 
             myInfoDto.setResult(UserInfoDto.Result.SUCCESS);
@@ -316,13 +314,11 @@ public class UserService {
             // userSeq로 userEntity를 뽑아낸 다음
             UserEntity userEntity = userRepository.findById(userSeq).get();
 
-            String userGitId = req.get("userGitId");
-            String userGitPassword = req.get("userGitId");
-            byte[] tempPassword = userGitPassword.getBytes(StandardCharsets.UTF_8);
-            String userGitPasswordSaved = encoder.encodeToString(tempPassword);
+            String userGitUsername = req.get("userGitUsername");
+            String userGitToken = req.get("userGitToken");
 
-            userEntity.setUserGitId(userGitId);
-            userEntity.setUserGitPassword(userGitPasswordSaved);
+            userEntity.setUserGitUsername(userGitUsername);
+            userEntity.setUserGitToken(userGitToken);
 
             userRepository.saveAndFlush(userEntity);
 
