@@ -31,7 +31,7 @@ public class SchedulerService {
 //        String[] containerCmd = {"/bin/sh", "-c", "docker", "ps", "|", "grep", "'crowstudio'"};
 //        String[] containerCmd = {"docker", "container", "ls", "--filter=name=crowstudio", "-q"}; // 이거 됨 !!!
         String[] containerCmd = {"docker", "container", "ls", "--filter=name=crowstudio", "-q"};
-        String containerList = compileService.resultString(containerCmd));
+        String containerList = compileService.resultString(containerCmd);
         System.out.println("continaerList : " + containerList);
         String[] stopCmd = {"docker", "stop", containerList};
         System.out.println("docker stop 시작 !");
