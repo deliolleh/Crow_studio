@@ -229,7 +229,7 @@ public class GitService {
             return check;
         }
 
-        ProcessBuilder command = new ProcessBuilder("/bin/sh","-c","git","push","origin",branchName,"|",email,"|",pass);
+        ProcessBuilder command = new ProcessBuilder("/bin/sh","-c","git push origin " + branchName,"|",email,"|",pass);
         command.directory(new File(gitPath));
 
         try {
