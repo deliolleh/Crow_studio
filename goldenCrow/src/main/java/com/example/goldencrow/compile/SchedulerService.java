@@ -30,15 +30,13 @@ public class SchedulerService {
 //        String[] containerCmd = {"/bin/sh", "-c", "docker", "container", "ls", "|", "grep", "'crowstudio'"};
 //        String[] containerCmd = {"/bin/sh", "-c", "docker", "ps", "|", "grep", "'crowstudio'"};
 //        String[] containerCmd = {"docker", "container", "ls", "--filter=name=crowstudio", "-q"}; // 이거 됨 !!!
-        String[] containerCmd = {"docker", "stop", "$(docker", "container", "ls", "--filter=\"name=crowstudio\"", "-q)"};
-        String containerList = compileService.resultString(containerCmd);
-        if (containerList == null) {
-            System.out.println("container 못찾음"); return; }
+        String[] containerCmd = {"docker", "container", "ls", "--filter=name=crowstudio", "-q"};
+        String containerList = (compileService.resultString(containerCmd)).trim();
         System.out.println(containerList);
-//        String[] stopCmd = {"docker", "stop", containerList};
-//        System.out.println("docker stop 시작 !");
-//        compileService.resultString(stopCmd);
-//        System.out.println("docker stop 됐다 !");
+        String[] stopCmd = {"docker", "stop", containerList};
+        System.out.println("docker stop 시작 !");
+        compileService.resultString(stopCmd);
+        System.out.println("docker stop 됐다 !");
 
 //        String[] rmImgCmd = {"/bin/sh", "-c", "docker", "rmi", "$(docker", "images", filteringName +"*", "-q)"};
 //        System.out.println("docker images 삭제 시작 !");
