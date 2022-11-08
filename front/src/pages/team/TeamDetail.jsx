@@ -68,6 +68,7 @@ const TeamDetail = () => {
 
   return (
     <div>
+      Team Detail
       <form
         method="post"
         // onSubmit={submitHandler}

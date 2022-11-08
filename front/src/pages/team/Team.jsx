@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import {
   getTeams,
@@ -18,6 +19,7 @@ import Header from "../../components/Header";
 
 const Team = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [teamName, setTeamName] = useState("");
   const [modifiedTeamName, setModifiedTeamName] = useState("");
@@ -43,6 +45,10 @@ const Team = () => {
 
   const createTeamHandler = () => {
     console.log("createTeam");
+  };
+
+  const clickTeamHandler = (teamSeq) => {
+    navigate(`/team/${teamSeq}`);
   };
 
   useEffect(() => {
@@ -78,8 +84,13 @@ const Team = () => {
 
       <div>
         {teams?.map((team) => (
-          <div key={`t${team.teamSeq}`} className="flex gap-2">
+          <div
+            key={`t${team.teamSeq}`}
+            className="flex gap-2 hover:cursor-pointer"
+            onClick={() => clickTeamHandler(team.teamSeq)}
+          >
             <div>🙄</div>
+            <div>{team.teamSeq}</div>
             <div>{team.teamName}</div>
             <div>{team.teamLeaderNickname}</div>
             <div>
