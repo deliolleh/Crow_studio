@@ -15,6 +15,7 @@ import Mypage from "./pages/mypage/Mypage";
 import ProjectCreate from "./pages/project-create/ProjectCreate";
 import Team from "./pages/team/Team";
 import TeamCreate from "./pages/team/TeamCreate";
+import TeamDetail from "./pages/team/TeamDetail";
 
 const router = createBrowserRouter([
   {
@@ -54,6 +55,14 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <Team />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/team/:teamSeq",
+    element: (
+      <PrivateRoute>
+        <TeamDetail />
       </PrivateRoute>
     ),
   },
