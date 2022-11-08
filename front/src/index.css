@@ -4,16 +4,134 @@
 
 body {
   margin: 0;
-  background-color: #2B2C2B;
-  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-    sans-serif;
-  color: #BBBBBB;
+  background-color: #2b2c2b;
+  font-family: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto", "Apple SD Gothic Neo",
+    "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu", "Cantarell",
+    "Fira Sans", "Droid Sans", "Helvetica Neue", "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  color: #bbbbbb;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+hr {
+  height: 3px;
+}
+
+/* scrollbar custom */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: #2b2c2b;
+  border-radius: 10px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 10px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+/* 스크롤바들이 만나는 하단 모서리 */
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.Pane1,
+.Pane2 {
+  overflow: auto;
+  position: static;
+  /* height: calc(100% - 120px); */
+  min-width: 0%;
+  min-height: 0%;
+}
+
+.Resizer {
+  z-index: 1;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding;
+  background-clip: padding-box;
+}
+
+.Resizer:hover {
+  -webkit-transition: all 2s ease;
+  transition: all 2s ease;
+}
+
+.Resizer.horizontal {
+  height: 11px;
+  margin: -5px 0;
+  cursor: row-resize;
+  width: 100vw;
+}
+
+.Resizer.horizontal:hover {
+  border-top: 5px solid greenyellow;
+  border-bottom: 5px solid greenyellow;
+}
+
+.Resizer.vertical {
+  width: 11px;
+  height: 100vh;
+  margin: 0 -5px;
+  cursor: col-resize;
+}
+
+.Resizer.vertical:hover {
+  border-left: 5px solid greenyellow;
+  border-right: 5px solid greenyellow;
+}
+.Resizer.disabled {
+  cursor: not-allowed;
+}
+.Resizer.disabled:hover {
+  border-color: transparent;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family: "JetBrains Mono", "Pretendard Variable", Pretendard,
+    -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto",
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.terminalContainer form {
+  font-family: "JetBrains Mono", "Pretendard Variable", Pretendard,
+    -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto",
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+.terminalContainer input {
+  font-family: "JetBrains Mono", "Pretendard Variable", Pretendard,
+    -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto",
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+.terminalContainer span {
+  font-family: "JetBrains Mono", "Pretendard Variable", Pretendard,
+    -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto",
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+.terminalContainer div {
+  font-family: "JetBrains Mono", "Pretendard Variable", Pretendard,
+    -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto",
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 }
