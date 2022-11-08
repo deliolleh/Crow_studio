@@ -27,7 +27,7 @@ public class SchedulerService {
         * */
         String filteringName = "crowstudio_";
 //        String[] containerCmd = {"/bin/sh", "-c", "docker", "container", "ls", "--filter=\"name=crowstudio\"", "-q"};
-        String[] containerCmd = {"/bin/sh", "-c", "docker", "container", "ls"};
+        String[] containerCmd = {"docker", "container", "ls"};
         String containerList = compileService.resultString(containerCmd);
         if (containerList == null) {
             System.out.println("container 못찾음"); return; }
