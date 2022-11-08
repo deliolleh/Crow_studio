@@ -26,23 +26,24 @@ public class SchedulerService {
         * docker rmi $(docker images -f "dangling=true" -q)
         * */
         String filteringName = "crowstudio_";
-        String[] containerCmd = {"/bin/sh", "-c", "docker", "container", "ls", "--filter=\"name=crowstudio\"", "-q"};
+//        String[] containerCmd = {"/bin/sh", "-c", "docker", "container", "ls", "--filter=\"name=crowstudio\"", "-q"};
+        String[] containerCmd = {"/bin/sh", "-c", "docker", "container", "ls"};
         String containerList = compileService.resultString(containerCmd);
         if (containerList == null) {
             System.out.println("container 못찾음"); return; }
         System.out.println(containerList);
-        String[] stopCmd = {"docker", "stop", containerList};
-        System.out.println("docker stop 시작 !");
-        compileService.resultString(stopCmd);
-
-        System.out.println("docker stop 됐다 !");
-        String[] rmImgCmd = {"/bin/sh", "-c", "docker", "rmi", "$(docker", "images", filteringName +"*", "-q)"};
-        System.out.println("docker images 삭제 시작 !");
-        compileService.resultString(rmImgCmd);
-        System.out.println("docker images 삭제 됐다 !");
-        String[] rmNoneCmd = {"/bin/sh", "-c", "docker", "rmi", "$(docker", "images", "-f" ,"\"dangling=true\"", "-q)"};
-        System.out.println("none image 삭제 시작 !");
-        compileService.resultString(rmNoneCmd);
-        System.out.println("none image 삭제 됐다 !");
+//        String[] stopCmd = {"docker", "stop", containerList};
+//        System.out.println("docker stop 시작 !");
+//        compileService.resultString(stopCmd);
+//
+//        System.out.println("docker stop 됐다 !");
+//        String[] rmImgCmd = {"/bin/sh", "-c", "docker", "rmi", "$(docker", "images", filteringName +"*", "-q)"};
+//        System.out.println("docker images 삭제 시작 !");
+//        compileService.resultString(rmImgCmd);
+//        System.out.println("docker images 삭제 됐다 !");
+//        String[] rmNoneCmd = {"/bin/sh", "-c", "docker", "rmi", "$(docker", "images", "-f" ,"\"dangling=true\"", "-q)"};
+//        System.out.println("none image 삭제 시작 !");
+//        compileService.resultString(rmNoneCmd);
+//        System.out.println("none image 삭제 됐다 !");
     }
 }
