@@ -240,8 +240,10 @@ public class GitService {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             p.waitFor();
+            System.out.println(br.readLine());
             while ((forPrint = br.readLine()) != null) {
                 System.out.println(forPrint);
+                System.out.println(br);
             }
 
         } catch (IOException e) {
