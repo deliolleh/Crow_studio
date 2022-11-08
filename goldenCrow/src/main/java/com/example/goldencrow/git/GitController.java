@@ -75,7 +75,7 @@ public class GitController {
         return new ResponseEntity<>(pushCheck, HttpStatus.OK);
     }
 
-    @PostMapping("/branch")
+    @PostMapping("/branches")
     public ResponseEntity<List<String>> getBranch(@RequestHeader("Authorization") String jwt, @RequestParam Integer type, @RequestBody HashMap<String,String> gitPath) {
         List<String> branches = gitService.getBranch(gitPath.get("gitPath"),type);
         if (branches.get(0).equals("failed!")) {

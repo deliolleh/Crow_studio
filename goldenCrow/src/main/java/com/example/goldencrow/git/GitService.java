@@ -276,8 +276,11 @@ public class GitService {
 
         if (type == 1) {
             command.command("git","branch");
-        } else {
+        } else if (type == 2){
             command.command("git","branch","-r");
+        } else {
+            branches.add("failed!");
+            return branches;
         }
         command.directory(new File(gitPath));
         String read;
@@ -285,19 +288,25 @@ public class GitService {
         try {
             Process getBranch = command.start();
             BufferedReader branch = new BufferedReader(new InputStreamReader(getBranch.getInputStream()));
+
             while ((read = branch.readLine()) != null) {
-                branches.add(read);
+                branches.add(read.trim());
                 System.out.println(read);
             }
             getBranch.waitFor();
+
         } catch (IOException e) {
+
             branches.add("failed!");
             branches.add(e.getMessage());
             return branches;
+
         } catch (InterruptedException e) {
+
             branches.add("failed!");
             branches.add(e.getMessage());
             return branches;
+
         }
         return branches;
     }
