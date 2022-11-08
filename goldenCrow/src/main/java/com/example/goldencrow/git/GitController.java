@@ -44,7 +44,7 @@ public class GitController {
 
     @PostMapping("/{teamSeq}/git-switch")
     public ResponseEntity<String> gitSwitch (@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> gitProject) {
-        String switchResult = gitService.gitSwitch(teamSeq,gitProject.get("projectName"),gitProject.get("branchName"),type);
+        String switchResult = gitService.gitSwitch(teamSeq,gitProject.get("gitPath"),gitProject.get("branchName"),type);
         if (!switchResult.equals("Success")) {
             return new ResponseEntity<>(switchResult,HttpStatus.BAD_REQUEST);
         }
