@@ -47,9 +47,9 @@ public class EditorsService {
 
             // windows cmd를 가리키는 변수
             // 나중에 Ubuntu할 때 맞는 변수로 바꿀 것
-            String env = checkOs ? "cmd /c" : "";
+            String env = checkOs ? "cmd /c " : "";
             System.out.println(checkOs ? "Operating in windows" : "Operating in linux");
-            String command = env + " black " + path + name;
+            String command = env + "black " + path + name;
             System.out.println(command);
 
             // Black 작동 => 성공
