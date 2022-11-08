@@ -170,7 +170,7 @@ public class GitService {
         command.directory(new File(gitPath));
 
         try {
-            Process p = command.start().;
+            Process p = command.start();
             String forPrint;
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((forPrint = br.readLine()) != null) {
