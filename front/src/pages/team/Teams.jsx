@@ -17,7 +17,7 @@ import {
 
 import Header from "../../components/Header";
 
-const Team = () => {
+const Teams = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -45,11 +45,11 @@ const Team = () => {
 
   const createTeamHandler = () => {
     console.log("createTeam");
-    navigate("/team/create");
+    navigate("/teams/create");
   };
 
   const clickTeamHandler = (teamSeq) => {
-    navigate(`/team/${teamSeq}`);
+    navigate(`/teams/${teamSeq}`);
   };
 
   useEffect(() => {
@@ -120,4 +120,4 @@ const Team = () => {
   );
 };
 
-export default Team;
+export default Teams;
