@@ -26,7 +26,7 @@ public class SchedulerService {
         * docker rmi $(docker images -f "dangling=true" -q)
         * */
         String filteringName = "crowstudio_";
-        String[] containerCmd = {"docker", "container", "ls", "--filter='name=" + filteringName +"'", "-q"};
+        String[] containerCmd = {"docker", "container", "ls", "--filter='name=crowstudio_'", "-q"};
         String containerList = compileService.resultString(containerCmd);
         if (containerList == null) {
             System.out.println("container 못찾음"); return; }
