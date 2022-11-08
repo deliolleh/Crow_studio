@@ -51,20 +51,21 @@ public class CompileService {
     /*
     filePath = /home/ubuntu/crow_data/{teamSeq}/{projectName}
     */
-    public String createDockerfile(String filePath, Long teamSeq, String type) {
+    public String createDockerfile(String filePath, Long teamSeq, int type) {
         // filePath가 /home/ubuntu/crow_data/로 시작하는지 확인
         boolean rightPath = filePath.startsWith("/home/ubuntu/crow_data/");
-        if (!rightPath) { return "Wrong file path"; }
+        if (!rightPath) { return "Error: Wrong file path(not /home/ubuntu/crow_data/)"; }
         // teamSeq가 있는지 확인
         Optional<TeamEntity> existTeam = teamRepository.findByTeamSeq(teamSeq);
-        if (!existTeam.isPresent()) { return "Can't Search team"; }
+        if (!existTeam.isPresent()) { return "Error: Can't Search team"; }
         // teamSeq랑 filePath에 있는 숫자랑 같은지 확인
         String[] pathList = filePath.split("/");
-        if (Long.parseLong(pathList[4]) != teamSeq) { return "Wrong file Path"; }
+        if (Long.parseLong(pathList[4]) != teamSeq) { return "Error: Wrong file Path(teamSeq)"; }
 //        int filePathIndex = filePath.lastIndexOf("/");
         String projectName = pathList[5];
         String content = "";
-        if (Objects.equals(type, "django")) {
+        // django
+        if (type == 2) {
             content = "FROM python:3.10\n" +
                     "RUN pip3 install django\n" +
                     "WORKDIR " + filePath + "\n" +
@@ -73,7 +74,7 @@ public class CompileService {
                     "CMD [\"python3\", \"manage.py\", \"runserver\", \"0.0.0.0:3000\"]\n" +
                     "EXPOSE 3000";
         }
-        else if (Objects.equals(type, "fastapi")) {
+        else if (type == 4) {  // fastapi
             content = "FROM python:3.10\n" +
                     "WORKDIR " + filePath + "\n" +
                     "RUN python3 -m venv venv\n" +
@@ -86,7 +87,7 @@ public class CompileService {
                     "EXPOSE 8000\n" +
                     "CMD [\"uvicorn\", \"" + projectName + ".main:app" + "\", \"--host\", \"0.0.0.0\"]";
         }
-        else if (Objects.equals(type, "flask")) {
+        else if (type == 3) {  // flask
             content = "FROM python:3.10\n" +
                     "WORKDIR " + filePath + "\n" +
                     "COPY . .\n" +
@@ -112,24 +113,30 @@ public class CompileService {
         System.out.println("포트 찾기 ! container id : " + container + "!");
         return resultString(command);
     }
+    /*
+     * type 1 = pure python
+     * 2 = django
+     * 3 = flask
+     * 4 = fastapi
+     */
 
-    public String pyCompile(Map<String, String> req, Long teamSeq) {
-        List<String> types = new ArrayList<>(Arrays.asList("pure", "django", "fastapi", "flask"));
+    public String pyCompile(Map<String, Object> req, Long teamSeq) {
+        int type = Integer.parseInt(req.get("type").toString());
         // 타입 이상한 거 들어오면 리턴
-        if (!types.contains(req.get("type"))) { return "Type error"; }
-        String filePath = req.get("filePath");
+        if (type > 4 || type < 0) { return "Type error"; }
+        String filePath = req.get("filePath").toString();
         int filePathIndex = filePath.lastIndexOf("/");
         String projectName = filePath.substring(filePathIndex+1);
         String conAndImgName = (projectName + teamSeq.toString()).toLowerCase();
         // 퓨어파이썬일 때
-        if (Objects.equals(req.get("type"), "pure")) {
-            if (req.get("input").isEmpty()) {
-                String[] command = {"python3", filePath+"/"+projectName+".py"};
+        if (type == 1) {
+            if (req.get("input").toString().isEmpty()) {
+                String[] command = {"python3", filePath};
                 System.out.println(Arrays.toString(command));
                 return resultString(command);
             }
             else {
-                String[] command = {"/bin/sh", "-c", "echo " + "\"" + req.get("input") + "\" | python3 "+ filePath+"/"+projectName+".py"};
+                String[] command = {"/bin/sh", "-c", "echo " + "\"" + req.get("input") + "\" | python3 "+ filePath};
                 System.out.println(Arrays.toString(command));
                 return resultString(command);
             }
@@ -137,22 +144,22 @@ public class CompileService {
         // Django, fastapi, flask 프로젝트일 때
         else {
             // 도커파일 추가
-            String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"));
+            String dockerfile = createDockerfile(filePath, teamSeq, type);
             if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
             System.out.println("도커파일 만들기 성공! 빌드를 해보자");
         }
         // 도커 이미지 빌드
         String[] image = {"docker", "build", "-t", conAndImgName, filePath+"/"};
         String imageBuild = resultString(image);
-        if (imageBuild.isEmpty()) { return "Can't build docker image"; }
+        if (imageBuild.isEmpty()) { return "Error: Can't build docker image"; }
         System.out.println("런 해보쟈");
         // 도커 런
         String[] command = {"docker", "run", "-d", "--name", conAndImgName, "-P", conAndImgName};
 //        System.out.println(Arrays.toString(command));
         String container = resultString(command);
-        if (container.isEmpty()) { return "Can't run docker container"; }
+        if (container.isEmpty()) { return "Error: Can't run docker container"; }
         String portString = portNum(container);
-        if (portString.isEmpty()) { return "런 시켰는데 컨테이너가 안돌아가서 포트를 찾을 수가 없음"; }
+        if (portString.isEmpty()) { return "Error: 런 시켰는데 컨테이너가 안돌아가서 포트를 찾을 수가 없음"; }
         // \n 전까지의 문자열에서 : 뒤에 있는 숫자만 가져오기
         String[] portList = portString.split("\n");
         System.out.println(Arrays.toString(portList));
@@ -167,20 +174,24 @@ public class CompileService {
         String[] containerStop = {"docker", "stop", conAndImgName};
         String stopedCon = resultString(containerStop);
         System.out.println("멈춘 컨테이너명 : " + stopedCon);
-        if (stopedCon.isEmpty() || !stopedCon.equals(conAndImgName) ) { return "Can't stop conatiner " + conAndImgName; }
+        if (stopedCon.isEmpty() || !stopedCon.equals(conAndImgName) ) { return "Error: Can't stop conatiner " + conAndImgName; }
 
         // 도커 컨테이너 rm
         String[] containerRm = {"docker", "rm", conAndImgName};
         String rmCon = resultString(containerRm);
         System.out.println("삭제한 컨테이너명 : " + rmCon);
-        if (rmCon.isEmpty() || !rmCon.equals(conAndImgName)) { return "Can't remove conatiner " + conAndImgName; }
+        if (rmCon.isEmpty() || !rmCon.equals(conAndImgName)) { return "Error: Can't remove conatiner " + conAndImgName; }
 
         // 도커 이미지 rmi
         String[] imageRm = {"docker", "rmi", conAndImgName};
         String rmImg = resultString(imageRm);
 //        System.out.println("삭제한 이미지명 : " + rmImg);
-        if (rmImg.isEmpty() || rmImg.startsWith("Error")) { return "Can't remove image " + conAndImgName; }
+        if (rmImg.isEmpty() || rmImg.startsWith("Error")) { return "Error: Can't remove image " + conAndImgName; }
 
+        // 도커파일 삭제
+        String BASE_URL = "/home/ubuntu/crow_data/";
+        boolean deleted = fileService.deleteFile(BASE_URL+req.get("teamSeq")+"/"+req.get("projectName")+"/Dockerfile", 2, Long.parseLong(req.get("teamSeq")));
+        if (!deleted) { return "Error: Can't remove Dockerfile"; }
         return "SUCCESS";
     }
 }
