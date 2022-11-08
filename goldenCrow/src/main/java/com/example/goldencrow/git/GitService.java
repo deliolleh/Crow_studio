@@ -125,23 +125,23 @@ public class GitService {
     /**
      * 깃 스위치 해주는 함수
      * @param teamSeq
-     * @param projectName
+     * @param gitPath
      * @param branchName
      * @return
      */
-    public String gitSwitch(Long teamSeq, String projectName, String branchName, Integer type) {
-        String filePath = baseUrl + "/" + String.valueOf(teamSeq) + "/" + projectName;
-        File targetFile = new File(filePath);
-        System.out.println(filePath);
+    public String gitSwitch(Long teamSeq, String gitPath, String branchName, Integer type) {
+
+        File targetFile = new File(gitPath);
+
         ProcessBuilder command = new ProcessBuilder();
-        File gitFile = targetFile.listFiles()[0];
+
         if (type == 1) {
             command.command("git","switch",branchName);
         } else {
             command.command("git","switch","-c",branchName);
         }
 
-        command.directory(gitFile);
+        command.directory(targetFile);
 
         try {
             command.start();
