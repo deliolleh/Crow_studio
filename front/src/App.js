@@ -14,6 +14,7 @@ import Main from "./pages/main/Main";
 import Mypage from "./pages/mypage/Mypage";
 import ProjectCreate from "./pages/project-create/ProjectCreate";
 import Team from "./pages/team/Team";
+import TeamCreate from "./pages/team/TeamCreate";
 
 const router = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
   {
     path: "/team",
     element: <Team />,
+  },
+  {
+    path: "/team/create",
+    element: <TeamCreate />,
   },
 ]);
 
