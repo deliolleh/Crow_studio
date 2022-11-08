@@ -51,7 +51,7 @@ const router = createBrowserRouter([
     element: <ProjectCreate />,
   },
   {
-    path: "/team",
+    path: "/teams",
     element: (
       <PrivateRoute>
         <Team />
@@ -59,7 +59,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/team/:teamSeq",
+    path: "/teams/:teamSeq",
     element: (
       <PrivateRoute>
         <TeamDetail />
@@ -67,7 +67,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/team/create",
+    path: "/teams/create",
     element: (
       <PrivateRoute>
         <TeamCreate />
