@@ -28,11 +28,9 @@ const TeamDetail = () => {
         console.log("res:", res);
       })
       .catch(console.error);
-  }, []);
+  }, [dispatch, teamSeq]);
 
-  const clickTeamListHandler = () => {
-    navigate("/teams");
-  };
+  const clickTeamListHandler = () => navigate("/teams");
 
   //
   const inputTeamNameChangeHandler = (e) => setInputTeamName(e.target.value);
@@ -42,11 +40,12 @@ const TeamDetail = () => {
     console.log("inputTeamName:", inputTeamName);
     dispatch(modifyTeamName({ teamName: inputTeamName, teamSeq }))
       .unwrap()
-      .then((res) =>
+      .then((res) => {
+        alert("팀 이름 변경 완료");
         setTeam((prev) => {
           return { ...prev, teamName: res };
-        })
-      )
+        });
+      })
       .catch(console.error);
   };
 
