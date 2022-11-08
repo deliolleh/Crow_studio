@@ -5,7 +5,7 @@ import * as iconsb from "react-icons/bi";
 import * as iconsim from "react-icons/im";
 // import * as icons from "@mdi/react";
 
-export const gmailData = [
+export const dirData = [
     {
         id: "1",
         name: "Dockerfile",

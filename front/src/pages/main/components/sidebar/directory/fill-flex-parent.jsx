@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React from "react";
 import mergeRefs from "./merge-refs";
 import useResizeObserver from "use-resize-observer";
 
