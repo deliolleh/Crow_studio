@@ -124,12 +124,11 @@ public class GitService {
 
     /**
      * 깃 스위치 해주는 함수
-     * @param teamSeq
      * @param gitPath
      * @param branchName
      * @return
      */
-    public String gitSwitch(Long teamSeq, String gitPath, String branchName, Integer type) {
+    public String gitSwitch(String gitPath, String branchName, Integer type) {
 
         File targetFile = new File(gitPath);
 
