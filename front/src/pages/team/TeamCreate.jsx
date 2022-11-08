@@ -79,6 +79,10 @@ const TeamCreate = () => {
       });
   };
 
+  const clickTeamListHandler = () => {
+    navigate("/team");
+  };
+
   return (
     <div>
       <form
@@ -115,6 +119,10 @@ const TeamCreate = () => {
           팀 생성
         </button>
       </form>
+
+      <br />
+
+      <button onClick={clickTeamListHandler}>팀 목록</button>
     </div>
   );
 };

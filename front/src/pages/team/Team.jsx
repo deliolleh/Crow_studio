@@ -45,6 +45,7 @@ const Team = () => {
 
   const createTeamHandler = () => {
     console.log("createTeam");
+    navigate("/team/create");
   };
 
   const clickTeamHandler = (teamSeq) => {
