@@ -1,20 +1,18 @@
 package com.example.goldencrow.file.Service;
 
-import com.example.goldencrow.file.FileDto.FileCreateDto;
-import com.example.goldencrow.file.FileEntity;
+
 import com.example.goldencrow.file.Repository.FileRepository;
-import com.example.goldencrow.team.entity.TeamEntity;
+
 import com.example.goldencrow.team.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
 
 import static java.lang.System.out;
 

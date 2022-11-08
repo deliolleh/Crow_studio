@@ -9,8 +9,12 @@ import com.google.cloud.storage.Acl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -172,7 +176,7 @@ public class GitService {
         } catch (InterruptedException e) {
             return e.getMessage();
         }
-
+        System.out.println("add 성공!");
         return "Success";
     }
 
@@ -201,7 +205,7 @@ public class GitService {
         } catch (InterruptedException e) {
             return e.getMessage();
         }
-
+        System.out.println("커밋 성공!");
         return "Success";
     }
 
@@ -258,4 +262,43 @@ public class GitService {
         return "Success";
     }
 
+    /**
+     * 브랜치를 보여주는 함수
+     * 타입 1은 로컬만 
+     * 타입 2는 전체 브랜치 조회
+     * @param gitPath
+     * @param type
+     * @return
+     */
+    public List<String> getBranch(String gitPath, Integer type) {
+        List<String> branches = new ArrayList<>();
+        ProcessBuilder command = new ProcessBuilder();
+
+        if (type == 1) {
+            command.command("git","branch");
+        } else {
+            command.command("git","branch","-r");
+        }
+        command.directory(new File(gitPath));
+        String read;
+
+        try {
+            Process getBranch = command.start();
+            BufferedReader branch = new BufferedReader(new InputStreamReader(getBranch.getInputStream()));
+            while ((read = branch.readLine()) != null) {
+                branches.add(read);
+                System.out.println(read);
+            }
+            getBranch.waitFor();
+        } catch (IOException e) {
+            branches.add("failed!");
+            branches.add(e.getMessage());
+            return branches;
+        } catch (InterruptedException e) {
+            branches.add("failed!");
+            branches.add(e.getMessage());
+            return branches;
+        }
+        return branches;
+    }
 }
