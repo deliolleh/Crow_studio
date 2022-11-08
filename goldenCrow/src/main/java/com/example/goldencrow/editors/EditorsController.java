@@ -48,7 +48,7 @@ public class EditorsController {
      * <br>Hashmap - "data": formatted code
      * <br>Nothing if failed
      */
-    @GetMapping("/format/{language}")
+    @PostMapping("/format/read/{language}")
     public ResponseEntity<Map<String, String>> formatResult(@PathVariable String language, @RequestBody HashMap<String, String> rawData) {
         String name = rawData.get("name"); // format 파일을 만든 시간
         HashMap<String, String> response = editorsService.FormatRead(language, name);

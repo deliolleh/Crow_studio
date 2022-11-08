@@ -35,7 +35,7 @@ public class CompileService {
             result = sb.toString();
             p.waitFor();
             in.close();
-//            System.out.println("결과: " + result);
+            System.out.println("결과: " + result);
             p.destroy();
             return result.trim();
         }catch(IOException e){
@@ -51,7 +51,7 @@ public class CompileService {
     /*
     filePath = /home/ubuntu/crow_data/{teamSeq}/{projectName}
     */
-    public String createDockerfile(String filePath, Long teamSeq, String type, String input) {
+    public String createDockerfile(String filePath, Long teamSeq, String type) {
         // filePath가 /home/ubuntu/crow_data/로 시작하는지 확인
         boolean rightPath = filePath.startsWith("/home/ubuntu/crow_data/");
         if (!rightPath) { return "Wrong file path"; }
@@ -64,19 +64,7 @@ public class CompileService {
 //        int filePathIndex = filePath.lastIndexOf("/");
         String projectName = pathList[5];
         String content = "";
-        if (Objects.equals(type, "pure") && input.isEmpty()) {
-            content = "FROM python:3.10\n" +
-                    "WORKDIR " + filePath + "\n" +
-                    "COPY . .\n" +
-                    "CMD [\"python3\", \"" +"./"+ projectName+".py\"]\n";
-        }
-        else if ((Objects.equals(type, "pure") && !input.isEmpty())) {
-            content = "FROM python:3.10\n" +
-                    "WORKDIR " + filePath + "\n" +
-                    "COPY . .\n" +
-                    "CMD [\"echo\", \""+ input +"\", \"|\", \"python3\", \"" +"./"+ projectName+".py\"]\n";
-        }
-        else if (Objects.equals(type, "django")) {
+        if (Objects.equals(type, "django")) {
             content = "FROM python:3.10\n" +
                     "RUN pip3 install django\n" +
                     "WORKDIR " + filePath + "\n" +
@@ -131,44 +119,28 @@ public class CompileService {
         if (!types.contains(req.get("type"))) { return "Type error"; }
         String filePath = req.get("filePath");
         int filePathIndex = filePath.lastIndexOf("/");
-        String conAndImgName = filePath.substring(filePathIndex+1) + teamSeq.toString();
+        String projectName = filePath.substring(filePathIndex+1);
+        String conAndImgName = (projectName + teamSeq.toString()).toLowerCase();
         // 퓨어파이썬일 때
         if (Objects.equals(req.get("type"), "pure")) {
-            // 도커파일 추가
-            String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
-            if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
-            String[] command = {"docker", "run", conAndImgName};
-            return resultString(command);
-//            if (req.get("input").isEmpty()) {
-//                // 도커파일 추가
-//                String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
-//                if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
-//                String[] command = {"docker", "run", conAndImgName};
-//                return resultString(command);
-//            }
-//            else {
-//                String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
-//                if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
-//                String[] command = {"docker", "run", conAndImgName};
-//                return resultString(command);
-//            }
-//            System.out.println(resultString(command));
-//            resultString(command);
-//            String[] inputCmd = req.get("input").split("\n");
-//            return resultString(inputCmd);
-//            return resultString(command);
+            if (req.get("input").isEmpty()) {
+                String[] command = {"python3", filePath+"/"+projectName+".py"};
+                System.out.println(Arrays.toString(command));
+                return resultString(command);
+            }
+            else {
+                String[] command = {"/bin/sh", "-c", "echo " + "\"" + req.get("input") + "\" | python3 "+ filePath+"/"+projectName+".py"};
+                System.out.println(Arrays.toString(command));
+                return resultString(command);
+            }
         }
         // Django, fastapi, flask 프로젝트일 때
         else {
             // 도커파일 추가
-            String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), req.get("input"));
+            String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"));
             if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
             System.out.println("도커파일 만들기 성공! 빌드를 해보자");
         }
-         // 도커파일 추가
-//        String dockerfile = createDockerfile(filePath, teamSeq, req.get("type"), );
-//        if (!Objects.equals(dockerfile, "SUCCESS")) { return dockerfile; }
-//        System.out.println("도커파일 만들기 성공! 빌드를 해보자");
         // 도커 이미지 빌드
         String[] image = {"docker", "build", "-t", conAndImgName, filePath+"/"};
         String imageBuild = resultString(image);
@@ -190,24 +162,24 @@ public class CompileService {
     }
 
     public String pyCompileStop(Map<String, String> req) {
-        String conAndImgName = req.get("projectName") + req.get("teamSeq");
+        String conAndImgName = (req.get("projectName") + req.get("teamSeq")).toLowerCase();
         // 도커 컨테이너 stop
         String[] containerStop = {"docker", "stop", conAndImgName};
         String stopedCon = resultString(containerStop);
         System.out.println("멈춘 컨테이너명 : " + stopedCon);
-        if (stopedCon.isEmpty() || stopedCon.equals(conAndImgName) ) { return "Can't stop conatiner " + conAndImgName; }
+        if (stopedCon.isEmpty() || !stopedCon.equals(conAndImgName) ) { return "Can't stop conatiner " + conAndImgName; }
 
         // 도커 컨테이너 rm
         String[] containerRm = {"docker", "rm", conAndImgName};
         String rmCon = resultString(containerRm);
         System.out.println("삭제한 컨테이너명 : " + rmCon);
-        if (rmCon.isEmpty() || rmCon.equals(conAndImgName)) { return "Can't remove conatiner " + conAndImgName; }
+        if (rmCon.isEmpty() || !rmCon.equals(conAndImgName)) { return "Can't remove conatiner " + conAndImgName; }
 
         // 도커 이미지 rmi
         String[] imageRm = {"docker", "rmi", conAndImgName};
         String rmImg = resultString(imageRm);
-        System.out.println("삭제한 이미지명 : " + rmImg);
-        if (rmImg.isEmpty() || rmImg.equals(conAndImgName)) { return "Can't remove image " + conAndImgName; }
+//        System.out.println("삭제한 이미지명 : " + rmImg);
+        if (rmImg.isEmpty() || rmImg.startsWith("Error")) { return "Can't remove image " + conAndImgName; }
 
         return "SUCCESS";
     }

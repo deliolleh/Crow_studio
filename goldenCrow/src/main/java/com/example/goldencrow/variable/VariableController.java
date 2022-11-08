@@ -23,7 +23,7 @@ public class VariableController {
      * @param alphabet In data key, get korean word
      * @return If success, data key has list of three types naming convention with EN translate
      */
-    @GetMapping("")
+    @PostMapping ("")
     public ResponseEntity<Map<String, Object>> variableRecommend(@RequestBody HashMap<String, String> alphabet) {
         String text = alphabet.get("data");
         HashMap<String, Object> response = variableService.variableRecommend(text);
