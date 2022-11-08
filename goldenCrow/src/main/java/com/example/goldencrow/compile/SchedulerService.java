@@ -28,7 +28,8 @@ public class SchedulerService {
         String filteringName = "crowstudio_";
 //        String[] containerCmd = {"docker", "container", "ls", "--filter=\"name=crowstudio\"", "-q"}; // filtering이 문제임 왜 안돼 진자ㅠㅠㅠㅠㅠㅠㅠㅠ
 //        String[] containerCmd = {"/bin/sh", "-c", "docker", "container", "ls", "|", "grep", "'crowstudio'"};
-        String[] containerCmd = {"/bin/sh", "-c", "docker", "ps", "|", "grep", "'crowstudio'"};
+//        String[] containerCmd = {"/bin/sh", "-c", "docker", "ps", "|", "grep", "'crowstudio'"};
+        String[] containerCmd = {"docker", "container", "ls", "--filter=name=crowstudio", "-q"};
         String containerList = compileService.resultString(containerCmd);
         if (containerList == null) {
             System.out.println("container 못찾음"); return; }
