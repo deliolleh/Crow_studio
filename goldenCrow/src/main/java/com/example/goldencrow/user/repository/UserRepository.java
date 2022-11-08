@@ -14,4 +14,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     List<UserEntity> findAllByUserIdContainingOrUserNicknameContaining(String word1, String word2);
 
+    UserEntity findByUserSeq(Long userSeq);
+
 }

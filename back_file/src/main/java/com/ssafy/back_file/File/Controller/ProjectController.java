@@ -33,6 +33,7 @@ public class ProjectController {
     public static void showFilesInDIr (String path) {
         File file = new File(path);
         File files[] = file.listFiles();
+        System.out.println(files);
         String names[] = file.list();
 
         for (int i = 0; i < files.length; i++) {
@@ -62,30 +63,31 @@ public class ProjectController {
 
     @GetMapping("/")
     public ResponseEntity<String> pjtRead(@RequestHeader("jwt") String jwt) {
-        String baseUrl = "C:\\Users\\multicampus\\Desktop\\test";
-        showFilesInDIr(baseUrl);
+        String baseUrl = "/home/ubuntu/crow_data/999";
+
 
         return new ResponseEntity<>("1", HttpStatus.ACCEPTED);
     }
-    @DeleteMapping("/{teamSeq}")
-    public ResponseEntity<String> deletePjt(@PathVariable Long teamSeq) {
-
-        String cmd = "/bin/sh -c cd /home/ubuntu/crow_data && sudo rm -r 15";
 
 
-
-
+    @GetMapping("/test")
+    public ResponseEntity<String> deletePjt() {
+        ProcessBuilder builder = new ProcessBuilder();
+        ProcessBuilder tester = new ProcessBuilder();
         try {
-            Runtime.getRuntime().exec("bash -c cd /home/ubuntu/crow_data && touch maind.py");
-            Runtime.getRuntime().exec("bash -c cd /home/ubuntu/crow_data && sudo touch maine.py");
-
-        } catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
-        try {
-            Process p = Runtime.getRuntime().exec("./bin/sh -c cd /home/123asd");
-            Process a = Runtime.getRuntime().exec("sh -c sudo cd /home/사람살려사람");
-        } catch (IOException e) {
+            builder.command("sh", "-c","sudo", "django-admin startproject helloWorld");
+            builder.directory(new File("/home/ubuntu/crow_data/15"));
+            tester.command("sh", "-c","sudo", "touchasd.py");
+            tester.directory(new File("/home/ubuntu/crow_data/15"));
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+
+        try {
+            builder.start();
+            tester.start();
+            System.out.println("여기요여기");
+        } catch (IOException e) { return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); }
 
         return new ResponseEntity<>("Why?", HttpStatus.OK);
     }
