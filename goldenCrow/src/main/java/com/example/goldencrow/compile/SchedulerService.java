@@ -34,6 +34,7 @@ public class SchedulerService {
         String containerList = compileService.resultString(containerCmd).replaceAll("(\r\n|\r|\n|\n\r)", " ");
         System.out.println("continaerList : " + containerList);
         String[] stopCmd = {"docker", "stop", containerList};
+        System.out.println(Arrays.toString(stopCmd));
         System.out.println("docker stop 시작 !");
         compileService.resultString(stopCmd);
         System.out.println("docker stop 됐다 !");
