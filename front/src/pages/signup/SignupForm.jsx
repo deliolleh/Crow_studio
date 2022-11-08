@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const initialInputState = {
   email: "",
@@ -12,6 +12,9 @@ const initialErrorState = {
   nicknameErrorMsg: "",
   passwordErrorMsg: "",
 };
+
+const emailRegEx =
+  /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
 
 const SignupForm = ({ signupHandler }) => {
   const [inputs, setInputs] = useState(initialInputState); // 초기 입력
@@ -53,6 +56,11 @@ const SignupForm = ({ signupHandler }) => {
     if (email.trim().length === 0) {
       setErrorMsgs((prev) => {
         return { ...prev, emailErrorMsg: "이메일을 입력하세요" };
+      });
+      isInvalid = true;
+    } else if (!emailRegEx.test(email)) {
+      setErrorMsgs((prev) => {
+        return { ...prev, emailErrorMsg: "이메일 형식이 올바르지 않습니다" };
       });
       isInvalid = true;
     }
@@ -101,7 +109,7 @@ const SignupForm = ({ signupHandler }) => {
       className="flex flex-col items-center"
     >
       {/* Email */}
-      <div className="w-full">
+      <div className="w-80 mb-1">
         <label htmlFor="email" className="">
           이메일
         </label>
@@ -109,17 +117,19 @@ const SignupForm = ({ signupHandler }) => {
           type="email"
           id="email"
           name="email"
-          className="w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
+          className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
           placeholder="이메일을 입력하세요"
           required
           value={email}
           onChange={inputChangeHandler}
         />
-        <div className="h-6 mb-2">{emailErrorMsg}</div>
+        <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
+          {emailErrorMsg}
+        </div>
       </div>
 
       {/* Nickname */}
-      <div className="w-full">
+      <div className="w-80 mb-1">
         <label htmlFor="nickname" className="">
           닉네임
         </label>
@@ -127,17 +137,19 @@ const SignupForm = ({ signupHandler }) => {
           type="text"
           id="nickname"
           name="nickname"
-          className="w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
+          className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
           placeholder="닉네임을 입력하세요"
           required
           value={nickname}
           onChange={inputChangeHandler}
         />
-        <div className="h-6 mb-2">{nicknameErrorMsg}</div>
+        <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
+          {nicknameErrorMsg}
+        </div>
       </div>
 
       {/* Password 1 */}
-      <div className="w-full">
+      <div className="w-80 mb-1">
         <label htmlFor="password1" className="">
           비밀번호
         </label>
@@ -145,17 +157,19 @@ const SignupForm = ({ signupHandler }) => {
           type="password"
           id="password1"
           name="password1"
-          className="w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
+          className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
           placeholder="비밀번호를 입력하세요"
           required
           value={password1}
           onChange={inputChangeHandler}
         />
-        <div className="h-6 mb-2">{password1ErrorMsg}</div>
+        <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
+          {password1ErrorMsg}
+        </div>
       </div>
 
       {/* Password 2 */}
-      <div className="w-full">
+      <div className="w-80 mb-10">
         <label htmlFor="password2" className="">
           비밀번호 확인
         </label>
@@ -163,19 +177,21 @@ const SignupForm = ({ signupHandler }) => {
           type="password"
           id="password2"
           name="password2"
-          className="w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
+          className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
           placeholder="비밀번호를 한번 더 입력하세요"
           required
           value={password2}
           onChange={inputChangeHandler}
         />
-        <div className="h-6 mb-2">{password2ErrorMsg}</div>
+        <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
+          {password2ErrorMsg}
+        </div>
       </div>
 
       {/* Submit Button */}
       <button
         type="submit"
-        className="w-full text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition"
+        className="w-80 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition mb-4"
         onClick={submitHandler}
       >
         회원가입

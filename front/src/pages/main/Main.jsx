@@ -1,19 +1,33 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
+import { useLoading } from "@rest-hooks/hooks";
 import styled from "styled-components";
 import SplitPane from "react-split-pane";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Tab, Panel, helpers, ExtraButton } from "@react-tabtab-next/tabtab";
 
 // components
-import Sidebar from "./components/Sidebar";
-import Directory from "./components/Directory";
-// import Git from "./components/Git";
-// import Team from "./components/Team";
-// import Settings from "./components/Settings";
-import CustomTabs from "./components/CustomTabs";
+import Header from "../../components/Header";
+import Sidebar from "./components/sidebar/Sidebar";
+import Directory from "./components/sidebar/Directory";
+import Git from "./components/sidebar/Git";
+import Team from "./components/sidebar/Team";
+import Api from "./components/sidebar/Api";
+import VariableName from "./components/sidebar/VariableName";
+import Settings from "./components/sidebar/Settings";
+import CustomTabs from "./components/tabs/CustomTabs";
+import CustomTabs2 from "./components/tabs/CustomTabs2";
+
 // tabtab dummy data
-import Tabs2 from "./components/Tabs2";
-import { makeData } from "../main/components/makeData";
+import {
+  MakeEditorData,
+  MakeConsoleData,
+} from "../main/components/tabs/makeData";
 
 // svg
 import { ReactComponent as IcAdd } from "../../assets/icons/ic_add.svg";
@@ -32,8 +46,8 @@ const SidebarItems = styled.div`
 //   grid-gap: 8px;
 // `;
 
-// beautiful-dnd
 
+// beautiful-dnd
 // fake data simple ver.
 const elements = [
   { id: "one", content: "one" },
@@ -72,16 +86,36 @@ const elements = [
 //   );
 
 const Main = () => {
-  // split pane size
-  const sizeRef = useRef();
-  const [ sideBarSize, setSideBarSize ] = useState(0);
+  // sidebar click event
+  const [com, setCom] = useState("디렉토리");
 
+  const showComponentHandler = (x) => {
+    setCom(x);
+  };
+
+  // split pane size
+  // useRef ver.
+  const sidebarSizeRef = useRef();
+  const [sidebarSize, setSidebarSize] = useState(0);
+  
   useEffect(() => {
-    setSideBarSize(sizeRef.current.getBoundingClientRect().width);
-    // setSideBarSize(sizeRef.current.offsetWidth);
-    console.log("sideBarSize: " + sideBarSize)
-    console.log("sizeRef.current.getBoundingClientRect().width: " + sizeRef.current.getBoundingClientRect().width)
-  }, [sideBarSize])
+    setSidebarSize(sidebarSizeRef.current.getBoundingClientRect().width);
+    // setSideBarSize(sidebarSizeRef.current.offsetWidth);
+    console.log("sidebarSize: " + sidebarSize);
+    console.log(
+      "sidebarSizeRef.current.getBoundingClientRect().width: " +
+      sidebarSizeRef.current.getBoundingClientRect().width
+      );
+    }, [sidebarSize]);
+
+  // editor pane height size  
+  // const [editorPaneSize, setEditorPaneSize] = useState(0);
+  // const editorPaneSizeRef = useRef(null)
+
+  // useEffect(() => {
+  //   setEditorPaneSize(editorPaneSizeRef.current.offsetHeight);
+  // })
+
 
   // Beautiful-dnd
   // simple ver.
@@ -124,105 +158,145 @@ const Main = () => {
   // };
 
   // tabtab
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeEditor1Tab, setActiveEditor1Tab] = useState(0);
+  const [activeEditor2Tab, setActiveEditor2Tab] = useState(0);
   const [activeTab2, setActiveTab2] = useState(0);
-  const [tabs, setTabs] = useState(makeData(2, 'Some Tab'));
-  const [tabs2, setTabs2] = useState(makeData(2, 'Some Tab2'));
-  // // customArrowAuto 설정해보고 싶었는데 통하지 않았습니다,,
-  // const [customArrowAuto, setCustomArrowAuto] = useState(false)
-  // const [ containerWidthSize, setContainerWidthSize ] = useState(0);
-  // const [ tabRefs, setTabRefs ] = useState([])
-  // const getTabNode = (tab) => {
-  //   return tab.__INTERNAL_NODE;
-  // }
+  const [editor1Tabs, setEditor1Tabs] = useState(MakeEditorData(2, "Editor Tab"));
+  const [editor2Tabs, setEditor2Tabs] = useState(MakeEditorData(2, "Editor Tab"));
+  const [consoleTabs, setConsoleTabs] = useState(
+    MakeConsoleData(1, "Console Tab")
+  );
 
-  // useEffect(() => {
-  //   setContainerWidthSize(sizeRef.current.getBoundingClientRect().width);
-  //   console.log("containerWidthSize: " + containerWidthSize)
-  //   console.log("sizeRef.current.getBoundingClientRect().width: " + sizeRef.current.getBoundingClientRect().width)
-  // }, [containerWidthSize])
-
-  // const auto = () => {
-  //   if (customArrowAuto === 'customArrowAuto') {
-  //     let tabWidth = 0;
-  //     customArrowAuto = false;
-  //     for (let index = 0; index < tabRefs.length; index++) {
-  //       const tab = getTabNode(tabRefs[index]);
-  //       tabWidth += tab.current.getBoundingClientRect().width;
-  //       if (tabWidth >= containerWidthSize) {
-  //         customArrowAuto = true;
-  //         break;
-  //       }
-  //     }
-  //   }
-  // }
-
-  const closableTabItems = useMemo(() => {
-    return tabs.map((tab, index) => {
+  // Editor 1
+  const closableEditor1TabItems = useMemo(() => {
+    return editor1Tabs.map((tab, index) => {
       return (
         <Tab closable key={index}>
           {tab.title}
         </Tab>
       );
     });
-  }, [tabs]);
+  }, [editor1Tabs]);
 
-  const panelItems = useMemo(() => {
-    return tabs.map((tab, index) => {
+  const editor1PanelItems = useMemo(() => {
+    return editor1Tabs.map((tab, index) => {
       return <Panel key={index}>{tab.content}</Panel>;
     });
-  }, [tabs]);
+  }, [editor1Tabs]);
 
-  
-  const handleTabChange = useCallback((index) => {
-    console.log('select tab', index);
-    setActiveTab(index);
+  const handleEditor1TabChange = useCallback((index) => {
+    console.log("select tab", index);
+    setActiveEditor1Tab(index);
   }, []);
-  
-  const handleTabSequenceChange = useCallback(({oldIndex, newIndex}) => {
-    console.log({oldIndex, newIndex});
-    setTabs((tab) => helpers.simpleSwitch(tabs, oldIndex, newIndex));
-    setActiveTab(newIndex)
+
+  const handleEditor1TabSequenceChange = useCallback(({ oldIndex, newIndex }) => {
+    console.log({ oldIndex, newIndex });
+    setEditor1Tabs((editor1Tabs) =>
+      helpers.simpleSwitch(editor1Tabs, oldIndex, newIndex)
+    );
+    setActiveEditor1Tab(newIndex);
   }, []);
-  
-  const closableTabItems2 = useMemo(() => {
-    return tabs2.map((tab, index) => {
+
+  // Editor 2
+  const closableEditor2TabItems = useMemo(() => {
+    return editor2Tabs.map((tab, index) => {
       return (
         <Tab closable key={index}>
           {tab.title}
         </Tab>
       );
     });
-  }, [tabs2]);
+  }, [editor2Tabs]);
+
+  const editor2PanelItems = useMemo(() => {
+    return editor2Tabs.map((tab, index) => {
+      return <Panel key={index}>{tab.content}</Panel>;
+    });
+  }, [editor2Tabs]);
+
+  const handleEditor2TabChange = useCallback((index) => {
+    console.log("select tab", index);
+    setActiveEditor2Tab(index);
+  }, []);
+
+  const handleEditor2TabSequenceChange = useCallback(({ oldIndex, newIndex }) => {
+    console.log({ oldIndex, newIndex });
+    setEditor2Tabs((editor2Tabs) =>
+      helpers.simpleSwitch(editor2Tabs, oldIndex, newIndex)
+    );
+    setActiveEditor2Tab(newIndex);
+  }, []);
+
+  // console
+  const closableTabItems2 = useMemo(() => {
+    return consoleTabs.map((tab, index) => {
+      return (
+        <Tab closable key={index}>
+          {tab.title}
+        </Tab>
+      );
+    });
+  }, [consoleTabs]);
 
   const panelItems2 = useMemo(() => {
-    return tabs2.map((tab, index) => {
+    return consoleTabs.map((tab, index) => {
       return <Panel key={index}>{tab.content}</Panel>;
     });
-  }, [tabs2]);
+  }, [consoleTabs]);
 
   const handleTabChange2 = useCallback((index) => {
-    console.log('select tab', index);
+    console.log("select tab", index);
     setActiveTab2(index);
   }, []);
 
-  const handleTabSequenceChange2 = useCallback(({oldIndex, newIndex}) => {
-    console.log({oldIndex, newIndex});
-    setTabs2((tab) => helpers.simpleSwitch(tabs2, oldIndex, newIndex));
-    setActiveTab2(newIndex)
+  const handleTabSequenceChange2 = useCallback(({ oldIndex, newIndex }) => {
+    console.log({ oldIndex, newIndex });
+    setConsoleTabs((consoleTabs) =>
+      helpers.simpleSwitch(consoleTabs, oldIndex, newIndex)
+    );
+    setActiveTab2(newIndex);
   }, []);
 
   return (
     <>
+      <Header />
       <div className="flex">
-        <div ref={ sizeRef } className="flex">
-          <Sidebar />
-          <SidebarItems>
-            <Directory />
-            {/* <Git />
-            <Team />
-            <Settings /> */}
-          </SidebarItems>
+        {/* useRef ver. */}
+        <div ref={sidebarSizeRef} className="flex">
+          <Sidebar onClickIcon={showComponentHandler} com={com} />
+          {com === "" && (
+            <SidebarItems style={{ width: "0px", margin: "0px" }} />
+          )}
+          {com === "디렉토리" && (
+            <SidebarItems>
+              <Directory />
+            </SidebarItems>
+          )}
+          {com === "깃" && (
+            <SidebarItems>
+              <Git />
+            </SidebarItems>
+          )}
+          {com === "팀" && (
+            <SidebarItems>
+              <Team />
+            </SidebarItems>
+          )}
+          {com === "api" && (
+            <SidebarItems>
+              <Api />
+            </SidebarItems>
+          )}
+          {com === "변수명" && (
+            <SidebarItems>
+              <VariableName />
+            </SidebarItems>
+          )}
+          {com === "세팅" && (
+            <SidebarItems>
+              <Settings />
+            </SidebarItems>
+          )}
         </div>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
@@ -230,84 +304,176 @@ const Main = () => {
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                style={{ display: "flex", width: `calc(100vw - ${sideBarSize}px - 30px)`, }}
+                style={
+                  com === ""
+                    ? { 
+                      display: "flex",
+                      width: `calc(100vw - 108px)`,
+                      height: "100vh",
+                    }
+                    : {
+                      display: "flex",
+                      width: `calc(100vw - ${sidebarSize}px - 23px)`,
+                      height: "100vh",
+                    }
+                }
               >
                 <SplitPane
-                  style={{ position: 'static', overflow: 'auto', width: `calc(100vw - ${sideBarSize}px - 30px)`,}}
-                  split="vertical"
-                  defaultSize="50%"
+                  // style={
+                  //   com === ""
+                  //     ? {
+                  //         position: "static",
+                  //         overflow: "auto",
+                  //         width: `calc(100vw - 108px)`,
+                  //         height: `calc(100vh - 300px)`,
+                  //       }
+                  //     : {
+                  //         position: "static",
+                  //         overflow: "auto",
+                  //         width: `calc(100vw - ${sidebarSize}px - 23px)`,
+                  //         height: `calc(100vh - 300px)`,
+                  //       }
+                  // }
+                  style={{ position: "static" }}
+                  split="horizontal"
+                  defaultSize="75%"
+                  minSize={31}
+                  maxSize={670}
                 >
-                  {items.map((item, index) => (
-                    <Draggable key={item.id} draggableId={item.id} index={index}>
-                      {(provided, snapshot) => (
-                        // <Tabs2
-                        //   provided={provided}
-                        //   snapshot={snapshot}
-                        //   item={item}
-                        // />
-                        <CustomTabs
-                          // beautiful-dnd
-                          provided={provided}
-                          snapshot={snapshot}
-                          item={item}
-                          // tabtab
-                          showModalButton={false}
-                          showArrowButton={true}
-                          onTabClose={
-                            item.id === "one" ? 
-                            (i) => {
-                            console.log('close', i);
-                            setTabs((prev) => prev.filter((_, idx) => idx !== i));}
-                            : (i) => {
-                              console.log('close', i);
-                              setTabs2((prev) => prev.filter((_, idx) => idx !== i));
+                  <SplitPane
+                    // style={
+                    //   com === ""
+                    //     ? {
+                    //         position: "static",
+                    //         overflow: "auto",
+                    //         width: `calc(100vw - 108px)`,
+                    //         height: "75%",
+                    //       }
+                    //     : {
+                    //         position: "static",
+                    //         overflow: "auto",
+                    //         width: `calc(100vw - ${sidebarSize}px - 23px)`,
+                    //         height: "75%",
+                    //       }
+                    // }
+                    split="vertical"
+                    defaultSize="50%"
+                    minSize={31}
+                    maxSize={1100}
+                  >
+                    {items.map((item, index) => (
+                      <Draggable
+                        key={item.id}
+                        draggableId={item.id}
+                        index={index}
+                      >
+                        {(provided, snapshot) => (
+                          // <Tabs2
+                          //   provided={provided}
+                          //   snapshot={snapshot}
+                          //   item={item}
+                          // />
+                          <CustomTabs
+                            // beautiful-dnd
+                            provided={provided}
+                            snapshot={snapshot}
+                            item={item}
+                            // tabtab
+                            showModalButton={false}
+                            showArrowButton={true}
+                            onTabClose={
+                              item.id === "one"
+                                ? (i) => {
+                                    console.log("close", i);
+                                    setEditor1Tabs((prev) =>
+                                      prev.filter((_, idx) => idx !== i)
+                                    );
+                                  }
+                                : (i) => {
+                                    console.log("close", i);
+                                    setEditor2Tabs((prev) =>
+                                      prev.filter((_, idx) => idx !== i)
+                                    );
+                                  }
+                            }
+                            activeIndex={
+                              item.id === "one" ? activeEditor1Tab : activeEditor2Tab
+                              // activeEditor1Tab
+                            }
+                            panelItems={
+                              item.id === "one" ? editor1PanelItems : editor2PanelItems
+                              // editor1PanelItems
+                            }
+                            closableTabItems={
+                              item.id === "one"
+                                ? closableEditor1TabItems
+                                : closableEditor2TabItems
+                              // closableEditor1TabItems
+                            }
+                            onTabChange={
+                              item.id === "one"
+                                ? handleEditor1TabChange
+                                : handleEditor2TabChange
+                              // handleEditor1TabChange
+                            }
+                            onTabSequenceChange={
+                              item.id === "one"
+                                ? handleEditor1TabSequenceChange
+                                : handleEditor2TabSequenceChange
+                              // handleEditor1TabSequenceChange
+                            }
+                          />
+                        )}
+                      </Draggable>
+                    ))}
+                  </SplitPane>
+                  <div style={{ marginTop: "8px" }}>
+                    <CustomTabs2
+                      // style={{ marginTop: "8px" }}
+                      // className="w-full h-full"
+                      sidebarSize={sidebarSize}
+                      // editorPaneSize={editorPaneSize}
+                      com={com}
+                      // tabtab
+                      showModalButton={false}
+                      showArrowButton={true}
+                      onTabClose={
+                        (i) => {
+                          console.log("close", i);
+                          setConsoleTabs((prev) =>
+                            prev.filter((_, idx) => idx !== i)
+                          );
+                        }
+                      }
+                      activeIndex={activeTab2}
+                      panelItems={panelItems2}
+                      closableTabItems={closableTabItems2}
+                      onTabChange={handleTabChange2}
+                      onTabSequenceChange={handleTabSequenceChange2}
+                      ExtraButton={
+                        <ExtraButton
+                          onClick={(e) => {
+                            setConsoleTabs((prev) => {
+                              const newTabs = [...prev];
+                              const newItem = MakeConsoleData(
+                                1,
+                                "New Tab " + (newTabs.length + 1),
+                                false
+                              )[0];
+                              newTabs.push(newItem);
+                              return newTabs;
+                            });
+                            setActiveTab2(consoleTabs.length);
                           }}
-                          activeIndex={activeTab}
-                          panelItems={
-                            item.id === "one" ? panelItems : panelItems2
-                          }
-                          closableTabItems={
-                            item.id === "one" ? closableTabItems : closableTabItems2
-                          }
-                          onTabChange={
-                            item.id === "one" ? handleTabChange : handleTabChange2
-                          }
-                          onTabSequenceChange={
-                            item.id === "one" ? handleTabSequenceChange : handleTabSequenceChange2
-                          }
-                          ExtraButton={
-                            item.id === "one" ? 
-                            <ExtraButton
-                              onClick={(e) => {
-                                setTabs((prev) => {
-                                  const newTabs = [...prev];
-                                  const newItem = makeData(1, 'New Tab ' + (newTabs.length + 1), false)[0];
-                                  newTabs.push(newItem);
-                                  return newTabs;
-                                });
-                                setActiveTab(tabs.length);
-                              }}
-                            >
-                              <IcAdd style={{ width: "10px", height: "10px", }} alt="add-icon" />
-                            </ExtraButton>
-                            : <ExtraButton
-                            onClick={(e) => {
-                              setTabs2((prev) => {
-                                const newTabs = [...prev];
-                                const newItem = makeData(1, 'New Tab ' + (newTabs.length + 1), false)[0];
-                                newTabs.push(newItem);
-                                return newTabs;
-                              });
-                              setActiveTab2(tabs2.length);
-                            }}
-                          >
-                            <IcAdd style={{ width: "10px", height: "10px", }} alt="add-icon" />
-                          </ExtraButton>
-                          }
-                        />
-                      )}
-                    </Draggable>
-                  ))}
+                        >
+                          <IcAdd
+                            style={{ width: "10px", height: "10px" }}
+                            alt="add-icon"
+                          />
+                        </ExtraButton>
+                      }
+                    />
+                  </div>
                 </SplitPane>
               </div>
             )}

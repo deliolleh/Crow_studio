@@ -1,11 +1,20 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components";
 import { Menu, Transition } from '@headlessui/react';
 
+import clsx from "clsx";
+import { Tree } from "react-arborist";
+import { dirData } from "./directory/dirData";
+import { FillFlexParent } from "./directory/fill-flex-parent.tsx";
+
+import * as icons from "react-icons/md";
+import { IoDocumentOutline } from "react-icons/io5";
+import styles from "./directory/dir-data.module.css"
+
 // import svg
-import { ReactComponent as IcNewFile } from "../../../assets/icons/ic_new_file.svg";
-import { ReactComponent as IcNewDir } from "../../../assets/icons/ic_new_dir.svg";
-import { ReactComponent as IcToggle } from "../../../assets/icons/ic_toggle.svg";
+import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
+import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
+import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
 // styled
 const DirectoryContainer = styled.div`
@@ -33,7 +42,57 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
+// tree view func (React Arborist)
+function Node({ node, style, dragHandle }) {
+  const Icon = node.data.icon || IoDocumentOutline
+  return (
+    <div
+      ref={dragHandle}
+      style={style}
+      className={clsx(styles.node, node.state)}
+      onClick={() => node.isInternal && node.toggle()}
+    >
+      <FolderArrow node={node} />
+      <span>
+        <Icon />
+      </span>
+      <span>{node.isEditing ? <Input node={node} /> : node.data.name}</span>
+      <span>{node.data.unread === 0 ? null : node.data.unread}</span>
+    </div>
+  );
+}
+
+function Input({ node }) {
+  return (
+    <input
+      autoFocus
+      type="text"
+      defaultValue={node.data.name}
+      onFocus={(e) => e.currentTarget.select()}
+      onBlur={() => node.reset()}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") node.reset();
+        if (e.key === "Enter") node.submit(e.currentTarget.value);
+      }}
+    />
+  );
+}
+
+function FolderArrow({ node }) {
+  if (node.isLeaf) return <span></span>;
+  return (
+    <span>
+      {node.isOpen ? <icons.MdArrowDropDown /> : <icons.MdArrowRight />}
+    </span>
+  );
+}
+
+function Cursor({ top, left }) {
+  return <div className={styles.dropCursor} style={{ top, left }}></div>;
+}
+
 const Directory = () => {
+  const [ term, setTerm ] = useState("");
   return (
     <>
       <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
@@ -136,8 +195,28 @@ const Directory = () => {
             </Menu>
           </div>
         </div>
-        <hr className="bg-component_dark border-0 m-0" style={{ height: 3 }} />
-        <div className="" style={{ padding: 15 }}>여기 폴더 구조</div>
+        <div className="text-xs" style={{ padding: 15 }}>
+          <hr className="bg-component_dark border-0 m-0 absolute" style={{ height: 3, width: 292, top: 140, left: 88 }} />
+          <div>뭐야 왜 이거 없으면 안보여?</div>
+          <FillFlexParent>
+            {({ width, height }) => {
+              return (
+                <Tree
+                  initialData={dirData}
+                  width={width}
+                  // height={height}
+                  height={600}
+                  rowHeight={32}
+                  renderCursor={Cursor}
+                  searchTerm={term}
+                  paddingBottom={32}
+                >
+                  {Node}
+                </Tree>
+              );
+            }}
+          </FillFlexParent>
+        </div>
       </DirectoryContainer>
     </>
   )

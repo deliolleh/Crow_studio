@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 
 import { login } from "../../redux/userSlice";
 
+import Header from "../../components/Header";
 import LoginTitle from "./LoginTitle";
 import LoginForm from "./LoginForm";
 
@@ -28,13 +29,16 @@ const Login = () => {
   };
 
   return (
-    <section className="w-max h-max">
-      <LoginTitle />
-      <LoginForm onLogin={loginHandler} />
-      <Link to="/signup" className="block w-full text-center">
-        회원가입
-      </Link>
-    </section>
+    <div className="flex flex-col">
+      <Header />
+      <section className="w-screen h-screen flex flex-col justify-center overflow-auto">
+        <LoginTitle />
+        <LoginForm onLogin={loginHandler} />
+        <Link to="/signup" className="block w-full text-center">
+          회원가입
+        </Link>
+      </section>
+    </div>
   );
 };
 
