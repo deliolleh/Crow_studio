@@ -24,12 +24,10 @@ public class SchedulerService {
         * docker rmi $(docker images crowstudio_* -q)
         * <none>인 이미지 삭제
         * docker rmi $(docker images -f "dangling=true" -q)
+        * 사용하지 않는 이미지 삭제(강경)
+        * docker image prune -a -f
         * */
         String filteringName = "crowstudio_";
-//        String[] containerCmd = {"docker", "container", "ls", "--filter=\"name=crowstudio\"", "-q"}; // filtering이 문제임 왜 안돼 진자ㅠㅠㅠㅠㅠㅠㅠㅠ
-//        String[] containerCmd = {"/bin/sh", "-c", "docker", "container", "ls", "|", "grep", "'crowstudio'"};
-//        String[] containerCmd = {"/bin/sh", "-c", "docker", "ps", "|", "grep", "'crowstudio'"};
-//        String[] containerCmd = {"docker", "container", "ls", "--filter=name=crowstudio", "-q"}; // 이거 됨 !!!
         String[] containerCmd = {"docker", "container", "ls", "--filter=name="+filteringName, "-q"};
         String[] containerList = compileService.resultString(containerCmd).split("(\r\n|\r|\n|\n\r)");
         System.out.println("containerList : " + Arrays.toString(containerList));
@@ -48,13 +46,5 @@ public class SchedulerService {
         System.out.println("docker images 삭제 시작 !");
         compileService.resultString(rmImgCmd);
         System.out.println("docker images 삭제 됐다 !");
-//        String[] rmImgCmd = {"/bin/sh", "-c", "docker", "rmi", "$(docker", "images", filteringName +"*", "-q)"};
-//        System.out.println("docker images 삭제 시작 !");
-//        compileService.resultString(rmImgCmd);
-//        System.out.println("docker images 삭제 됐다 !");
-//        String[] rmNoneCmd = {"/bin/sh", "-c", "docker", "rmi", "$(docker", "images", "-f" ,"\"dangling=true\"", "-q)"};
-//        System.out.println("none image 삭제 시작 !");
-//        compileService.resultString(rmNoneCmd);
-//        System.out.println("none image 삭제 됐다 !");
     }
 }
