@@ -42,16 +42,16 @@ public class GitController {
         return new ResponseEntity<>("클론에 성공했습니다!", HttpStatus.OK);
     }
 
-    @PostMapping("/{teamSeq}/git-switch")
-    public ResponseEntity<String> gitSwitch (@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> gitProject) {
-        String switchResult = gitService.gitSwitch(teamSeq,gitProject.get("gitPath"),gitProject.get("branchName"),type);
+    @PostMapping("/git-switch")
+    public ResponseEntity<String> gitSwitch (@RequestHeader("Authorization") String jwt,  @RequestParam Integer type, @RequestBody HashMap<String, String> gitProject) {
+        String switchResult = gitService.gitSwitch(gitProject.get("gitPath"),gitProject.get("branchName"),type);
         if (!switchResult.equals("Success")) {
             return new ResponseEntity<>(switchResult,HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("깃 스위치에 성공했습니다", HttpStatus.OK);
     }
 
-    @PostMapping("/{teamSeq}/git-commit")
+    @PostMapping("/git-commit")
     public ResponseEntity<String> gitCommit(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String, String> gitFile) {
         String message = gitFile.get("message");
         String gitPath = gitFile.get("gitPath");
