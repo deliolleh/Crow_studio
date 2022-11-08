@@ -51,6 +51,12 @@ const TeamCreate = () => {
       });
       isInvalid = true;
     }
+    if (teamName.trim() === "400" || teamName.trim() === "403") {
+      setErrorMsgs((prev) => {
+        return { ...prev, teamNameErrMsg: "사용할 수 없는 팀 이름입니다" };
+      });
+      isInvalid = true;
+    }
     if (isInvalid) {
       return;
     }
@@ -64,7 +70,13 @@ const TeamCreate = () => {
         navigate("/team", { replace: true });
         console.log("res:", res);
       })
-      .catch(console.error);
+      .catch((errorStatusCode) => {
+        if (errorStatusCode === 409) {
+          alert("이미 해당 이름으로 팀을 생성했습니다");
+        } else {
+          alert("비상!!");
+        }
+      });
   };
 
   return (
