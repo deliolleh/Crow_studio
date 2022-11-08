@@ -63,13 +63,11 @@ export const MakeEditorData = (
     data.push({
       title: useTitleCounter ? `${titlePrefix} ${i + 1}` : titlePrefix,
       content: (
-        // <div>
-        //   <b>Content {i + 1}</b>
-        //   <p>{lorem.generateWords(15)}</p>
-        // </div>
         <div>
           <Editor
+            style={{ overflow: "auto" }}
             height="calc(100vh - 31px)"
+            // height="100%"
             theme="vs-dark"
             // path={file.name}
             path={i + 1 === 1 ? "script.js" : "style.css"}
@@ -80,6 +78,7 @@ export const MakeEditorData = (
               i + 1 === 1 ? files["script.js"].value : files["style.css"].value
             }
             onMount={(editor) => (editorRef.current = editor)}
+            onChange={{}}
             options={{
               scrollBeyondLastLine: false,
               fontSize: "14px",
@@ -117,6 +116,7 @@ export const MakeConsoleData = (
           {/* <b>Content {i + 1}</b>
           <p>{lorem.generateWords(15)}</p> */}
           <ReactTerminal
+            style={{ overflow: "hidden" }}
             promptSymbol="🔥>"
             theme={{
               background: "#333333",
@@ -127,7 +127,9 @@ export const MakeConsoleData = (
               fontSize: "14px",
               spacing: "1.5%",
               width: "100%",
-              height: "calc(100vh - 31px)",
+              // height: "calc(100vh - 551.5px)",
+              height: "calc(100vh - 50px)",
+              // height: "100%",
             }}
             emulatorState={customState}
           />

@@ -4,12 +4,12 @@ import { Menu, Transition } from '@headlessui/react';
 
 import clsx from "clsx";
 import { Tree } from "react-arborist";
-import { gmailData } from "./directory/gmail";
+import { dirData } from "./directory/dirData";
 import { FillFlexParent } from "./directory/fill-flex-parent.tsx";
 
 import * as icons from "react-icons/md";
 import { IoDocumentOutline } from "react-icons/io5";
-import styles from "./directory/Gmail.module.css"
+import styles from "./directory/dir-data.module.css"
 
 // import svg
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
@@ -197,12 +197,12 @@ const Directory = () => {
         </div>
         <div className="text-xs" style={{ padding: 15 }}>
           <hr className="bg-component_dark border-0 m-0 absolute" style={{ height: 3, width: 292, top: 140, left: 88 }} />
-          {/* <div>뭐야 왜 이거 없으면 안보여?</div> */}
+          <div>뭐야 왜 이거 없으면 안보여?</div>
           <FillFlexParent>
             {({ width, height }) => {
               return (
                 <Tree
-                  initialData={gmailData}
+                  initialData={dirData}
                   width={width}
                   // height={height}
                   height={600}

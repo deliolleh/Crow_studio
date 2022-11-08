@@ -99,11 +99,6 @@ hr {
   border-color: transparent;
 }
 
-/* .monaco-editor .current-line {
-  border-radius: 10px 10px 10px 10px !important;
-  background: none !important;
-} */
-
 code {
   font-family: "JetBrains Mono", "Pretendard Variable", Pretendard,
     -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto",
