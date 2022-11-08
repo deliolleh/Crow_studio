@@ -12,7 +12,7 @@ public class SchedulerService {
     @Autowired
     private CompileService compileService;
 
-    @Scheduled(cron = "0 20 * * * *")
+    @Scheduled(cron = "0 25 * * * *")
     public void run() {
         System.out.println("hi i'm working");
         // 모든 컨테이너 닫기
@@ -29,6 +29,7 @@ public class SchedulerService {
         String[] containerCmd = {"docker", "container", "ls", "--filter='name="+ filteringName +"'", "-q"};
         String containerList = compileService.resultString(containerCmd);
         if (containerList == null) { return; }
+        System.out.println(containerList);
         String[] stopCmd = {"docker", "stop", containerList};
         System.out.println("docker stop 시작 !");
         compileService.resultString(stopCmd);
