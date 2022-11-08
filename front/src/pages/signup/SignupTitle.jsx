@@ -2,9 +2,11 @@ import React from "react";
 
 const SignupTitle = () => {
   return (
-    <section className="">
-      <div className="text-point_purple">logo</div>
-      <h1 className="text-4xl font-bold text-white">까마귀공방에 회원가입</h1>
+    <section className="text-center pb-10">
+      <div className="text-2xl text-bold text-point_purple pb-5">logo</div>
+      <h1 className="text-4xl font-bold text-white pb-2">
+        까마귀공방에 회원가입
+      </h1>
       <p className="text-xs">
         이 자리에 까마귀공방 캐치프라이즈 같은 거 넣으면 덜 허전할 것 같습니다!
       </p>
