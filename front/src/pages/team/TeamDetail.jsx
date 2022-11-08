@@ -2,7 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { getTeam, modifyTeamName, deleteTeam } from "../../redux/teamSlice";
+import {
+  getTeam,
+  modifyTeamName,
+  deleteTeam,
+  addMember,
+} from "../../redux/teamSlice";
 import { searchUser } from "../../redux/userSlice";
 
 // const initialInputState = { teamName: "", projectName: "", templateName: "" };
@@ -75,8 +80,32 @@ const TeamDetail = () => {
     e.preventDefault();
     dispatch(searchUser(JSON.stringify({ searchWord: searchUserName })))
       .unwrap()
-      .then((res) => setSearchResults(res))
+      .then((res) => {
+        setSearchResults(res);
+        console.log("res:", res);
+      })
       .catch(console.error);
+  };
+
+  const addUserHandler = (addUserSeq, addUserName) => {
+    console.log("addUserSeq:", addUserSeq);
+    if (!window.confirm(`${addUserName}님을 팀원으로 추가할까요?`)) {
+      return;
+    }
+    const addMemberData = JSON.stringify({ teamSeq, memberSeq: addUserSeq });
+    dispatch(addMember(addMemberData))
+      .unwrap()
+      .then((res) => {
+        alert(`${addUserName}님을 팀원으로 추가했습니다`);
+        console.log(res);
+      })
+      .catch((errorStatusCode) => {
+        if (errorStatusCode === 409) {
+          alert("이미 추가된 팀원입니다");
+        } else {
+          alert("비상!!");
+        }
+      });
   };
 
   return (
@@ -119,7 +148,17 @@ const TeamDetail = () => {
       </div>
 
       <div>검색 결과</div>
-      <div></div>
+      <div>
+        {searchResults?.map((user) => (
+          <div
+            key={user.userId}
+            className="hover:cursor-pointer"
+            onClick={() => addUserHandler(user.userSeq, user.userNickname)}
+          >
+            {user.userNickname}
+          </div>
+        ))}
+      </div>
 
       <br />
 
