@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { getTeam, modifyTeamName, deleteTeam } from "../../redux/teamSlice";
+import { searchUser } from "../../redux/userSlice";
 
 // const initialInputState = { teamName: "", projectName: "", templateName: "" };
 // const initialErrorState = {
@@ -19,6 +20,10 @@ const TeamDetail = () => {
   const [team, setTeam] = useState({});
   const { teamName, teamLeaderNickname, memberDtoList: members } = team;
   const [inputTeamName, setInputTeamName] = useState(teamName);
+
+  const [searchUserName, setSearchUserName] = useState("");
+
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     dispatch(getTeam(teamSeq))
@@ -64,45 +69,15 @@ const TeamDetail = () => {
 
   useEffect(() => {}, [teamName]);
 
-  //
-  // const submitHandler = (e) => {
-  //   e.preventDefault();
+  const searchUserChangeHandler = (e) => setSearchUserName(e.target.value);
 
-  //   let isInvalid = false;
-  //   setErrorMsgs(initialErrorState);
-  //   if (teamName.trim().length === 0) {
-  //     setErrorMsgs((prev) => {
-  //       return { ...prev, teamNameErrMsg: "팀 이름을 입력하세요" };
-  //     });
-  //     isInvalid = true;
-  //   }
-  //   if (teamName.trim() === "400" || teamName.trim() === "403") {
-  //     setErrorMsgs((prev) => {
-  //       return { ...prev, teamNameErrMsg: "사용할 수 없는 팀 이름입니다" };
-  //     });
-  //     isInvalid = true;
-  //   }
-  //   if (isInvalid) {
-  //     return;
-  //   }
-
-  //   const teamNameData = { teamName };
-  //   setErrorMsgs(initialErrorState);
-  //   dispatch(createTeam(JSON.stringify(teamNameData)))
-  //     .unwrap()
-  //     .then((res) => {
-  //       alert("팀 생성 완료");
-  //       navigate("/team", { replace: true });
-  //       console.log("res:", res);
-  //     })
-  //     .catch((errorStatusCode) => {
-  //       if (errorStatusCode === 409) {
-  //         alert("이미 해당 이름으로 팀을 생성했습니다");
-  //       } else {
-  //         alert("비상!!");
-  //       }
-  //     });
-  // };
+  const submitSearchUser = (e) => {
+    e.preventDefault();
+    dispatch(searchUser(JSON.stringify({ searchWord: searchUserName })))
+      .unwrap()
+      .then((res) => setSearchResults(res))
+      .catch(console.error);
+  };
 
   return (
     <div>
@@ -127,6 +102,24 @@ const TeamDetail = () => {
           </div>
         ))}
       </div>
+
+      <br />
+
+      <div>유저 검색</div>
+      <div>
+        <form onSubmit={submitSearchUser}>
+          <input
+            type="text"
+            name="searchUser"
+            id="searchUser"
+            onChange={searchUserChangeHandler}
+            value={searchUserName}
+          />
+        </form>
+      </div>
+
+      <div>검색 결과</div>
+      <div></div>
 
       <br />
 
