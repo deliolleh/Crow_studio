@@ -8,6 +8,7 @@ const userApi = {
   putNickname: (nicknameData) => api.put("users/edit/nickname", nicknameData),
   putPassword: (passwordData) => api.put("users/edit/password", passwordData),
   deleteQuit: () => api.delete("users/quit"),
+  searchUser: (searchData) => api.post("/users/search", searchData),
 };
 
 export default userApi;
