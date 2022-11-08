@@ -89,7 +89,8 @@ public class EditorsService {
             String str;
             while ((str = reader.readLine()) != null) {
 //                System.out.println(str);
-                sb.append(str);
+                String temp = str + "\n";
+                sb.append(temp);
             }
 
             response.put("data", sb.toString());
