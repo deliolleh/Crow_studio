@@ -229,11 +229,12 @@ public class GitService {
             return check;
         }
 
-        ProcessBuilder command = new ProcessBuilder("git","push","origin",branchName);
+        ProcessBuilder command = new ProcessBuilder("/bin/sh","-c","git","push","origin",branchName,"|",email,"|",pass);
         command.directory(new File(gitPath));
 
         try {
             System.out.println("여기야 여기");
+            System.out.println(gitPath);
             Process p = command.start();
             String forPrint;
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -251,25 +252,25 @@ public class GitService {
 //        String email = user.getUserGitId();
 //        String pass = user.getUserPassWord();
 
-        ProcessBuilder setEmail = new ProcessBuilder(email);
-
-        try {
-            setEmail.start().waitFor();;
-        } catch (IOException e) {
-            return e.getMessage();
-        } catch (InterruptedException e) {
-            return e.getMessage();
-        }
-
-        ProcessBuilder setPass = new ProcessBuilder(pass);
-
-        try {
-            setPass.start().waitFor();
-        } catch (IOException e) {
-            return e.getMessage();
-        } catch (InterruptedException e) {
-            return e.getMessage();
-        }
+//        ProcessBuilder setEmail = new ProcessBuilder(email);
+//
+//        try {
+//            setEmail.start().waitFor();;
+//        } catch (IOException e) {
+//            return e.getMessage();
+//        } catch (InterruptedException e) {
+//            return e.getMessage();
+//        }
+//
+//        ProcessBuilder setPass = new ProcessBuilder(pass);
+//
+//        try {
+//            setPass.start().waitFor();
+//        } catch (IOException e) {
+//            return e.getMessage();
+//        } catch (InterruptedException e) {
+//            return e.getMessage();
+//        }
 
         return "Success";
     }
