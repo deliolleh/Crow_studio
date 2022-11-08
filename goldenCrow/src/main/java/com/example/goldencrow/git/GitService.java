@@ -231,10 +231,10 @@ public class GitService {
 
         ProcessBuilder command = new ProcessBuilder("/bin/sh","-c","git push origin " + branchName,"|",email,"|",pass);
         command.directory(new File(gitPath));
-        String[] cosa = {"/bin/sh","-c","git push origin " + branchName,"|",email,"|",pass};
+        String[] cosa = {"/bin/sh","-c","git push origin " + branchName};
         try {
             System.out.println("여기야 여기");
-            System.out.println(gitPath);
+            System.out.println(cosa);
             Process p = Runtime.getRuntime().exec(cosa);
             String forPrint;
 
