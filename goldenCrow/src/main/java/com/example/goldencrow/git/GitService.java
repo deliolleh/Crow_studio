@@ -239,10 +239,11 @@ public class GitService {
             String forPrint;
 
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            p.waitFor();
             while ((forPrint = br.readLine()) != null) {
                 System.out.println(forPrint);
             }
-            p.waitFor();
+
         } catch (IOException e) {
             return e.getMessage();
         } catch (InterruptedException e) {
