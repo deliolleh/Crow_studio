@@ -5,7 +5,8 @@ const editorApi = {
   lint: (language, codeData) => api.post(`/editors/lint/${language}`, codeData),
   formatPut: (language, codeData) =>
     api.post(`/editors/format/${language}`, codeData),
-  formatGet: (fileNum) => api.post(`/editors/format`, fileNum),
+  formatGet: (language, fileNum) =>
+    api.post(`/editors/format/read/${language}`, fileNum),
   variableRecommend: (letter) => api.post("/variable", letter),
 };
 
