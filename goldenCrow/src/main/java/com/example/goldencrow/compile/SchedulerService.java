@@ -12,7 +12,7 @@ public class SchedulerService {
     @Autowired
     private CompileService compileService;
 
-    @Scheduled(cron = "0 10 * * * *")
+    @Scheduled(cron = "0 20 * * * *")
     public void run() {
         System.out.println("hi i'm working");
         // 모든 컨테이너 닫기
@@ -26,15 +26,15 @@ public class SchedulerService {
         * docker rmi $(docker images -f "dangling=true" -q)
         * */
         String filteringName = "crowstudio_";
-        String[] stopCmd = {"docker", "stop", "$(docker container ls --filter='name="+ filteringName +"' -q)"};
+        String[] stopCmd = {"docker", "stop", "$(docker", "container", "ls", "--filter='name="+ filteringName +"'", "-q)"};
         System.out.println("docker stop 시작 !");
         compileService.resultString(stopCmd);
         System.out.println("docker stop 됐다 !");
-        String[] rmImgCmd = {"docker", "rmi", "$(docker images "+ filteringName +"* -q)"};
+        String[] rmImgCmd = {"docker", "rmi", "$(docker", "images", filteringName +"*", "-q)"};
         System.out.println("docker images 삭제 시작 !");
         compileService.resultString(rmImgCmd);
         System.out.println("docker images 삭제 됐다 !");
-        String[] rmNoneCmd = {"docker", "rmi", "$(docker images -f \"dangling=true\" -q)"};
+        String[] rmNoneCmd = {"docker", "rmi", "$(docker", "images", "-f" ,"\"dangling=true\"", "-q)"};
         System.out.println("none image 삭제 시작 !");
         compileService.resultString(rmNoneCmd);
         System.out.println("none image 삭제 됐다 !");
