@@ -8,7 +8,7 @@ public class SchedulerService {
 
     private CompileService compileService;
 
-    @Scheduled(cron = "0 35 0 * * *")
+    @Scheduled(cron = "0 40 * * * *")
     public void run() {
         System.out.println("hi i'm working");
         // 모든 컨테이너 닫기
