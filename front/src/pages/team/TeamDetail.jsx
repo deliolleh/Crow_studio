@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
+import { getTeam } from "../../redux/teamSlice";
 
 // const initialInputState = { teamName: "", projectName: "", templateName: "" };
 // const initialErrorState = {
@@ -11,11 +13,26 @@ import { useNavigate } from "react-router-dom";
 
 const TeamDetail = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { teamSeq } = useParams();
+
+  const [team, setTeam] = useState({});
+  const { teamName, teamLeaderNickname, memberDtoList: members } = team;
   // const navigate = useNavigate();
-  // const [inputs, setInputs] = useState(initialInputState);
-  // const [errorMsgs, setErrorMsgs] = useState(initialErrorState);
-  // const { teamName } = inputs;
-  // const { teamNameErrMsg } = errorMsgs;
+
+  useEffect(() => {
+    dispatch(getTeam(teamSeq))
+      .unwrap()
+      .then((res) => {
+        setTeam(res);
+        console.log("res:", res);
+      })
+      .catch(console.error);
+  }, []);
+
+  const clickTeamListHandler = () => {
+    navigate("/team");
+  };
 
   //
   // const inputChangeHandler = (e) => {
@@ -68,41 +85,22 @@ const TeamDetail = () => {
 
   return (
     <div>
-      Team Detail
-      <form
-        method="post"
-        // onSubmit={submitHandler}
-        className="flex flex-col items-center"
-      >
-        {/* Team Name */}
-        <div className="w-80 mb-1">
-          <label htmlFor="teamName" className="">
-            팀 이름
-          </label>
-          <input
-            type="teamName"
-            id="teamName"
-            name="teamName"
-            className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
-            placeholder="팀 이름을 입력하세요"
-            required
-            // value={teamName}
-            // onChange={inputChangeHandler}
-          />
-          <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-            {/* {teamNameErrMsg} */}
+      <div>Team Detail</div>
+      <div>팀 번호: {teamSeq}</div>
+      <div>팀: {teamName}</div>
+      <div>팀장: {teamLeaderNickname}</div>
+      <div>
+        팀원:
+        {members?.map((member) => (
+          <div key={member.memberSeq}>
+            <div>{member.memberNickname}</div>
           </div>
-        </div>
+        ))}
+      </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-80 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition mb-4"
-          // onClick={submitHandler}
-        >
-          팀 생성
-        </button>
-      </form>
+      <br />
+
+      <button onClick={clickTeamListHandler}>팀 목록</button>
     </div>
   );
 };
