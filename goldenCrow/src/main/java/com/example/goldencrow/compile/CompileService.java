@@ -154,7 +154,7 @@ public class CompileService {
         if (imageBuild.isEmpty()) { return "Error: Can't build docker image"; }
         System.out.println("런 해보쟈");
         // 도커 런
-        String[] command = {"docker", "run", "-d", "--name", conAndImgName, "-P", conAndImgName};
+        String[] command = {"docker", "run", "--rm", "-d", "--name", conAndImgName, "-P", conAndImgName};
 //        System.out.println(Arrays.toString(command));
         String container = resultString(command);
         if (container.isEmpty()) { return "Error: Can't run docker container"; }
@@ -175,13 +175,7 @@ public class CompileService {
         String stopedCon = resultString(containerStop);
         System.out.println("멈춘 컨테이너명 : " + stopedCon);
         if (stopedCon.isEmpty() || !stopedCon.equals(conAndImgName) ) { return "Error: Can't stop conatiner " + conAndImgName; }
-
-        // 도커 컨테이너 rm
-        String[] containerRm = {"docker", "rm", conAndImgName};
-        String rmCon = resultString(containerRm);
-        System.out.println("삭제한 컨테이너명 : " + rmCon);
-        if (rmCon.isEmpty() || !rmCon.equals(conAndImgName)) { return "Error: Can't remove conatiner " + conAndImgName; }
-
+        
         // 도커 이미지 rmi
         String[] imageRm = {"docker", "rmi", conAndImgName};
         String rmImg = resultString(imageRm);
