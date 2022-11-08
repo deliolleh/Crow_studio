@@ -12,9 +12,9 @@ public class SchedulerService {
     @Autowired
     private CompileService compileService;
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void run() {
-        System.out.println("hi i'm working");
+        System.out.println("now 24:00");
         // 모든 컨테이너 닫기
         /*
         * 우리가 사용하는 포트(컨테이너)를 제외하고 !
