@@ -242,7 +242,14 @@ public class GitService {
         ProcessBuilder setEmail = new ProcessBuilder(email);
 
         try {
-            setEmail.start().waitFor();
+            Process p = setEmail.start();
+            String forPrint;
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((forPrint = br.readLine()) != null) {
+                System.out.println(forPrint);
+            }
+
+            p.waitFor();
         } catch (IOException e) {
             return e.getMessage();
         } catch (InterruptedException e) {
@@ -282,6 +289,7 @@ public class GitService {
             branches.add("failed!");
             return branches;
         }
+
         command.directory(new File(gitPath));
         String read;
 

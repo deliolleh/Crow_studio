@@ -28,7 +28,6 @@ public class GitController {
      * @param jwt
      * @param teamSeq
      * @param gitProject
-     * @return
      */
     @PostMapping("/{teamSeq}")
     public ResponseEntity<String> gitClone (@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq , @RequestBody HashMap<String,String> gitProject) {
