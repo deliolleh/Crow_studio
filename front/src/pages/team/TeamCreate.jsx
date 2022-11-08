@@ -1,14 +1,25 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { createTeam } from "../../redux/teamSlice";
 
 const initialInputState = { teamName: "", projectName: "", templateName: "" };
+const initialErrorState = {
+  teamNameErrMsg: "",
+  projectNameErrMsg: "",
+  templateNameErrMsg: "",
+};
 
 const TeamCreate = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [inputs, setInputs] = useState(initialInputState);
-  const { teamName, projectName, templateName } = inputs;
+  const [errorMsgs, setErrorMsgs] = useState(initialErrorState);
+  const { teamName } = inputs;
+  // const { teamName, projectName, templateName } = inputs;
+  const { teamNameErrMsg } = errorMsgs;
+  // const { teamNameErrMsg, projectNameErrMsg, templateNameErrMsg } = errorMsgs;
 
   //
   const inputChangeHandler = (e) => {
@@ -16,27 +27,41 @@ const TeamCreate = () => {
       setInputs((prev) => {
         return { ...prev, teamName: e.target.value };
       });
-    } else if (e.target.name === "projectName") {
-      setInputs((prev) => {
-        return { ...prev, projectName: e.target.value };
-      });
-    } else if (e.target.name === "templateName") {
-      setInputs((prev) => {
-        return { ...prev, templateName: e.target.value };
-      });
     }
+    // else if (e.target.name === "projectName") {
+    //   setInputs((prev) => {
+    //     return { ...prev, projectName: e.target.value };
+    //   });
+    // } else if (e.target.name === "templateName") {
+    //   setInputs((prev) => {
+    //     return { ...prev, templateName: e.target.value };
+    //   });
+    // }
   };
 
   //
   const submitHandler = (e) => {
     e.preventDefault();
 
-    const teamNameData = { teamName };
+    let isInvalid = false;
+    setErrorMsgs(initialErrorState);
+    if (teamName.trim().length === 0) {
+      setErrorMsgs((prev) => {
+        return { ...prev, teamNameErrMsg: "팀 이름을 입력하세요" };
+      });
+      isInvalid = true;
+    }
+    if (isInvalid) {
+      return;
+    }
 
+    const teamNameData = { teamName };
+    setErrorMsgs(initialErrorState);
     dispatch(createTeam(JSON.stringify(teamNameData)))
       .unwrap()
       .then((res) => {
         alert("팀 생성 완료");
+        navigate("/team", { replace: true });
         console.log("res:", res);
       })
       .catch(console.error);
@@ -65,7 +90,7 @@ const TeamCreate = () => {
             onChange={inputChangeHandler}
           />
           <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-            에러메시지예정
+            {teamNameErrMsg}
           </div>
         </div>
 
