@@ -31,7 +31,7 @@ const TeamDetail = () => {
   }, []);
 
   const clickTeamListHandler = () => {
-    navigate("/team");
+    navigate("/teams");
   };
 
   //
@@ -54,7 +54,7 @@ const TeamDetail = () => {
       .unwrap()
       .then(() => {
         alert("성공적으로 삭제되었습니다");
-        navigate("/team");
+        navigate("/teams");
       })
       .catch(console.error);
   };

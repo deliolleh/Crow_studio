@@ -13,7 +13,7 @@ import Signup from "./pages/signup/Signup";
 import Main from "./pages/main/Main";
 import Mypage from "./pages/mypage/Mypage";
 import ProjectCreate from "./pages/project-create/ProjectCreate";
-import Team from "./pages/team/Team";
+import Teams from "./pages/team/Teams";
 import TeamCreate from "./pages/team/TeamCreate";
 import TeamDetail from "./pages/team/TeamDetail";
 
@@ -54,7 +54,7 @@ const router = createBrowserRouter([
     path: "/teams",
     element: (
       <PrivateRoute>
-        <Team />
+        <Teams />
       </PrivateRoute>
     ),
   },

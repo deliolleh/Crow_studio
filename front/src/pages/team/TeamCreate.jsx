@@ -67,7 +67,7 @@ const TeamCreate = () => {
       .unwrap()
       .then((res) => {
         alert("팀 생성 완료");
-        navigate("/team", { replace: true });
+        navigate("/teams", { replace: true });
         console.log("res:", res);
       })
       .catch((errorStatusCode) => {
@@ -80,7 +80,7 @@ const TeamCreate = () => {
   };
 
   const clickTeamListHandler = () => {
-    navigate("/team");
+    navigate("/teams");
   };
 
   return (
