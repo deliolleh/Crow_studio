@@ -1,10 +1,9 @@
 // import * as React from "react";
 import React, { useState, useEffect, useRef } from "react";
-import Editor from "@monaco-editor/react";
+import Editor, { useMonaco } from "@monaco-editor/react";
 import files from "./files";
 import ReactTerminal from "react-terminal-component";
 import { EmulatorState, FileSystem } from "javascript-terminal";
-import { useDispatch } from "react-redux";
 import editorApi from "../../../../api/editorApi";
 
 export const MakeEditorData = (
@@ -12,37 +11,63 @@ export const MakeEditorData = (
   titlePrefix = "Tab",
   useTitleCounter = true
 ) => {
-  const dispatch = useDispatch();
-
   // 에디터 파일
   const editorRef = useRef(null);
   const [fileName, setFileName] = useState("script.js");
-  const [language, setLanguage] = useState("");
+  const [language, setLanguage] = useState("python");
+  const [value, setValue] = useState("");
+
+  const monaco = useMonaco();
 
   const file = files[fileName];
+
+  const data = [];
 
   useEffect(() => {
     editorRef.current?.focus();
   }, [file.name]);
 
-  const data = [];
+  // useEffect(() => {
+  //   document.addEventListener("keydown", detectKeyDown, false);
+  // });
+
+  // const detectKeyDown = (e) => {};
 
   // 포맷팅 영역
-  const format = () => {
-    editorApi.formatPut(language, editorRef).then((num) => {
+  const format = async () => {
+    // console.log(editorRef.current.getValue());
+    const sendCode = editorRef.current.getValue();
+    // console.log(sendCode);
+    const body = {
+      text: JSON.stringify(sendCode),
+    };
+    console.log(body);
+    await editorApi.formatPut(language, body).then((res) => {
+      const number = res.data.data;
+      console.log("dataCome ", res.data.data);
+      const body2 = {
+        name: number,
+      };
       editorApi
-        .formatGet(num)
+        .formatGet(language, body2)
         .then((res) => {
-          editorRef = res;
+          // editorRef.current = res.data.data;
+          setValue(() => res.data.data);
+          console.log("Only data: ", res.data.data);
         })
         .catch((err) => console.error(err));
     });
+    console.log("value: ", value);
   };
 
   // 린트 영역
   const lint = () => {
+    const sendCode = editorRef.current.getValue();
+    const body = {
+      text: sendCode,
+    };
     editorApi
-      .lint(language, editorRef)
+      .lint(language, body)
       .then((res) => {
         console.log(res.data);
       })
@@ -51,19 +76,13 @@ export const MakeEditorData = (
       });
   };
 
-  // 변수명 추천
-  const varRecommend = (letter) => {
-    editorApi
-      .variableRecommend(letter)
-      .then((res) => console.log(res))
-      .catch((err) => console.error(err));
-  };
-
   for (let i = 0; i < number; i++) {
     data.push({
       title: useTitleCounter ? `${titlePrefix} ${i + 1}` : titlePrefix,
       content: (
         <div>
+          <button onClick={format}>포맷팅</button>
+          <button onClick={lint}>린트</button>
           <Editor
             style={{ overflow: "auto" }}
             height="calc(100vh - 31px)"
@@ -72,11 +91,14 @@ export const MakeEditorData = (
             // path={file.name}
             path={i + 1 === 1 ? "script.js" : "style.css"}
             // defaultLanguage={file.language}
-            defaultLanguage={i + 1 === 1 ? "javascript" : "css"}
+            defaultLanguage={language}
             // defaultValue={file.value}
-            defaultValue={
-              i + 1 === 1 ? files["script.js"].value : files["style.css"].value
-            }
+            // defaultValue={
+            //   i + 1 === 1 ? files["script.js"].value : files["style.css"].value
+            // }
+            defaultValue={value}
+            value={value}
+            onChange={() => setValue(() => editorRef.current.getValue())}
             onMount={(editor) => (editorRef.current = editor)}
             onChange={{}}
             options={{
