@@ -1,14 +1,18 @@
 package com.example.goldencrow.compile;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
 
 @Service
 public class SchedulerService {
 
+    @Autowired
     private CompileService compileService;
 
-    @Scheduled(cron = "0 50 * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void run() {
         System.out.println("hi i'm working");
         // 모든 컨테이너 닫기
