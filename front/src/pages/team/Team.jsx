@@ -22,6 +22,8 @@ const Team = () => {
   const [teamName, setTeamName] = useState("");
   const [modifiedTeamName, setModifiedTeamName] = useState("");
 
+  const [teams, setTeams] = useState(null);
+
   const submitHandler1 = (e) => {
     e.preventDefault();
     console.log(teamName);
@@ -39,11 +41,21 @@ const Team = () => {
       .catch(console.error);
   };
 
+  const createTeamHandler = () => {
+    console.log("createTeam");
+  };
+
   useEffect(() => {
-    dispatch(getTeams()).unwrap().then(console.log).catch(console.error);
+    dispatch(getTeams())
+      .unwrap()
+      .then((res) => {
+        console.log("res:", res);
+        setTeams(() => [...res]);
+      })
+      .catch(console.error);
     // dispatch(getTeam(6)).unwrap().then(console.log).catch(console.error);
     // dispatch(deleteTeam(7)).unwrap().then(console.log).catch(console.error);
-    dispatch(getMembers(3)).unwrap().then(console.log).catch(console.error);
+    // dispatch(getMembers(3)).unwrap().then(console.log).catch(console.error);
     // dispatch(addMember(JSON.stringify({ teamSeq: 3, memberSeq: 4 })))
     //   .unwrap()
     //   .then(console.log)
@@ -54,7 +66,7 @@ const Team = () => {
     <div>
       <Header />
       <div>Team</div>
-      <form onSubmit={submitHandler1}>
+      {/* <form onSubmit={submitHandler1}>
         <label>팀 생성</label>
         <input
           type="text"
@@ -62,11 +74,28 @@ const Team = () => {
           value={teamName}
           onChange={(e) => setTeamName(e.target.value)}
         />
-      </form>
+      </form> */}
+
+      <div>
+        {teams?.map((team) => (
+          <div key={`t${team.teamSeq}`} className="flex gap-2">
+            <div>🙄</div>
+            <div>{team.teamName}</div>
+            <div>{team.teamLeaderNickname}</div>
+            <div>
+              {team.memberDtoList.map((member) => (
+                <div key={`m${member.memberSeq}`}>{member.memberNickname}</div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <button onClick={createTeamHandler}>팀 생성하기</button>
 
       <br />
 
-      <form onSubmit={submitHandler2}>
+      {/* <form onSubmit={submitHandler2}>
         <label>팀명 수정</label>
         <input
           type="text"
@@ -74,7 +103,7 @@ const Team = () => {
           value={modifiedTeamName}
           onChange={(e) => setModifiedTeamName(e.target.value)}
         />
-      </form>
+      </form> */}
     </div>
   );
 };
