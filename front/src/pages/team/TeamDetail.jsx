@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { getTeam } from "../../redux/teamSlice";
+import { getTeam, modifyTeamName, deleteTeam } from "../../redux/teamSlice";
 
 // const initialInputState = { teamName: "", projectName: "", templateName: "" };
 // const initialErrorState = {
@@ -18,7 +18,7 @@ const TeamDetail = () => {
 
   const [team, setTeam] = useState({});
   const { teamName, teamLeaderNickname, memberDtoList: members } = team;
-  // const navigate = useNavigate();
+  const [inputTeamName, setInputTeamName] = useState(teamName);
 
   useEffect(() => {
     dispatch(getTeam(teamSeq))
@@ -35,13 +35,31 @@ const TeamDetail = () => {
   };
 
   //
-  // const inputChangeHandler = (e) => {
-  //   if (e.target.name === "teamName") {
-  //     setInputs((prev) => {
-  //       return { ...prev, teamName: e.target.value };
-  //     });
-  //   }
-  // };
+  const inputTeamNameChangeHandler = (e) => setInputTeamName(e.target.value);
+
+  const submitTeamNameChange = (e) => {
+    e.preventDefault();
+    console.log("inputTeamName:", inputTeamName);
+    dispatch(modifyTeamName({ teamName: inputTeamName, teamSeq }))
+      .unwrap()
+      .then(console.log)
+      .catch(console.error);
+  };
+
+  const deleteTeamHandler = () => {
+    if (!window.confirm("정말로 팀을 삭제하시겠습니까?")) {
+      return;
+    }
+    dispatch(deleteTeam(teamSeq))
+      .unwrap()
+      .then(() => {
+        alert("성공적으로 삭제되었습니다");
+        navigate("/team");
+      })
+      .catch(console.error);
+  };
+
+  useEffect(() => {}, [teamName]);
 
   //
   // const submitHandler = (e) => {
@@ -88,6 +106,15 @@ const TeamDetail = () => {
       <div>Team Detail</div>
       <div>팀 번호: {teamSeq}</div>
       <div>팀: {teamName}</div>
+      <form onSubmit={submitTeamNameChange}>
+        <input
+          type="text"
+          name="inputTeamName"
+          id="inputTeamName"
+          defaultValue={teamName}
+          onChange={inputTeamNameChangeHandler}
+        />
+      </form>
       <div>팀장: {teamLeaderNickname}</div>
       <div>
         팀원:
@@ -97,6 +124,10 @@ const TeamDetail = () => {
           </div>
         ))}
       </div>
+
+      <br />
+
+      <button onClick={deleteTeamHandler}>팀 삭제</button>
 
       <br />
 
