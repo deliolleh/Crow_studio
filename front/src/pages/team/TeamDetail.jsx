@@ -42,7 +42,11 @@ const TeamDetail = () => {
     console.log("inputTeamName:", inputTeamName);
     dispatch(modifyTeamName({ teamName: inputTeamName, teamSeq }))
       .unwrap()
-      .then(console.log)
+      .then((res) =>
+        setTeam((prev) => {
+          return { ...prev, teamName: res };
+        })
+      )
       .catch(console.error);
   };
 
