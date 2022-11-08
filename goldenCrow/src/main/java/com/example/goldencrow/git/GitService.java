@@ -228,7 +228,13 @@ public class GitService {
         command.directory(new File(gitPath));
 
         try {
-            command.start().waitFor();
+            Process p = command.start();
+            String forPrint;
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((forPrint = br.readLine()) != null) {
+                System.out.println(forPrint);
+            }
+            p.waitFor();
         } catch (IOException e) {
             return e.getMessage();
         } catch (InterruptedException e) {
@@ -242,14 +248,7 @@ public class GitService {
         ProcessBuilder setEmail = new ProcessBuilder(email);
 
         try {
-            Process p = setEmail.start();
-            String forPrint;
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while ((forPrint = br.readLine()) != null) {
-                System.out.println(forPrint);
-            }
-
-            p.waitFor();
+            setEmail.start().waitFor();;
         } catch (IOException e) {
             return e.getMessage();
         } catch (InterruptedException e) {
