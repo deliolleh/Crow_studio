@@ -23,6 +23,8 @@ import Settings from "./components/sidebar/Settings";
 import CustomTabs from "./components/tabs/CustomTabs";
 import CustomTabs2 from "./components/tabs/CustomTabs2";
 
+import projectApi from "../../api/projectApi";
+
 // tabtab dummy data
 import {
   MakeEditorData,
@@ -85,6 +87,19 @@ const elements = [
 //   );
 
 const Main = () => {
+  const teamSeq = 4;
+
+  const [directory, setDirectory] = useState({});
+  const [fileName, setFileName] = useState("");
+  const [nowAddress, setNowAddress] = useState("");
+
+  useEffect(() => {
+    projectApi
+      .directoryList(teamSeq)
+      .then((res) => console.log(res.data))
+      .catch((err) => console.error(err));
+  }, []);
+
   // sidebar click event
   const [com, setCom] = useState("디렉토리");
 
@@ -98,13 +113,13 @@ const Main = () => {
   const [sidebarSize, setSidebarSize] = useState(0);
 
   useEffect(() => {
-    setSidebarSize(sidebarSizeRef.current.getBoundingClientRect().width);
+    setSidebarSize(() => sidebarSizeRef.current.getBoundingClientRect().width);
     // setSideBarSize(sidebarSizeRef.current.offsetWidth);
-    console.log("sidebarSize: " + sidebarSize);
-    console.log(
-      "sidebarSizeRef.current.getBoundingClientRect().width: " +
-        sidebarSizeRef.current.getBoundingClientRect().width
-    );
+    // console.log("sidebarSize: " + sidebarSize);
+    // console.log(
+    //   "sidebarSizeRef.current.getBoundingClientRect().width: " +
+    //     sidebarSizeRef.current.getBoundingClientRect().width
+    // );
   }, [sidebarSize]);
 
   // editor pane height size
