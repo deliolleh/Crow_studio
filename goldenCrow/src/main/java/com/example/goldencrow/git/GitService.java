@@ -240,7 +240,7 @@ public class GitService {
             return check;
         }
         String gitUrl = getRemoteUrl(gitPath);
-        System.out.println(gitUrl);
+
         ProcessBuilder command = new ProcessBuilder();
         command.directory(new File(gitPath));
 
@@ -335,6 +335,7 @@ public class GitService {
 
             while ((reader = br.readLine()) != null) {
                 sb.append(reader);
+                System.out.println(reader);
             }
         } catch (IOException e) {
             return e.getMessage();
