@@ -7,7 +7,9 @@ import { logout } from "../redux/userSlice";
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoggedIn, mySeq } = useSelector((state) => state.user.value);
+  const { isLoggedIn, mySeq, myNickname } = useSelector(
+    (state) => state.user.value
+  );
   const [navbarOpen, setNavbarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -110,7 +112,9 @@ const Header = () => {
             <div className="absolute flex flex-col gap-2 w-40 lg:top-12 lg:right-4 top-9 right-0 px-3 py-2 bg-component_item_bg_+2_dark rounded-md text-right text-white z-10">
               {isLoggedIn ? (
                 <React.Fragment>
+                  <div>{myNickname}</div>
                   <Link to={`/mypage/${mySeq}`}>마이페이지</Link>
+                  <Link to={`/teams`}>팀 목록</Link>
                   <Link to="/">회원정보수정</Link>
                   <div className="cursor-pointer" onClick={logoutHandler}>
                     로그아웃
