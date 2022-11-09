@@ -212,7 +212,6 @@ public class GitService {
             System.out.println(br.readLine());
             while ((forPrint = br.readLine()) != null) {
                 System.out.println(forPrint);
-                System.out.println(br);
             }
             p.waitFor();
         } catch (IOException e) {
@@ -243,7 +242,7 @@ public class GitService {
         ProcessBuilder command = new ProcessBuilder("/bin/sh","-c","git push origin " + branchName,"|",email,"|",pass);
         command.directory(new File(gitPath));
 
-        String[] cosa = {"/bin/sh","-c","echo -e " + "\"" + email + "\n" + pass + "\" | git push origin " + branchName};
+        String[] cosa = {"/bin/sh","-c","echo " + "\"" + pass + "\"" + " | " + "echo " + "\"" + email + "\" | git push origin " + branchName};
 
         System.out.println(Arrays.toString(cosa));
         try {
@@ -257,7 +256,6 @@ public class GitService {
             System.out.println(br.readLine());
             while ((forPrint = br.readLine()) != null) {
                 System.out.println(forPrint);
-                System.out.println(br);
             }
 
             p.waitFor();
