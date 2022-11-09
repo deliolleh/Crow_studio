@@ -56,7 +56,6 @@ const TeamDetail = () => {
     dispatch(modifyTeamName({ teamName: inputTeamName, teamSeq }))
       .unwrap()
       .then((res) => {
-        alert("팀 이름 변경 완료");
         setTeam((prev) => {
           return { ...prev, teamName: res };
         });
@@ -100,7 +99,6 @@ const TeamDetail = () => {
     dispatch(addMember(addMemberData))
       .unwrap()
       .then((res) => {
-        alert(`${addUserName}님을 팀원으로 추가했습니다`);
         console.log(res);
         setIsSearch(false);
         setSearchResults([]);
@@ -268,6 +266,7 @@ const TeamDetail = () => {
 
               {isSearch && (
                 <div className="flex gap-1">
+                  <div>유저검색</div>
                   <form onSubmit={submitSearchUser}>
                     <input
                       type="text"
