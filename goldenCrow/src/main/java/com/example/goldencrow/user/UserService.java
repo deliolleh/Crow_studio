@@ -6,6 +6,7 @@ import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.MemberRepository;
 import com.example.goldencrow.team.repository.TeamRepository;
 import com.example.goldencrow.user.dto.MyInfoDto;
+import com.example.goldencrow.user.dto.SettingsDto;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import com.example.goldencrow.user.entity.UserEntity;
 import com.example.goldencrow.user.repository.UserRepository;
@@ -394,7 +395,7 @@ public class UserService {
     }
 
     // 개인 환경세팅 저장
-    public String personalPost(String jwt, UserInfoDto data) {
+    public String personalPost(String jwt, SettingsDto data) {
 
         try {
             // 사용자 정보 불러와서 체크하고
@@ -421,10 +422,10 @@ public class UserService {
     }
 
     // 개인 환경세팅 조회
-    public UserInfoDto personalGet(String jwt) {
+    public SettingsDto personalGet(String jwt) {
 
         ObjectMapper mapper = new ObjectMapper();
-        UserInfoDto userInfoDto = new UserInfoDto();
+        SettingsDto settingsDto = new SettingsDto();
 
         try {
             // 사용자 정보 불러와서 체크하고
@@ -435,15 +436,15 @@ public class UserService {
             UserEntity userEntity = userRepository.findById(userSeq).get();
             String data = userEntity.getUserSettings();
 
-            userInfoDto = mapper.readValue(data, UserInfoDto.class);
-            userInfoDto.setResult(UserInfoDto.Result.SUCCESS);
+            settingsDto = mapper.readValue(data, SettingsDto.class);
+            settingsDto.setResult("success");
 
         } catch (Exception e) {
             e.printStackTrace();
-            userInfoDto.setResult(UserInfoDto.Result.FAILURE);
+            settingsDto.setResult("error");
         }
 
-        return userInfoDto;
+        return settingsDto;
 
     }
 
