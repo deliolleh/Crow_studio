@@ -242,7 +242,7 @@ public class GitService {
         ProcessBuilder command = new ProcessBuilder("/bin/sh","-c","git push origin " + branchName,"|",email,"|",pass);
         command.directory(new File(gitPath));
 
-        String[] cosa = {"/bin/sh","-c", "git push origin " + branchName+ " && " + email + " && "+pass };
+        String[] cosa = {"git push origin " + branchName};
 
         System.out.println(Arrays.toString(cosa));
         try {
