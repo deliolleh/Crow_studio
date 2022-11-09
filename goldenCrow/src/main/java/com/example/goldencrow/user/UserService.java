@@ -27,9 +27,6 @@ public class UserService {
 
     final String BASE_PATH = "/home/ubuntu/crow_data/userprofile/";
 
-    private final Base64.Encoder encoder = Base64.getEncoder();
-    private final Base64.Decoder decoder = Base64.getDecoder();
-
     @Autowired
     private UserRepository userRepository;
 
@@ -405,9 +402,6 @@ public class UserService {
             UserEntity userEntity = userRepository.findById(userSeq).get();
 
             // 받아온 json을 String으로 바꾸기
-
-            System.out.println(data.toString());
-
             JSONObject jsonObject = new JSONObject(data);
             String settings = jsonObject.toString();
             userEntity.setUserSettings(settings);
