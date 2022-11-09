@@ -246,11 +246,27 @@ public class GitService {
         }
 
         String newGitUrl = newRemoteUrl(gitUrl,email,pass);
-        System.out.println(newGitUrl);
 
-        ProcessBuilder command = new ProcessBuilder();
+        boolean setNew = setNewUrl(newGitUrl,gitPath);
+
+        if (!setNew) {
+            return "새로운 url 설정에 실패했습니다.";
+        }
+
+        ProcessBuilder command = new ProcessBuilder("git","push","origin",branchName);
         command.directory(new File(gitPath));
 
+        try {
+            command.start();
+        } catch (IOException e) {
+            return e.getMessage();
+        }
+
+        boolean returnOld = setNewUrl(gitUrl,gitPath);
+
+        if (!returnOld) {
+            return "url 재설정에 실패했습니다.";
+        }
 
 //        UserEntity user = userRepository.findByUserSeq(userSeq);
 //        String email = user.getUserGitId();
@@ -374,4 +390,18 @@ public class GitService {
         String returnPath = basicPath.replace("https://",String.format("https://%s:%s@",id,pass));
         return returnPath;
     }
+
+    public Boolean setNewUrl(String newUrl, String gitPath) {
+        command.command("git","remote","set-url","origin",newUrl);
+        command.directory(new File(gitPath));
+
+        try {
+            command.start();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
 }
