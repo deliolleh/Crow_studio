@@ -6,10 +6,10 @@ import {
   getTeam,
   modifyTeamName,
   deleteTeam,
-  searchUser,
   addMember,
   deleteMember,
 } from "../../redux/teamSlice";
+import { searchUser } from "../../redux/userSlice";
 
 const TeamDetail = () => {
   const dispatch = useDispatch();
