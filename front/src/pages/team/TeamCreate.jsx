@@ -63,27 +63,24 @@ const TeamCreate = () => {
       return;
     }
 
-    const teamNameData = { teamName };
+    const teamNameData = JSON.stringify({ teamName });
     setErrorMsgs(initialErrorState);
-    dispatch(createTeam(JSON.stringify(teamNameData)))
+    dispatch(createTeam(teamNameData))
       .unwrap()
-      .then((res) => {
+      .then(() => {
         alert("팀 생성 완료");
         navigate("/teams", { replace: true });
-        console.log("res:", res);
       })
       .catch((errorStatusCode) => {
         if (errorStatusCode === 409) {
-          alert("이미 해당 이름으로 팀을 생성했습니다");
+          alert("해당 이름으로 생성된 팀이 있습니다");
         } else {
           alert("비상!!");
         }
       });
   };
 
-  const clickTeamListHandler = () => {
-    navigate("/teams");
-  };
+  const clickTeamListHandler = () => navigate("/teams");
 
   return (
     <div>
