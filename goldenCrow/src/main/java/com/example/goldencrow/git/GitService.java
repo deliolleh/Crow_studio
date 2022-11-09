@@ -4,8 +4,7 @@ import com.example.goldencrow.file.Service.ProjectService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
 import com.example.goldencrow.user.entity.UserEntity;
-import com.example.goldencrow.user.repository.UserRepository;
-import com.google.cloud.storage.Acl;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -202,8 +202,19 @@ public class GitService {
         ProcessBuilder command = new ProcessBuilder("git","commit","-m",message);
         command.directory(new File(gitPath));
 
+
         try {
-            command.start().waitFor();
+            Process p = command.start();
+            String forPrint;
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+            System.out.println(br.readLine());
+            while ((forPrint = br.readLine()) != null) {
+                System.out.println(forPrint);
+                System.out.println(br);
+            }
+            p.waitFor();
         } catch (IOException e) {
             return e.getMessage();
         } catch (InterruptedException e) {
@@ -231,7 +242,10 @@ public class GitService {
 
         ProcessBuilder command = new ProcessBuilder("/bin/sh","-c","git push origin " + branchName,"|",email,"|",pass);
         command.directory(new File(gitPath));
-        String[] cosa = {"/bin/sh","-c","git push origin " + branchName};
+
+        String[] cosa = {"/bin/sh","-c","echo " + "\"" + email + "\"" + "|" + "\"" + pass + "\" | git push origin " + branchName};
+
+        System.out.println(Arrays.toString(cosa));
         try {
             System.out.println("여기야 여기");
             System.out.println(cosa);
@@ -239,13 +253,14 @@ public class GitService {
             String forPrint;
 
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            p.waitFor();
+
             System.out.println(br.readLine());
             while ((forPrint = br.readLine()) != null) {
                 System.out.println(forPrint);
                 System.out.println(br);
             }
 
+            p.waitFor();
         } catch (IOException e) {
             return e.getMessage();
         } catch (InterruptedException e) {
