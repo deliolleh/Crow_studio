@@ -239,7 +239,14 @@ public class GitService {
         if (!check.equals("Success")) {
             return check;
         }
+
         String gitUrl = getRemoteUrl(gitPath);
+        if (!gitUrl.contains("https")) {
+            return "url 설정에 실패했습니다.";
+        }
+
+        String newGitUrl = newRemoteUrl(gitUrl,email,pass);
+        System.out.println(newGitUrl);
 
         ProcessBuilder command = new ProcessBuilder();
         command.directory(new File(gitPath));
@@ -351,5 +358,20 @@ public class GitService {
             return returnUrl;
         }
 
+    }
+
+    public String newRemoteUrl (String basicPath, String email, String pass) {
+        String id = "";
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < email.length(); i++) {
+            if (String.valueOf(email.charAt(i)).equals("@")) {
+                break;
+            }
+            sb.append(String.valueOf(email.charAt(i)));
+        }
+        id = sb.toString();
+        System.out.println(id);
+        String returnPath = basicPath.replace("https://",String.format("https://%s:%s@",id,pass));
+        return returnPath;
     }
 }
