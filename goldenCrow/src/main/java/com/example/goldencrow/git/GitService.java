@@ -326,7 +326,7 @@ public class GitService {
     public String getRemoteUrl (String gitPath) {
         command = new ProcessBuilder("git","remote","-vv");
         command.directory(new File(gitPath));
-        StringBuffer sb = new StringBuffer();
+        String returnUrl = null;
 
         try {
             Process p = command.start();
@@ -334,17 +334,21 @@ public class GitService {
             String reader = null;
 
             while ((reader = br.readLine()) != null) {
-                sb.append(reader);
-                System.out.println(reader);
+                returnUrl = reader;
+                System.out.println(returnUrl);
             }
         } catch (IOException e) {
             return e.getMessage();
         }
 
-        if (sb.length() == 0) {
+        if (returnUrl == null) {
             return "failed";
         } else {
-            return sb.toString();
+            returnUrl = returnUrl.replace("origin","");
+            returnUrl = returnUrl.replace("(push)","");
+            returnUrl = returnUrl.trim();
+            System.out.println(returnUrl);
+            return returnUrl;
         }
 
     }
