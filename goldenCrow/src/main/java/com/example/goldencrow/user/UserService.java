@@ -6,6 +6,7 @@ import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.MemberRepository;
 import com.example.goldencrow.team.repository.TeamRepository;
 import com.example.goldencrow.user.dto.MyInfoDto;
+import com.example.goldencrow.user.dto.SettingsDto;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import com.example.goldencrow.user.entity.UserEntity;
 import com.example.goldencrow.user.repository.UserRepository;
@@ -208,22 +209,27 @@ public class UserService {
             // 입력받은 파일을 하나씩 읽을 인풋스트림
             InputStream inputStream = multipartFile.getInputStream();
 
-            // 읽어들인 글자의 수
-            int readCount = 0;
+            try {
 
-            // 한번에 읽을 만큼의 바이트를 지정
-            // 1024, 2048 등의 크기가 일반적
-            byte[] buffer = new byte[1024];
+                // 읽어들인 글자의 수
+                int readCount = 0;
 
-            // 끝까지 읽기
-            while((readCount = inputStream.read(buffer))!=-1) {
-                fileOutputStream.write(buffer, 0, readCount);
+                // 한번에 읽을 만큼의 바이트를 지정
+                // 1024, 2048 등의 크기가 일반적
+                byte[] buffer = new byte[1024];
+
+                // 끝까지 읽기
+                while((readCount = inputStream.read(buffer))!=-1) {
+                    fileOutputStream.write(buffer, 0, readCount);
+                }
+
+                System.out.println("서버에 저장 완료");
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                inputStream.close();
+                fileOutputStream.close();
             }
-
-            // 파일 스트림 닫기
-            inputStream.close();
-            fileOutputStream.close();
-            System.out.println("서버에 저장 완료");
 
             // 방금 넣은 파일의 주소를 db에 저장
             userEntity.setUserProfile(filePath);
@@ -389,7 +395,7 @@ public class UserService {
     }
 
     // 개인 환경세팅 저장
-    public String personalPost(String jwt, UserInfoDto data) {
+    public String personalPost(String jwt, SettingsDto data) {
 
         try {
             // 사용자 정보 불러와서 체크하고
@@ -416,10 +422,10 @@ public class UserService {
     }
 
     // 개인 환경세팅 조회
-    public UserInfoDto personalGet(String jwt) {
+    public SettingsDto personalGet(String jwt) {
 
         ObjectMapper mapper = new ObjectMapper();
-        UserInfoDto userInfoDto = new UserInfoDto();
+        SettingsDto settingsDto = new SettingsDto();
 
         try {
             // 사용자 정보 불러와서 체크하고
@@ -430,15 +436,15 @@ public class UserService {
             UserEntity userEntity = userRepository.findById(userSeq).get();
             String data = userEntity.getUserSettings();
 
-            userInfoDto = mapper.readValue(data, UserInfoDto.class);
-            userInfoDto.setResult(UserInfoDto.Result.SUCCESS);
+            settingsDto = mapper.readValue(data, SettingsDto.class);
+            settingsDto.setResult("success");
 
         } catch (Exception e) {
             e.printStackTrace();
-            userInfoDto.setResult(UserInfoDto.Result.FAILURE);
+            settingsDto.setResult("error");
         }
 
-        return userInfoDto;
+        return settingsDto;
 
     }
 

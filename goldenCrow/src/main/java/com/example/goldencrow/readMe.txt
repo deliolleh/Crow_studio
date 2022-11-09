@@ -24,3 +24,11 @@ JPA 작성에서 특히 주의해야 할 것
 - 기타
     - 엔티티 <-> 레포지토리 <-> 서비스 <-> 컨트롤러
     - 특화의 좋은 예시 : users 혹은 pieces
+
+- 코드리뷰 후기
+    - Optional 옵션을 사용했다면 isPresent로 검사한 뒤에 .get() 하자
+    - resource (인풋스트림, 버퍼드리더 등) 를 사용할 때
+           - finally를 통해 close() 하거나
+           - try-with-resource 구문을 사용한다
+    - Java-Linux 작업 시에는 InterruptedException을 따로 catch 해준다
+    - BoxedType (long 말고 Long 같은) 쓸 때는 == 말고 !=null && equals()를 쓴다
