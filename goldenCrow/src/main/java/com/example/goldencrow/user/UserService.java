@@ -27,9 +27,6 @@ public class UserService {
 
     final String BASE_PATH = "/home/ubuntu/crow_data/userprofile/";
 
-    private final Base64.Encoder encoder = Base64.getEncoder();
-    private final Base64.Decoder decoder = Base64.getDecoder();
-
     @Autowired
     private UserRepository userRepository;
 
@@ -372,7 +369,6 @@ public class UserService {
             if(projectService.deleteProject(teamSeqList).equals("fail!")){
                 return "error";
             }
-
 
             // userSeq로 userEntity를 뽑아낸 다음
             UserEntity userEntity = userRepository.findById(userSeq).get();

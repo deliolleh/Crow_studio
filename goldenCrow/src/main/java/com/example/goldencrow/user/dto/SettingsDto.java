@@ -9,7 +9,7 @@ public class SettingsDto {
 
     private int horizonSplit;
     private int verticalSplit;
-    private List<SettingTapDto> lastTapLeft;
+    private List<SettingTapDto> lastTabLeft;
     private List<SettingTapDto> lastTabRight;
     private int lastSideBar;
     private SettingEditorDto editors;
