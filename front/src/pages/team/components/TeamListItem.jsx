@@ -16,9 +16,15 @@ const TeamListItem = ({ team, clickTeamDetail }) => {
       <div>{teamSeq}</div>
       <div>{teamName}</div>
       <div>{teamLeaderNickname}</div>
-      <div>
+      <div className="flex">
         {members.map((member) => (
-          <div key={`m${member.memberSeq}`}>{member.memberNickname}</div>
+          <div
+            key={`m${member.memberSeq}`}
+            className="flex flex-col gap-2 items-center"
+          >
+            <div className="bg-point_light_yellow w-11 h-11 rounded-full"></div>
+            <div className="text-white">{member.memberNickname}</div>
+          </div>
         ))}
       </div>
     </div>
