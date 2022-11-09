@@ -33,6 +33,7 @@ public class FileEntity {
     private String filePath;
 
     @CreatedDate
+    @Column(updatable = false)
     private Date fileCreatedAt;
 
     @LastModifiedDate
@@ -45,6 +46,7 @@ public class FileEntity {
         this.filePath = fileCreateDto.getFilePath();
         this.team = team;
         this.fileCreatedAt = new Date();
+        this.fileUpdatedAt = new Date();
     }
 
 

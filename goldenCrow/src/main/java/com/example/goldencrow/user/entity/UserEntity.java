@@ -33,6 +33,12 @@ public class UserEntity {
     private String userProfile;
 
     @Column
+    private String userGitUsername;
+
+    @Column
+    private String userGitToken;
+
+    @Column
     private String userRefresh;
 
     public UserEntity() {

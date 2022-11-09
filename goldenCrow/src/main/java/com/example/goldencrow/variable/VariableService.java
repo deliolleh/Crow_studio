@@ -41,26 +41,36 @@ public class VariableService {
             StringBuilder pascal = new StringBuilder();
             StringBuilder snake = new StringBuilder();
             for (i = 0; i < len; i++) {
-                if (letters[i].equals("%20")) {
-                    System.out.println();
-                } else if (i == 0) {
-                    camel.append(letters[i].toLowerCase());
-                    pascal.append(letters[i].substring(0, 1).toUpperCase()).append(letters[i].substring(1).toLowerCase());
-                    snake.append(letters[i].toLowerCase());
-                } else {
-                    camel.append(letters[i].substring(0, 1).toUpperCase()).append(letters[i].substring(1));
-                    pascal.append(letters[i].substring(0, 1).toUpperCase()).append(letters[i].substring(1));
-                    snake.append("_").append(letters[i].toLowerCase());
-                }
+                String clearLetter = letters[i].replaceAll("%20", "");
+                // toLowerCase().equals => equalsIgnoreCase()로 메서드 사용 최소화
+                if (!clearLetter.equalsIgnoreCase("a") && !clearLetter.equalsIgnoreCase("an")) {
+                    // camel
+                    if (camel.length() == 0) {
+                        camel.append(letters[i].toLowerCase());
+                    } else {
+                        camel.append(letters[i].substring(0, 1).toUpperCase()).append(letters[i].substring(1));
+                    }
 
+                    // pascal
+                    if (pascal.length() == 0) {
+                        pascal.append(letters[i].substring(0, 1).toUpperCase()).append(letters[i].substring(1).toLowerCase());
+                    } else {
+                        pascal.append(letters[i].substring(0, 1).toUpperCase()).append(letters[i].substring(1));
+                    }
+
+                    // snake
+                    if (snake.length() == 0) {
+                        snake.append(letters[i].toLowerCase());
+                    } else {
+                        snake.append("_").append(letters[i].toLowerCase());
+                    }
+                }
             }
 
             converts.add(camel.toString());
             converts.add(pascal.toString());
             converts.add(snake.toString());
-            System.out.println(camel);
-            System.out.println(pascal);
-            System.out.println(snake);
+            System.out.println(camel + " " + pascal + " " + snake);
 //            String word2 = word.replace("[a,e,i,o,u, A, E, I, O, U]", "");
 
         }
@@ -72,14 +82,7 @@ public class VariableService {
     public String papagoApi(String word) {
         String response = "";
 
-        URI uri = UriComponentsBuilder
-                .fromUriString("https://openapi.naver.com")
-                .path("/v1/papago/n2mt")
-                .queryParam("source", "ko")
-                .queryParam("target", "en")
-                .queryParam("text", word)
-                .build()
-                .toUri();
+        URI uri = UriComponentsBuilder.fromUriString("https://openapi.naver.com").path("/v1/papago/n2mt").queryParam("source", "ko").queryParam("target", "en").queryParam("text", word).build().toUri();
 
 
         RequestEntity<Void> requestEntity = naverHeader(uri);
@@ -102,11 +105,7 @@ public class VariableService {
     }
 
     private RequestEntity<Void> naverHeader(URI uri) {
-        return RequestEntity
-                .get(uri)
-                .header("X-Naver-Client-Id", clientId)
-                .header("X-Naver-Client-Secret", clientSecret)
-                .build();
+        return RequestEntity.get(uri).header("X-Naver-Client-Id", clientId).header("X-Naver-Client-Secret", clientSecret).build();
     }
 
 //    public String googleApi(String word) {

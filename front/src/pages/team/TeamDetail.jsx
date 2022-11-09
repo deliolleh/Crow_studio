@@ -6,17 +6,10 @@ import {
   getTeam,
   modifyTeamName,
   deleteTeam,
+  searchUser,
   addMember,
   deleteMember,
 } from "../../redux/teamSlice";
-import { searchUser } from "../../redux/userSlice";
-
-// const initialInputState = { teamName: "", projectName: "", templateName: "" };
-// const initialErrorState = {
-//   teamNameErrMsg: "",
-//   projectNameErrMsg: "",
-//   templateNameErrMsg: "",
-// };
 
 const TeamDetail = () => {
   const dispatch = useDispatch();
