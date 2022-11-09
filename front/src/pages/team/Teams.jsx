@@ -2,55 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import {
-  getTeams,
-  getTeam,
-  createTeam,
-  modifyTeamName,
-  deleteTeam,
-  getMembers,
-  addMember,
-  // deleteMember,
-  // delegateLeader,
-  // resignTeam,
-} from "../../redux/teamSlice";
+import { getTeams } from "../../redux/teamSlice";
 
 import Header from "../../components/Header";
+import TeamListItem from "./components/TeamListItem";
 
 const Teams = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [teamName, setTeamName] = useState("");
-  const [modifiedTeamName, setModifiedTeamName] = useState("");
-
   const [teams, setTeams] = useState(null);
 
-  const submitHandler1 = (e) => {
-    e.preventDefault();
-    console.log(teamName);
-    dispatch(createTeam(JSON.stringify({ teamName })))
-      .unwrap()
-      .then(console.log)
-      .catch(console.error);
-  };
+  const createTeamHandler = () => navigate("/teams/create");
 
-  const submitHandler2 = (e) => {
-    e.preventDefault();
-    dispatch(modifyTeamName({ teamSeq: 6, teamName: modifiedTeamName }))
-      .unwrap()
-      .then(console.log)
-      .catch(console.error);
-  };
-
-  const createTeamHandler = () => {
-    console.log("createTeam");
-    navigate("/teams/create");
-  };
-
-  const clickTeamHandler = (teamSeq) => {
-    navigate(`/teams/${teamSeq}`);
-  };
+  const clickTeamDetailHandler = (teamSeq) => navigate(`/teams/${teamSeq}`);
 
   useEffect(() => {
     dispatch(getTeams())
@@ -60,62 +25,56 @@ const Teams = () => {
         setTeams(() => [...res]);
       })
       .catch(console.error);
-    // dispatch(getTeam(6)).unwrap().then(console.log).catch(console.error);
-    // dispatch(deleteTeam(7)).unwrap().then(console.log).catch(console.error);
-    // dispatch(getMembers(3)).unwrap().then(console.log).catch(console.error);
-    // dispatch(addMember(JSON.stringify({ teamSeq: 3, memberSeq: 4 })))
-    //   .unwrap()
-    //   .then(console.log)
-    //   .catch(console.error);
   }, [dispatch]);
 
   return (
     <div>
       <Header />
-      <div>Team</div>
-      {/* <form onSubmit={submitHandler1}>
-        <label>팀 생성</label>
-        <input
-          type="text"
-          name="teamName"
-          value={teamName}
-          onChange={(e) => setTeamName(e.target.value)}
-        />
-      </form> */}
-
-      <div>
+      <h1 className="text-2xl">팀 목록</h1>
+      <div className="flex flex-col gap-2">
         {teams?.map((team) => (
-          <div
-            key={`t${team.teamSeq}`}
-            className="flex gap-2 hover:cursor-pointer"
-            onClick={() => clickTeamHandler(team.teamSeq)}
-          >
-            <div>🙄</div>
-            <div>{team.teamSeq}</div>
-            <div>{team.teamName}</div>
-            <div>{team.teamLeaderNickname}</div>
-            <div>
-              {team.memberDtoList.map((member) => (
-                <div key={`m${member.memberSeq}`}>{member.memberNickname}</div>
-              ))}
-            </div>
-          </div>
+          <TeamListItem
+            key={`team${team.teamSeq}`}
+            clickTeamDetail={clickTeamDetailHandler}
+            team={team}
+          />
         ))}
       </div>
 
-      <button onClick={createTeamHandler}>팀 생성하기</button>
+      <div className="w-fit h-96 px-8 flex flex-col justify-center border border-primary_-2_dark rounded-md">
+        <div className="text-white text-xl font-bold">나의 프로젝트</div>
+        <div className="text-point_light_yellow">금오</div>
+        <div className="flex">
+          <div className="w-32 h-56 pr-3 flex flex-col justify-around items-end bg-point_purple rounded-tl-2xl rounded-bl-2xl">
+            <div className="text-white font-bold">팀장</div>
+            <div className="text-white font-bold">팀원</div>
+            <div className="text-white font-bold">프로젝트</div>
+          </div>
+          <div className="w-96 h-56 pl-5 flex flex-col justify-around items-start bg-component_item_bg_dark rounded-tr-2xl rounded-br-2xl">
+            <div className="flex">
+              {/* <Member /> */}
+              멤버
+            </div>
+            <div className="flex">
+              {/* <Member /> */}
+              {/* <Member /> */}
+              {/* <Member /> */}
+              {/* <Member /> */}
+              {/* <Member /> */}
+              멤버
+            </div>
+            <div className="text-point_light_yellow">/까마귀공방</div>
+          </div>
+        </div>
+      </div>
 
-      <br />
-
-      {/* <form onSubmit={submitHandler2}>
-        <label>팀명 수정</label>
-        <input
-          type="text"
-          name="teamNameModify"
-          value={modifiedTeamName}
-          onChange={(e) => setModifiedTeamName(e.target.value)}
-        />
-      </form> */}
+      <button
+        type="submit"
+        className="w-80 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition mb-4"
+        onClick={createTeamHandler}
+      >
+        새로운 팀 생성
+      </button>
     </div>
   );
 };
