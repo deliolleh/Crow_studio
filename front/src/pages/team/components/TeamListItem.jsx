@@ -34,7 +34,7 @@ const TeamListItem = ({ team, clickTeamDetail }) => {
             key={`m${member.memberSeq}`}
             className="flex flex-col gap-2 items-center p-2"
           >
-            <div className="bg-point_light_yellow w-11 h-11 rounded-full"></div>
+            {/* <div className="bg-point_light_yellow w-11 h-11 rounded-full"></div> */}
             <div className="text-white">{member.memberNickname}</div>
           </div>
         ))}
