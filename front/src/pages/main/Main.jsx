@@ -46,7 +46,6 @@ const SidebarItems = styled.div`
 //   grid-gap: 8px;
 // `;
 
-
 // beautiful-dnd
 // fake data simple ver.
 const elements = [
@@ -97,25 +96,24 @@ const Main = () => {
   // useRef ver.
   const sidebarSizeRef = useRef();
   const [sidebarSize, setSidebarSize] = useState(0);
-  
+
   useEffect(() => {
     setSidebarSize(sidebarSizeRef.current.getBoundingClientRect().width);
     // setSideBarSize(sidebarSizeRef.current.offsetWidth);
     console.log("sidebarSize: " + sidebarSize);
     console.log(
       "sidebarSizeRef.current.getBoundingClientRect().width: " +
-      sidebarSizeRef.current.getBoundingClientRect().width
-      );
-    }, [sidebarSize]);
+        sidebarSizeRef.current.getBoundingClientRect().width
+    );
+  }, [sidebarSize]);
 
-  // editor pane height size  
+  // editor pane height size
   // const [editorPaneSize, setEditorPaneSize] = useState(0);
   // const editorPaneSizeRef = useRef(null)
 
   // useEffect(() => {
   //   setEditorPaneSize(editorPaneSizeRef.current.offsetHeight);
   // })
-
 
   // Beautiful-dnd
   // simple ver.
@@ -161,8 +159,12 @@ const Main = () => {
   const [activeEditor1Tab, setActiveEditor1Tab] = useState(0);
   const [activeEditor2Tab, setActiveEditor2Tab] = useState(0);
   const [activeTab2, setActiveTab2] = useState(0);
-  const [editor1Tabs, setEditor1Tabs] = useState(MakeEditorData(2, "Editor Tab"));
-  const [editor2Tabs, setEditor2Tabs] = useState(MakeEditorData(2, "Editor Tab"));
+  const [editor1Tabs, setEditor1Tabs] = useState(
+    MakeEditorData(2, "Editor Tab")
+  );
+  const [editor2Tabs, setEditor2Tabs] = useState(
+    MakeEditorData(2, "Editor Tab")
+  );
   const [consoleTabs, setConsoleTabs] = useState(
     MakeConsoleData(1, "Console Tab")
   );
@@ -189,13 +191,16 @@ const Main = () => {
     setActiveEditor1Tab(index);
   }, []);
 
-  const handleEditor1TabSequenceChange = useCallback(({ oldIndex, newIndex }) => {
-    console.log({ oldIndex, newIndex });
-    setEditor1Tabs((editor1Tabs) =>
-      helpers.simpleSwitch(editor1Tabs, oldIndex, newIndex)
-    );
-    setActiveEditor1Tab(newIndex);
-  }, []);
+  const handleEditor1TabSequenceChange = useCallback(
+    ({ oldIndex, newIndex }) => {
+      console.log({ oldIndex, newIndex });
+      setEditor1Tabs((editor1Tabs) =>
+        helpers.simpleSwitch(editor1Tabs, oldIndex, newIndex)
+      );
+      setActiveEditor1Tab(newIndex);
+    },
+    []
+  );
 
   // Editor 2
   const closableEditor2TabItems = useMemo(() => {
@@ -219,13 +224,16 @@ const Main = () => {
     setActiveEditor2Tab(index);
   }, []);
 
-  const handleEditor2TabSequenceChange = useCallback(({ oldIndex, newIndex }) => {
-    console.log({ oldIndex, newIndex });
-    setEditor2Tabs((editor2Tabs) =>
-      helpers.simpleSwitch(editor2Tabs, oldIndex, newIndex)
-    );
-    setActiveEditor2Tab(newIndex);
-  }, []);
+  const handleEditor2TabSequenceChange = useCallback(
+    ({ oldIndex, newIndex }) => {
+      console.log({ oldIndex, newIndex });
+      setEditor2Tabs((editor2Tabs) =>
+        helpers.simpleSwitch(editor2Tabs, oldIndex, newIndex)
+      );
+      setActiveEditor2Tab(newIndex);
+    },
+    []
+  );
 
   // console
   const closableTabItems2 = useMemo(() => {
@@ -306,16 +314,16 @@ const Main = () => {
                 ref={provided.innerRef}
                 style={
                   com === ""
-                    ? { 
-                      display: "flex",
-                      width: `calc(100vw - 108px)`,
-                      height: "100vh",
-                    }
+                    ? {
+                        display: "flex",
+                        width: `calc(100vw - 108px)`,
+                        height: "100vh",
+                      }
                     : {
-                      display: "flex",
-                      width: `calc(100vw - ${sidebarSize}px - 23px)`,
-                      height: "100vh",
-                    }
+                        display: "flex",
+                        width: `calc(100vw - ${sidebarSize}px - 23px)`,
+                        height: "100vh",
+                      }
                 }
               >
                 <SplitPane
@@ -397,11 +405,15 @@ const Main = () => {
                                   }
                             }
                             activeIndex={
-                              item.id === "one" ? activeEditor1Tab : activeEditor2Tab
+                              item.id === "one"
+                                ? activeEditor1Tab
+                                : activeEditor2Tab
                               // activeEditor1Tab
                             }
                             panelItems={
-                              item.id === "one" ? editor1PanelItems : editor2PanelItems
+                              item.id === "one"
+                                ? editor1PanelItems
+                                : editor2PanelItems
                               // editor1PanelItems
                             }
                             closableTabItems={
@@ -437,14 +449,12 @@ const Main = () => {
                       // tabtab
                       showModalButton={false}
                       showArrowButton={true}
-                      onTabClose={
-                        (i) => {
-                          console.log("close", i);
-                          setConsoleTabs((prev) =>
-                            prev.filter((_, idx) => idx !== i)
-                          );
-                        }
-                      }
+                      onTabClose={(i) => {
+                        console.log("close", i);
+                        setConsoleTabs((prev) =>
+                          prev.filter((_, idx) => idx !== i)
+                        );
+                      }}
                       activeIndex={activeTab2}
                       panelItems={panelItems2}
                       closableTabItems={closableTabItems2}
