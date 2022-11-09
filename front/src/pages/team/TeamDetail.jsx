@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -11,13 +11,24 @@ import {
 } from "../../redux/teamSlice";
 import { searchUser } from "../../redux/userSlice";
 
+import Header from "../../components/Header";
+
 const TeamDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { teamSeq } = useParams();
+  const { mySeq, myNickname } = useSelector((state) => state.user.value);
 
   const [team, setTeam] = useState({});
-  const { teamName, teamLeaderNickname, memberDtoList: members } = team;
+  const {
+    teamName,
+    teamLeaderNickname,
+    teamLeaderSeq,
+    memberDtoList: members,
+  } = team;
+
+  const [isEdit, setIsEdit] = useState(false);
+
   const [inputTeamName, setInputTeamName] = useState(teamName);
 
   const [searchUserName, setSearchUserName] = useState("");
@@ -36,7 +47,6 @@ const TeamDetail = () => {
 
   const clickTeamListHandler = () => navigate("/teams");
 
-  //
   const inputTeamNameChangeHandler = (e) => setInputTeamName(e.target.value);
 
   const submitTeamNameChange = (e) => {
@@ -49,6 +59,7 @@ const TeamDetail = () => {
         setTeam((prev) => {
           return { ...prev, teamName: res };
         });
+        setIsEdit(false);
       })
       .catch(console.error);
   };
@@ -65,8 +76,6 @@ const TeamDetail = () => {
       })
       .catch(console.error);
   };
-
-  useEffect(() => {}, [teamName]);
 
   const searchUserChangeHandler = (e) => setSearchUserName(e.target.value);
 
@@ -116,20 +125,63 @@ const TeamDetail = () => {
       });
   };
 
+  const openTeamNameEditorHandler = () => setIsEdit(true);
+
+  const closeTeamNameEditorHandler = () => setIsEdit(false);
+
   return (
     <div>
-      <div>Team Detail</div>
-      <div>팀 번호: {teamSeq}</div>
-      <div>팀: {teamName}</div>
-      <form onSubmit={submitTeamNameChange}>
-        <input
-          type="text"
-          name="inputTeamName"
-          id="inputTeamName"
-          defaultValue={teamName}
-          onChange={inputTeamNameChangeHandler}
-        />
-      </form>
+      <Header />
+      <div className="p-8 flex flex-col justify-center border border-primary_-2_dark rounded-md">
+        <div className="flex justify-between">
+          {!isEdit && (
+            <h1 className="text-white text-xl font-bold">
+              {teamName}{" "}
+              <span
+                className="cursor-pointer"
+                onClick={openTeamNameEditorHandler}
+              >
+                v
+              </span>
+            </h1>
+          )}
+
+          {isEdit && (
+            <div className="flex gap-1">
+              <form onSubmit={submitTeamNameChange}>
+                <input
+                  type="text"
+                  name="inputTeamName"
+                  id="inputTeamName"
+                  defaultValue={teamName}
+                  onChange={inputTeamNameChangeHandler}
+                />
+              </form>
+              <span
+                onClick={closeTeamNameEditorHandler}
+                className="cursor-pointer"
+              >
+                X
+              </span>
+            </div>
+          )}
+
+          {teamLeaderSeq === mySeq && (
+            <button className="px-2 py-1 text-lg font-bold text-component_dark bg-point_pink hover:bg-point_red hover:text-white rounded-md transition">
+              팀 삭제
+            </button>
+          )}
+
+          {!(teamLeaderSeq === mySeq) && (
+            <button className="px-2 py-1 text-lg font-bold text-component_dark bg-point_pink hover:bg-point_red hover:text-white rounded-md transition">
+              팀 탈퇴
+            </button>
+          )}
+        </div>
+        <span className="text-point_light_yellow">{myNickname}</span>
+        {/* <TeamList clickTeamDetail={clickTeamDetailHandler} teams={teams} /> */}
+      </div>
+
       <div>팀장: {teamLeaderNickname}</div>
       <div>
         팀원:
