@@ -38,11 +38,9 @@ public class CompileService {
             System.out.println("결과: " + result);
             p.destroy();
             return result.trim();
-        }catch(IOException e){
+        }catch(IOException | InterruptedException e){
             e.printStackTrace();
             return "";
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         }
 
     }
@@ -98,10 +96,8 @@ public class CompileService {
                     "CMD [ \"python3\" , \"main.py\", \"run\", \"--host=0.0.0.0\"]";
         }
         File file = new File(filePath + "/Dockerfile");
-        try {
-            FileWriter overWriteFile = new FileWriter(file, false);
+        try (FileWriter overWriteFile = new FileWriter(file, false)) {
             overWriteFile.write(content);
-            overWriteFile.close();
         } catch (IOException e) {
             return e.getMessage();
         }
