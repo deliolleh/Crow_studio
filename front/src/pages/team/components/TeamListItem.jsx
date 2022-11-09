@@ -25,7 +25,7 @@ const TeamListItem = ({ team, clickTeamDetail }) => {
           className="flex flex-col gap-2 items-center p-2"
         >
           <div className="bg-point_light_yellow w-11 h-11 rounded-full"></div>
-          <div className="text-white">{teamLeaderNickname}</div>
+          <div className="text-white text-sm">{teamLeaderNickname}</div>
         </div>
       </div>
       <div className="flex">
@@ -35,7 +35,7 @@ const TeamListItem = ({ team, clickTeamDetail }) => {
             className="flex flex-col gap-2 items-center p-2"
           >
             {/* <div className="bg-point_light_yellow w-11 h-11 rounded-full"></div> */}
-            <div className="text-white">{member.memberNickname}</div>
+            <div className="text-white text-sm">{member.memberNickname}</div>
           </div>
         ))}
       </div>
