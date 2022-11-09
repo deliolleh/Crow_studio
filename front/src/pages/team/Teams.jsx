@@ -30,20 +30,21 @@ const Teams = () => {
   return (
     <div>
       <Header />
-      <h1 className="text-2xl">팀 목록</h1>
+      <div></div>
       <div className="p-8 flex flex-col justify-center border border-primary_-2_dark rounded-md">
-        <div className="text-white text-xl font-bold">팀 목록</div>
-        <div className="text-point_light_yellow">나의 닉네임</div>
+        <div className="flex justify-between">
+          <h1 className="text-white text-xl font-bold">팀 목록</h1>
+          <button
+            type="submit"
+            className="px-2 py-1 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow rounded-md transition"
+            onClick={createTeamHandler}
+          >
+            새로운 팀 생성
+          </button>
+        </div>
+        <span className="text-point_light_yellow">나의 닉네임</span>
         <TeamList clickTeamDetail={clickTeamDetailHandler} teams={teams} />
       </div>
-
-      <button
-        type="submit"
-        className="w-80 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition mb-4"
-        onClick={createTeamHandler}
-      >
-        새로운 팀 생성
-      </button>
     </div>
   );
 };

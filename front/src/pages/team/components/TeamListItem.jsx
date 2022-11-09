@@ -14,16 +14,15 @@ const TeamListItem = ({ team, clickTeamDetail }) => {
   return (
     <div
       onClick={clickHandler}
-      className="flex items-center gap-2 bg-component_item_bg_dark hover:cursor-pointer"
+      className="flex items-center gap-2 bg-component_item_bg_dark hover:cursor-pointer rounded-md"
     >
-      {/* <div className="text-white bg-point_purple p-1">{teamSeq}</div> */}
-      <div className="text-white bg-point_purple h-full p-2 flex items-center">
+      <div className="w-48 text-white font-bold bg-point_purple h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
         {teamName}
       </div>
       <div>
         <div
           key={`l${teamLeaderSeq}`}
-          className="flex flex-col gap-2 items-center"
+          className="flex flex-col gap-2 items-center p-2"
         >
           <div className="bg-point_light_yellow w-11 h-11 rounded-full"></div>
           <div className="text-white">{teamLeaderNickname}</div>
@@ -33,7 +32,7 @@ const TeamListItem = ({ team, clickTeamDetail }) => {
         {members.map((member) => (
           <div
             key={`m${member.memberSeq}`}
-            className="flex flex-col gap-2 items-center"
+            className="flex flex-col gap-2 items-center p-2"
           >
             <div className="bg-point_light_yellow w-11 h-11 rounded-full"></div>
             <div className="text-white">{member.memberNickname}</div>
