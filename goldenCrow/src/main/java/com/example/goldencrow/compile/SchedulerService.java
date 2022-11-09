@@ -12,9 +12,9 @@ public class SchedulerService {
     @Autowired
     private CompileService compileService;
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void run() {
-        System.out.println("hi i'm working");
+        System.out.println("now 24:00");
         // 모든 컨테이너 닫기
         /*
         * 우리가 사용하는 포트(컨테이너)를 제외하고 !
@@ -24,27 +24,27 @@ public class SchedulerService {
         * docker rmi $(docker images crowstudio_* -q)
         * <none>인 이미지 삭제
         * docker rmi $(docker images -f "dangling=true" -q)
+        * 사용하지 않는 이미지 삭제(강경)
+        * docker image prune -a -f
         * */
         String filteringName = "crowstudio_";
-//        String[] containerCmd = {"docker", "container", "ls", "--filter=\"name=crowstudio\"", "-q"}; // filtering이 문제임 왜 안돼 진자ㅠㅠㅠㅠㅠㅠㅠㅠ
-//        String[] containerCmd = {"/bin/sh", "-c", "docker", "container", "ls", "|", "grep", "'crowstudio'"};
-//        String[] containerCmd = {"/bin/sh", "-c", "docker", "ps", "|", "grep", "'crowstudio'"};
-//        String[] containerCmd = {"docker", "container", "ls", "--filter=name=crowstudio", "-q"}; // 이거 됨 !!!
-        String[] containerCmd = {"docker", "container", "ls", "--filter=name=crowstudio", "-q"};
-        String containerList = (compileService.resultString(containerCmd)).trim();
-        System.out.println(containerList);
-        String[] stopCmd = {"docker", "stop", containerList};
-        System.out.println("docker stop 시작 !");
-        compileService.resultString(stopCmd);
-        System.out.println("docker stop 됐다 !");
+        String[] containerCmd = {"docker", "container", "ls", "--filter=name="+filteringName, "-q"};
+        String[] containerList = compileService.resultString(containerCmd).split("(\r\n|\r|\n|\n\r)");
+        System.out.println("containerList : " + Arrays.toString(containerList));
+        if (containerList.length != 0) {
+            for (String container:
+                    containerList) {
+                String[] stopCmd = {"docker", "stop", container};
+                System.out.println(Arrays.toString(stopCmd));
+                System.out.println("docker stop 시작 !");
+                compileService.resultString(stopCmd);
+                System.out.println("docker stop 됐다 !");
+            }
+        }
 
-//        String[] rmImgCmd = {"/bin/sh", "-c", "docker", "rmi", "$(docker", "images", filteringName +"*", "-q)"};
-//        System.out.println("docker images 삭제 시작 !");
-//        compileService.resultString(rmImgCmd);
-//        System.out.println("docker images 삭제 됐다 !");
-//        String[] rmNoneCmd = {"/bin/sh", "-c", "docker", "rmi", "$(docker", "images", "-f" ,"\"dangling=true\"", "-q)"};
-//        System.out.println("none image 삭제 시작 !");
-//        compileService.resultString(rmNoneCmd);
-//        System.out.println("none image 삭제 됐다 !");
+        String[] rmImgCmd = {"docker", "image", "prune", "-a", "-f"};
+        System.out.println("docker images 삭제 시작 !");
+        compileService.resultString(rmImgCmd);
+        System.out.println("docker images 삭제 됐다 !");
     }
 }
