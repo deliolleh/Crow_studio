@@ -123,7 +123,7 @@ public class CompileService {
         String filePath = req.get("filePath").toString();
         int filePathIndex = filePath.lastIndexOf("/");
         String projectName = filePath.substring(filePathIndex+1);
-        String conAndImgName = (projectName + teamSeq.toString()).toLowerCase();
+        String conAndImgName = "crowstudio_" + projectName.toLowerCase() + "_" + req.get("teamSeq");
         // 퓨어파이썬일 때
         if (type == 1) {
             if (req.get("input").toString().isEmpty()) {
@@ -165,7 +165,7 @@ public class CompileService {
     }
 
     public String pyCompileStop(Map<String, String> req) {
-        String conAndImgName = "crowstudio_" + (req.get("projectName") + req.get("teamSeq")).toLowerCase();
+        String conAndImgName = "crowstudio_" + (req.get("projectName")).toLowerCase() + "_" + req.get("teamSeq");
         // 도커 컨테이너 stop
         String[] containerStop = {"docker", "stop", conAndImgName};
         String stopedCon = resultString(containerStop);
