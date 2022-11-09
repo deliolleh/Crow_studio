@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { getTeam, modifyTeamName, deleteTeam } from "../../redux/teamSlice";
-
-// const initialInputState = { teamName: "", projectName: "", templateName: "" };
-// const initialErrorState = {
-//   teamNameErrMsg: "",
-//   projectNameErrMsg: "",
-//   templateNameErrMsg: "",
-// };
+import {
+  getTeam,
+  modifyTeamName,
+  deleteTeam,
+  searchUser,
+  addMember,
+  deleteMember,
+} from "../../redux/teamSlice";
 
 const TeamDetail = () => {
   const dispatch = useDispatch();
@@ -19,6 +19,10 @@ const TeamDetail = () => {
   const [team, setTeam] = useState({});
   const { teamName, teamLeaderNickname, memberDtoList: members } = team;
   const [inputTeamName, setInputTeamName] = useState(teamName);
+
+  const [searchUserName, setSearchUserName] = useState("");
+
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     dispatch(getTeam(teamSeq))
@@ -64,45 +68,53 @@ const TeamDetail = () => {
 
   useEffect(() => {}, [teamName]);
 
-  //
-  // const submitHandler = (e) => {
-  //   e.preventDefault();
+  const searchUserChangeHandler = (e) => setSearchUserName(e.target.value);
 
-  //   let isInvalid = false;
-  //   setErrorMsgs(initialErrorState);
-  //   if (teamName.trim().length === 0) {
-  //     setErrorMsgs((prev) => {
-  //       return { ...prev, teamNameErrMsg: "팀 이름을 입력하세요" };
-  //     });
-  //     isInvalid = true;
-  //   }
-  //   if (teamName.trim() === "400" || teamName.trim() === "403") {
-  //     setErrorMsgs((prev) => {
-  //       return { ...prev, teamNameErrMsg: "사용할 수 없는 팀 이름입니다" };
-  //     });
-  //     isInvalid = true;
-  //   }
-  //   if (isInvalid) {
-  //     return;
-  //   }
+  const submitSearchUser = (e) => {
+    e.preventDefault();
+    dispatch(searchUser(JSON.stringify({ searchWord: searchUserName })))
+      .unwrap()
+      .then((res) => {
+        setSearchResults(res);
+        console.log("res:", res);
+      })
+      .catch(console.error);
+  };
 
-  //   const teamNameData = { teamName };
-  //   setErrorMsgs(initialErrorState);
-  //   dispatch(createTeam(JSON.stringify(teamNameData)))
-  //     .unwrap()
-  //     .then((res) => {
-  //       alert("팀 생성 완료");
-  //       navigate("/team", { replace: true });
-  //       console.log("res:", res);
-  //     })
-  //     .catch((errorStatusCode) => {
-  //       if (errorStatusCode === 409) {
-  //         alert("이미 해당 이름으로 팀을 생성했습니다");
-  //       } else {
-  //         alert("비상!!");
-  //       }
-  //     });
-  // };
+  const addUserHandler = (addUserSeq, addUserName) => {
+    console.log("addUserSeq:", addUserSeq);
+    if (!window.confirm(`${addUserName}님을 팀원으로 추가할까요?`)) {
+      return;
+    }
+    const addMemberData = JSON.stringify({ teamSeq, memberSeq: addUserSeq });
+    dispatch(addMember(addMemberData))
+      .unwrap()
+      .then((res) => {
+        alert(`${addUserName}님을 팀원으로 추가했습니다`);
+        console.log(res);
+      })
+      .catch((errorStatusCode) => {
+        if (errorStatusCode === 409) {
+          alert("이미 추가된 팀원입니다");
+        } else {
+          alert("비상!!");
+        }
+      });
+  };
+
+  const deleteMemberHandler = (memberNickname, memberSeq) => {
+    if (!window.confirm(`${memberNickname}님을 팀에서 삭제하시겠습니까?`)) {
+      return;
+    }
+    const deleteData = JSON.stringify({ teamSeq, memberSeq });
+    console.log("deleteData:", deleteData);
+    dispatch(deleteMember(deleteData))
+      .unwrap()
+      .then(console.log)
+      .catch((errorStatusCode) => {
+        console.error(errorStatusCode);
+      });
+  };
 
   return (
     <div>
@@ -123,7 +135,45 @@ const TeamDetail = () => {
         팀원:
         {members?.map((member) => (
           <div key={member.memberSeq}>
-            <div>{member.memberNickname}</div>
+            <div>
+              {member.memberNickname}{" "}
+              <span
+                onClick={() =>
+                  deleteMemberHandler(member.memberNickname, member.memberSeq)
+                }
+                className="cursor-pointer"
+              >
+                X
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <br />
+
+      <div>유저 검색</div>
+      <div>
+        <form onSubmit={submitSearchUser}>
+          <input
+            type="text"
+            name="searchUser"
+            id="searchUser"
+            onChange={searchUserChangeHandler}
+            value={searchUserName}
+          />
+        </form>
+      </div>
+
+      <div>검색 결과</div>
+      <div>
+        {searchResults?.map((user) => (
+          <div
+            key={user.userId}
+            className="hover:cursor-pointer"
+            onClick={() => addUserHandler(user.userSeq, user.userNickname)}
+          >
+            {user.userNickname}
           </div>
         ))}
       </div>
