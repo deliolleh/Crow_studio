@@ -20,7 +20,7 @@ import java.util.Optional;
 @Service
 public class GitService {
 
-    private ProjectService projectService;
+    private final ProjectService projectService;
 
     @Autowired
     private TeamRepository teamRepository;
@@ -246,14 +246,16 @@ public class GitService {
 
         System.out.println(Arrays.toString(cosa));
         try {
-            System.out.println("여기야 여기");
             System.out.println(cosa);
             Process p = Runtime.getRuntime().exec(cosa);
             String forPrint;
-            p.wait();
+
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
             System.out.println(br.readLine());
+            if (br.readLine()== null) {
+                p.wait();
+            }
             while ((forPrint = br.readLine()) != null) {
                 System.out.println(forPrint);
             }
