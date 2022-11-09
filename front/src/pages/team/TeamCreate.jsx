@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 import { createTeam } from "../../redux/teamSlice";
 
+import Header from "../../components/Header";
+
 const initialInputState = { teamName: "", projectName: "", templateName: "" };
 const initialErrorState = {
   teamNameErrMsg: "",
@@ -85,44 +87,49 @@ const TeamCreate = () => {
 
   return (
     <div>
-      <form
-        method="post"
-        onSubmit={submitHandler}
-        className="flex flex-col items-center"
-      >
-        {/* Team Name */}
-        <div className="w-80 mb-1">
-          <label htmlFor="teamName" className="">
-            팀 이름
-          </label>
-          <input
-            type="teamName"
-            id="teamName"
-            name="teamName"
-            className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
-            placeholder="팀 이름을 입력하세요"
-            required
-            value={teamName}
-            onChange={inputChangeHandler}
-          />
-          <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-            {teamNameErrMsg}
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-80 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition mb-4"
-          onClick={submitHandler}
+      <Header />
+      <div className="p-8 flex flex-col justify-center items-center border border-primary_-2_dark rounded-md">
+        <form
+          method="post"
+          onSubmit={submitHandler}
+          className="flex flex-col items-center"
         >
-          팀 생성
+          {/* Team Name */}
+          <div className="w-80 mb-1">
+            <label htmlFor="teamName" className="">
+              팀 이름
+            </label>
+            <input
+              type="teamName"
+              id="teamName"
+              name="teamName"
+              className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
+              placeholder="팀 이름을 입력하세요"
+              required
+              value={teamName}
+              onChange={inputChangeHandler}
+            />
+            <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
+              {teamNameErrMsg}
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-80 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition mb-4"
+            onClick={submitHandler}
+          >
+            팀 생성
+          </button>
+        </form>
+        <button
+          onClick={clickTeamListHandler}
+          className="w-80 px-10 py-2 text-primary_dark bg-component_item_bg_dark border border-primary_-2_dark rounded-md"
+        >
+          팀 목록
         </button>
-      </form>
-
-      <br />
-
-      <button onClick={clickTeamListHandler}>팀 목록</button>
+      </div>
     </div>
   );
 };
