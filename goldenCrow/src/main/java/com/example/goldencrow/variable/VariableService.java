@@ -42,7 +42,8 @@ public class VariableService {
             StringBuilder snake = new StringBuilder();
             for (i = 0; i < len; i++) {
                 String clearLetter = letters[i].replaceAll("%20", "");
-                if (!clearLetter.toLowerCase().equals("a") && !clearLetter.toLowerCase().equals("an")) {
+                // toLowerCase().equals => equalsIgnoreCase()로 메서드 사용 최소화
+                if (!clearLetter.equalsIgnoreCase("a") && !clearLetter.equalsIgnoreCase("an")) {
                     // camel
                     if (camel.length() == 0) {
                         camel.append(letters[i].toLowerCase());
