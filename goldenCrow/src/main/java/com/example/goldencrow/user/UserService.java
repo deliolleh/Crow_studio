@@ -373,7 +373,6 @@ public class UserService {
                 return "error";
             }
 
-
             // userSeq로 userEntity를 뽑아낸 다음
             UserEntity userEntity = userRepository.findById(userSeq).get();
 
@@ -406,6 +405,9 @@ public class UserService {
             UserEntity userEntity = userRepository.findById(userSeq).get();
 
             // 받아온 json을 String으로 바꾸기
+
+            System.out.println(data.toString());
+
             JSONObject jsonObject = new JSONObject(data);
             String settings = jsonObject.toString();
             userEntity.setUserSettings(settings);
