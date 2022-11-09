@@ -22,6 +22,7 @@ public class GitService {
 
     private final ProjectService projectService;
 
+    private ProcessBuilder command;
     @Autowired
     private TeamRepository teamRepository;
 
@@ -238,37 +239,11 @@ public class GitService {
         if (!check.equals("Success")) {
             return check;
         }
-
-        ProcessBuilder command = new ProcessBuilder("/bin/sh","-c","git push origin " + branchName,"|",email,"|",pass);
+        String gitUrl = getRemoteUrl(gitPath);
+        System.out.println(gitUrl);
+        ProcessBuilder command = new ProcessBuilder();
         command.directory(new File(gitPath));
 
-        String[] cosa = {"/bin/sh","-c","echo -e" + "\"" + email + "\n" + pass + "\" | git push origin " + branchName};
-
-        System.out.println(Arrays.toString(cosa));
-        try {
-            System.out.println(cosa);
-            Process p = Runtime.getRuntime().exec(cosa);
-            String forPrint;
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-            System.out.println(br.readLine());
-            if (br.readLine()== null) {
-                p.notify();
-                p.wait();
-                System.out.println("여기요 여기!");
-            }
-            while ((forPrint = br.readLine()) != null) {
-                System.out.println(forPrint);
-            }
-
-
-        } catch (IOException e) {
-            return e.getMessage();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return e.getMessage();
-        }
 
 //        UserEntity user = userRepository.findByUserSeq(userSeq);
 //        String email = user.getUserGitId();
@@ -346,5 +321,30 @@ public class GitService {
 
         }
         return branches;
+    }
+
+    public String getRemoteUrl (String gitPath) {
+        command = new ProcessBuilder("git","remote","-vv");
+        command.directory(new File(gitPath));
+        StringBuffer sb = new StringBuffer();
+
+        try {
+            Process p = command.start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String reader = null;
+
+            while ((reader = br.readLine()) != null) {
+                sb.append(reader);
+            }
+        } catch (IOException e) {
+            return e.getMessage();
+        }
+
+        if (sb.length() == 0) {
+            return "failed";
+        } else {
+            return sb.toString();
+        }
+
     }
 }
