@@ -25,11 +25,6 @@ public class GitService {
     @Autowired
     private TeamRepository teamRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    String baseUrl = "/home/ubuntu/crow_data";
-
     public GitService(ProjectService projectService) {
         this.projectService = projectService;
     }
@@ -74,9 +69,12 @@ public class GitService {
             // 에러난다면 에러를 리턴
             return e.getMessage();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             return e.getMessage();
         }
-
+        if (newProjectFolder.listFiles() == null || newProjectFolder.listFiles().length == 0) {
+            return "해당 폴더가 존재하지 않습니다.";
+        }
         File newFolder = newProjectFolder.listFiles()[0];
         System.out.println(newFolder.getPath());
 
@@ -179,6 +177,7 @@ public class GitService {
         } catch (IOException e) {
             return e.getMessage();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             return e.getMessage();
         }
         System.out.println("add 성공!");
@@ -208,6 +207,7 @@ public class GitService {
         } catch (IOException e) {
             return e.getMessage();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             return e.getMessage();
         }
         System.out.println("커밋 성공!");
@@ -249,6 +249,7 @@ public class GitService {
         } catch (IOException e) {
             return e.getMessage();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             return e.getMessage();
         }
 
@@ -320,7 +321,8 @@ public class GitService {
             return branches;
 
         } catch (InterruptedException e) {
-
+            Thread.currentThread().interrupt();
+            System.out.println(e.getMessage());
             branches.add("failed!");
             branches.add(e.getMessage());
             return branches;

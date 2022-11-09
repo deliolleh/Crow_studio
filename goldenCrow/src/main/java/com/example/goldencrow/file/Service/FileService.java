@@ -2,15 +2,14 @@ package com.example.goldencrow.file.Service;
 
 
 import com.example.goldencrow.file.FileDto.FileCreateDto;
-import com.example.goldencrow.file.FileEntity;
-import com.example.goldencrow.file.Repository.FileRepository;
+
+
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
-import com.example.goldencrow.user.JwtService;
-import com.example.goldencrow.user.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import java.io.*;
 import java.nio.file.Files;
@@ -18,9 +17,10 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import static java.lang.System.out;
 
@@ -29,16 +29,6 @@ public class FileService {
 
     @Autowired
     private TeamRepository teamRepository;
-
-    @Autowired
-    private FileRepository fileRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private JwtService jwtService;
-
 
 
     /** 파일 생성 로직
@@ -97,12 +87,12 @@ public class FileService {
             }
         // 파일 이라면
         } else {
-
             try {
                 Files.delete(path);
             } catch (NoSuchFileException e) {
                 return false;
-            } catch (IOException e) {
+            } catch (IOException ioe) {
+                out.println(ioe.getMessage());
                 return false;
             }
 
@@ -118,20 +108,19 @@ public class FileService {
      * @param content
      * @return
      */
-    public boolean saveFile(String filePath, String content) {
+    public String saveFile(String filePath, String content) {
         File oldFile = new File(filePath);
         oldFile.delete();
+
         File newFile = new File(filePath);
 
-        try {
-            FileWriter overWriteFile = new FileWriter(newFile, false);
+        try (FileWriter overWriteFile = new FileWriter(newFile, false);) {
             overWriteFile.write(content);
-            overWriteFile.close();
         } catch (IOException e) {
-            return false;
+            return e.getMessage();
         }
 
-        return true;
+        return "Success";
     }
 //    @Transactional
 //    public boolean updateFileUpdatedAt(Long teamSeq, String filePath){
@@ -167,7 +156,7 @@ public class FileService {
         BufferedReader br = null;
         String content = "";
 
-        List res = new ArrayList<>();
+        List<String> res = new ArrayList<>();
 
         try {
             br = new BufferedReader(new FileReader(filePath));
@@ -180,20 +169,18 @@ public class FileService {
         } catch (Exception e) {
             res.add("Failed");
             res.add(e.getMessage());
-            return res;
-        } finally {
-            try {
-                if(br != null)
-                    br.close();
-            } catch (IOException e) {
-                res.add("Failed");
-                res.add(e.getMessage());
-                return res;
-            }
         }
+//        } finally {
+//            try {
+//                if(br != null)
+//                    br.close();
+//            } catch (IOException e) {
+//                res.add("Failed");
+//                res.add(e.getMessage());
+//            }
+//        }
         res.add("Success");
         res.add(content);
         return res;
     }
-
 }

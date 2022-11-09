@@ -38,11 +38,9 @@ public class CompileService {
             System.out.println("결과: " + result);
             p.destroy();
             return result.trim();
-        }catch(IOException e){
+        }catch(IOException | InterruptedException e){
             e.printStackTrace();
             return "";
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         }
 
     }
@@ -98,10 +96,8 @@ public class CompileService {
                     "CMD [ \"python3\" , \"main.py\", \"run\", \"--host=0.0.0.0\"]";
         }
         File file = new File(filePath + "/Dockerfile");
-        try {
-            FileWriter overWriteFile = new FileWriter(file, false);
+        try (FileWriter overWriteFile = new FileWriter(file, false)) {
             overWriteFile.write(content);
-            overWriteFile.close();
         } catch (IOException e) {
             return e.getMessage();
         }
@@ -127,7 +123,7 @@ public class CompileService {
         String filePath = req.get("filePath").toString();
         int filePathIndex = filePath.lastIndexOf("/");
         String projectName = filePath.substring(filePathIndex+1);
-        String conAndImgName = (projectName + teamSeq.toString()).toLowerCase();
+        String conAndImgName = "crowstudio_" + projectName.toLowerCase() + "_" + req.get("teamSeq");
         // 퓨어파이썬일 때
         if (type == 1) {
             if (req.get("input").toString().isEmpty()) {
@@ -169,7 +165,7 @@ public class CompileService {
     }
 
     public String pyCompileStop(Map<String, String> req) {
-        String conAndImgName = (req.get("projectName") + req.get("teamSeq")).toLowerCase();
+        String conAndImgName = "crowstudio_" + (req.get("projectName")).toLowerCase() + "_" + req.get("teamSeq");
         // 도커 컨테이너 stop
         String[] containerStop = {"docker", "stop", conAndImgName};
         String stopedCon = resultString(containerStop);
