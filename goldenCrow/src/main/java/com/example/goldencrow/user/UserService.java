@@ -208,22 +208,27 @@ public class UserService {
             // 입력받은 파일을 하나씩 읽을 인풋스트림
             InputStream inputStream = multipartFile.getInputStream();
 
-            // 읽어들인 글자의 수
-            int readCount = 0;
+            try {
 
-            // 한번에 읽을 만큼의 바이트를 지정
-            // 1024, 2048 등의 크기가 일반적
-            byte[] buffer = new byte[1024];
+                // 읽어들인 글자의 수
+                int readCount = 0;
 
-            // 끝까지 읽기
-            while((readCount = inputStream.read(buffer))!=-1) {
-                fileOutputStream.write(buffer, 0, readCount);
+                // 한번에 읽을 만큼의 바이트를 지정
+                // 1024, 2048 등의 크기가 일반적
+                byte[] buffer = new byte[1024];
+
+                // 끝까지 읽기
+                while((readCount = inputStream.read(buffer))!=-1) {
+                    fileOutputStream.write(buffer, 0, readCount);
+                }
+
+                System.out.println("서버에 저장 완료");
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                inputStream.close();
+                fileOutputStream.close();
             }
-
-            // 파일 스트림 닫기
-            inputStream.close();
-            fileOutputStream.close();
-            System.out.println("서버에 저장 완료");
 
             // 방금 넣은 파일의 주소를 db에 저장
             userEntity.setUserProfile(filePath);
