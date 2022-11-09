@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -11,10 +11,13 @@ import {
 } from "../../redux/teamSlice";
 import { searchUser } from "../../redux/userSlice";
 
+import Header from "../../components/Header";
+
 const TeamDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { teamSeq } = useParams();
+  const myNickname = useSelector((state) => state.user.value.myNickname);
 
   const [team, setTeam] = useState({});
   const { teamName, teamLeaderNickname, memberDtoList: members } = team;
@@ -36,7 +39,6 @@ const TeamDetail = () => {
 
   const clickTeamListHandler = () => navigate("/teams");
 
-  //
   const inputTeamNameChangeHandler = (e) => setInputTeamName(e.target.value);
 
   const submitTeamNameChange = (e) => {
@@ -118,8 +120,18 @@ const TeamDetail = () => {
 
   return (
     <div>
-      <div>Team Detail</div>
-      <div>팀 번호: {teamSeq}</div>
+      <Header />
+      <div className="p-8 flex flex-col justify-center border border-primary_-2_dark rounded-md">
+        <div className="flex justify-between">
+          <h1 className="text-white text-xl font-bold">팀 목록</h1>
+          <button className="px-2 py-1 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow rounded-md transition">
+            팀 삭제 / 팀 탈퇴
+          </button>
+        </div>
+        <span className="text-point_light_yellow">{myNickname}</span>
+        {/* <TeamList clickTeamDetail={clickTeamDetailHandler} teams={teams} /> */}
+      </div>
+
       <div>팀: {teamName}</div>
       <form onSubmit={submitTeamNameChange}>
         <input
