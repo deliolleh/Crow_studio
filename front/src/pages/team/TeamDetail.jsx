@@ -138,10 +138,10 @@ const TeamDetail = () => {
             <h1 className="text-white text-xl font-bold">
               {teamName}{" "}
               <span
-                className="cursor-pointer"
+                className="text-sm cursor-pointer"
                 onClick={openTeamNameEditorHandler}
               >
-                v
+                (편집)
               </span>
             </h1>
           )}
