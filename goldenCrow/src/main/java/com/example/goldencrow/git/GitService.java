@@ -202,8 +202,19 @@ public class GitService {
         ProcessBuilder command = new ProcessBuilder("git","commit","-m",message);
         command.directory(new File(gitPath));
 
+
         try {
-            command.start().waitFor();
+            Process p = command.start();
+            String forPrint;
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+            System.out.println(br.readLine());
+            while ((forPrint = br.readLine()) != null) {
+                System.out.println(forPrint);
+                System.out.println(br);
+            }
+            p.waitFor();
         } catch (IOException e) {
             return e.getMessage();
         } catch (InterruptedException e) {
@@ -231,7 +242,7 @@ public class GitService {
 
         ProcessBuilder command = new ProcessBuilder("/bin/sh","-c","git push origin " + branchName,"|",email,"|",pass);
         command.directory(new File(gitPath));
-        String[] cosa = {"/bin/sh","-c","echo " + "\"" + email + "\" | git push origin " + branchName};
+        String[] cosa = {"/bin/sh","-c","echo " + "\"" + email + "\"" + "\"" + pass + "\" | git push origin " + branchName};
         System.out.println(Arrays.toString(cosa));
         try {
             System.out.println("여기야 여기");
