@@ -7,6 +7,7 @@ import {
   modifyTeamName,
   deleteTeam,
   addMember,
+  deleteMember,
 } from "../../redux/teamSlice";
 import { searchUser } from "../../redux/userSlice";
 
@@ -108,6 +109,20 @@ const TeamDetail = () => {
       });
   };
 
+  const deleteMemberHandler = (memberNickname, memberSeq) => {
+    if (!window.confirm(`${memberNickname}님을 팀에서 삭제하시겠습니까?`)) {
+      return;
+    }
+    const deleteData = JSON.stringify({ teamSeq, memberSeq });
+    console.log("deleteData:", deleteData);
+    dispatch(deleteMember(deleteData))
+      .unwrap()
+      .then(console.log)
+      .catch((errorStatusCode) => {
+        console.error(errorStatusCode);
+      });
+  };
+
   return (
     <div>
       <div>Team Detail</div>
@@ -127,7 +142,17 @@ const TeamDetail = () => {
         팀원:
         {members?.map((member) => (
           <div key={member.memberSeq}>
-            <div>{member.memberNickname}</div>
+            <div>
+              {member.memberNickname}{" "}
+              <span
+                onClick={() =>
+                  deleteMemberHandler(member.memberNickname, member.memberSeq)
+                }
+                className="cursor-pointer"
+              >
+                X
+              </span>
+            </div>
           </div>
         ))}
       </div>
