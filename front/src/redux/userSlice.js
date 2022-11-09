@@ -114,6 +114,21 @@ export const userQuit = createAsyncThunk(
   }
 );
 
+export const searchUser = createAsyncThunk(
+  "user/searchUser",
+  async (searchData, { rejectWithValue }) => {
+    try {
+      const response = await userApi.searchUser(searchData);
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+      // return rejectWithValue(err.response.status);
+    }
+  }
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
