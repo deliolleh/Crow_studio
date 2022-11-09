@@ -124,6 +124,8 @@ public class ProjectService {
 //        }
 //    }
 
+
+
     /**
      * 프로젝트 이니셜 파일 생성
      * type 1 = pure python
@@ -142,12 +144,15 @@ public class ProjectService {
             djangoStarter.directory(new File(path));
 
             try {
-                djangoStarter.start().waitFor();
+                Process p = djangoStarter.start();
+                p.waitFor();
             } catch (IOException e) {
                 out.println(e.getMessage());
                 return e.getMessage();
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 return e.getMessage();
+
             }
 
             String newPath = path + fileTitle + "/" +fileTitle + "/" + "settings.py";
@@ -182,11 +187,8 @@ public class ProjectService {
 
             String content = "from flask import Flask\n\napp=Flask(__name__)\n\n@app.route(\"/\")\ndef hello_world():\n\treturn \"<p>Hello, World</p>\" \n\nif __name__ == \"__main__\" :\n\tapp.run(\"0.0.0.0\")";
 
-            try {
-                FileWriter overWriteFile = new FileWriter(file, false);
+            try (FileWriter overWriteFile = new FileWriter(file, false);) {
                 overWriteFile.write(content);
-                overWriteFile.close();
-
             } catch (IOException e) {
                 out.println("here!!!!!!!!!!!");
                 return e.getMessage();
@@ -201,10 +203,8 @@ public class ProjectService {
             String pjt1 = createDir(pjt,fileTitle);
             File file = new File(pjt1 + "/main.py");
             String content = "from fastapi import FastAPI\n\napp=FastAPI()\n\n@app.get(\"/\")\nasync def root():\n\treturn {\"message\" : \"Hello, World\"}";
-            try {
-                FileWriter overWriteFile = new FileWriter(file, false);
+            try(FileWriter overWriteFile = new FileWriter(file, false);) {
                 overWriteFile.write(content);
-                overWriteFile.close();
             } catch (IOException e) {
                 return e.getMessage();
             }
