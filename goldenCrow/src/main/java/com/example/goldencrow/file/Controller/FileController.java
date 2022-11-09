@@ -7,21 +7,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 
-import static java.lang.System.out;
 
 @RestController
 @RequestMapping(value = "/api/files")
 public class FileController {
-
     private final FileService fileService;
     private final JwtService jwtService;
-    private String baseUrl = "/home/ubuntu/crow_data/";
+
+    private String stringPath = "filePath";
     public FileController(FileService fileService, JwtService jwtService) {
         this.fileService = fileService;
         this.jwtService = jwtService;
@@ -50,7 +46,7 @@ public class FileController {
      */
     @DeleteMapping("/{teamSeq}")
     public ResponseEntity<String> userFileDelete(@RequestHeader("Authorization") String jwt,@PathVariable Long teamSeq, @RequestParam Integer type,@RequestBody HashMap<String, String> filePath) {
-        if (fileService.deleteFile(filePath.get("filePath"), type,teamSeq)) {
+        if (fileService.deleteFile(filePath.get(stringPath), type,teamSeq)) {
             return new ResponseEntity<>("파일 삭제를 성공했습니다.", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("파일 삭제를 실패했습니다.", HttpStatus.BAD_REQUEST);
@@ -59,13 +55,16 @@ public class FileController {
 
     /**
      * 파일 이름 변경 요청
-     * @param
+     * @param filePath
      * @return
      */
     @PutMapping("/{fileTitle}")
     public ResponseEntity<String> fileNameUpdate(@PathVariable String fileTitle, @RequestBody HashMap<String, String> filePath) {
+        String path = filePath.get(stringPath);
+        String title = fileTitle;
+        String oldFileName = filePath.get("oldFileName");
 
-        boolean result = fileService.updateFileName(filePath.get("filePath"),fileTitle,filePath.get("oldFileName"));
+        boolean result = fileService.updateFileName(path,title,oldFileName);
 
         if (result) {
             return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.OK);
@@ -77,28 +76,28 @@ public class FileController {
 
     @GetMapping("/{teamSeq}")
     public ResponseEntity<String> getDirectory(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
-        out.println(jwtService.JWTtoUserSeq(jwt));
-        return new ResponseEntity<>("Success", HttpStatus.OK);
+        Long result = jwtService.JWTtoUserSeq(jwt);
+        return new ResponseEntity<>(String.valueOf(result), HttpStatus.OK);
     }
 
     @PutMapping("/{teamSeq}/files")
     public ResponseEntity<String> saveFile(@RequestHeader("Authorization") String jwt,@PathVariable Long teamSeq,@RequestBody HashMap<String, String> fileContent){
-
         String content = fileContent.get("fileContent");
-        String filePath = fileContent.get("filePath");
+        String filePath = fileContent.get(stringPath);
+        String result = fileService.saveFile(filePath,content);
 
-        boolean result = fileService.saveFile(filePath,content);
-        // boolean result2 = fileService.updateFileUpdatedAt(teamSeq,filePath);
-        if (result) {
+        if (result.equals("Success")) {
             return new ResponseEntity<>("Success", HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
+
+        // boolean result2 = fileService.updateFileUpdatedAt(teamSeq,filePath);
     }
 
     @PostMapping("/files")
     public ResponseEntity<String> readFile(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,String> path) {
-        List<String> content = fileService.readFile(path.get("filePath"));
+        List<String> content = fileService.readFile(path.get(stringPath));
         if (content.get(0).equals("Success")) {
             return new ResponseEntity<>(content.get(1),HttpStatus.OK);
         } else {

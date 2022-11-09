@@ -9,7 +9,8 @@ const teamApi = {
   deleteTeam: (teamSeq) => api.delete(`/teams/delete/${teamSeq}`),
   getMembers: (teamSeq) => api.get(`/teams/member/${teamSeq}`),
   addMember: (addData) => api.put("/teams/add", addData),
-  deleteMember: (deleteData) => api.delete("/teams/remove", deleteData),
+  deleteMember: (deleteData) =>
+    api.delete("/teams/remove", { data: deleteData }),
   delegateLeader: (delegateData) => api.put("teams/beLeader", delegateData),
   resignTeam: (teamSeq) => api.delete(`teams/quit/${teamSeq}`),
 };
