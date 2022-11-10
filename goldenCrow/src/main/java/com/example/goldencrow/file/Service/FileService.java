@@ -153,13 +153,12 @@ public class FileService {
     }
 
     public List<String> readFile(String filePath) {
-        BufferedReader br = null;
         String content = "";
 
         List<String> res = new ArrayList<>();
 
-        try {
-            br = new BufferedReader(new FileReader(filePath));
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+
             String line = null;
 
             while ((line = br.readLine()) != null) {

@@ -135,19 +135,24 @@ public class ProjectService {
      */
     public String createProject(String path, Integer type, String projectName, Long teamSeq) {
 
+        String teamFile = createDir(path,String.valueOf(teamSeq));
+
+        if (teamFile.equals("2")) {
+            return "이미 폴더가 존재합니다";
+        }
+
         String fileTitle = projectName;
 
         if (type == 2) {
 
             ProcessBuilder djangoStarter = new ProcessBuilder();
             djangoStarter.command("django-admin", "startproject", fileTitle);
-            djangoStarter.directory(new File(path));
+            djangoStarter.directory(new File(teamFile));
 
             try {
                 Process p = djangoStarter.start();
                 p.waitFor();
             } catch (IOException e) {
-                out.println(e.getMessage());
                 return e.getMessage();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -155,16 +160,16 @@ public class ProjectService {
 
             }
 
-            String newPath = path + fileTitle + "/" +fileTitle + "/" + "settings.py";
+            String newPath = teamFile + "/" + fileTitle + "/" +fileTitle + "/" + "settings.py";
             String change = changeSetting(newPath);
 
 //            saveFilesInDIr(path,teamSeq);
             return "1";
         } else if (type == 1) {
-            String pjt = createDir(path,fileTitle);
+            String pjt = createDir(teamFile,fileTitle);
             if (pjt.equals("2")) {
 //                saveFilesInDIr(path,teamSeq);
-                return "2";
+                return "이미 폴더가 존재합니다";
             }
 
             File file = new File(pjt + "/" + fileTitle +".py");
@@ -173,15 +178,15 @@ public class ProjectService {
 //                    saveFilesInDIr(path,teamSeq);
                     return "1";
                 } else {
-                    return "2";
+                    return "이미 파일이 존재합니다";
                 }
             } catch (IOException e) {
                 return e.getMessage();
             }
         } else if (type == 3) {
-            String pjt = createDir(path,fileTitle);
+            String pjt = createDir(teamFile,fileTitle);
             if (pjt.equals("2")) {
-                return "2";
+                return "이미 폴더가 존재합니다";
             }
             File file = new File(pjt + "/main.py");
 
@@ -190,15 +195,14 @@ public class ProjectService {
             try (FileWriter overWriteFile = new FileWriter(file, false);) {
                 overWriteFile.write(content);
             } catch (IOException e) {
-                out.println("here!!!!!!!!!!!");
                 return e.getMessage();
             }
 //            saveFilesInDIr(path,teamSeq);
             return "1";
         } else if (type == 4) {
-            String pjt = createDir(path,fileTitle);
+            String pjt = createDir(teamFile,fileTitle);
             if (pjt.equals("2")) {
-                return "2";
+                return "이미 폴더가 존재합니다";
             }
             String pjt1 = createDir(pjt,fileTitle);
             File file = new File(pjt1 + "/main.py");
@@ -211,8 +215,7 @@ public class ProjectService {
 //            saveFilesInDIr(path,teamSeq);
             return "1";
         }
-        out.println("여기서 걸림");
-        return "2";
+        return "프로젝트 생성에 실패했습니다";
     }
 
     public String deleteProject(List<Long> teamSeqs){

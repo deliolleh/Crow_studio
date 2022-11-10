@@ -4,8 +4,7 @@ import com.example.goldencrow.file.Service.ProjectService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
 import com.example.goldencrow.user.entity.UserEntity;
-import com.example.goldencrow.user.repository.UserRepository;
-import com.google.cloud.storage.Acl;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +13,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class GitService {
 
-    private ProjectService projectService;
+    private final ProjectService projectService;
 
+    private ProcessBuilder command;
     @Autowired
     private TeamRepository teamRepository;
 
@@ -202,8 +203,18 @@ public class GitService {
         ProcessBuilder command = new ProcessBuilder("git","commit","-m",message);
         command.directory(new File(gitPath));
 
+
         try {
-            command.start().waitFor();
+            Process p = command.start();
+            String forPrint;
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+            System.out.println(br.readLine());
+            while ((forPrint = br.readLine()) != null) {
+                System.out.println(forPrint);
+            }
+            p.waitFor();
         } catch (IOException e) {
             return e.getMessage();
         } catch (InterruptedException e) {
@@ -229,28 +240,32 @@ public class GitService {
             return check;
         }
 
-        ProcessBuilder command = new ProcessBuilder("/bin/sh","-c","git push origin " + branchName,"|",email,"|",pass);
+        String gitUrl = getRemoteUrl(gitPath);
+        if (!gitUrl.contains("https")) {
+            return "url 설정에 실패했습니다.";
+        }
+
+        String newGitUrl = newRemoteUrl(gitUrl,email,pass);
+
+        boolean setNew = setNewUrl(newGitUrl,gitPath);
+
+        if (!setNew) {
+            return "새로운 url 설정에 실패했습니다.";
+        }
+
+        ProcessBuilder command = new ProcessBuilder("git","push","origin",branchName);
         command.directory(new File(gitPath));
-        String[] cosa = {"/bin/sh","-c","git push origin " + branchName};
+
         try {
-            System.out.println("여기야 여기");
-            System.out.println(cosa);
-            Process p = Runtime.getRuntime().exec(cosa);
-            String forPrint;
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            p.waitFor();
-            System.out.println(br.readLine());
-            while ((forPrint = br.readLine()) != null) {
-                System.out.println(forPrint);
-                System.out.println(br);
-            }
-
+            command.start();
         } catch (IOException e) {
             return e.getMessage();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return e.getMessage();
+        }
+
+        boolean returnOld = setNewUrl(gitUrl,gitPath);
+
+        if (!returnOld) {
+            return "url 재설정에 실패했습니다.";
         }
 
 //        UserEntity user = userRepository.findByUserSeq(userSeq);
@@ -330,4 +345,63 @@ public class GitService {
         }
         return branches;
     }
+
+    public String getRemoteUrl (String gitPath) {
+        command = new ProcessBuilder("git","remote","-vv");
+        command.directory(new File(gitPath));
+        String returnUrl = null;
+
+        try {
+            Process p = command.start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String reader = null;
+
+            while ((reader = br.readLine()) != null) {
+                returnUrl = reader;
+                System.out.println(returnUrl);
+            }
+        } catch (IOException e) {
+            return e.getMessage();
+        }
+
+        if (returnUrl == null) {
+            return "failed";
+        } else {
+            returnUrl = returnUrl.replace("origin","");
+            returnUrl = returnUrl.replace("(push)","");
+            returnUrl = returnUrl.trim();
+            System.out.println(returnUrl);
+            return returnUrl;
+        }
+
+    }
+
+    public String newRemoteUrl (String basicPath, String email, String pass) {
+        String id = "";
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < email.length(); i++) {
+            if (String.valueOf(email.charAt(i)).equals("@")) {
+                break;
+            }
+            sb.append(String.valueOf(email.charAt(i)));
+        }
+        id = sb.toString();
+        System.out.println(id);
+        String returnPath = basicPath.replace("https://",String.format("https://%s:%s@",id,pass));
+        return returnPath;
+    }
+
+    public Boolean setNewUrl(String newUrl, String gitPath) {
+        command.command("git","remote","set-url","origin",newUrl);
+        command.directory(new File(gitPath));
+
+        try {
+            command.start();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
 }
