@@ -76,20 +76,19 @@ public class TeamController {
     // create
     @PostMapping("/create")
     public ResponseEntity<Map<String, Long>> teamCreatePost(@RequestHeader("Authorization") String jwt,
-                                                            @RequestParam Integer type,
                                                             @RequestBody Map<String, String> req) {
 
         // 타입이랑
-        // 맵 안의 팀네임 프로젝트네임 필요함
+        // 맵 안의 팀네임 프로젝트네임 타입 필요함
 
         // 로그에 내용이 찍히는 400 or 409 : 프로젝트 생성에서 문제가 있었음
         // 내용이 안찍히는 400 or 409 : 팀 생성에서 문제가 있었음
 
-        if(req.get("teamName")==null||req.get("projectName")==null) {
+        if(req.get("teamName")==null||req.get("projectName")==null||req.get("projectType")==null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
-        Map<String, Long> res = teamService.teamCreate(jwt, type, req);
+        Map<String, Long> res = teamService.teamCreate(jwt, req);
 
         if(res==null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
