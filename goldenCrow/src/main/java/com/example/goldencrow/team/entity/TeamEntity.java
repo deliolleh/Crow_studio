@@ -28,13 +28,15 @@ public class TeamEntity {
     @Column
     private String teamGit;
 
+    @Column (name = "teamType")
+    private Integer type;
+
     public TeamEntity() {
     }
 
-    public TeamEntity(UserEntity userEntity, String teamName) {
+    public TeamEntity(UserEntity userEntity, String teamName, Integer type) {
         this.teamLeader = userEntity;
         this.teamName = teamName;
-
-        // User들은 서비스에서 등록하자~
+        this.type = type;
     }
 }
