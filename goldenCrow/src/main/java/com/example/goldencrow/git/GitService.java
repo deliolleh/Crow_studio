@@ -5,6 +5,7 @@ import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
 import com.example.goldencrow.user.entity.UserEntity;
 
+import com.example.goldencrow.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +27,21 @@ public class GitService {
     @Autowired
     private TeamRepository teamRepository;
 
-    public GitService(ProjectService projectService) {
+    @Autowired
+    private UserRepository userRepository;
+
+    public GitService(ProjectService projectService, UserRepository userRepository) {
         this.projectService = projectService;
+        this.userRepository = userRepository;
+    }
+
+    public List<String> getGitInfo (Long userSeq) {
+        List<String> gitInfo = new ArrayList<>();
+        String email = userRepository.getReferenceById(userSeq).getUserGitUsername();
+        String token = userRepository.getReferenceById(userSeq).getUserGitToken();
+        gitInfo.add(email);
+        gitInfo.add(token);
+        return gitInfo;
     }
 
     /**
@@ -234,7 +248,7 @@ public class GitService {
      * @param filePath
      * @return
      */
-    public String gitPush(String branchName, String message, String gitPath, String filePath, Long userSeq, String email, String pass) {
+    public String gitPush(String branchName, String message, String gitPath, String filePath, Long userSeq) {
         String check = gitCommit(message,gitPath,filePath);
         if (!check.equals("Success")) {
             return check;
@@ -244,6 +258,10 @@ public class GitService {
         if (!gitUrl.contains("https")) {
             return "url 설정에 실패했습니다.";
         }
+
+        List<String> gitInfo = getGitInfo(userSeq);
+        String email = gitInfo.get(0);
+        String pass = gitInfo.get(1);
 
         String newGitUrl = newRemoteUrl(gitUrl,email,pass);
 
@@ -450,8 +468,12 @@ public class GitService {
         return "Success";
     }
 
-    public String gitPull(String gitPath, String email, String pass, String brachName) {
+    public String gitPull(String gitPath, Long userSeq, String brachName) {
         String gitUrl = getRemoteUrl(gitPath);
+
+        List<String> gitInfo = getGitInfo(userSeq);
+        String email = gitInfo.get(0);
+        String pass = gitInfo.get(1);
 
         String check = setUrl(gitPath,email,pass);
 

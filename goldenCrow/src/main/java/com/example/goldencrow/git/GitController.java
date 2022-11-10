@@ -68,9 +68,8 @@ public class GitController {
         String gitPath = gitFile.get("gitPath");
         String filePath = gitFile.get("filePath");
         String branchName = gitFile.get("branchName");
-        String email = gitFile.get("email");
-        String pass = gitFile.get("pass");
-        String pushCheck = gitService.gitPush(branchName,message,gitPath,filePath,userSeq,email,pass);
+
+        String pushCheck = gitService.gitPush(branchName,message,gitPath,filePath,userSeq);
 
         return new ResponseEntity<>(pushCheck, HttpStatus.OK);
     }
@@ -85,13 +84,13 @@ public class GitController {
         }
     }
 
-    @PostMapping("/git-pull")
-    public ResponseEntity<String> gitPull(@RequestHeader("Authorization") String jwt, @RequestBody Map<String,String> gitInfo) {
+    @PostMapping("/{userSeq}/git-pull")
+    public ResponseEntity<String> gitPull(@RequestHeader("Authorization") String jwt,@PathVariable Long userSeq, @RequestBody Map<String,String> gitInfo) {
         String gitPath = gitInfo.get("gitPath");
         String email = gitInfo.get("email");
         String pass = gitInfo.get("pass");
         String branchName = gitInfo.get("branchName");
-        String result = gitService.gitPull(gitPath,email,pass,branchName);
+        String result = gitService.gitPull(gitPath,userSeq,branchName);
 
         if (result.equals("성공")) {
             return new ResponseEntity<>("깃 풀 성공!", HttpStatus.OK);
