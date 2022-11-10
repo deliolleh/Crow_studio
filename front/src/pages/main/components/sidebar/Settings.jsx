@@ -1,7 +1,7 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components";
-import { Menu, Transition } from '@headlessui/react';
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import { Combobox, Transition, Switch } from '@headlessui/react';
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
 // styled
 const SettingsContainer = styled.div`
@@ -9,12 +9,36 @@ const SettingsContainer = styled.div`
   height: 100vh;
 `;
 
-// dropdown func
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
+// Combobox items
+const fonts = [
+  { id: 1, name: 'JetBrains Mono' },  // defaulf
+  { id: 2, name: 'Monospace' }, // 
+  { id: 3, name: 'IBM Plex Sans' },
+  { id: 5, name: 'Inter' },
+  { id: 6, name: 'Courier' },
+  // <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+  // <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  // <link rel="stylesheet" href="https://use.typekit.net/eqy3ulj.css">
+]
 
 const Settings = () => {
+  // 폰트 셀렉트 Combobox
+  const [selected, setSelected] = useState(fonts[0])
+  const [query, setQuery] = useState('')
+
+  const filteredFonts =
+    query === ''
+      ? fonts
+      : fonts.filter((font) =>
+          font.name
+            .toLowerCase()
+            .replace(/\s+/g, '')
+            .includes(query.toLowerCase().replace(/\s+/g, ''))
+        )
+    
+  // 자동 줄바꿈 switch
+  const [enabled, setEnabled] = useState(false)
+
   return (
     <>
       <SettingsContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
@@ -26,85 +50,202 @@ const Settings = () => {
         <hr className="bg-component_dark border-0 m-0" style={{ height: 3 }} />
         <div className="" style={{ padding: 15 }}>
           <div className="pl-1">
+            <label className="block text-primary_dark text-sm font-bold mb-2" htmlFor="editorFontSize">
+              에디터 폰트 크기
+            </label>
+            <input className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark" style={{ height: 28, width: 217 }} id="editorFontSize" type="text" placeholder="Editor Font Size" />
+          </div>
+          <div className="pl-1 mt-5">
             <div className="text-primary_dark text-sm font-bold ">
-              폰트 사이즈
+              에디터 폰트
             </div>
-            {/* dropdown */}
-            <Menu as="div" className="relative inline-block text-left mt-2">
-              <div>
-                <Menu.Button className="flex justify-between items-center rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left shadow-sm hover:bg-point_purple_op20 active:outline-none active:ring-2 active:ring-point_purple" style={{ height: 26, width: 217 }}>
-                  보통
-                  <ChevronDownIcon className="-mr-1 ml-2 h1.5 w-2.5" aria-hidden="true" />
-                </Menu.Button>
+            {/* headless ui combobox */}
+            <Combobox value={selected} onChange={setSelected}>
+              <div className="relative mt-1">
+                <div 
+                // className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"
+                className="flex justify-between items-center rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left shadow-sm hover:bg-point_purple_op20 active:outline-none active:ring-2 active:ring-point_purple" style={{ height: 26, width: 217 }}>
+                  <Combobox.Input
+                    className="border-none pr-4 py-1 text-xs font-medium text-white bg-transparent 
+                    focus:outline-none focus:border-none focus:ring-0"
+                    displayValue={(font) => font.name}
+                    onChange={(event) => setQuery(event.target.value)}
+                  />
+                  <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                    <ChevronUpDownIcon
+                      className="h-5 w-5 text-gray-400"
+                      aria-hidden="true"
+                    />
+                  </Combobox.Button>
+                </div>
+                <Transition
+                  as={Fragment}
+                  leave="transition ease-in duration-100"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                  afterLeave={() => setQuery('')}
+                >
+                  <Combobox.Options
+                  // className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg focus:outline-none sm:text-sm"
+                  className="absolute left-0 z-10 mt-0.5 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" style={{ height: 130, width: 217 }}
+                  >
+                    {filteredFonts.length === 0 && query !== '' ? (
+                      <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                        Nothing found.
+                      </div>
+                    ) : (
+                      filteredFonts.map((font) => (
+                        <Combobox.Option
+                          key={font.id}
+                          className={({ active }) =>
+                            `relative cursor-default select-none py-1 text-xs pl-10 pr-4 hover:bg-point_purple_op20 rounded-md ${
+                              active ? 'bg-point_purple_op20 text-white' : 'text-white'
+                            }`
+                          }
+                          value={font}
+                          style={{ height: 26, display: "flex", alignItems: "center" }}
+                        >
+                          {({ selected, active }) => (
+                            <>
+                              <span
+                                className={`block truncate ${
+                                  selected ? 'font-medium' : 'font-normal'
+                                }`}
+                              >
+                                {font.name}
+                              </span>
+                              {selected ? (
+                                <span
+                                  className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                    active ? 'bg-point_purple_op20 text-point_purple' : 'text-white'
+                                  }`}
+                                >
+                                  <CheckIcon className="h-5 w-5 text-point_purple" aria-hidden="true" />
+                                </span>
+                              ) : null}
+                            </>
+                          )}
+                        </Combobox.Option>
+                      ))
+                    )}
+                  </Combobox.Options>
+                </Transition>
               </div>
-
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute left-0 z-10 mt-0.5 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" style={{ height: 104, width: 217 }}>
-                  <div className="py-1">
-                    <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active ? 'bg-point_purple_op20 text-white' : 'text-white',
-                            'block px-4 py-1 text-xs'
-                          )}
+            </Combobox>
+          </div>
+          <div className="pl-1 mt-5">
+            <label className="block text-primary_dark text-sm font-bold mb-2" htmlFor="editorIndent">
+              에디터 들여쓰기
+            </label>
+            <input className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark" style={{ height: 28, width: 217 }} id="editorIndent" type="text" placeholder="Editor Indent" />
+          </div>
+          <div className="pl-1 mt-5 flex items-center">
+            <div className="text-primary_dark text-sm font-bold ">
+              에디터 자동 줄바꿈
+            </div>
+            <Switch
+              checked={enabled}
+              onChange={setEnabled}
+              className={`${enabled ? 'bg-point_purple' : 'bg-component_item_bg_+2_dark'}
+                relative inline-flex h-[26px] w-[46px] ml-[68px] text-right shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+            >
+              <span className="sr-only">Use setting</span>
+              <span
+                aria-hidden="true"
+                className={`${enabled ? 'translate-x-[20px]' : 'translate-x-[0.5px]'}
+                  pointer-events-none inline-block h-[22px] w-[22px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+              />
+            </Switch>
+          </div>
+          <div className="pl-1 mt-5">
+            <label className="block text-primary_dark text-sm font-bold mb-2" htmlFor="consoleFontSize">
+              콘솔 폰트 크기
+            </label>
+            <input className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark" style={{ height: 28, width: 217 }} id="consoleFontSize" type="text" placeholder="Console Font Size" />
+          </div>
+          <div className="pl-1 mt-5">
+          <div className="text-primary_dark text-sm font-bold ">
+              콘솔 폰트
+            </div>
+            {/* headless ui combobox */}
+            <Combobox value={selected} onChange={setSelected}>
+              <div className="relative mt-1">
+                <div 
+                // className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"
+                className="flex justify-between items-center rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left shadow-sm hover:bg-point_purple_op20 active:outline-none active:ring-2 active:ring-point_purple" style={{ height: 26, width: 217 }}>
+                  <Combobox.Input
+                    className="border-none pr-4 py-1 text-xs font-medium text-white bg-transparent 
+                    focus:outline-none focus:border-none focus:ring-0"
+                    displayValue={(font) => font.name}
+                    onChange={(event) => setQuery(event.target.value)}
+                  />
+                  <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                    <ChevronUpDownIcon
+                      className="h-5 w-5 text-gray-400"
+                      aria-hidden="true"
+                    />
+                  </Combobox.Button>
+                </div>
+                <Transition
+                  as={Fragment}
+                  leave="transition ease-in duration-100"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                  afterLeave={() => setQuery('')}
+                >
+                  <Combobox.Options
+                  // className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg focus:outline-none sm:text-sm"
+                  className="absolute left-0 z-10 mt-0.5 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" style={{ height: 130, width: 217 }}
+                  >
+                    {filteredFonts.length === 0 && query !== '' ? (
+                      <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                        Nothing found.
+                      </div>
+                    ) : (
+                      filteredFonts.map((font) => (
+                        <Combobox.Option
+                          key={font.id}
+                          className={({ active }) =>
+                            `relative cursor-default select-none py-1 text-xs pl-10 pr-4 hover:bg-point_purple_op20 rounded-md ${
+                              active ? 'bg-point_purple_op20 text-white' : 'text-white'
+                            }`
+                          }
+                          value={font}
+                          style={{ height: 26, display: "flex", alignItems: "center" }}
                         >
-                          작게
-                        </a>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active ? 'bg-point_purple_op20 text-white' : 'text-white',
-                            'block px-4 py-1 text-xs'
+                          {({ selected, active }) => (
+                            <>
+                              <span
+                                className={`block truncate ${
+                                  selected ? 'font-medium' : 'font-normal'
+                                }`}
+                              >
+                                {font.name}
+                              </span>
+                              {selected ? (
+                                <span
+                                  className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                    active ? 'bg-point_purple_op20 text-point_purple' : 'text-white'
+                                  }`}
+                                >
+                                  <CheckIcon className="h-5 w-5 text-point_purple" aria-hidden="true" />
+                                </span>
+                              ) : null}
+                            </>
                           )}
-                        >
-                          보통
-                        </a>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active ? 'bg-point_purple_op20 text-white' : 'text-white',
-                            'block px-4 py-1 text-xs'
-                          )}
-                        >
-                          크게
-                        </a>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active ? 'bg-point_purple_op20 text-white' : 'text-white',
-                            'block px-4 py-1 text-xs'
-                          )}
-                        >
-                          매우 크게
-                        </a>
-                      )}
-                    </Menu.Item>
-                  </div>
-                </Menu.Items>
-              </Transition>
-            </Menu>
+                        </Combobox.Option>
+                      ))
+                    )}
+                  </Combobox.Options>
+                </Transition>
+              </div>
+            </Combobox>
+          </div>
+          <div className="pl-1 mt-5">
+          <label className="block text-primary_dark text-sm font-bold mb-2" htmlFor="consoleIcon">
+              콘솔 아이콘
+            </label>
+            <input className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark" style={{ height: 28, width: 217 }} id="consoleIcon" type="text" placeholder="Console Icon" />
           </div>
         </div>
       </SettingsContainer>

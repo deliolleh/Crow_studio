@@ -100,6 +100,7 @@ export const MakeEditorData = (
             value={value}
             onChange={() => setValue(() => editorRef.current.getValue())}
             onMount={(editor) => (editorRef.current = editor)}
+            // onChange={{}}
             options={{
               scrollBeyondLastLine: false,
               fontSize: "14px",
