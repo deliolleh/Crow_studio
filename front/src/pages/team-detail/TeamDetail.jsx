@@ -74,8 +74,9 @@ const TeamDetail = () => {
     alert("가지마");
   };
 
+  const openSearchInputHandler = () => setIsSearch(true);
+  const closeSearchInputHandler = () => setIsSearch(false);
   const searchUserChangeHandler = (e) => setSearchUserName(e.target.value);
-
   const submitSearchUserHandler = (e) => {
     e.preventDefault();
     const searchData = JSON.stringify({ searchWord: searchUserName });
@@ -89,7 +90,6 @@ const TeamDetail = () => {
   };
 
   const addUserHandler = (addUserSeq, addUserName) => {
-    console.log("addUserSeq:", addUserSeq);
     if (!window.confirm(`${addUserName}님을 팀원으로 추가할까요?`)) {
       return;
     }
@@ -130,9 +130,8 @@ const TeamDetail = () => {
       .catch(console.error);
   };
 
-  const openSearchInputHandler = () => setIsSearch(true);
-  const closeSearchInputHandler = () => setIsSearch(false);
-
+  const openModifyHandler = () => setIsModify(true);
+  const closeModifyHandler = () => setIsModify(false);
   const submitTeamNameModifyHandler = (modifiedTeamName) => {
     dispatch(modifyTeamName({ teamName: modifiedTeamName, teamSeq }))
       .unwrap()
@@ -144,8 +143,6 @@ const TeamDetail = () => {
       })
       .catch(console.error);
   };
-  const openModifyHandler = () => setIsModify(true);
-  const closeModifyHandler = () => setIsModify(false);
 
   return (
     <div>
@@ -212,12 +209,12 @@ const TeamDetail = () => {
 
               {/* isSearch가 아니면 + 버튼, isSearch이면 유저 검색 입력창 나옴 */}
               {!isSearch ? (
-                <div
+                <button
                   className="text-white text-sm cursor-pointer"
                   onClick={openSearchInputHandler}
                 >
                   ➕
-                </div>
+                </button>
               ) : (
                 <div className="flex gap-1">
                   <div>유저검색</div>
