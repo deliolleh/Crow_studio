@@ -14,6 +14,7 @@ import { searchUser } from "../../redux/userSlice";
 import Header from "../../components/Header";
 import TeamNameModifyInput from "./components/TeamNameModifyInput";
 import Member from "./components/Member";
+import TeamName from "./components/TeamName";
 import TeamListButton from "./components/TeamListButton";
 import RedButton from "./components/RedButton";
 
@@ -31,6 +32,8 @@ const TeamDetail = () => {
     memberDtoList: members,
   } = team;
 
+  const [isLeader, setIsLeader] = useState(false);
+
   const [isModify, setIsModify] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
 
@@ -46,7 +49,8 @@ const TeamDetail = () => {
         console.log("res:", res);
       })
       .catch(console.error);
-  }, [dispatch, teamSeq]);
+    setIsLeader(teamLeaderSeq === mySeq);
+  }, [dispatch, teamSeq, teamLeaderSeq, mySeq]);
 
   const goTeamListHandler = () => navigate("/teams");
 
@@ -151,15 +155,7 @@ const TeamDetail = () => {
         <div className="flex justify-between">
           {/* isModify가 아니면 팀 이름, isModify이면 팀 이름 변경 input 나옴 */}
           {!isModify ? (
-            <h1 className="text-white text-xl font-bold">
-              {teamName}
-              <span
-                className="text-sm cursor-pointer"
-                onClick={openModifyHandler}
-              >
-                ✏
-              </span>
-            </h1>
+            <TeamName onOpenModify={openModifyHandler}>{teamName}</TeamName>
           ) : (
             <TeamNameModifyInput
               originTeamName={teamName}
@@ -174,11 +170,9 @@ const TeamDetail = () => {
             <TeamListButton onClick={goTeamListHandler}>팀 목록</TeamListButton>
             {/* 팀장이면 팀 삭제 버튼, 팀원이면 팀 탈퇴 버튼 */}
             <RedButton
-              onClick={
-                teamLeaderSeq === mySeq ? deleteTeamHandler : resignTeamHandler
-              }
+              onClick={isLeader ? deleteTeamHandler : resignTeamHandler}
             >
-              {teamLeaderSeq === mySeq ? "팀 삭제" : "팀 탈퇴"}
+              {isLeader ? "팀 삭제" : "팀 탈퇴"}
             </RedButton>
           </div>
         </div>
@@ -191,10 +185,11 @@ const TeamDetail = () => {
           <div className="w-48 text-white font-bold bg-point_purple h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
             팀장
           </div>
-          <div className="flex flex-col gap-2 items-center p-2">
-            {/* <div className="bg-point_light_yellow w-11 h-11 rounded-full"></div> */}
-            <div className="text-white text-sm">{teamLeaderNickname}</div>
-          </div>
+          <Member
+            isLeader={true}
+            teamLeaderNickname={teamLeaderNickname}
+            onDelete={deleteMemberHandler}
+          />
         </div>
 
         {/* 팀원 */}
@@ -206,6 +201,7 @@ const TeamDetail = () => {
             {members?.map((member) => (
               <Member
                 key={`m${member.memberSeq}`}
+                isLeader={false}
                 member={member}
                 onDelete={deleteMemberHandler}
               />
