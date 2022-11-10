@@ -165,9 +165,7 @@ const Main = () => {
   const [editor2Tabs, setEditor2Tabs] = useState(
     MakeEditorData(2, "Editor Tab")
   );
-  const [consoleTabs, setConsoleTabs] = useState(
-    MakeConsoleData(1, "Console Tab")
-  );
+  const [consoleTabs, setConsoleTabs] = useState(MakeConsoleData(1, "Console"));
 
   // Editor 1
   const closableEditor1TabItems = useMemo(() => {
