@@ -5,10 +5,11 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { useLoading } from "@rest-hooks/hooks";
 import styled from "styled-components";
-import { ResizeObserver } from "@juggle/resize-observer";
 import SplitPane from "react-split-pane";
+import { useSelector } from "react-redux";
+import { useLoading } from "@rest-hooks/hooks";
+import { ResizeObserver } from "@juggle/resize-observer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Tab, Panel, helpers, ExtraButton } from "@react-tabtab-next/tabtab";
 
@@ -23,6 +24,9 @@ import VariableName from "./components/sidebar/VariableName";
 import Settings from "./components/sidebar/Settings";
 import CustomTabs from "./components/tabs/CustomTabs";
 import CustomTabs2 from "./components/tabs/CustomTabs2";
+
+// api
+import projectApi from "../../api/projectApi";
 
 // tabtab dummy data
 import {
@@ -49,18 +53,26 @@ const elements = [
 ];
 
 const Main = () => {
+  // const teamSeq = useSelector((state) => state.team.value.teamSeq);
+  const teamSeq = 4;
+  useEffect(() => {
+    projectApi.directoryList(teamSeq).then((res) => {
+      console.log(res.data);
+    });
+  });
+
   // save-env state
   // horizontal split 상단 높이 비율
   // https://www.kindacode.com/article/react-get-the-width-height-of-a-dynamic-element/ 참고 중
 
-  const horEl = document.getElementsByClassName('horizontal Pane1')[0];
-  const verEl = document.getElementsByClassName('vertical Pane1')[0];
+  const horEl = document.getElementsByClassName("horizontal Pane1")[0];
+  const verEl = document.getElementsByClassName("vertical Pane1")[0];
 
   // ResizeObserver
-  const ro = new ResizeObserver(entries => {
+  const ro = new ResizeObserver((entries) => {
     for (let entry of entries) {
       const cr = entry.contentRect;
-      console.log('Element:', entry.target);
+      console.log("Element:", entry.target);
       console.log(`Element size: ${cr.width}px x ${cr.height}px`);
       console.log(`Element padding: ${cr.top}px ; ${cr.left}px`);
     }
@@ -68,7 +80,7 @@ const Main = () => {
   });
 
   const horRef = useRef();
-  
+
   const [horizontalSplit, setHorizontalSplit] = useState("75%");
   // const changeHorizontalSplitHandler = (x) => {
   //   setHorizontalSplit(x);
@@ -104,20 +116,19 @@ const Main = () => {
   // Update 'width' and 'height' when the window resizes
   useEffect(() => {
     window.addEventListener("resize", [getHorHeightSize, getVerWidthSize]);
-    console.log("리사이즈 이벤트 리스너")
+    console.log("리사이즈 이벤트 리스너");
     // Observe one or multiple elements
     // ro.observe(horEl);
     // ro.observe(verEl);
     return () => {
       // 메모리 누수 방지를 위한 클린업
-      window.removeEventListener("resize", [getHorHeightSize, getVerWidthSize])
-      console.log("이벤트 리스너 지움")
-    }
+      window.removeEventListener("resize", [getHorHeightSize, getVerWidthSize]);
+      console.log("이벤트 리스너 지움");
+    };
   }, [horEl, verEl]);
 
   // 마지막으로 띄운 파일들
   // 마지막으로 띄운 사이드바
-
 
   // sidebar click event
   const [com, setCom] = useState("디렉토리");
@@ -138,7 +149,7 @@ const Main = () => {
     //   "sidebarSizeRef.current.getBoundingClientRect().width: " +
     //   sidebarSizeRef.current.getBoundingClientRect().width
     //   );
-    }, [sidebarSize]);
+  }, [sidebarSize]);
 
   // Beautiful-dnd
   // simple ver.
