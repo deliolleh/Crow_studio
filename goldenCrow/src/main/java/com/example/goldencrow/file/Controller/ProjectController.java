@@ -38,13 +38,8 @@ public class ProjectController {
     public ResponseEntity<String> teamProjectCreate(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> projectName) {
         String pjt = projectName.get("projectName");
         String baseUrl = "/home/ubuntu/crow_data";
-        String newBaseUrl = baseUrl + "/" + String.valueOf(teamSeq)+"/";
-        File newDir = new File(newBaseUrl);
 
-        if (!newDir.mkdirs()) {
-            return new ResponseEntity<>("이미 프로젝트가 존재합니다.", HttpStatus.NOT_ACCEPTABLE);
-        }
-        String check = projectService.createProject(newBaseUrl, type, pjt, teamSeq);
+        String check = projectService.createProject(baseUrl, type, pjt, teamSeq);
         if (check.equals("1")) {
             return new ResponseEntity<>("프로젝트 생성 성공했습니다.", HttpStatus.OK);
         } else if (check.equals("2")) {
