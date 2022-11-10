@@ -32,7 +32,8 @@ public class FileController {
 
     @PostMapping("/{teamSeq}")
     public ResponseEntity<String> userFileCreate(@RequestHeader("Authorization") String jwt,@RequestParam Integer type,@PathVariable Long teamSeq, @RequestBody FileCreateDto fileCreateDto) {
-        if (fileService.createFile(fileCreateDto, type, teamSeq)) {
+        Boolean check = fileService.createFile(fileCreateDto, type, teamSeq);
+        if (check) {
             String newFilePath = fileCreateDto.getFilePath()  + "/" + fileCreateDto.getFileTitle();
             return new ResponseEntity<>(newFilePath, HttpStatus.OK);
         } else {
@@ -46,7 +47,8 @@ public class FileController {
      */
     @DeleteMapping("/{teamSeq}")
     public ResponseEntity<String> userFileDelete(@RequestHeader("Authorization") String jwt,@PathVariable Long teamSeq, @RequestParam Integer type,@RequestBody HashMap<String, String> filePath) {
-        if (fileService.deleteFile(filePath.get(stringPath), type,teamSeq)) {
+        boolean check = fileService.deleteFile(filePath.get(stringPath), type,teamSeq);
+        if (check) {
             return new ResponseEntity<>("파일 삭제를 성공했습니다.", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("파일 삭제를 실패했습니다.", HttpStatus.BAD_REQUEST);
@@ -58,10 +60,10 @@ public class FileController {
      * @param filePath
      * @return
      */
-    @PutMapping("/{fileTitle}")
-    public ResponseEntity<String> fileNameUpdate(@PathVariable String fileTitle, @RequestBody HashMap<String, String> filePath) {
+    @PutMapping("/file-title")
+    public ResponseEntity<String> fileNameUpdate(@RequestBody HashMap<String, String> filePath) {
         String path = filePath.get(stringPath);
-        String title = fileTitle;
+        String title = filePath.get("fileTitle");
         String oldFileName = filePath.get("oldFileName");
 
         boolean result = fileService.updateFileName(path,title,oldFileName);
