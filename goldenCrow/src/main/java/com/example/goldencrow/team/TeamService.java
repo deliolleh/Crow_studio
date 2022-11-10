@@ -150,10 +150,24 @@ public class TeamService {
     }
 
     // 팀 생성
-    public Map<String, Long> teamCreate(String jwt, Integer type, Map<String, String> req) {
+    public Map<String, Long> teamCreate(String jwt, Map<String, String> req) {
 
         String teamName = req.get("teamName");
         String projectName = req.get("projectName");
+        String projectType = req.get("projectType");
+        Integer type;
+
+        if(projectType.equals("pure Python")) {
+            type = 1;
+        } else if(projectType.equals("Django")){
+            type = 2;
+        } else if(projectType.equals("Flask")) {
+            type = 3;
+        } else if(projectType.equals("FastAPI")) {
+            type = 4;
+        } else {
+            return null;
+        }
 
         Map<String, Long> res = new HashMap<>();
 
