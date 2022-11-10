@@ -6,11 +6,14 @@ import { createTeam } from "../../redux/teamSlice";
 
 import Header from "../../components/Header";
 
-const initialInputState = { teamName: "", projectName: "", templateName: "" };
+const initialInputState = {
+  teamName: "",
+  projectType: "2",
+  projectName: "",
+};
 const initialErrorState = {
   teamNameErrMsg: "",
   projectNameErrMsg: "",
-  templateNameErrMsg: "",
 };
 
 const TeamCreate = () => {
@@ -18,30 +21,26 @@ const TeamCreate = () => {
   const navigate = useNavigate();
   const [inputs, setInputs] = useState(initialInputState);
   const [errorMsgs, setErrorMsgs] = useState(initialErrorState);
-  const { teamName } = inputs;
-  // const { teamName, projectName, templateName } = inputs;
-  const { teamNameErrMsg } = errorMsgs;
-  // const { teamNameErrMsg, projectNameErrMsg, templateNameErrMsg } = errorMsgs;
+  const { teamName, projectType, projectName } = inputs;
+  const { teamNameErrMsg, projectNameErrMsg } = errorMsgs;
 
-  //
   const inputChangeHandler = (e) => {
     if (e.target.name === "teamName") {
       setInputs((prev) => {
         return { ...prev, teamName: e.target.value };
       });
+    } else if (e.target.name === "projectType") {
+      console.log("projectType-e.target.value:", e.target.value);
+      setInputs((prev) => {
+        return { ...prev, projectType: e.target.value };
+      });
+    } else if (e.target.name === "projectName") {
+      setInputs((prev) => {
+        return { ...prev, projectName: e.target.value };
+      });
     }
-    // else if (e.target.name === "projectName") {
-    //   setInputs((prev) => {
-    //     return { ...prev, projectName: e.target.value };
-    //   });
-    // } else if (e.target.name === "templateName") {
-    //   setInputs((prev) => {
-    //     return { ...prev, templateName: e.target.value };
-    //   });
-    // }
   };
 
-  //
   const submitHandler = (e) => {
     e.preventDefault();
 
@@ -91,7 +90,7 @@ const TeamCreate = () => {
           onSubmit={submitHandler}
           className="flex flex-col items-center"
         >
-          {/* Team Name */}
+          {/* 팀 이름 */}
           <div className="w-80 mb-1">
             <label htmlFor="teamName" className="">
               팀 이름
@@ -111,7 +110,47 @@ const TeamCreate = () => {
             </div>
           </div>
 
-          {/* Submit Button */}
+          {/* 프로젝트 종류 */}
+          <div className="w-80 mb-1">
+            <label htmlFor="projectType" className="">
+              프로젝트 종류
+            </label>
+            <select
+              className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
+              id="projectType"
+              name="projectType"
+              value={projectType}
+              onChange={inputChangeHandler}
+            >
+              <option value="1">pure Python</option>
+              <option value="2">Django</option>
+              <option value="3">Flask</option>
+              <option value="4">FastAPI</option>
+            </select>
+            <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink"></div>
+          </div>
+
+          {/* 프로젝트 이름 */}
+          <div className="w-80 mb-1">
+            <label htmlFor="projectName" className="">
+              프로젝트 이름
+            </label>
+            <input
+              type="text"
+              id="projectName"
+              name="projectName"
+              className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
+              placeholder="프로젝트 이름을 입력하세요"
+              required
+              value={teamName}
+              onChange={inputChangeHandler}
+            />
+            <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
+              {teamNameErrMsg}
+            </div>
+          </div>
+
+          {/* 팀 생성 버튼 */}
           <button
             type="submit"
             className="w-80 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition mb-4"
