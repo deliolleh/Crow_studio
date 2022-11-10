@@ -1,26 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-import {
-  getTeam,
-  modifyTeamName,
-  deleteTeam,
-  addMember,
-  deleteMember,
-} from "../../redux/teamSlice";
+import { getTeam, addMember, deleteMember } from "../../redux/teamSlice";
 import { searchUser } from "../../redux/userSlice";
 
 import Header from "../../components/Header";
-import TeamNameModifyInput from "./components/TeamNameModifyInput";
+import TeamDetailHeader from "./components/TeamDetailHeader";
+
 import Member from "./components/Member";
-import TeamName from "./components/TeamName";
-import TeamListButton from "./components/TeamListButton";
-import RedButton from "./components/RedButton";
 
 const TeamDetail = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+
   const { teamSeq } = useParams();
   const { mySeq, myNickname } = useSelector((state) => state.user.value);
 
@@ -34,7 +26,6 @@ const TeamDetail = () => {
 
   const [isLeader, setIsLeader] = useState(false);
 
-  const [isModify, setIsModify] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
 
   const [searchUserName, setSearchUserName] = useState("");
@@ -51,28 +42,6 @@ const TeamDetail = () => {
       .catch(console.error);
     setIsLeader(teamLeaderSeq === mySeq);
   }, [dispatch, teamSeq, teamLeaderSeq, mySeq]);
-
-  const goTeamListHandler = () => navigate("/teams");
-
-  const deleteTeamHandler = () => {
-    if (!window.confirm("정말로 팀을 삭제하시겠습니까?")) {
-      return;
-    }
-    dispatch(deleteTeam(teamSeq))
-      .unwrap()
-      .then(() => {
-        alert("성공적으로 삭제되었습니다");
-        navigate("/teams");
-      })
-      .catch(console.error);
-  };
-
-  const resignTeamHandler = () => {
-    if (!window.confirm("정말로 팀에서 탈퇴하시겠습니까?")) {
-      return;
-    }
-    alert("가지마");
-  };
 
   const openSearchInputHandler = () => setIsSearch(true);
   const closeSearchInputHandler = () => setIsSearch(false);
@@ -130,49 +99,17 @@ const TeamDetail = () => {
       .catch(console.error);
   };
 
-  const openModifyHandler = () => setIsModify(true);
-  const closeModifyHandler = () => setIsModify(false);
-  const submitTeamNameModifyHandler = (modifiedTeamName) => {
-    dispatch(modifyTeamName({ teamName: modifiedTeamName, teamSeq }))
-      .unwrap()
-      .then((res) => {
-        setTeam((prev) => {
-          return { ...prev, teamName: res };
-        });
-        setIsModify(false);
-      })
-      .catch(console.error);
-  };
-
   return (
-    <div>
+    <React.Fragment>
       <Header />
-      <div className="p-8 flex flex-col justify-center border border-primary_-2_dark rounded-md">
-        {/* 팀 이름, 팀 이름 변경, 팀 목록 버튼, 팀 삭제 버튼, 팀 탈퇴 버튼 */}
-        <div className="flex justify-between">
-          {/* isModify가 아니면 팀 이름, isModify이면 팀 이름 변경 input 나옴 */}
-          {!isModify ? (
-            <TeamName onOpenModify={openModifyHandler}>{teamName}</TeamName>
-          ) : (
-            <TeamNameModifyInput
-              originTeamName={teamName}
-              onSubmitModify={submitTeamNameModifyHandler}
-              onCloseModify={closeModifyHandler}
-            />
-          )}
 
-          {/* 팀 목록, 팀 삭제(팀 탈퇴) 버튼 컨테이너 */}
-          <div className="flex gap-2">
-            {/* 팀 목록 버튼 */}
-            <TeamListButton onClick={goTeamListHandler}>팀 목록</TeamListButton>
-            {/* 팀장이면 팀 삭제 버튼, 팀원이면 팀 탈퇴 버튼 */}
-            <RedButton
-              onClick={isLeader ? deleteTeamHandler : resignTeamHandler}
-            >
-              {isLeader ? "팀 삭제" : "팀 탈퇴"}
-            </RedButton>
-          </div>
-        </div>
+      <div className="p-8 flex flex-col justify-center border border-primary_-2_dark rounded-md">
+        <TeamDetailHeader
+          teamName={teamName}
+          isLeader={isLeader}
+          teamSeq={teamSeq}
+          setTeam={setTeam}
+        />
 
         {/* 현재 로그인한 유저 닉네임 */}
         <span className="text-point_light_yellow">{myNickname}</span>
@@ -263,7 +200,7 @@ const TeamDetail = () => {
           </div>
         </div>
       </div>
-    </div>
+    </React.Fragment>
   );
 };
 
