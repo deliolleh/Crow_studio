@@ -28,7 +28,7 @@ public class TeamEntity {
     @Column
     private String teamGit;
 
-    @Column
+    @Column (name = "teamType")
     private Integer type;
 
     public TeamEntity() {
