@@ -150,7 +150,10 @@ public class TeamService {
     }
 
     // 팀 생성
-    public Map<String, Long> teamCreate(String jwt, String teamName, String teamGit) {
+    public Map<String, Long> teamCreate(String jwt, Integer type, Map<String, String> req) {
+
+        String teamName = req.get("teamName");
+        String projectName = req.get("projectName");
 
         Map<String, Long> res = new HashMap<>();
 
@@ -168,7 +171,7 @@ public class TeamService {
             }
 
             // 이 사람을 팀장으로 하는 팀 생성하고 저장
-            TeamEntity teamEntity = new TeamEntity(userEntity, teamName);
+            TeamEntity teamEntity = new TeamEntity(userEntity, teamName, type);
             teamRepository.saveAndFlush(teamEntity);
 
             // 멤버 테이블에도 그 사람을 등록
@@ -176,15 +179,44 @@ public class TeamService {
             MemberEntity memberEntity = new MemberEntity(userEntity, savedTeamEntity);
             memberRepository.saveAndFlush(memberEntity);
 
-            // 성공 여부 반환
-            res.put("result", new Long(200));
-            res.put("teamSeq", savedTeamEntity.getTeamSeq());
-            return res;
+            // 등록한 것에서 시퀀스를 받아옴
+            // 아니... 알아서 오토인크리먼트를 해버려서 시퀀스를 바로 갖다 써도 되는구나...
+            Long teamSeq = savedTeamEntity.getTeamSeq();
+
+            String projectCreateResult = projectService.createProject("/home/ubuntu/crow_data", type, projectName, teamSeq);
+
+            if(projectCreateResult.equals("1")) {
+                // 성공
+                res.put("result", new Long(200));
+                res.put("teamSeq", teamSeq);
+            } else {
+                // 모든 경우의 프로젝트 생성 실패
+
+                // 등록되었던 팀과 멤버를 삭제한다
+                teamRepository.delete(teamEntity);
+                memberRepository.delete(memberEntity);
+                System.out.println(projectCreateResult);
+
+                if(projectCreateResult.equals("프로젝트 생성에 실패했습니다")){
+                    // 아무것도 못함
+                    return null;
+                } else if(projectCreateResult.equals("이미 폴더가 존재합니다")||
+                        projectCreateResult.equals("이미 파일이 존재합니다")) {
+                    // 충돌나서 못만들었음
+                    res.put("result", new Long(409));
+                } else {
+                    // 왜때매 터졌을까...
+                    return null;
+                }
+
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+
+        return res;
 
     }
 
