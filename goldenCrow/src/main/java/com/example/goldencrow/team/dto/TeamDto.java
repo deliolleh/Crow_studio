@@ -46,7 +46,7 @@ public class TeamDto {
                 case(1) : this.projectType = "pure Python"; break;
                 case(2) : this.projectType = "Django"; break;
                 case(3) : this.projectType = "Flask"; break;
-                case(4) : this.projectType = "FastApi"; break;
+                case(4) : this.projectType = "FastAPI"; break;
                 default : this.projectType = "none"; break;
             }
         }
