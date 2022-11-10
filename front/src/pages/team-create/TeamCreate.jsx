@@ -8,7 +8,7 @@ import Header from "../../components/Header";
 
 const initialInputState = {
   teamName: "",
-  projectType: "2",
+  projectType: "1",
   projectName: "",
 };
 const initialErrorState = {
@@ -55,6 +55,12 @@ const TeamCreate = () => {
     if (teamName.trim() === "400" || teamName.trim() === "403") {
       setErrorMsgs((prev) => {
         return { ...prev, teamNameErrMsg: "사용할 수 없는 팀 이름입니다" };
+      });
+      isInvalid = true;
+    }
+    if (projectName.trim().length === 0) {
+      setErrorMsgs((prev) => {
+        return { ...prev, projectNameErrMsg: "프로젝트 이름을 입력하세요" };
       });
       isInvalid = true;
     }
@@ -142,11 +148,11 @@ const TeamCreate = () => {
               className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
               placeholder="프로젝트 이름을 입력하세요"
               required
-              value={teamName}
+              value={projectName}
               onChange={inputChangeHandler}
             />
             <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-              {teamNameErrMsg}
+              {projectNameErrMsg}
             </div>
           </div>
 
