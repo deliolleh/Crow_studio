@@ -12,7 +12,6 @@ import RedButton from "./RedButton";
 const TeamDetailHeader = ({ teamName, isLeader, teamSeq, setTeam }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const [isModify, setIsModify] = useState(false);
 
   const openModifyHandler = () => setIsModify(true);

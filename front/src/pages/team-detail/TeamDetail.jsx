@@ -24,8 +24,6 @@ const TeamDetail = () => {
     memberDtoList: members,
   } = team;
 
-  const [isLeader, setIsLeader] = useState(false);
-
   const [isSearch, setIsSearch] = useState(false);
 
   const [searchUserName, setSearchUserName] = useState("");
@@ -40,8 +38,7 @@ const TeamDetail = () => {
         console.log("res:", res);
       })
       .catch(console.error);
-    setIsLeader(teamLeaderSeq === mySeq);
-  }, [dispatch, teamSeq, teamLeaderSeq, mySeq]);
+  }, [dispatch, teamSeq]);
 
   const openSearchInputHandler = () => setIsSearch(true);
   const closeSearchInputHandler = () => setIsSearch(false);
@@ -106,7 +103,7 @@ const TeamDetail = () => {
       <div className="p-8 flex flex-col justify-center border border-primary_-2_dark rounded-md">
         <TeamDetailHeader
           teamName={teamName}
-          isLeader={isLeader}
+          isLeader={teamLeaderSeq === mySeq}
           teamSeq={teamSeq}
           setTeam={setTeam}
         />
