@@ -346,6 +346,11 @@ public class GitService {
         return branches;
     }
 
+    /**
+     * 현재 연결된 깃의 URL을 받아오는 함수
+     * @param gitPath
+     * @return remoteURL
+     */
     public String getRemoteUrl (String gitPath) {
         command = new ProcessBuilder("git","remote","-vv");
         command.directory(new File(gitPath));
@@ -376,6 +381,13 @@ public class GitService {
 
     }
 
+    /**
+     * 푸쉬를 하기 위한 새로운 Url을 만들어주는 함수(만들기만 하고 세팅하진 않음!)
+     * @param basicPath
+     * @param email
+     * @param pass
+     * @return newUrl
+     */
     public String newRemoteUrl (String basicPath, String email, String pass) {
         String id = "";
         StringBuffer sb = new StringBuffer();
@@ -391,6 +403,12 @@ public class GitService {
         return returnPath;
     }
 
+    /**
+     * push / pull할 새로운 URL 세팅
+     * @param newUrl
+     * @param gitPath
+     * @return
+     */
     public Boolean setNewUrl(String newUrl, String gitPath) {
         command.command("git","remote","set-url","origin",newUrl);
         command.directory(new File(gitPath));
@@ -402,6 +420,57 @@ public class GitService {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 새로운 푸쉬/풀 할 수 있는 gitUrl을 설정해주는 통합 관리 함수
+     * @param gitPath
+     * @param email
+     * @param pass
+     * @return msg
+     */
+    public String setUrl(String gitPath, String email, String pass) {
+        String gitUrl = getRemoteUrl(gitPath);
+        if (gitUrl.equals("failed")) {
+            return "gitUrl을 받아오지 못했습니다.";
+        }
+        String newRemoteUrl = newRemoteUrl(gitUrl,email,pass);
+        Boolean check = setNewUrl(newRemoteUrl,gitPath);
+        if (!check) {
+            return "gitUrl 설정에 실패했습니다";
+        }
+        return "성공";
+    }
+
+    public String reUrl(String oldUrl, String gitPath) {
+        Boolean check = setNewUrl(oldUrl,gitPath);
+        if (!check) {
+            return "fail!";
+        }
+        return "Success";
+    }
+
+    public String gitPull(String gitPath, String email, String pass, String brachName) {
+        String gitUrl = getRemoteUrl(gitPath);
+
+        String check = setUrl(gitPath,email,pass);
+
+        if (!check.equals("성공")) {
+            return check;
+        }
+
+        ProcessBuilder pb = new ProcessBuilder("git","pull","origin",brachName);
+        pb.directory(new File(gitPath));
+
+        try {
+            pb.start();
+        } catch (IOException e) {
+            return e.getMessage();
+        }
+
+        String result = reUrl(gitUrl,gitPath);
+
+        return "성공";
     }
 
 }

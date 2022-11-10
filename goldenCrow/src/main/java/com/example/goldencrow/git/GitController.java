@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/git")
@@ -81,6 +82,21 @@ public class GitController {
             return new ResponseEntity<>(branches,HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(branches,HttpStatus.OK);
+        }
+    }
+
+    @PostMapping("/git-pull")
+    public ResponseEntity<String> gitPull(@RequestHeader("Authorization") String jwt, @RequestBody Map<String,String> gitInfo) {
+        String gitPath = gitInfo.get("gitPath");
+        String email = gitInfo.get("email");
+        String pass = gitInfo.get("pass");
+        String branchName = gitInfo.get("branchName");
+        String result = gitService.gitPull(gitPath,email,pass,branchName);
+
+        if (result.equals("성공")) {
+            return new ResponseEntity<>("깃 풀 성공!", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
     }
 }
