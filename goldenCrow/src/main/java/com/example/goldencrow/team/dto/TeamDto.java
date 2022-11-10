@@ -17,9 +17,9 @@ public class TeamDto {
 
     private String teamGit;
 
-    private List<MemberDto> memberDtoList;
-
     private String projectType;
+
+    private List<MemberDto> memberDtoList;
 
     public TeamDto() {
     }
