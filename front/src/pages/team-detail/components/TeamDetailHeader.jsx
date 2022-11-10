@@ -9,7 +9,7 @@ import TeamNameModifyInput from "./TeamNameModifyInput";
 import TeamListButton from "./TeamListButton";
 import RedButton from "./RedButton";
 
-const TeamDetailHeader = ({ teamName, isLeader, teamSeq, setTeam }) => {
+const TeamDetailHeader = ({ teamName, isLeader, teamSeq, setTeamName }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isModify, setIsModify] = useState(false);
@@ -19,10 +19,8 @@ const TeamDetailHeader = ({ teamName, isLeader, teamSeq, setTeam }) => {
   const submitTeamNameModifyHandler = (modifiedTeamName) => {
     dispatch(modifyTeamName({ teamName: modifiedTeamName, teamSeq }))
       .unwrap()
-      .then((res) => {
-        setTeam((prev) => {
-          return { ...prev, teamName: res };
-        });
+      .then((resTeamName) => {
+        setTeamName(resTeamName);
         setIsModify(false);
       })
       .catch(console.error);

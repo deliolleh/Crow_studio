@@ -40,6 +40,11 @@ const TeamDetail = () => {
       .catch(console.error);
   }, [dispatch, teamSeq]);
 
+  const setTeamNameHandler = (resTeamName) =>
+    setTeam((prev) => {
+      return { ...prev, teamName: resTeamName };
+    });
+
   const openSearchInputHandler = () => setIsSearch(true);
   const closeSearchInputHandler = () => setIsSearch(false);
   const searchUserChangeHandler = (e) => setSearchUserName(e.target.value);
@@ -105,7 +110,7 @@ const TeamDetail = () => {
           teamName={teamName}
           isLeader={teamLeaderSeq === mySeq}
           teamSeq={teamSeq}
-          setTeam={setTeam}
+          setTeamName={setTeamNameHandler}
         />
 
         {/* 현재 로그인한 유저 닉네임 */}
