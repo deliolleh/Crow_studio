@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ForumService {
@@ -21,7 +22,12 @@ public class ForumService {
 
     public String forumCheck(Long userSeq, Long forumSeq) {
         if (forumRepository.findById(forumSeq).isPresent()) {
-            Long writeSeq = forumRepository.findById(forumSeq).get().getUser().getUserSeq();
+            Optional<ForumEntity> write = forumRepository.findById(forumSeq);
+            if (!write.isPresent()) {
+                return "fail";
+            }
+            long writeSeq = write.get().getUser().getUserSeq();
+
             if (userSeq.equals(writeSeq)) {
                 return "success";
             } else {

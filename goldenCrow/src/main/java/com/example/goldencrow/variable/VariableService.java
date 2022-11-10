@@ -95,7 +95,7 @@ public class VariableService {
             JSONObject jsonObject2 = (JSONObject) jsonObject1.get("result");
             response = jsonObject2.get("translatedText").toString();
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         System.out.println(response);

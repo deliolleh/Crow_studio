@@ -27,7 +27,7 @@ public class EditorsController {
      */
     @PostMapping("/format/{language}")
     public ResponseEntity<Map<String, String>> fileFormat(@PathVariable String language,
-                                                          @RequestBody Map<String, String> rawText) {
+                                                          @RequestBody Map<String, String> rawText) throws Exception {
         System.out.println("get text");
         System.out.println(language);
         System.out.println(rawText);

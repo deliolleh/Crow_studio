@@ -17,7 +17,7 @@ public class EditorsService {
     boolean checkOs = System.getProperty("os.name").toLowerCase().contains("window");
     String path = checkOs ? System.getProperty("user.dir") + "\\" : "/home/ubuntu/crow_data/temp/";
 
-    public HashMap<String, String> Formatting(String language, String code) {
+    public HashMap<String, String> Formatting(String language, String code) throws Exception {
         System.out.println("Format Service in");
         long now = new Date().getTime();
         HashMap<String, String> response = new HashMap<>();
@@ -30,20 +30,17 @@ public class EditorsService {
             type = ".txt";
         }
 
-        try {
+        String name = "format" + now + type;
+        // temp.py 파일 생성
+        File file = new File(path + name);
+        System.out.println("파일생성 성공");
 
-            String name = "format" + now + type;
-            // temp.py 파일 생성
-            File file = new File(path + name);
-            System.out.println("파일생성 성공");
-            FileOutputStream ffw = new FileOutputStream(file);
-            PrintWriter writer = new PrintWriter(ffw);
+        try (FileOutputStream ffw = new FileOutputStream(file);
+             PrintWriter writer = new PrintWriter(ffw)) {
+
             // temp.py에 code를 입력
             writer.print(code);
 
-            // FileWriter 닫기(안 하면 오류)
-            writer.flush();
-            writer.close();
 
             // windows cmd를 가리키는 변수
             // 나중에 Ubuntu할 때 맞는 변수로 바꿀 것
@@ -58,12 +55,14 @@ public class EditorsService {
 
             response.put("data", now + "");
 
+        } catch (InterruptedException e) {
+            System.out.println("It is interrupted");
+            Thread.currentThread().interrupt();
+            throw new Exception();
         } catch (Exception e) {
-
             response.put("data", "null");
             System.out.println("문제 발생");
-            e.printStackTrace();
-
+//            e.printStackTrace();
         }
         return response;
 
@@ -82,9 +81,7 @@ public class EditorsService {
 
         String name = path + "format" + fileName + type;
 
-
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(name));
+        try (BufferedReader reader = new BufferedReader(new FileReader(name))) {
             StringBuilder sb = new StringBuilder();
             String str;
             while ((str = reader.readLine()) != null) {
@@ -94,11 +91,10 @@ public class EditorsService {
             }
 
             response.put("data", sb.toString());
-            reader.close();
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             response.put("data", "null");
         }
 
@@ -108,7 +104,7 @@ public class EditorsService {
             System.out.println("Delete file complete");
         } catch (Exception e) {
             System.out.println("Deleting file fail");
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         return response;
@@ -117,11 +113,11 @@ public class EditorsService {
     public HashMap<String, Object> Linting(String language, String code) {
         HashMap<String, Object> result = new HashMap<>();
         if (language.equals("python")) {
-            try {
-                File file = new File(path + "lint.py");
-                System.out.println("lint.py 생성");
-                FileOutputStream lfw = new FileOutputStream(file);
-                PrintWriter writer = new PrintWriter(lfw);
+            File file = new File(path + "lint.py");
+            System.out.println("lint.py 생성");
+
+            try (FileOutputStream lfw = new FileOutputStream(file);
+                 PrintWriter writer = new PrintWriter(lfw)) {
                 // temp.py에 code를 입력
                 writer.print(code);
 
@@ -164,11 +160,11 @@ public class EditorsService {
                         System.out.println("파일이 삭제되지 않았습니다");
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+//                e.printStackTrace();
                 result.put("data", "null");
             }
 
