@@ -43,7 +43,6 @@ const TeamCreate = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-
     let isInvalid = false;
     setErrorMsgs(initialErrorState);
     if (teamName.trim().length === 0) {
@@ -68,9 +67,11 @@ const TeamCreate = () => {
       return;
     }
 
-    const teamNameData = JSON.stringify({ teamName });
+    console.log(teamName, projectType, projectName);
+
+    const teamData = JSON.stringify({ teamName, projectType, projectName });
     setErrorMsgs(initialErrorState);
-    dispatch(createTeam(teamNameData))
+    dispatch(createTeam(teamData))
       .unwrap()
       .then(() => {
         alert("팀 생성 완료");
@@ -78,14 +79,14 @@ const TeamCreate = () => {
       })
       .catch((errorStatusCode) => {
         if (errorStatusCode === 409) {
-          alert("해당 이름으로 생성된 팀이 있습니다");
+          alert("이미 해당 이름으로 생성된 팀이 있습니다");
         } else {
           alert("비상!!");
         }
       });
   };
 
-  const clickTeamListHandler = () => navigate("/teams");
+  const goTeamListHandler = () => navigate("/teams");
 
   return (
     <div>
@@ -166,7 +167,7 @@ const TeamCreate = () => {
           </button>
         </form>
         <button
-          onClick={clickTeamListHandler}
+          onClick={goTeamListHandler}
           className="w-80 px-10 py-2 text-primary_dark bg-component_item_bg_dark border border-primary_-2_dark rounded-md"
         >
           팀 목록
