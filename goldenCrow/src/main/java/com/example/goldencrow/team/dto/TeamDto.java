@@ -39,12 +39,16 @@ public class TeamDto {
             this.teamGit = team.getTeamGit();
         }
 
-        switch (team.getType()){
-            case(1) : this.projectType = "pure Python"; break;
-            case(2) : this.projectType = "Django"; break;
-            case(3) : this.projectType = "Flask"; break;
-            case(4) : this.projectType = "FastApi"; break;
-            default : this.projectType = "none"; break;
+        if(team.getType()==null){
+            this.projectType = "none";
+        } else {
+            switch (team.getType().intValue()){
+                case(1) : this.projectType = "pure Python"; break;
+                case(2) : this.projectType = "Django"; break;
+                case(3) : this.projectType = "Flask"; break;
+                case(4) : this.projectType = "FastApi"; break;
+                default : this.projectType = "none"; break;
+            }
         }
 
         // 멤버 리스트는 따로 넣어줘야 함
