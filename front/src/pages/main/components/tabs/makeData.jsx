@@ -17,8 +17,6 @@ export const MakeEditorData = (
   const [language, setLanguage] = useState("python");
   const [value, setValue] = useState("");
 
-  const monaco = useMonaco();
-
   const file = files[fileName];
 
   const data = [];
@@ -100,7 +98,6 @@ export const MakeEditorData = (
             value={value}
             onChange={() => setValue(() => editorRef.current.getValue())}
             onMount={(editor) => (editorRef.current = editor)}
-            // onChange={{}}
             options={{
               scrollBeyondLastLine: false,
               fontSize: "14px",
