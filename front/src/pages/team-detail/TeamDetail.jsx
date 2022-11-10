@@ -12,6 +12,11 @@ import {
 import { searchUser } from "../../redux/userSlice";
 
 import Header from "../../components/Header";
+import TeamNameModifyInput from "./components/TeamNameModifyInput";
+import Member from "./components/Member";
+import TeamName from "./components/TeamName";
+import TeamListButton from "./components/TeamListButton";
+import RedButton from "./components/RedButton";
 
 const TeamDetail = () => {
   const dispatch = useDispatch();
@@ -27,10 +32,10 @@ const TeamDetail = () => {
     memberDtoList: members,
   } = team;
 
+  const [isLeader, setIsLeader] = useState(false);
+
   const [isModify, setIsModify] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
-
-  const [modifiedTeamName, setModifiedTeamName] = useState(teamName);
 
   const [searchUserName, setSearchUserName] = useState("");
 
@@ -44,24 +49,10 @@ const TeamDetail = () => {
         console.log("res:", res);
       })
       .catch(console.error);
-  }, [dispatch, teamSeq]);
+    setIsLeader(teamLeaderSeq === mySeq);
+  }, [dispatch, teamSeq, teamLeaderSeq, mySeq]);
 
   const goTeamListHandler = () => navigate("/teams");
-
-  const inputTeamNameChangeHandler = (e) => setModifiedTeamName(e.target.value);
-
-  const submitTeamNameModifyHandler = (e) => {
-    e.preventDefault();
-    dispatch(modifyTeamName({ teamName: modifiedTeamName, teamSeq }))
-      .unwrap()
-      .then((res) => {
-        setTeam((prev) => {
-          return { ...prev, teamName: res };
-        });
-        setIsModify(false);
-      })
-      .catch(console.error);
-  };
 
   const deleteTeamHandler = () => {
     if (!window.confirm("정말로 팀을 삭제하시겠습니까?")) {
@@ -74,6 +65,13 @@ const TeamDetail = () => {
         navigate("/teams");
       })
       .catch(console.error);
+  };
+
+  const resignTeamHandler = () => {
+    if (!window.confirm("정말로 팀에서 탈퇴하시겠습니까?")) {
+      return;
+    }
+    alert("가지마");
   };
 
   const searchUserChangeHandler = (e) => setSearchUserName(e.target.value);
@@ -121,7 +119,6 @@ const TeamDetail = () => {
       return;
     }
     const deleteData = JSON.stringify({ teamSeq, memberSeq });
-    console.log("deleteData:", deleteData);
     dispatch(deleteMember(deleteData))
       .unwrap()
       .then(() => {
@@ -130,18 +127,25 @@ const TeamDetail = () => {
           .then((res) => setTeam(res))
           .catch(console.error);
       })
-      .catch((errorStatusCode) => {
-        console.error(errorStatusCode);
-      });
+      .catch(console.error);
   };
 
-  const openTeamNameEditorHandler = () => setIsModify(true);
-
-  const closeTeamNameEditorHandler = () => setIsModify(false);
-
   const openSearchInputHandler = () => setIsSearch(true);
-
   const closeSearchInputHandler = () => setIsSearch(false);
+
+  const submitTeamNameModifyHandler = (modifiedTeamName) => {
+    dispatch(modifyTeamName({ teamName: modifiedTeamName, teamSeq }))
+      .unwrap()
+      .then((res) => {
+        setTeam((prev) => {
+          return { ...prev, teamName: res };
+        });
+        setIsModify(false);
+      })
+      .catch(console.error);
+  };
+  const openModifyHandler = () => setIsModify(true);
+  const closeModifyHandler = () => setIsModify(false);
 
   return (
     <div>
@@ -151,57 +155,25 @@ const TeamDetail = () => {
         <div className="flex justify-between">
           {/* isModify가 아니면 팀 이름, isModify이면 팀 이름 변경 input 나옴 */}
           {!isModify ? (
-            <h1 className="text-white text-xl font-bold">
-              {teamName}{" "}
-              <span
-                className="text-sm cursor-pointer"
-                onClick={openTeamNameEditorHandler}
-              >
-                ✏
-              </span>
-            </h1>
+            <TeamName onOpenModify={openModifyHandler}>{teamName}</TeamName>
           ) : (
-            <div className="flex gap-1">
-              <form onSubmit={submitTeamNameModifyHandler}>
-                <input
-                  type="text"
-                  name="inputTeamName"
-                  id="inputTeamName"
-                  defaultValue={teamName}
-                  onChange={inputTeamNameChangeHandler}
-                />
-              </form>
-              <span
-                onClick={closeTeamNameEditorHandler}
-                className="cursor-pointer"
-              >
-                ❌
-              </span>
-            </div>
+            <TeamNameModifyInput
+              originTeamName={teamName}
+              onSubmitModify={submitTeamNameModifyHandler}
+              onCloseModify={closeModifyHandler}
+            />
           )}
 
           {/* 팀 목록, 팀 삭제(팀 탈퇴) 버튼 컨테이너 */}
           <div className="flex gap-2">
             {/* 팀 목록 버튼 */}
-            <button
-              onClick={goTeamListHandler}
-              className="px-2 py-1 text-lg text-primary_dark bg-component_item_bg_dark border border-primary_-2_dark rounded-md"
-            >
-              팀 목록
-            </button>
+            <TeamListButton onClick={goTeamListHandler}>팀 목록</TeamListButton>
             {/* 팀장이면 팀 삭제 버튼, 팀원이면 팀 탈퇴 버튼 */}
-            {teamLeaderSeq === mySeq ? (
-              <button
-                onClick={deleteTeamHandler}
-                className="px-2 py-1 text-lg font-bold text-component_dark bg-point_pink hover:bg-point_red hover:text-white rounded-md transition"
-              >
-                팀 삭제
-              </button>
-            ) : (
-              <button className="px-2 py-1 text-lg font-bold text-component_dark bg-point_pink hover:bg-point_red hover:text-white rounded-md transition">
-                팀 탈퇴
-              </button>
-            )}
+            <RedButton
+              onClick={isLeader ? deleteTeamHandler : resignTeamHandler}
+            >
+              {isLeader ? "팀 삭제" : "팀 탈퇴"}
+            </RedButton>
           </div>
         </div>
 
@@ -213,12 +185,11 @@ const TeamDetail = () => {
           <div className="w-48 text-white font-bold bg-point_purple h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
             팀장
           </div>
-          <div className="flex">
-            <div className="flex flex-col gap-2 items-center p-2">
-              {/* <div className="bg-point_light_yellow w-11 h-11 rounded-full"></div> */}
-              <div className="text-white text-sm">{teamLeaderNickname}</div>
-            </div>
-          </div>
+          <Member
+            isLeader={true}
+            teamLeaderNickname={teamLeaderNickname}
+            onDelete={deleteMemberHandler}
+          />
         </div>
 
         {/* 팀원 */}
@@ -228,26 +199,12 @@ const TeamDetail = () => {
           </div>
           <div className="flex">
             {members?.map((member) => (
-              <div
+              <Member
                 key={`m${member.memberSeq}`}
-                className="flex flex-col gap-2 items-center p-2"
-              >
-                {/* <div className="bg-point_light_yellow w-11 h-11 rounded-full"></div> */}
-                <div className="text-white text-sm">
-                  {member.memberNickname}{" "}
-                  <span
-                    className="cursor-pointer"
-                    onClick={() =>
-                      deleteMemberHandler(
-                        member.memberNickname,
-                        member.memberSeq
-                      )
-                    }
-                  >
-                    ❌
-                  </span>
-                </div>
-              </div>
+                isLeader={false}
+                member={member}
+                onDelete={deleteMemberHandler}
+              />
             ))}
 
             <div className="flex flex-col gap-2 items-center p-2">
