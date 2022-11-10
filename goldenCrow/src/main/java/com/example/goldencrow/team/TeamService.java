@@ -206,10 +206,10 @@ public class TeamService {
             } else {
                 // 모든 경우의 프로젝트 생성 실패
 
-                // 등록되었던 팀과 멤버를 삭제한다
-                teamRepository.delete(teamEntity);
-                memberRepository.delete(memberEntity);
                 System.out.println(projectCreateResult);
+
+                // 등록되었던 팀과 멤버를 삭제한다
+                teamRepository.delete(teamRepository.findByTeamSeq(teamSeq).get());
 
                 if(projectCreateResult.equals("프로젝트 생성에 실패했습니다")){
                     // 아무것도 못함
