@@ -9,7 +9,8 @@ import TeamNameModifyInput from "./TeamNameModifyInput";
 import TeamListButton from "./TeamListButton";
 import RedButton from "./RedButton";
 
-const TeamDetailHeader = ({ teamName, isLeader, teamSeq, setTeamName }) => {
+const TeamDetailHeader = (props) => {
+  const { teamName, isLeader, teamSeq, setTeamName } = props;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isModify, setIsModify] = useState(false);
