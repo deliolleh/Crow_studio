@@ -1,12 +1,13 @@
 import React from "react";
 
+import Member from "./Member";
+
 const TeamListItem = ({ team, clickTeam }) => {
   const {
     teamSeq,
     teamName,
     teamLeaderNickname,
     memberDtoList: members,
-    teamLeaderSeq,
   } = team;
 
   const clickTeamListItemHandler = () => clickTeam(teamSeq);
@@ -19,24 +20,16 @@ const TeamListItem = ({ team, clickTeam }) => {
       <div className="w-48 text-white font-bold bg-point_purple h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
         {teamName}
       </div>
-      <div>
-        <div
-          key={`l${teamLeaderSeq}`}
-          className="flex flex-col gap-2 items-center p-2"
-        >
-          <div className="bg-point_light_yellow w-11 h-11 rounded-full"></div>
-          <div className="text-white text-sm">{teamLeaderNickname}</div>
-        </div>
-      </div>
+      {/* 팀장 */}
+      <Member isLeader={true} teamLeaderNickname={teamLeaderNickname} />
+      {/* 팀원들 */}
       <div className="flex">
         {members.map((member) => (
-          <div
-            key={`m${member.memberSeq}`}
-            className="flex flex-col gap-2 items-center p-2"
-          >
-            {/* <div className="bg-point_light_yellow w-11 h-11 rounded-full"></div> */}
-            <div className="text-white text-sm">{member.memberNickname}</div>
-          </div>
+          <Member
+            key={`member${member.memberSeq}`}
+            isLeader={false}
+            memberNickname={member.memberNickname}
+          />
         ))}
       </div>
     </div>
