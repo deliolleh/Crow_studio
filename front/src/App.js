@@ -13,9 +13,9 @@ import Signup from "./pages/signup/Signup";
 import Main from "./pages/main/Main";
 import Mypage from "./pages/mypage/Mypage";
 import ProjectCreate from "./pages/project-create/ProjectCreate";
-import Teams from "./pages/team/Teams";
-import TeamCreate from "./pages/team/TeamCreate";
-import TeamDetail from "./pages/team/TeamDetail";
+import Teams from "./pages/teams/Teams";
+import TeamCreate from "./pages/team-create/TeamCreate";
+import TeamDetail from "./pages/team-detail/TeamDetail";
 
 const router = createBrowserRouter([
   {
