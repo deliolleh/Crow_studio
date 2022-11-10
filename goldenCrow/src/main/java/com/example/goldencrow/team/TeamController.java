@@ -84,7 +84,7 @@ public class TeamController {
         // 로그에 내용이 찍히는 400 or 409 : 프로젝트 생성에서 문제가 있었음
         // 내용이 안찍히는 400 or 409 : 팀 생성에서 문제가 있었음
 
-        if(req.get("teamName")==null||req.get("projectname")==null||req.get("projectType")==null) {
+        if(req.get("teamName")==null||req.get("projectName")==null||req.get("projectType")==null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
