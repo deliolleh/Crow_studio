@@ -19,7 +19,14 @@ const VariableName = () => {
 
   const rendering = () => {
     let show = [];
-    result.map((li, index) => show.push(<div key={`${index}`}>{li}</div>));
+    result.map((li, index) => show.push(
+      <div
+        key={`${index}`}
+        className="mt-1 ml-[15px] font-medium text-white"
+      >
+        {li}
+      </div>
+    ));
     return show;
   };
 
@@ -44,20 +51,28 @@ const VariableName = () => {
           className="flex justify-between items-center"
           style={{ padding: 15 }}
         >
-          <div className="text-xl font-bold text-white my-1">Variable Name</div>
+          <div className="text-xl font-bold text-white my-1">변수명 추천</div>
         </div>
         <hr className="bg-component_dark border-0 m-0" style={{ height: 3 }} />
         <div style={{ padding: 15 }}>
           <div className="pl-1">
             <div className="text-primary_dark text-sm font-bold">
-              <div className="mb-2">
+              <div className="flex justify-items-center items-center mb-3">
                 <input
                   type="text"
                   name="variable"
                   value={variable}
                   onChange={(e) => update(e)}
+                  className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
+                  placeholder="추천받고 싶은 단어 입력"
+                  style={{ height: 28, width: 200 }}
                 />
-                <button onClick={sendWord}>Send</button>
+                <button
+                  onClick={sendWord}
+                  className="ml-2 w-[45px] h-[26px] bg-point_purple hover:bg-point_purple_-2 rounded-md text-white text-sm"
+                >
+                  추천
+                </button>
               </div>
               {resultActive && rendering()}
             </div>
