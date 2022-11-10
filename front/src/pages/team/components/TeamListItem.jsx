@@ -1,6 +1,6 @@
 import React from "react";
 
-const TeamListItem = ({ team, clickTeamDetail }) => {
+const TeamListItem = ({ team, clickTeam }) => {
   const {
     teamSeq,
     teamName,
@@ -9,11 +9,11 @@ const TeamListItem = ({ team, clickTeamDetail }) => {
     teamLeaderSeq,
   } = team;
 
-  const clickHandler = () => clickTeamDetail(teamSeq);
+  const clickTeamListItemHandler = () => clickTeam(teamSeq);
 
   return (
     <div
-      onClick={clickHandler}
+      onClick={clickTeamListItemHandler}
       className="flex items-center gap-2 bg-component_item_bg_dark hover:cursor-pointer rounded-md"
     >
       <div className="w-48 text-white font-bold bg-point_purple h-full p-2 flex items-center rounded-bl-md rounded-tl-md">

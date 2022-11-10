@@ -11,26 +11,30 @@ const Teams = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const myNickname = useSelector((state) => state.user.value.myNickname);
-
-  const [teams, setTeams] = useState(null);
+  const [myTeams, setMyTeams] = useState([]);
 
   const createTeamHandler = () => navigate("/teams/create");
-
-  const clickTeamDetailHandler = (teamSeq) => navigate(`/teams/${teamSeq}`);
+  const clickTeamHandler = (teamSeq) => navigate(`/teams/${teamSeq}`);
 
   useEffect(() => {
+    // 본인이 속한 팀들 가져옴
     dispatch(getTeams())
       .unwrap()
-      .then((res) => setTeams(() => [...res]))
+      .then((res) => setMyTeams(res))
       .catch(console.error);
   }, [dispatch]);
 
   return (
     <div>
       <Header />
+
       <div className="p-8 flex flex-col justify-center border border-primary_-2_dark rounded-md">
         <div className="flex justify-between">
-          <h1 className="text-white text-xl font-bold">팀 목록</h1>
+          {/* 제목 */}
+          <h1 className="text-white text-xl font-bold">
+            팀 목록 ({myTeams.length})
+          </h1>
+          {/* 팀 생성 버튼 */}
           <button
             className="px-2 py-1 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow rounded-md transition"
             onClick={createTeamHandler}
@@ -38,8 +42,14 @@ const Teams = () => {
             새로운 팀 생성
           </button>
         </div>
+        {/* 현재 로그인한 유저 닉네임 */}
         <span className="text-point_light_yellow">{myNickname}</span>
-        <TeamList clickTeamDetail={clickTeamDetailHandler} teams={teams} />
+        {/* 팀 리스트 */}
+        {myTeams.length > 0 ? (
+          <TeamList clickTeam={clickTeamHandler} teams={myTeams} />
+        ) : (
+          <div>팀이 없습니다</div>
+        )}
       </div>
     </div>
   );
