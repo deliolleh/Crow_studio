@@ -38,9 +38,9 @@ export const getTeam = createAsyncThunk(
 
 export const createTeam = createAsyncThunk(
   "team/createTeam",
-  async (teamName, { rejectWithValue }) => {
+  async (teamData, { rejectWithValue }) => {
     try {
-      const response = await teamApi.createTeam(teamName);
+      const response = await teamApi.createTeam(teamData);
       return response.data;
     } catch (err) {
       if (!err.response) {
