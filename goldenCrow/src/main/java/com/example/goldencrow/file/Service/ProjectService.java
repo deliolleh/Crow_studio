@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 import static java.lang.System.out;
@@ -35,9 +33,7 @@ public class ProjectService {
      */
     public String createDir(String path, String name){
         String pjt = path + "/" + name;
-        out.println(pjt);
         File pjtDir = new File(pjt);
-        out.println(pjtDir);
         if (pjtDir.mkdir()) {
             return pjt;
         };
@@ -61,36 +57,33 @@ public class ProjectService {
 //    }
 
     /**
-     * 파일 경로를 모두 찾아서 HashMap으로 반환해주는 함수
+     * 해당 파일의 바로 하위 파일만 보내주는 함수
      * @param rootPath
      * @param rootName
-     * @param visit
      * @return 
      */
-    public Map<List<String>,List<List<String>>> readDirectory(String rootPath, String rootName, Map<List<String>,List<List<String>>> visit){
+    public Map<String,List<Map<String,String>>> readDirectory(String rootPath, String rootName){
+        Map<String,List<Map<String,String>>> fileTree = new TreeMap<>();
+        List<Map<String,String>> childTree = new ArrayList<>();
+        fileTree.put("fileDirectory",childTree);
         File file = new File(rootPath);
         File files[] = file.listFiles();
         String names[] = file.list();
-        List<String> root = new ArrayList<>();
-        root.add(rootName);
-        root.add(rootPath);
+
         for (int i = 0; i < files.length; i++) {
             File dir = files[i];
-            String name = names[i];
+            String fileName = names[i];
             String thisPath = dir.getPath();
-            List<String> here = new ArrayList<>();
-            here.add(name);
-            here.add(thisPath);
+            Map<String,String> here = new TreeMap<>();
+            here.put("name",fileName);
+            here.put("path",thisPath);
             if (dir.isDirectory()) {
-                List<List<String>> newValue = new ArrayList<>();
-                visit.get(root).add(here);
-                visit.put(here,newValue);
-                readDirectory(thisPath,name,visit);
+                here.put("type","directory");
             } else {
-                visit.get(root).add(here);
+                here.put("type", "file");
             }
         }
-        return visit;
+        return fileTree;
     }
 
     /**
