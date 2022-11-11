@@ -65,16 +65,23 @@ public class ProjectService {
     public Map<String,List<Map<String,String>>> readDirectory(String rootPath, String rootName){
         Map<String,List<Map<String,String>>> fileTree = new TreeMap<>();
         List<Map<String,String>> childTree = new ArrayList<>();
-        fileTree.put("fileDirectory",childTree);
+
         File file = new File(rootPath);
         File files[] = file.listFiles();
         String names[] = file.list();
 
+        try {
+            if (files.length == 0 || names.length == 0) {
+                fileTree.put("fileDirectory",childTree);
+                return fileTree;
+            }
+        } catch (NullPointerException e) {
+            return fileTree;
+        }
+
         for (int i = 0; i < files.length; i++) {
             File dir = files[i];
             String fileName = names[i];
-            out.println(fileName);
-            out.println(dir);
             String thisPath = dir.getPath();
             Map<String,String> here = new HashMap<>();
             here.put("name",fileName);
@@ -84,7 +91,9 @@ public class ProjectService {
             } else {
                 here.put("type", "file");
             }
+            childTree.add(here);
         }
+        fileTree.put("fileDirectory",childTree);
         out.println(fileTree);
         return fileTree;
     }
