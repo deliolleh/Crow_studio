@@ -24,8 +24,11 @@ const Api = () => {
     setUri(e.target.value);
   };
 
-  const onMethodChange = (e) => {
-    setMethod(e.target.value);
+  // const onMethodChange = (e) => {
+  //   setMethod(e.target.value);
+  // };
+  const onMethodChange = (tempValue) => {
+    setMethod(tempValue);
   };
 
   const update = (which, e) => {
@@ -82,50 +85,65 @@ const Api = () => {
 
   return (
     <>
-      <ApiContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
+      <ApiContainer className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto">
         <div
           className="flex justify-between items-center"
           style={{ padding: 15 }}
         >
           <div className="text-xl font-bold text-white my-1">API 테스트</div>
         </div>
-        <hr className="bg-component_dark border-0 m-0" style={{ height: 3 }} />
+        {/* stroke */}
+        <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
         <div style={{ padding: 15 }}>
           <div className="pl-1">
             <div className="text-primary_dark text-sm font-bold">
-              <div>URI</div>
+              <div className="mb-2">URI</div>
               <input
                 type="text"
                 onChange={onUriChange}
                 value={uri}
                 placeholder="address"
+                className="h-[28px] w-[217px] rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5"
               />
-              <div>Method</div>
+              <div className="mb-2">Method</div>
               <SelectMethod onMethodChange={onMethodChange} />
-              <div>Request</div>
+              <div className="mb-2">Request</div>
               {/* <KeyValue you="request" getList={getList}/> */}
               <textarea
                 name="request"
                 onChange={(e) => update("request", e)}
-                cols="10"
-                rows="7"
+                cols="25"
+                rows="6"
                 placeholder="{ key: value }"
+                className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5"
               ></textarea>
-              <div>Header</div>
+              <div className="mb-2">Header</div>
               {/* <KeyValue you="header" getList={getList}/> */}
-              <textarea
-                name="header"
-                onChange={(e) => update("header", e)}
-                cols="10"
-                rows="7"
-                placeholder="{ key: value } // Content-Type, Authorization, etc..."
-              ></textarea>
-              <button onClick={sendApi}>전송</button>
+              <div className="flex flex-col w-fit items-end">
+                <textarea
+                  name="header"
+                  onChange={(e) => update("header", e)}
+                  cols="25"
+                  rows="6"
+                  placeholder="{ key: value } // Content-Type, Authorization, etc..."
+                  className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
+                ></textarea>
+                <button
+                  onClick={sendApi}
+                  className="h-[26px] w-[45px] rounded-md bg-point_purple text-white"
+                >전송</button>
+              </div>
               {resultActive && (
-                <div>
-                  <div>소요시간 : {time / 100}초</div>
-                  <div>결과</div>
-                  <div>{result}</div>
+                <div className="mt-5">
+                  <div className="flex">
+                    <div className="mr-4">소요시간 :</div>
+                    <div className="text-point_yellow">{time / 100}</div>
+                    <div className="ml-1">초</div>
+                  </div>
+                  <div className="flex mb-5">
+                    <div className="mr-4">결과 :</div>
+                    <div className="w-[186px] h-auto break-all text-point_yellow">{result}</div>
+                  </div>
                 </div>
               )}
             </div>

@@ -53,7 +53,7 @@ const VariableName = () => {
         >
           <div className="text-xl font-bold text-white my-1">변수명 추천</div>
         </div>
-        <hr className="bg-component_dark border-0 m-0" style={{ height: 3 }} />
+        <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
         <div style={{ padding: 15 }}>
           <div className="pl-1">
             <div className="text-primary_dark text-sm font-bold">
