@@ -69,11 +69,12 @@ public class ProjectService {
         File file = new File(rootPath);
         File files[] = file.listFiles();
         String names[] = file.list();
-        out.println(files);
-        out.println(names);
+
         for (int i = 0; i < files.length; i++) {
             File dir = files[i];
             String fileName = names[i];
+            out.println(fileName);
+            out.println(dir);
             String thisPath = dir.getPath();
             Map<String,String> here = new TreeMap<>();
             here.put("name",fileName);
