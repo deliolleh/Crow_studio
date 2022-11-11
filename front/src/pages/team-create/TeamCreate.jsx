@@ -8,7 +8,7 @@ import Header from "../../components/Header";
 
 const initialInputState = {
   teamName: "",
-  projectType: "1",
+  projectType: "pure Python",
   projectName: "",
 };
 const initialErrorState = {
@@ -129,10 +129,10 @@ const TeamCreate = () => {
               value={projectType}
               onChange={inputChangeHandler}
             >
-              <option value="1">pure Python</option>
-              <option value="2">Django</option>
-              <option value="3">Flask</option>
-              <option value="4">FastAPI</option>
+              <option value="pure Python">pure Python</option>
+              <option value="Django">Django</option>
+              <option value="Flask">Flask</option>
+              <option value="FastAPI">FastAPI</option>
             </select>
             <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink"></div>
           </div>
