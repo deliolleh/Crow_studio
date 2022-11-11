@@ -135,3 +135,10 @@ code {
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 }
+
+textarea::-webkit-resizer {
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent #797979 #797979 transparent;
+  border-radius: 0 0 5px 0;
+}

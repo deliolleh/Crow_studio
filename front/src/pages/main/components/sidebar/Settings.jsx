@@ -47,7 +47,7 @@ const Settings = () => {
             Settings
           </div>
         </div>
-        <hr className="bg-component_dark border-0 m-0" style={{ height: 3 }} />
+        <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
         <div className="" style={{ padding: 15 }}>
           <div className="pl-1">
             <label className="block text-primary_dark text-sm font-bold mb-2" htmlFor="editorFontSize">
