@@ -1,31 +1,24 @@
 package com.example.goldencrow.file.Controller;
 
-import com.example.goldencrow.file.Service.FileService;
+
 import com.example.goldencrow.file.Service.ProjectService;
-import com.example.goldencrow.user.JwtService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.*;
+
 import java.util.*;
 
-import static java.lang.System.out;
+
 
 @RestController
 @RequestMapping(value = "/api/projects")
 public class ProjectController {
-    private final JwtService jwtService;
-
-    private final FileService fileService;
 
     private final ProjectService projectService;
 
-    private String baseUrl = "/home/ubuntu/crow_data/";
-
-    public ProjectController(FileService fileService, JwtService jwtService, ProjectService projectService) {
-        this.fileService = fileService;
-        this.jwtService = jwtService;
+    public ProjectController(ProjectService projectService) {
         this.projectService = projectService;
     }
 
@@ -48,10 +41,10 @@ public class ProjectController {
 
     @PostMapping("/directories")
     public ResponseEntity<Map<String,List<Map<String,String>>>> pjtRead(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,String> rootFile) {
-        String rootUrl = rootFile.get("rootUrl");
+        String rootPath = rootFile.get("rootPath");
         String rootName = rootFile.get("rootName");
         Map<String,List<Map<String,String>>> directory = new TreeMap<>();
-        directory = projectService.readDirectory(rootUrl,rootName);
+        directory = projectService.readDirectory(rootPath,rootName);
 
         return new ResponseEntity<>(directory, HttpStatus.ACCEPTED);
     }
