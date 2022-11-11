@@ -8,10 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.lang.System.out;
 
@@ -49,23 +46,14 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/{teamSeq}")
-    public ResponseEntity<Map<List<String>,List<List<String>>>> pjtRead(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
-        String baseUrl = "/home/ubuntu/crow_data/"+String.valueOf(teamSeq);
-        File teamPjt = new File(baseUrl);
-        String[] names = teamPjt.list();
-        String rootName = names[0];
-        String newUrl = baseUrl+ "/" + rootName;
+    @PostMapping("/directories")
+    public ResponseEntity<Map<String,List<Map<String,String>>>> pjtRead(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,String> rootFile) {
+        String rootUrl = rootFile.get("rootUrl");
+        String rootName = rootFile.get("rootName");
+        Map<String,List<Map<String,String>>> directory = new TreeMap<>();
+        directory = projectService.readDirectory(rootUrl,rootName);
 
-        Map<List<String>,List<List<String>>> visit = new HashMap<>();
-        List<List<String>> newValue = new ArrayList<>();
-        List<String> root = new ArrayList<>();
-        root.add(rootName);
-        root.add(newUrl);
-        visit.put(root,newValue);
-        projectService.readDirectory(newUrl,rootName,visit);
-
-        return new ResponseEntity<>(visit, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(directory, HttpStatus.ACCEPTED);
     }
 
 
