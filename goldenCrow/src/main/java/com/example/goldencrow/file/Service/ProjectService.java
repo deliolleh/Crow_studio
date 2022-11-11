@@ -76,7 +76,7 @@ public class ProjectService {
             out.println(fileName);
             out.println(dir);
             String thisPath = dir.getPath();
-            Map<String,String> here = new TreeMap<>();
+            Map<String,String> here = new HashMap<>();
             here.put("name",fileName);
             here.put("path",thisPath);
             if (dir.isDirectory()) {
@@ -85,6 +85,7 @@ public class ProjectService {
                 here.put("type", "file");
             }
         }
+        out.println(fileTree);
         return fileTree;
     }
 

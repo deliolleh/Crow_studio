@@ -43,7 +43,7 @@ public class ProjectController {
     public ResponseEntity<Map<String,List<Map<String,String>>>> pjtRead(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,String> rootFile) {
         String rootPath = rootFile.get("rootPath");
         String rootName = rootFile.get("rootName");
-        Map<String,List<Map<String,String>>> directory = new TreeMap<>();
+        Map<String,List<Map<String,String>>> directory;
         directory = projectService.readDirectory(rootPath,rootName);
 
         return new ResponseEntity<>(directory, HttpStatus.ACCEPTED);
