@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
+import Editor from "@monaco-editor/react";
 
 import {
   createFile,
@@ -26,8 +27,10 @@ const Test = () => {
   const [newFileName, setNewFileName] = useState("");
   const [newDirectoryName, setNewDirectoryName] = useState("");
   const [curItems, setCurItems] = useState([]);
-  const [curFileContent, setCurFileContent] = useState("");
+  // const [curFileContent, setCurFileContent] = useState("");
   const [curFilePath, setCurFilePath] = useState("");
+
+  const editorRef = useRef(null);
 
   const dispatchGetDirectoryList = () => {
     dispatch(getDirectoryList(directoryData))
@@ -134,8 +137,9 @@ const Test = () => {
       .unwrap()
       .then((res) => {
         console.log(res);
-        setCurFileContent(res);
         setCurFilePath(targetPath);
+        // setCurFileContent(res);
+        editorRef.current.getModel().setValue(res);
       })
       .catch(console.error);
   };
@@ -143,10 +147,14 @@ const Test = () => {
   // 파일 저장
   const fileSaveHandler = (e) => {
     e.preventDefault();
-    console.log(curFileContent, curFilePath);
+    // console.log(curFileContent, curFilePath);
+    // const saveFileData = {
+    //   filePath: curFilePath,
+    //   fileContent: curFileContent,
+    // };
     const saveFileData = {
       filePath: curFilePath,
-      fileContent: curFileContent,
+      fileContent: editorRef.current.getValue(),
     };
     dispatch(saveFileContent({ teamSeq: TEAM_SEQ, contentData: saveFileData }))
       .unwrap()
@@ -189,18 +197,14 @@ const Test = () => {
         curItems?.map((item) => (
           <div className="mb-4 text-sm" key={item.path}>
             <div>경로 {item.path}</div>
-            <div
-              className="cursor-pointer"
-              onClick={() => showFileContentHandler(item.type, item.path)}
-            >
-              이름 {item.name}
-            </div>
-            <div>타입 {item.type}</div>
-            <div>
-              <button
-                className="mr-2"
-                onClick={() => renameItemHandler(item.path, item.name)}
+            <div className="flex gap-1">
+              <div
+                className="cursor-pointer"
+                onClick={() => showFileContentHandler(item.type, item.path)}
               >
+                {item.name}
+              </div>
+              <button onClick={() => renameItemHandler(item.path, item.name)}>
                 ✏
               </button>
               <button
@@ -216,16 +220,40 @@ const Test = () => {
 
       {/* 파일 내용 에디터 */}
       <form method="post" onSubmit={fileSaveHandler}>
-        <textarea
+        {/* <textarea
           rows="10"
           cols="40"
           className="text-black"
           value={curFileContent}
           onChange={(e) => setCurFileContent(e.target.value)}
-        ></textarea>
+        ></textarea> */}
         <button type="submit" onClick={fileSaveHandler}>
           💾
         </button>
+        <Editor
+          style={{ overflow: "auto" }}
+          height="calc(100vh - 31px)"
+          // height="100%"
+          theme="vs-dark"
+          // path={file.name}
+          // path={i + 1 === 1 ? "script.js" : "style.css"}
+          // defaultLanguage={file.language}
+          defaultLanguage="python"
+          // defaultValue={file.value}
+          // defaultValue={
+          //   i + 1 === 1 ? files["script.js"].value : files["style.css"].value
+          // }
+          onMount={(editor) => {
+            editorRef.current = editor;
+          }}
+          options={{
+            scrollBeyondLastLine: false,
+            fontSize: "14px",
+            fontFamily: "JetBrains Mono",
+            autoIndent: "advanced",
+            wrappingIndent: "same",
+          }}
+        />
       </form>
     </React.Fragment>
   );
