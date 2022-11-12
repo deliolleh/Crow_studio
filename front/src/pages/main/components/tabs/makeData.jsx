@@ -15,7 +15,6 @@ export const MakeEditorData = (
   const editorRef = useRef(null);
   const [fileName, setFileName] = useState("script.js");
   const [language, setLanguage] = useState("python");
-  const [value, setValue] = useState("");
 
   const file = files[fileName];
 
@@ -34,10 +33,13 @@ export const MakeEditorData = (
   // 포맷팅 영역
   const format = async () => {
     // console.log(editorRef.current.getValue());
-    const sendCode = editorRef.current.getValue();
+    const rawCode = editorRef.current.getValue();
+    const sendCode = rawCode.slice(1, rawCode.length - 1);
+    console.log(sendCode);
+    const sendBody = sendCode.replaceAll(" ", "");
     // console.log(sendCode);
     const body = {
-      text: JSON.stringify(sendCode),
+      text: JSON.stringify(sendBody),
     };
     console.log(body);
     await editorApi.formatPut(language, body).then((res) => {
@@ -49,13 +51,12 @@ export const MakeEditorData = (
       editorApi
         .formatGet(language, body2)
         .then((res) => {
-          // editorRef.current = res.data.data;
-          setValue(() => res.data.data);
-          console.log("Only data: ", res.data.data);
+          const updateCode = res.data.data.slice(1, res.data.data.length - 1);
+          console.log("updateCode: ", updateCode);
+          editorRef.current.getModel().setValue(updateCode);
         })
         .catch((err) => console.error(err));
     });
-    console.log("value: ", value);
   };
 
   // 린트 영역
@@ -94,9 +95,7 @@ export const MakeEditorData = (
             // defaultValue={
             //   i + 1 === 1 ? files["script.js"].value : files["style.css"].value
             // }
-            defaultValue={value}
-            value={value}
-            onChange={() => setValue(() => editorRef.current.getValue())}
+            defaultValue={""}
             onMount={(editor) => (editorRef.current = editor)}
             options={{
               scrollBeyondLastLine: false,
