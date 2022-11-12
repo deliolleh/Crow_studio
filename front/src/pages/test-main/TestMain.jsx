@@ -55,11 +55,7 @@ const elements = [
 const TestMain = () => {
   // const teamSeq = useSelector((state) => state.team.value.teamSeq);
   const teamSeq = 4;
-  useEffect(() => {
-    projectApi.directoryList(teamSeq).then((res) => {
-      console.log(res.data);
-    });
-  });
+  useEffect(() => {}, []);
 
   // save-env state
   // horizontal split 상단 높이 비율

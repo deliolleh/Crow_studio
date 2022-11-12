@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 import styled from "styled-components";
-import { Menu, Transition } from '@headlessui/react';
+import { Menu, Transition } from "@headlessui/react";
 
 import clsx from "clsx";
 import { Tree } from "react-arborist";
@@ -9,7 +9,7 @@ import { FillFlexParent } from "./directory/fill-flex-parent.tsx";
 
 import * as icons from "react-icons/md";
 import { IoDocumentOutline } from "react-icons/io5";
-import styles from "./directory/dir-data.module.css"
+import styles from "./directory/dir-data.module.css";
 
 // import svg
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
@@ -26,25 +26,25 @@ const IcSpan = styled.span`
   cursor: pointer;
 
   &:hover {
-    background-color: #D9D9D9;
+    background-color: #d9d9d9;
     border-radius: 5px;
 
     & svg {
       & path {
-        fill: #2B2C2B;
+        fill: #2b2c2b;
       }
-    }  
+    }
   }
 `;
 
 // dropdown func
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
 // tree view func (React Arborist)
 function Node({ node, style, dragHandle }) {
-  const Icon = node.data.icon || IoDocumentOutline
+  const Icon = node.data.icon || IoDocumentOutline;
   return (
     <div
       ref={dragHandle}
@@ -92,11 +92,14 @@ function Cursor({ top, left }) {
 }
 
 const Directory = () => {
-  const [ term, setTerm ] = useState("");
+  const [term, setTerm] = useState("");
   return (
     <>
       <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
-        <div className="flex justify-between items-center" style={{ padding: 15 }}>
+        <div
+          className="flex justify-between items-center"
+          style={{ padding: 15 }}
+        >
           <div className="text-xl font-bold text-white">Directory</div>
           <div className="mt-1 flex items-center">
             <IcSpan>
@@ -129,8 +132,10 @@ const Directory = () => {
                         <a
                           href="#"
                           className={classNames(
-                            active ? 'bg-point_purple_op20 text-white' : 'text-white',
-                            'block px-4 py-2 text-xs'
+                            active
+                              ? "bg-point_purple_op20 text-white"
+                              : "text-white",
+                            "block px-4 py-2 text-xs"
                           )}
                         >
                           파일 업로드
@@ -142,8 +147,10 @@ const Directory = () => {
                         <a
                           href="#"
                           className={classNames(
-                            active ? 'bg-point_purple_op20 text-white' : 'text-white',
-                            'block px-4 py-2 text-xs'
+                            active
+                              ? "bg-point_purple_op20 text-white"
+                              : "text-white",
+                            "block px-4 py-2 text-xs"
                           )}
                         >
                           폴더 업로드
@@ -155,8 +162,10 @@ const Directory = () => {
                         <a
                           href="#"
                           className={classNames(
-                            active ? 'bg-point_purple_op20 text-white' : 'text-white',
-                            'block px-4 py-2 text-xs'
+                            active
+                              ? "bg-point_purple_op20 text-white"
+                              : "text-white",
+                            "block px-4 py-2 text-xs"
                           )}
                         >
                           zip 파일로 다운로드
@@ -168,8 +177,10 @@ const Directory = () => {
                         <a
                           href="#"
                           className={classNames(
-                            active ? 'bg-point_purple_op20 text-white' : 'text-white',
-                            'block px-4 py-2 text-xs'
+                            active
+                              ? "bg-point_purple_op20 text-white"
+                              : "text-white",
+                            "block px-4 py-2 text-xs"
                           )}
                         >
                           이름 바꾸기
@@ -181,8 +192,10 @@ const Directory = () => {
                         <a
                           href="#"
                           className={classNames(
-                            active ? 'bg-point_purple_op20 text-white' : 'text-white',
-                            'block px-4 py-2 text-xs'
+                            active
+                              ? "bg-point_purple_op20 text-white"
+                              : "text-white",
+                            "block px-4 py-2 text-xs"
                           )}
                         >
                           삭제
@@ -196,7 +209,10 @@ const Directory = () => {
           </div>
         </div>
         <div className="text-xs" style={{ padding: 15 }}>
-          <hr className="bg-component_dark border-0 m-0 absolute min-h-[3px]" style={{ height: 3, width: 292, top: 140, left: 88 }} />
+          <hr
+            className="bg-component_dark border-0 m-0 absolute min-h-[3px]"
+            style={{ height: 3, width: 292, top: 140, left: 88 }}
+          />
           <div>뭐야 왜 이거 없으면 안보여?</div>
           <FillFlexParent>
             {({ width, height }) => {
@@ -219,7 +235,7 @@ const Directory = () => {
         </div>
       </DirectoryContainer>
     </>
-  )
-}
+  );
+};
 
 export default Directory;
