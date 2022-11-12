@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import fileApi from "../../api/fileApi";
-
-import { createFile, deleteFile, renameFile } from "../../redux/fileSlice";
+import {
+  createFile,
+  deleteFile,
+  renameFile,
+  getFileContent,
+  saveFileContent,
+} from "../../redux/fileSlice";
 import { getDirectoryList } from "../../redux/projectSlice";
 
 import Header from "../../components/Header";
@@ -23,6 +27,7 @@ const Test = () => {
   const [newDirectoryName, setNewDirectoryName] = useState("");
   const [curItems, setCurItems] = useState([]);
   const [curFileContent, setCurFileContent] = useState("");
+  const [curFilePath, setCurFilePath] = useState("");
 
   const dispatchGetDirectoryList = () => {
     dispatch(getDirectoryList(directoryData))
@@ -108,7 +113,7 @@ const Test = () => {
     };
     dispatch(renameFile(renameData))
       .unwrap()
-      .then((res) => {
+      .then(() => {
         console.log(`${targetName} -> ${newName} 변경 성공`);
         dispatchGetDirectoryList();
       })
@@ -116,7 +121,38 @@ const Test = () => {
   };
 
   // 파일 클릭하면 내용 보여주기
-  const showFileContentHandler = () => {};
+  const showFileContentHandler = (targetType, targetPath) => {
+    if (targetType === "directory") {
+      console.log("디렉터리임");
+      return;
+    }
+    console.log(targetPath);
+    const requireData = {
+      filePath: targetPath,
+    };
+    dispatch(getFileContent(requireData))
+      .unwrap()
+      .then((res) => {
+        console.log(res);
+        setCurFileContent(res);
+        setCurFilePath(targetPath);
+      })
+      .catch(console.error);
+  };
+
+  // 파일 저장
+  const fileSaveHandler = (e) => {
+    e.preventDefault();
+    console.log(curFileContent, curFilePath);
+    const saveFileData = {
+      filePath: curFilePath,
+      fileContent: curFileContent,
+    };
+    dispatch(saveFileContent({ teamSeq: TEAM_SEQ, contentData: saveFileData }))
+      .unwrap()
+      .then(console.log)
+      .catch(console.error);
+  };
 
   return (
     <React.Fragment>
@@ -152,11 +188,14 @@ const Test = () => {
       {curItems &&
         curItems?.map((item) => (
           <div className="mb-4 text-sm" key={item.path}>
-            <div>path: {item.path}</div>
-            <div onClick={() => showFileContentHandler(item.path)}>
-              name: {item.name}
+            <div>경로 {item.path}</div>
+            <div
+              className="cursor-pointer"
+              onClick={() => showFileContentHandler(item.type, item.path)}
+            >
+              이름 {item.name}
             </div>
-            <div>type: {item.type}</div>
+            <div>타입 {item.type}</div>
             <div>
               <button
                 className="mr-2"
@@ -175,11 +214,19 @@ const Test = () => {
           </div>
         ))}
 
-      {/* 파일 조회 */}
-      <textarea
-        value={curFileContent}
-        onChange={(e) => setCurFileContent(e.target.value)}
-      ></textarea>
+      {/* 파일 내용 에디터 */}
+      <form method="post" onSubmit={fileSaveHandler}>
+        <textarea
+          rows="10"
+          cols="40"
+          className="text-black"
+          value={curFileContent}
+          onChange={(e) => setCurFileContent(e.target.value)}
+        ></textarea>
+        <button type="submit" onClick={fileSaveHandler}>
+          💾
+        </button>
+      </form>
     </React.Fragment>
   );
 };

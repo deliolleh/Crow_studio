@@ -5,7 +5,8 @@ const fileApi = {
     api.post(`/files/${teamSeq}?type=${type}`, fileData),
   fileDelete: (teamSeq, type, fileData) =>
     api.delete(`/files/${teamSeq}?type=${type}`, { data: fileData }),
-  fileSave: (teamSeq, ContentData) => api.put(`/files/${teamSeq}`, ContentData),
+  fileSave: (teamSeq, contentData) =>
+    api.put(`/files/${teamSeq}/files`, contentData),
   // fileNameChange: (fileTitle, fileData) =>
   //   api.put(`/files/${fileTitle}`, fileData),
   fileNameChange: (fileData) => api.put(`/files/file-title`, fileData),

@@ -51,6 +51,36 @@ export const renameFile = createAsyncThunk(
   }
 );
 
+export const getFileContent = createAsyncThunk(
+  "file/getFileContent",
+  async (fileData, { rejectWithValue }) => {
+    try {
+      const response = await fileApi.fileCall(fileData);
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+      return rejectWithValue(err.response.status);
+    }
+  }
+);
+
+export const saveFileContent = createAsyncThunk(
+  "file/saveFileContent",
+  async ({ teamSeq, contentData }, { rejectWithValue }) => {
+    try {
+      const response = await fileApi.fileSave(teamSeq, contentData);
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+      return rejectWithValue(err.response.status);
+    }
+  }
+);
+
 //
 
 //
