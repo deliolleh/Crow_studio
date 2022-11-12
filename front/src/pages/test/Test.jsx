@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 
 import fileApi from "../../api/fileApi";
 
-import { createFile } from "../../redux/fileSlice";
+import { createFile, deleteFile, renameFile } from "../../redux/fileSlice";
 import { getDirectoryList } from "../../redux/projectSlice";
 
 import Header from "../../components/Header";
@@ -22,6 +22,7 @@ const Test = () => {
   const [newFileName, setNewFileName] = useState("");
   const [newDirectoryName, setNewDirectoryName] = useState("");
   const [curItems, setCurItems] = useState([]);
+  const [curFileContent, setCurFileContent] = useState("");
 
   const dispatchGetDirectoryList = () => {
     dispatch(getDirectoryList(directoryData))
@@ -34,17 +35,6 @@ const Test = () => {
   };
 
   useEffect(() => {
-    // const directoryData = {
-    //   rootPath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
-    //   rootName: ``,
-    // };
-    // projectApi
-    //   .directoryList(directoryData)
-    //   .then((res) => {
-    //     console.log("directoryList res:", res);
-    //     setCurItems(res.data.fileDirectory);
-    //   })
-    //   .catch(console.error);
     dispatchGetDirectoryList();
   }, []);
 
@@ -62,19 +52,10 @@ const Test = () => {
       .unwrap()
       .then(() => {
         console.log(`/${newDirectoryName} 생성 완료`);
-        alert(`/${newDirectoryName} 생성 완료`);
         setNewDirectoryName("");
         dispatchGetDirectoryList();
       })
       .catch(console.error);
-    // fileApi
-    //   .fileCreate(TEAM_SEQ, 1, fileData)
-    //   .then(() => {
-    //     console.log(`/${newDirectoryName} 생성 완료`);
-    //     alert(`/${newDirectoryName} 생성 완료`);
-    //     setNewDirectoryName("");
-    //   })
-    //   .catch(console.error);
   };
 
   // 파일 생성 핸들러
@@ -91,19 +72,10 @@ const Test = () => {
       .unwrap()
       .then(() => {
         console.log(`${newFileName} 생성 완료`);
-        alert(`${newFileName} 생성 완료`);
         setNewFileName("");
         dispatchGetDirectoryList();
       })
       .catch(console.error);
-    // fileApi
-    //   .fileCreate(TEAM_SEQ, 2, fileData)
-    //   .then(() => {
-    //     console.log(`${newFileName} 생성 완료`);
-    //     alert(`${newFileName} 생성 완료`);
-    //     setNewFileName("");
-    //   })
-    //   .catch(console.error);
   };
 
   // 파일, 폴더 삭제 핸들러
@@ -115,9 +87,14 @@ const Test = () => {
     const targetData = {
       filePath: targetPath,
     };
-    fileApi
-      .fileDelete(TEAM_SEQ, targetType, targetData)
-      .then(console.log)
+    dispatch(
+      deleteFile({ teamSeq: TEAM_SEQ, type: targetType, fileData: targetData })
+    )
+      .unwrap()
+      .then((res) => {
+        console.log("삭제 성공 res:", res);
+        dispatchGetDirectoryList();
+      })
       .catch(console.error);
   };
 
@@ -129,11 +106,17 @@ const Test = () => {
       oldFileName: targetName,
       fileTitle: newName,
     };
-    fileApi
-      .fileNameChange(renameData)
-      .then(console.log(`${targetName} -> ${newName} 변경 성공`))
+    dispatch(renameFile(renameData))
+      .unwrap()
+      .then((res) => {
+        console.log(`${targetName} -> ${newName} 변경 성공`);
+        dispatchGetDirectoryList();
+      })
       .catch(console.error);
   };
+
+  // 파일 클릭하면 내용 보여주기
+  const showFileContentHandler = () => {};
 
   return (
     <React.Fragment>
@@ -170,7 +153,9 @@ const Test = () => {
         curItems?.map((item) => (
           <div className="mb-4 text-sm" key={item.path}>
             <div>path: {item.path}</div>
-            <div>name: {item.name}</div>
+            <div onClick={() => showFileContentHandler(item.path)}>
+              name: {item.name}
+            </div>
             <div>type: {item.type}</div>
             <div>
               <button
@@ -191,7 +176,10 @@ const Test = () => {
         ))}
 
       {/* 파일 조회 */}
-      {/* <textarea value="hah"></textarea> */}
+      <textarea
+        value={curFileContent}
+        onChange={(e) => setCurFileContent(e.target.value)}
+      ></textarea>
     </React.Fragment>
   );
 };
