@@ -73,7 +73,7 @@ const Sidebar = ({ onClickIcon, com }) => {
               onClick={() => {
                 if (
                   classRef.current.classList.contains("activeIcon") ||
-                  com == "디렉토리"
+                  com === "디렉토리"
                 ) {
                   onClickIcon("");
                   console.log(com);
@@ -96,7 +96,7 @@ const Sidebar = ({ onClickIcon, com }) => {
               onClick={() => {
                 if (
                   classRef.current.classList.contains("activeIcon") ||
-                  com == "깃"
+                  com === "깃"
                 ) {
                   onClickIcon("");
                   console.log(com);
@@ -119,7 +119,7 @@ const Sidebar = ({ onClickIcon, com }) => {
               onClick={() => {
                 if (
                   classRef.current.classList.contains("activeIcon") ||
-                  com == "팀"
+                  com === "팀"
                 ) {
                   onClickIcon("");
                   console.log(com);
@@ -142,7 +142,7 @@ const Sidebar = ({ onClickIcon, com }) => {
               onClick={() => {
                 if (
                   classRef.current.classList.contains("activeIcon") ||
-                  com == "api"
+                  com === "api"
                 ) {
                   onClickIcon("");
                   console.log(com);
@@ -165,7 +165,7 @@ const Sidebar = ({ onClickIcon, com }) => {
               onClick={() => {
                 if (
                   classRef.current.classList.contains("activeIcon") ||
-                  com == "변수명"
+                  com === "변수명"
                 ) {
                   onClickIcon("");
                   console.log(com);
@@ -188,7 +188,7 @@ const Sidebar = ({ onClickIcon, com }) => {
               onClick={() => {
                 if (
                   classRef.current.classList.contains("activeIcon") ||
-                  com == "세팅"
+                  com === "세팅"
                 ) {
                   onClickIcon("");
                   console.log(com);
