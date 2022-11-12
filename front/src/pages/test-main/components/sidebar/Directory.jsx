@@ -16,31 +16,10 @@ import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_fil
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
 import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
-// styled
-const DirectoryContainer = styled.div`
-  border-radius: 0 10px 10px 0;
-  height: 100vh;
-`;
-const IcSpan = styled.span`
-  padding: 0.5rem;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #d9d9d9;
-    border-radius: 5px;
-
-    & svg {
-      & path {
-        fill: #2b2c2b;
-      }
-    }
-  }
-`;
-
 // dropdown func
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+// function classNames(...classes) {
+//   return classes.filter(Boolean).join(" ");
+// }
 
 // tree view func (React Arborist)
 function Node({ node, style, dragHandle }) {
@@ -93,6 +72,7 @@ function Cursor({ top, left }) {
 
 const Directory = () => {
   const [term, setTerm] = useState("");
+
   return (
     <>
       <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
@@ -128,79 +108,29 @@ const Directory = () => {
                 <Menu.Items className="absolute left-6 -top-2 z-10 mt-2 w-36 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="py-1">
                     <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active
-                              ? "bg-point_purple_op20 text-white"
-                              : "text-white",
-                            "block px-4 py-2 text-xs"
-                          )}
-                        >
-                          파일 업로드
-                        </a>
-                      )}
+                      <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
+                        파일 업로드
+                      </div>
                     </Menu.Item>
                     <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active
-                              ? "bg-point_purple_op20 text-white"
-                              : "text-white",
-                            "block px-4 py-2 text-xs"
-                          )}
-                        >
-                          폴더 업로드
-                        </a>
-                      )}
+                      <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
+                        폴더 업로드
+                      </div>
                     </Menu.Item>
                     <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active
-                              ? "bg-point_purple_op20 text-white"
-                              : "text-white",
-                            "block px-4 py-2 text-xs"
-                          )}
-                        >
-                          zip 파일로 다운로드
-                        </a>
-                      )}
+                      <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
+                        zip 파일로 다운로드
+                      </div>
                     </Menu.Item>
                     <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active
-                              ? "bg-point_purple_op20 text-white"
-                              : "text-white",
-                            "block px-4 py-2 text-xs"
-                          )}
-                        >
-                          이름 바꾸기
-                        </a>
-                      )}
+                      <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
+                        이름 바꾸기
+                      </div>
                     </Menu.Item>
                     <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active
-                              ? "bg-point_purple_op20 text-white"
-                              : "text-white",
-                            "block px-4 py-2 text-xs"
-                          )}
-                        >
-                          삭제
-                        </a>
-                      )}
+                      <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
+                        삭제
+                      </div>
                     </Menu.Item>
                   </div>
                 </Menu.Items>
@@ -239,3 +169,24 @@ const Directory = () => {
 };
 
 export default Directory;
+
+// styled
+const DirectoryContainer = styled.div`
+  border-radius: 0 10px 10px 0;
+  height: 100vh;
+`;
+const IcSpan = styled.span`
+  padding: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #d9d9d9;
+    border-radius: 5px;
+
+    & svg {
+      & path {
+        fill: #2b2c2b;
+      }
+    }
+  }
+`;
