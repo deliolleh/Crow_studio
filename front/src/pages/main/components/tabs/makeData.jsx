@@ -30,18 +30,14 @@ export const MakeEditorData = (
 
   // const detectKeyDown = (e) => {};
 
-  // 포맷팅 영역
+  // Formatting
   const format = async () => {
-    // console.log(editorRef.current.getValue());
-    const rawCode = editorRef.current.getValue();
-    const sendCode = rawCode.slice(1, rawCode.length - 1);
-    console.log(sendCode);
-    const sendBody = sendCode.replaceAll(" ", "");
-    // console.log(sendCode);
+    // When formatting Button Click, useRef of that part's value get
+    const sendCode = editorRef.current.getValue();
     const body = {
-      text: JSON.stringify(sendBody),
+      text: sendCode,
     };
-    console.log(body);
+    // console.log(body);
     await editorApi.formatPut(language, body).then((res) => {
       const number = res.data.data;
       console.log("dataCome ", res.data.data);
@@ -51,9 +47,9 @@ export const MakeEditorData = (
       editorApi
         .formatGet(language, body2)
         .then((res) => {
-          const updateCode = res.data.data.slice(1, res.data.data.length - 1);
-          console.log("updateCode: ", updateCode);
-          editorRef.current.getModel().setValue(updateCode);
+          console.log("updateCode: ", res.data.data);
+          const summaryCode = res.data.data.trim();
+          editorRef.current.getModel().setValue(summaryCode);
         })
         .catch((err) => console.error(err));
     });
@@ -95,12 +91,17 @@ export const MakeEditorData = (
             // defaultValue={
             //   i + 1 === 1 ? files["script.js"].value : files["style.css"].value
             // }
-            defaultValue={""}
-            onMount={(editor) => (editorRef.current = editor)}
+            defaultValue={"#welcome python"}
+            onMount={(editor) => {
+              editorRef.current = editor;
+              console.log(editor);
+            }}
             options={{
               scrollBeyondLastLine: false,
               fontSize: "14px",
               fontFamily: "JetBrains Mono",
+              autoIndent: "advanced",
+              wrappingIndent: "same",
             }}
           />
         </div>
