@@ -16,6 +16,7 @@ import ProjectCreate from "./pages/project-create/ProjectCreate";
 import Teams from "./pages/teams/Teams";
 import TeamCreate from "./pages/team-create/TeamCreate";
 import TeamDetail from "./pages/team-detail/TeamDetail";
+import Test from "./pages/test/Test";
 
 const router = createBrowserRouter([
   {
@@ -71,6 +72,14 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <TeamCreate />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/test",
+    element: (
+      <PrivateRoute>
+        <Test />
       </PrivateRoute>
     ),
   },
