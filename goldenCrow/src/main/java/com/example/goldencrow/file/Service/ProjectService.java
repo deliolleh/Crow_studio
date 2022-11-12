@@ -66,7 +66,15 @@ public class ProjectService {
         Map<String,List<Map<String,String>>> fileTree = new TreeMap<>();
         List<Map<String,String>> childTree = new ArrayList<>();
 
-        File file = new File(rootPath);
+        File file;
+
+        if (rootName.equals("root")) {
+            String baseUrl = "/home/ubuntu/crow_data/" + rootPath;
+            file = new File(baseUrl);
+        } else {
+            file = new File(rootPath);
+        }
+
         File files[] = file.listFiles();
         String names[] = file.list();
 
