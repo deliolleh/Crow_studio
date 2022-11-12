@@ -38,7 +38,7 @@ const Test = () => {
     };
     fileApi
       .fileCreate(TEAM_SEQ, 1, fileData)
-      .then((res) => {
+      .then(() => {
         console.log(`/${newDirectoryName} 생성 완료`);
         alert(`/${newDirectoryName} 생성 완료`);
         setNewDirectoryName("");
@@ -58,7 +58,7 @@ const Test = () => {
     };
     fileApi
       .fileCreate(TEAM_SEQ, 2, fileData)
-      .then((res) => {
+      .then(() => {
         console.log(`${newFileName} 생성 완료`);
         alert(`${newFileName} 생성 완료`);
         setNewFileName("");
@@ -78,6 +78,20 @@ const Test = () => {
     fileApi
       .fileDelete(TEAM_SEQ, targetType, targetData)
       .then(console.log)
+      .catch(console.error);
+  };
+
+  // 파일, 폴더 이름 수정 핸들러
+  const renameItemHandler = (targetPath, targetName) => {
+    const newName = prompt("변경할 이름 입력", targetName);
+    const renameData = {
+      filePath: targetPath,
+      oldFileName: targetName,
+      fileTitle: newName,
+    };
+    fileApi
+      .fileNameChange(renameData)
+      .then(console.log(`${targetName} -> ${newName} 변경 성공`))
       .catch(console.error);
   };
 
@@ -111,7 +125,7 @@ const Test = () => {
         />
       </form>
 
-      {/* 현재 프로젝트 구조 */}
+      {/* 현재 프로젝트 아이템들 */}
       {curItems &&
         curItems?.map((item) => (
           <div className="mb-4 text-sm" key={item.path}>
@@ -119,7 +133,12 @@ const Test = () => {
             <div>name: {item.name}</div>
             <div>type: {item.type}</div>
             <div>
-              <button className="mr-2">✏</button>
+              <button
+                className="mr-2"
+                onClick={() => renameItemHandler(item.path, item.name)}
+              >
+                ✏
+              </button>
               <button
                 onClick={() =>
                   deleteItemHandler(item.path, item.type, item.name)
