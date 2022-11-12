@@ -1,10 +1,11 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { Menu, Transition } from "@headlessui/react";
 
 import clsx from "clsx";
 import { Tree } from "react-arborist";
-import { dirData } from "./directory/dirData";
+// import { dirData } from "./directory/dirData";
 import { FillFlexParent } from "./directory/fill-flex-parent.tsx";
 
 import * as icons from "react-icons/md";
@@ -16,31 +17,14 @@ import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_fil
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
 import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
-// styled
-const DirectoryContainer = styled.div`
-  border-radius: 0 10px 10px 0;
-  height: 100vh;
-`;
-const IcSpan = styled.span`
-  padding: 0.5rem;
-  cursor: pointer;
+import * as iconsi from "react-icons/io5";
 
-  &:hover {
-    background-color: #d9d9d9;
-    border-radius: 5px;
-
-    & svg {
-      & path {
-        fill: #2b2c2b;
-      }
-    }
-  }
-`;
+import { getDirectoryList } from "../../../../redux/projectSlice";
 
 // dropdown func
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+// function classNames(...classes) {
+//   return classes.filter(Boolean).join(" ");
+// }
 
 // tree view func (React Arborist)
 function Node({ node, style, dragHandle }) {
@@ -91,8 +75,49 @@ function Cursor({ top, left }) {
   return <div className={styles.dropCursor} style={{ top, left }}></div>;
 }
 
+const TEAM_SEQ = 3;
+const DIRECTORY_DATA = {
+  rootPath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
+  rootName: ``,
+};
+
 const Directory = () => {
+  const dispatch = useDispatch();
   const [term, setTerm] = useState("");
+
+  const [curItems, setCurItems] = useState([]);
+
+  useEffect(() => {
+    dispatch(getDirectoryList(DIRECTORY_DATA))
+      .unwrap()
+      .then((res) => {
+        console.log("directoryList res:", res);
+        setCurItems(
+          res.fileDirectory.map((el, i) => {
+            const elementData = {
+              id: `${i + 1}`,
+              name: el.name,
+              unread: 0,
+              icon: el.name.includes(".py")
+                ? iconsi.IoLogoPython
+                : iconsi.IoFolderOpenOutline,
+            };
+            return elementData;
+          })
+        );
+      })
+      .catch(console.error);
+  }, [dispatch]);
+
+  const testDirData = [
+    {
+      id: "2",
+      name: "manage.py",
+      unread: 0,
+      icon: iconsi.IoLogoPython,
+    },
+  ];
+
   return (
     <>
       <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
@@ -108,6 +133,7 @@ const Directory = () => {
             <IcSpan>
               <IcNewDir alt="IcNewDir" />
             </IcSpan>
+
             {/* dropdown */}
             <Menu as="div" className="relative">
               <Menu.Button>
@@ -128,79 +154,29 @@ const Directory = () => {
                 <Menu.Items className="absolute left-6 -top-2 z-10 mt-2 w-36 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="py-1">
                     <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active
-                              ? "bg-point_purple_op20 text-white"
-                              : "text-white",
-                            "block px-4 py-2 text-xs"
-                          )}
-                        >
-                          파일 업로드
-                        </a>
-                      )}
+                      <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
+                        파일 업로드
+                      </div>
                     </Menu.Item>
                     <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active
-                              ? "bg-point_purple_op20 text-white"
-                              : "text-white",
-                            "block px-4 py-2 text-xs"
-                          )}
-                        >
-                          폴더 업로드
-                        </a>
-                      )}
+                      <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
+                        폴더 업로드
+                      </div>
                     </Menu.Item>
                     <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active
-                              ? "bg-point_purple_op20 text-white"
-                              : "text-white",
-                            "block px-4 py-2 text-xs"
-                          )}
-                        >
-                          zip 파일로 다운로드
-                        </a>
-                      )}
+                      <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
+                        zip 파일로 다운로드
+                      </div>
                     </Menu.Item>
                     <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active
-                              ? "bg-point_purple_op20 text-white"
-                              : "text-white",
-                            "block px-4 py-2 text-xs"
-                          )}
-                        >
-                          이름 바꾸기
-                        </a>
-                      )}
+                      <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
+                        이름 바꾸기
+                      </div>
                     </Menu.Item>
                     <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active
-                              ? "bg-point_purple_op20 text-white"
-                              : "text-white",
-                            "block px-4 py-2 text-xs"
-                          )}
-                        >
-                          삭제
-                        </a>
-                      )}
+                      <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
+                        삭제
+                      </div>
                     </Menu.Item>
                   </div>
                 </Menu.Items>
@@ -218,7 +194,9 @@ const Directory = () => {
             {({ width, height }) => {
               return (
                 <Tree
-                  initialData={dirData}
+                  // initialData={dirData}
+                  // initialData={curItems}
+                  data={curItems}
                   width={width}
                   // height={height}
                   height={600}
@@ -239,3 +217,24 @@ const Directory = () => {
 };
 
 export default Directory;
+
+// styled
+const DirectoryContainer = styled.div`
+  border-radius: 0 10px 10px 0;
+  height: 100vh;
+`;
+const IcSpan = styled.span`
+  padding: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #d9d9d9;
+    border-radius: 5px;
+
+    & svg {
+      & path {
+        fill: #2b2c2b;
+      }
+    }
+  }
+`;
