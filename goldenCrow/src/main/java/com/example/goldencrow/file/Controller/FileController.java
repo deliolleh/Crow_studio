@@ -69,9 +69,9 @@ public class FileController {
         boolean result = fileService.updateFileName(path,title,oldFileName);
 
         if (result) {
-            return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.OK);
+            return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 

@@ -46,7 +46,7 @@ public class ProjectController {
         Map<String,List<Map<String,String>>> directory;
         directory = projectService.readDirectory(rootPath,rootName);
 
-        return new ResponseEntity<>(directory, HttpStatus.SERVICE_UNAVAILABLE);
+        return new ResponseEntity<>(directory, HttpStatus.ACCEPTED);
     }
 
 
