@@ -1,10 +1,11 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { Menu, Transition } from "@headlessui/react";
 
 import clsx from "clsx";
 import { Tree } from "react-arborist";
-import { dirData } from "./directory/dirData";
+// import { dirData } from "./directory/dirData";
 import { FillFlexParent } from "./directory/fill-flex-parent.tsx";
 
 import * as icons from "react-icons/md";
@@ -15,6 +16,10 @@ import styles from "./directory/dir-data.module.css";
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
 import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
+
+import * as iconsi from "react-icons/io5";
+
+import { getDirectoryList } from "../../../../redux/projectSlice";
 
 // dropdown func
 // function classNames(...classes) {
@@ -70,8 +75,48 @@ function Cursor({ top, left }) {
   return <div className={styles.dropCursor} style={{ top, left }}></div>;
 }
 
+const TEAM_SEQ = 3;
+const DIRECTORY_DATA = {
+  rootPath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
+  rootName: ``,
+};
+
 const Directory = () => {
+  const dispatch = useDispatch();
   const [term, setTerm] = useState("");
+
+  const [curItems, setCurItems] = useState([]);
+
+  useEffect(() => {
+    dispatch(getDirectoryList(DIRECTORY_DATA))
+      .unwrap()
+      .then((res) => {
+        console.log("directoryList res:", res);
+        setCurItems(
+          res.fileDirectory.map((el, i) => {
+            const elementData = {
+              id: `${i + 1}`,
+              name: el.name,
+              unread: 0,
+              icon: el.name.includes(".py")
+                ? iconsi.IoLogoPython
+                : iconsi.IoFolderOpenOutline,
+            };
+            return elementData;
+          })
+        );
+      })
+      .catch(console.error);
+  }, [dispatch]);
+
+  const testDirData = [
+    {
+      id: "2",
+      name: "manage.py",
+      unread: 0,
+      icon: iconsi.IoLogoPython,
+    },
+  ];
 
   return (
     <>
@@ -88,6 +133,7 @@ const Directory = () => {
             <IcSpan>
               <IcNewDir alt="IcNewDir" />
             </IcSpan>
+
             {/* dropdown */}
             <Menu as="div" className="relative">
               <Menu.Button>
@@ -148,7 +194,9 @@ const Directory = () => {
             {({ width, height }) => {
               return (
                 <Tree
-                  initialData={dirData}
+                  // initialData={dirData}
+                  // initialData={curItems}
+                  data={curItems}
                   width={width}
                   // height={height}
                   height={600}
