@@ -1,29 +1,51 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 import fileApi from "../../api/fileApi";
-import projectApi from "../../api/projectApi";
+
+import { createFile } from "../../redux/fileSlice";
+import { getDirectoryList } from "../../redux/projectSlice";
 
 import Header from "../../components/Header";
 
 const TEAM_SEQ = 3;
+const TYPE_DIRECTORY = 1;
+const TYPE_FILE = 2;
+
+const directoryData = {
+  rootPath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
+  rootName: ``,
+};
 
 const Test = () => {
+  const dispatch = useDispatch();
   const [newFileName, setNewFileName] = useState("");
   const [newDirectoryName, setNewDirectoryName] = useState("");
   const [curItems, setCurItems] = useState([]);
 
-  useEffect(() => {
-    const directoryData = {
-      rootPath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
-      rootName: ``,
-    };
-    projectApi
-      .directoryList(directoryData)
+  const dispatchGetDirectoryList = () => {
+    dispatch(getDirectoryList(directoryData))
+      .unwrap()
       .then((res) => {
         console.log("directoryList res:", res);
-        setCurItems(res.data.fileDirectory);
+        setCurItems(res.fileDirectory);
       })
       .catch(console.error);
+  };
+
+  useEffect(() => {
+    // const directoryData = {
+    //   rootPath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
+    //   rootName: ``,
+    // };
+    // projectApi
+    //   .directoryList(directoryData)
+    //   .then((res) => {
+    //     console.log("directoryList res:", res);
+    //     setCurItems(res.data.fileDirectory);
+    //   })
+    //   .catch(console.error);
+    dispatchGetDirectoryList();
   }, []);
 
   // 디렉터리 생성 핸들러
@@ -36,14 +58,23 @@ const Test = () => {
       fileTitle: newDirectoryName,
       filePath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
     };
-    fileApi
-      .fileCreate(TEAM_SEQ, 1, fileData)
+    dispatch(createFile({ teamSeq: TEAM_SEQ, type: TYPE_DIRECTORY, fileData }))
+      .unwrap()
       .then(() => {
         console.log(`/${newDirectoryName} 생성 완료`);
         alert(`/${newDirectoryName} 생성 완료`);
         setNewDirectoryName("");
+        dispatchGetDirectoryList();
       })
       .catch(console.error);
+    // fileApi
+    //   .fileCreate(TEAM_SEQ, 1, fileData)
+    //   .then(() => {
+    //     console.log(`/${newDirectoryName} 생성 완료`);
+    //     alert(`/${newDirectoryName} 생성 완료`);
+    //     setNewDirectoryName("");
+    //   })
+    //   .catch(console.error);
   };
 
   // 파일 생성 핸들러
@@ -56,14 +87,23 @@ const Test = () => {
       fileTitle: newFileName,
       filePath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
     };
-    fileApi
-      .fileCreate(TEAM_SEQ, 2, fileData)
+    dispatch(createFile({ teamSeq: TEAM_SEQ, type: TYPE_FILE, fileData }))
+      .unwrap()
       .then(() => {
         console.log(`${newFileName} 생성 완료`);
         alert(`${newFileName} 생성 완료`);
         setNewFileName("");
+        dispatchGetDirectoryList();
       })
       .catch(console.error);
+    // fileApi
+    //   .fileCreate(TEAM_SEQ, 2, fileData)
+    //   .then(() => {
+    //     console.log(`${newFileName} 생성 완료`);
+    //     alert(`${newFileName} 생성 완료`);
+    //     setNewFileName("");
+    //   })
+    //   .catch(console.error);
   };
 
   // 파일, 폴더 삭제 핸들러
@@ -149,6 +189,9 @@ const Test = () => {
             </div>
           </div>
         ))}
+
+      {/* 파일 조회 */}
+      {/* <textarea value="hah"></textarea> */}
     </React.Fragment>
   );
 };
