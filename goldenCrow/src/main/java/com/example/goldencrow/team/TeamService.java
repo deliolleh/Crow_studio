@@ -150,10 +150,24 @@ public class TeamService {
     }
 
     // 팀 생성
-    public Map<String, Long> teamCreate(String jwt, Integer type, Map<String, String> req) {
+    public Map<String, Long> teamCreate(String jwt, Map<String, String> req) {
 
         String teamName = req.get("teamName");
         String projectName = req.get("projectName");
+        String projectType = req.get("projectType");
+        Integer type;
+
+        if(projectType.equals("pure Python")) {
+            type = 1;
+        } else if(projectType.equals("Django")){
+            type = 2;
+        } else if(projectType.equals("Flask")) {
+            type = 3;
+        } else if(projectType.equals("FastAPI")) {
+            type = 4;
+        } else {
+            return null;
+        }
 
         Map<String, Long> res = new HashMap<>();
 
@@ -192,10 +206,10 @@ public class TeamService {
             } else {
                 // 모든 경우의 프로젝트 생성 실패
 
-                // 등록되었던 팀과 멤버를 삭제한다
-                teamRepository.delete(teamEntity);
-                memberRepository.delete(memberEntity);
                 System.out.println(projectCreateResult);
+
+                // 등록되었던 팀과 멤버를 삭제한다
+                teamRepository.delete(teamRepository.findByTeamSeq(teamSeq).get());
 
                 if(projectCreateResult.equals("프로젝트 생성에 실패했습니다")){
                     // 아무것도 못함
