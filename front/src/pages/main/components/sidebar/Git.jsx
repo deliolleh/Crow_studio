@@ -45,9 +45,11 @@ const Git = (
   const changeBranch = (event) => {
     const ChangingBranch = event.target.textContent;
     console.log("click: ", ChangingBranch);
+    const pureBranch = ChangingBranch.split(" ")[0].replaceAll("origin/", "");
+    console.log(pureBranch);
     const gitData = {
       gitPath: nowAddress,
-      branchName: ChangingBranch,
+      branchName: pureBranch,
     };
     gitApi
       .gitSwitch(1, gitData)
