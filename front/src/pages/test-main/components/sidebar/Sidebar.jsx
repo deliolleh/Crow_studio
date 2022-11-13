@@ -9,59 +9,47 @@ import { ReactComponent as IcApi } from "../../../../assets/icons/ic_api.svg";
 import { ReactComponent as IcVar } from "../../../../assets/icons/ic_var.svg";
 import { ReactComponent as IcSettings } from "../../../../assets/icons/ic_set.svg";
 
-const Sidebar = ({ onClickIcon, showComponent }) => {
+const Sidebar = ({ clickIcon, showItem }) => {
   const classRef = useRef(null);
-
-  const addClassName = showComponent === "디렉토리" ? " activeIcon" : "";
+  const activeIconDir = showItem === "Dir" ? " activeIcon" : "";
+  const activeIconGit = showItem === "Git" ? " activeIcon" : "";
+  const activeIconTeam = showItem === "Team" ? " activeIcon" : "";
+  const activeIconApi = showItem === "Api" ? " activeIcon" : "";
+  const activeIconVar = showItem === "Var" ? " activeIcon" : "";
+  const activeIconSet = showItem === "Set" ? " activeIcon" : "";
 
   const clickHandler = (clickedName) => {
-    const isContainsActiveIcon =
-      classRef.current.classList.contains("activeIcon");
-    if (clickedName === "디렉토리") {
-      if (isContainsActiveIcon || showComponent === "디렉토리") {
-        onClickIcon("");
-      } else {
-        onClickIcon("디렉토리");
-      }
-    } else if (clickedName === "깃") {
-      if (isContainsActiveIcon || showComponent === "깃") {
-        onClickIcon("");
-      } else {
-        onClickIcon("깃");
-      }
-    } else if (clickedName === "팀") {
-      if (isContainsActiveIcon || showComponent === "팀") {
-        onClickIcon("");
-      } else {
-        onClickIcon("팀");
-      }
-    } else if (clickedName === "api") {
-      if (isContainsActiveIcon || showComponent === "api") {
-        onClickIcon("");
-      } else {
-        onClickIcon("api");
-      }
-    } else if (clickedName === "변수명") {
-      if (isContainsActiveIcon || showComponent === "변수명") {
-        onClickIcon("");
-      } else {
-        onClickIcon("변수명");
-      }
-    } else if (clickedName === "세팅") {
-      if (isContainsActiveIcon || showComponent === "세팅") {
-        onClickIcon("");
-      } else {
-        onClickIcon("세팅");
-      }
+    const isActive = classRef.current.classList.contains("activeIcon");
+    switch (clickedName) {
+      case "Dir":
+        isActive || showItem === "Dir" ? clickIcon("") : clickIcon("Dir");
+        break;
+      case "Git":
+        isActive || showItem === "Git" ? clickIcon("") : clickIcon("Git");
+        break;
+      case "Team":
+        isActive || showItem === "Team" ? clickIcon("") : clickIcon("Team");
+        break;
+      case "Api":
+        isActive || showItem === "Api" ? clickIcon("") : clickIcon("Api");
+        break;
+      case "Var":
+        isActive || showItem === "Var" ? clickIcon("") : clickIcon("Var");
+        break;
+      case "Set":
+        isActive || showItem === "Set" ? clickIcon("") : clickIcon("Set");
+        break;
+      default:
+        break;
     }
   };
 
   return (
-    <>
+    <React.Fragment>
       <SidebarContainer
         className="ml-3 mb-3 bg-component_item_bg_dark"
         style={
-          showComponent === ""
+          showItem === ""
             ? { borderRadius: "10px" }
             : { borderRadius: "10px 0 0 10px" }
         }
@@ -70,9 +58,9 @@ const Sidebar = ({ onClickIcon, showComponent }) => {
           <ul className="pt-3.5">
             {/* Directory */}
             <ListHover
-              className={`flex flex-col items-center py-0.5 ${addClassName}`}
+              className={`flex flex-col items-center py-0.5 ${activeIconDir}`}
               ref={classRef}
-              onClick={() => clickHandler("디렉토리")}
+              onClick={() => clickHandler("Dir")}
             >
               <IcSpan>
                 <IcDirectory alt="directory" />
@@ -81,12 +69,9 @@ const Sidebar = ({ onClickIcon, showComponent }) => {
 
             {/* Git */}
             <ListHover
-              className={
-                "flex flex-col items-center py-0.5" +
-                (showComponent === "깃" ? " activeIcon" : "")
-              }
+              className={`flex flex-col items-center py-0.5 ${activeIconGit}`}
               ref={classRef}
-              onClick={() => clickHandler("깃")}
+              onClick={() => clickHandler("Git")}
             >
               <IcSpan>
                 <IcGit alt="git" />
@@ -95,12 +80,9 @@ const Sidebar = ({ onClickIcon, showComponent }) => {
 
             {/* Team */}
             <ListHover
-              className={
-                "flex flex-col items-center py-0.5" +
-                (showComponent === "팀" ? " activeIcon" : "")
-              }
+              className={`flex flex-col items-center py-0.5 ${activeIconTeam}`}
               ref={classRef}
-              onClick={() => clickHandler("팀")}
+              onClick={() => clickHandler("Team")}
             >
               <IcSpan>
                 <IcTeam alt="team" />
@@ -109,12 +91,9 @@ const Sidebar = ({ onClickIcon, showComponent }) => {
 
             {/* API */}
             <ListHover
-              className={
-                "flex flex-col items-center py-0.5" +
-                (showComponent === "api" ? " activeIcon" : "")
-              }
+              className={`flex flex-col items-center py-0.5 ${activeIconApi}`}
               ref={classRef}
-              onClick={() => clickHandler("api")}
+              onClick={() => clickHandler("Api")}
             >
               <IcSpan>
                 <IcApi alt="api" />
@@ -123,12 +102,9 @@ const Sidebar = ({ onClickIcon, showComponent }) => {
 
             {/* Variable Name */}
             <ListHover
-              className={
-                "flex flex-col items-center py-0.5" +
-                (showComponent === "변수명" ? " activeIcon" : "")
-              }
+              className={`flex flex-col items-center py-0.5 ${activeIconVar}`}
               ref={classRef}
-              onClick={() => clickHandler("변수명")}
+              onClick={() => clickHandler("Var")}
             >
               <IcSpan>
                 <IcVar alt="variable name" />
@@ -137,12 +113,9 @@ const Sidebar = ({ onClickIcon, showComponent }) => {
 
             {/* Settings */}
             <ListHover
-              className={
-                "flex flex-col items-center py-0.5" +
-                (showComponent === "세팅" ? " activeIcon" : "")
-              }
+              className={`flex flex-col items-center py-0.5 ${activeIconSet}`}
               ref={classRef}
-              onClick={() => clickHandler("세팅")}
+              onClick={() => clickHandler("Set")}
             >
               <IcSpan>
                 <IcSettings alt="settings" />
@@ -151,7 +124,7 @@ const Sidebar = ({ onClickIcon, showComponent }) => {
           </ul>
         </div>
       </SidebarContainer>
-    </>
+    </React.Fragment>
   );
 };
 

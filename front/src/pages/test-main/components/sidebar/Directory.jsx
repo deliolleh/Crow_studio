@@ -20,6 +20,13 @@ import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.s
 import * as iconsi from "react-icons/io5";
 
 import { getDirectoryList } from "../../../../redux/projectSlice";
+import {
+  createFile,
+  deleteFile,
+  renameFile,
+  getFileContent,
+  saveFileContent,
+} from "../../../../redux/fileSlice";
 
 // dropdown func
 // function classNames(...classes) {
@@ -76,6 +83,8 @@ function Cursor({ top, left }) {
 }
 
 const TEAM_SEQ = 3;
+const TYPE_DIRECTORY = 1;
+const TYPE_FILE = 2;
 const DIRECTORY_DATA = {
   rootPath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
   rootName: ``,
@@ -86,8 +95,10 @@ const Directory = () => {
   const [term, setTerm] = useState("");
 
   const [curItems, setCurItems] = useState([]);
+  // const [newFileName, setNewFileName] = useState("");
+  // const [newDirectoryName, setNewDirectoryName] = useState("");
 
-  useEffect(() => {
+  const dispatchGetDirectoryList = () => {
     dispatch(getDirectoryList(DIRECTORY_DATA))
       .unwrap()
       .then((res) => {
@@ -107,16 +118,49 @@ const Directory = () => {
         );
       })
       .catch(console.error);
-  }, [dispatch]);
+  };
 
-  const testDirData = [
-    {
-      id: "2",
-      name: "manage.py",
-      unread: 0,
-      icon: iconsi.IoLogoPython,
-    },
-  ];
+  useEffect(() => {
+    dispatchGetDirectoryList();
+  }, []);
+
+  // 디렉터리 생성 핸들러
+  const createDirectoryHandler = () => {
+    const newDirectoryName = prompt("생성할 폴더 이름 입력");
+    if (newDirectoryName.trim().length === 0) {
+      return;
+    }
+    const fileData = {
+      fileTitle: newDirectoryName,
+      filePath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
+    };
+    dispatch(createFile({ teamSeq: TEAM_SEQ, type: TYPE_DIRECTORY, fileData }))
+      .unwrap()
+      .then(() => {
+        console.log(`/${newDirectoryName} 생성 완료`);
+        dispatchGetDirectoryList();
+      })
+      .catch(console.error);
+  };
+
+  // 파일 생성 핸들러
+  const createFileHandler = () => {
+    const newFileName = prompt("생성할 파일 이름 입력");
+    if (newFileName.trim().length === 0) {
+      return;
+    }
+    const fileData = {
+      fileTitle: newFileName,
+      filePath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
+    };
+    dispatch(createFile({ teamSeq: TEAM_SEQ, type: TYPE_FILE, fileData }))
+      .unwrap()
+      .then(() => {
+        console.log(`${newFileName} 생성 완료`);
+        dispatchGetDirectoryList();
+      })
+      .catch(console.error);
+  };
 
   return (
     <>
@@ -128,10 +172,10 @@ const Directory = () => {
           <div className="text-xl font-bold text-white">Directory</div>
           <div className="mt-1 flex items-center">
             <IcSpan>
-              <IcNewFile alt="IcNewFile" />
+              <IcNewFile alt="IcNewFile" onClick={createFileHandler} />
             </IcSpan>
             <IcSpan>
-              <IcNewDir alt="IcNewDir" />
+              <IcNewDir alt="IcNewDir" onClick={createDirectoryHandler} />
             </IcSpan>
 
             {/* dropdown */}
