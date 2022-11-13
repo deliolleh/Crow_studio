@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import gitApi from "../../../../api/gitApi";
+import { BsCircleFill } from "react-icons/bs";
 
 // styled
 const GitContainer = styled.div`
@@ -113,60 +114,105 @@ const Git = (
           <div className="text-xl font-bold text-white my-1">Git</div>
         </div>
         <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
-        <div style={{ padding: 15 }}>
+        <div className="p-[15px] overflow-auto">
           <div className="pl-1">
             <div className="text-primary_dark text-sm font-bold">
               <div>
-                <div>
-                  <div>Repo Branch</div>
-                  {repoBranch.map((branch, index) => {
-                    return (
-                      <div
-                        key={"repo " + index}
-                        onClick={(e) => changeBranch(e)}
-                      >
-                        {branch}
-                      </div>
-                    );
-                  })}
-                  <br />
-                  <div>Local Branch</div>
+                <div className="w-fit mb-5">
+                  <div className="mb-2">Commit/Push</div>
+                  <textarea
+                    value={commitMessage}
+                    style={{ resize: "none" }}
+                    onChange={changeCommit}
+                    cols="25"
+                    rows="6"
+                    className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
+                  ></textarea>
+                  <div className="flex justify-end">
+                    <button
+                      onClick={justCommit}
+                      className="h-[26px] w-[70px] rounded-md bg-point_purple text-white mr-2"
+                    >
+                      Commit
+                    </button>
+                    <button
+                      onClick={commitAndPush}
+                      className="h-[26px] w-[110px] rounded-md bg-point_purple text-white"
+                    >
+                      Commit&Push
+                    </button>
+                  </div>
+                </div>
+                <hr className="bg-component_+2_dark border-0 m-0 h-[1px] min-h-[1px] w-[253px] mb-5" />
+                <details open className="mb-5 w-fit">
+                  <summary className="font-bold mb-2">새로운 브랜치</summary>
+                  <div className="flex">
+                    <input
+                      type="text"
+                      onChange={onChangeName}
+                      value={newBranchName}
+                      className="h-[28px] w-[180px] rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
+                    />
+                    <button
+                      onClick={newBranch}
+                      className="h-[26px] w-[45px] rounded-md bg-point_purple text-white ml-2"
+                    >
+                      생성
+                    </button>
+                  </div>
+                </details>
+                <hr className="bg-component_+2_dark border-0 m-0 h-[1px] min-h-[1px] w-[253px] mb-5" />
+                <details open className="mb-5 w-fit">
+                  <summary className="mb-2">Local Branch</summary>
                   {localBranch.map((branch, index) => {
                     return (
                       <div
                         key={"local " + index}
                         onClick={(e) => changeBranch(e)}
+                        className="flex items-center w-[233px] h-[26px] rounded-md hover:bg-point_purple_op20"
                       >
-                        {branch}
+                        <BsCircleFill
+                          size={"0.5rem"}
+                          className={
+                            "text-point_purple ml-4 mr-3" +
+                            (branch.includes("*") === true
+                              ? ""
+                              : " text-transparent")
+                          }
+                        />
+                        <div className="text-white font-normal">
+                          {branch.includes("*") === true
+                            ? branch.replace("*", "")
+                            : branch}
+                        </div>
                       </div>
                     );
                   })}
-                </div>
-                <br />
-                <div>
-                  <div>새로운 브랜치 만들기</div>
-                  <input
-                    type="text"
-                    onChange={onChangeName}
-                    value={newBranchName}
-                  />
-                  <button onClick={newBranch}>make New Branch</button>
-                </div>
-                <br />
-                <div>
-                  <div>Commit/Push</div>
-                  <textarea
-                    value={commitMessage}
-                    style={{ resize: "none" }}
-                    onChange={changeCommit}
-                    cols="10"
-                    rows="5"
-                  ></textarea>
-                  <div>
-                    <button onClick={justCommit}>Commit</button>
-                    <button onClick={commitAndPush}>Commit&Push</button>
-                  </div>
-                </div>
+                </details>
+                <hr className="bg-component_+2_dark border-0 m-0 h-[1px] min-h-[1px] w-[253px] mb-5" />
+                <details className="mb-5 w-fit">
+                  <summary className="mb-2">Repo Branch</summary>
+                  {repoBranch.map((branch, index) => {
+                    return (
+                      <div
+                        key={"repo " + index}
+                        onClick={(e) => changeBranch(e)}
+                        className="flex items-center w-[233px] h-[26px] rounded-md hover:bg-point_purple_op20 overflow-x-auto"
+                      >
+                        <BsCircleFill
+                          size={"0.5rem"}
+                          className={
+                            "text-point_purple  ml-4 mr-3" +
+                            (branch.includes("*") === true
+                              ? ""
+                              : " text-transparent")
+                          }
+                        />
+                        <div className="text-white font-normal">{branch}</div>
+                      </div>
+                    );
+                  })}
+                </details>
               </div>
             </div>
           </div>
