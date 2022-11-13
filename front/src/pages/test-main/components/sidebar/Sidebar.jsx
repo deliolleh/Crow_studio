@@ -11,8 +11,12 @@ import { ReactComponent as IcSettings } from "../../../../assets/icons/ic_set.sv
 
 const Sidebar = ({ clickIcon, showItem }) => {
   const classRef = useRef(null);
-
-  const addClassName = showItem === "Dir" ? " activeIcon" : "";
+  const activeIconDir = showItem === "Dir" ? " activeIcon" : "";
+  const activeIconGit = showItem === "Git" ? " activeIcon" : "";
+  const activeIconTeam = showItem === "Team" ? " activeIcon" : "";
+  const activeIconApi = showItem === "Api" ? " activeIcon" : "";
+  const activeIconVar = showItem === "Var" ? " activeIcon" : "";
+  const activeIconSet = showItem === "Set" ? " activeIcon" : "";
 
   const clickHandler = (clickedName) => {
     const isActive = classRef.current.classList.contains("activeIcon");
@@ -41,7 +45,7 @@ const Sidebar = ({ clickIcon, showItem }) => {
   };
 
   return (
-    <>
+    <React.Fragment>
       <SidebarContainer
         className="ml-3 mb-3 bg-component_item_bg_dark"
         style={
@@ -54,7 +58,7 @@ const Sidebar = ({ clickIcon, showItem }) => {
           <ul className="pt-3.5">
             {/* Directory */}
             <ListHover
-              className={`flex flex-col items-center py-0.5 ${addClassName}`}
+              className={`flex flex-col items-center py-0.5 ${activeIconDir}`}
               ref={classRef}
               onClick={() => clickHandler("Dir")}
             >
@@ -65,10 +69,7 @@ const Sidebar = ({ clickIcon, showItem }) => {
 
             {/* Git */}
             <ListHover
-              className={
-                "flex flex-col items-center py-0.5" +
-                (showItem === "Git" ? " activeIcon" : "")
-              }
+              className={`flex flex-col items-center py-0.5 ${activeIconGit}`}
               ref={classRef}
               onClick={() => clickHandler("Git")}
             >
@@ -79,10 +80,7 @@ const Sidebar = ({ clickIcon, showItem }) => {
 
             {/* Team */}
             <ListHover
-              className={
-                "flex flex-col items-center py-0.5" +
-                (showItem === "Team" ? " activeIcon" : "")
-              }
+              className={`flex flex-col items-center py-0.5 ${activeIconTeam}`}
               ref={classRef}
               onClick={() => clickHandler("Team")}
             >
@@ -93,10 +91,7 @@ const Sidebar = ({ clickIcon, showItem }) => {
 
             {/* API */}
             <ListHover
-              className={
-                "flex flex-col items-center py-0.5" +
-                (showItem === "Api" ? " activeIcon" : "")
-              }
+              className={`flex flex-col items-center py-0.5 ${activeIconApi}`}
               ref={classRef}
               onClick={() => clickHandler("Api")}
             >
@@ -107,10 +102,7 @@ const Sidebar = ({ clickIcon, showItem }) => {
 
             {/* Variable Name */}
             <ListHover
-              className={
-                "flex flex-col items-center py-0.5" +
-                (showItem === "Var" ? " activeIcon" : "")
-              }
+              className={`flex flex-col items-center py-0.5 ${activeIconVar}`}
               ref={classRef}
               onClick={() => clickHandler("Var")}
             >
@@ -121,10 +113,7 @@ const Sidebar = ({ clickIcon, showItem }) => {
 
             {/* Settings */}
             <ListHover
-              className={
-                "flex flex-col items-center py-0.5" +
-                (showItem === "Set" ? " activeIcon" : "")
-              }
+              className={`flex flex-col items-center py-0.5 ${activeIconSet}`}
               ref={classRef}
               onClick={() => clickHandler("Set")}
             >
@@ -135,7 +124,7 @@ const Sidebar = ({ clickIcon, showItem }) => {
           </ul>
         </div>
       </SidebarContainer>
-    </>
+    </React.Fragment>
   );
 };
 
