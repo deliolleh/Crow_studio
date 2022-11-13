@@ -1,19 +1,6 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  // useCallback,
-  // useMemo,
-} from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-// import SplitPane from "react-split-pane";
-// import { useSelector } from "react-redux";
-// import { useLoading } from "@rest-hooks/hooks";
-// import { ResizeObserver } from "@juggle/resize-observer";
-// import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-// import { Tab, Panel, helpers, ExtraButton } from "@react-tabtab-next/tabtab";
 
-// components
 import Header from "../../components/Header";
 import Sidebar from "./components/sidebar/Sidebar";
 import Directory from "./components/sidebar/Directory";
@@ -22,82 +9,31 @@ import Team from "./components/sidebar/Team";
 import Api from "./components/sidebar/Api";
 import VariableName from "./components/sidebar/VariableName";
 import Settings from "./components/sidebar/Settings";
-// import CustomTabs from "./components/tabs/CustomTabs";
-// import CustomTabs2 from "./components/tabs/CustomTabs2";
-
-// api
-// import projectApi from "../../api/projectApi";
-
-// tabtab dummy data
-// import {
-//   MakeEditorData,
-//   MakeConsoleData,
-// } from "../main/components/tabs/makeData";
-
-// svg
-// import { ReactComponent as IcAdd } from "../../assets/icons/ic_add.svg";
 
 const TestMain = () => {
-  // const teamSeq = useSelector((state) => state.team.value.teamSeq);
-  // const teamSeq = 4;
+  const [showItem, setShowItem] = useState("Dir");
 
-  const [showComponent, setShowComponent] = useState("디렉토리");
-
-  const showComponentHandler = (x) => setShowComponent(x);
-
-  // split pane size
-  const sidebarSizeRef = useRef();
-  const [sidebarSize, setSidebarSize] = useState(0);
-
-  useEffect(() => {
-    setSidebarSize(sidebarSizeRef.current.getBoundingClientRect().width);
-  }, [sidebarSize]);
+  const showItemHandler = (componentName) => setShowItem(componentName);
 
   return (
-    <>
+    <React.Fragment>
       <Header />
       <div className="flex">
-        <div ref={sidebarSizeRef} className="flex">
-          <Sidebar
-            onClickIcon={showComponentHandler}
-            showComponent={showComponent}
-          />
-          {showComponent === "" && (
-            <SidebarItems style={{ width: "0px", margin: "0px" }} />
-          )}
-          {showComponent === "디렉토리" && (
+        <div className="flex">
+          <Sidebar clickIcon={showItemHandler} showItem={showItem} />
+          {showItem && (
             <SidebarItems>
-              <Directory />
-            </SidebarItems>
-          )}
-          {showComponent === "깃" && (
-            <SidebarItems>
-              <Git />
-            </SidebarItems>
-          )}
-          {showComponent === "팀" && (
-            <SidebarItems>
-              <Team />
-            </SidebarItems>
-          )}
-          {showComponent === "api" && (
-            <SidebarItems>
-              <Api />
-            </SidebarItems>
-          )}
-          {showComponent === "변수명" && (
-            <SidebarItems>
-              <VariableName />
-            </SidebarItems>
-          )}
-          {showComponent === "세팅" && (
-            <SidebarItems>
-              <Settings />
+              {showItem === "Dir" && <Directory />}
+              {showItem === "Git" && <Git />}
+              {showItem === "Team" && <Team />}
+              {showItem === "Api" && <Api />}
+              {showItem === "Var" && <VariableName />}
+              {showItem === "Set" && <Settings />}
             </SidebarItems>
           )}
         </div>
       </div>
-    </>
+    </React.Fragment>
   );
 };
 
