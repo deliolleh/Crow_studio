@@ -94,7 +94,7 @@ export const MakeEditorData = (
             defaultValue={"#welcome python"}
             onMount={(editor) => {
               editorRef.current = editor;
-              console.log(editor);
+              // console.log(editor);
             }}
             options={{
               scrollBeyondLastLine: false,
