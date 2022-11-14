@@ -7,17 +7,23 @@ import {
   modifyPassword,
   resign,
   updateGitAuth,
+  getUser,
 } from "../../redux/userSlice";
 
 import NicknameForm from "./components/NicknameForm";
 import PasswordForm from "./components/PasswordForm";
 import ResignForm from "./components/ResignForm";
 import GitForm from "./components/GitForm";
+import { useEffect } from "react";
 
 const Modify = ({ closeModify }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { myNickname } = useSelector((state) => state.user.value);
+
+  // useEffect(() => {
+  //   dispatch(getUser()).unwrap().then(console.log);
+  // }, []);
 
   const closeModifyHandler = () => closeModify(false);
 
