@@ -129,6 +129,22 @@ export const searchUser = createAsyncThunk(
   }
 );
 
+export const resign = createAsyncThunk(
+  "user/resign",
+  async (_, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await userApi.resign();
+      dispatch(logout());
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+      // return rejectWithValue(err.response.status);
+    }
+  }
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,

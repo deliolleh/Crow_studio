@@ -16,7 +16,7 @@ const Mypage = () => {
   };
 
   return (
-    <section className="flex">
+    <section className="container flex">
       {/* 프로필 */}
       <Profile userSeq={userSeq} openModify={modifyHandler} />
       {/* 프로젝트 */}

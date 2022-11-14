@@ -1,12 +1,16 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { modifyNickname, modifyPassword } from "../../redux/userSlice";
+import { useNavigate } from "react-router-dom";
+
+import { modifyNickname, modifyPassword, resign } from "../../redux/userSlice";
 
 import NicknameForm from "./components/NicknameForm";
 import PasswordForm from "./components/PasswordForm";
+import ResignForm from "./components/ResignForm";
 
 const Modify = ({ closeModify }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { myNickname } = useSelector((state) => state.user.value);
 
   const closeModifyHandler = () => closeModify(false);
@@ -26,8 +30,22 @@ const Modify = ({ closeModify }) => {
       });
   };
 
+  const resignHandler = () => {
+    if (!window.confirm("진짜 갈거임??")) {
+      return;
+    }
+    dispatch(resign())
+      .unwrap()
+      .then((res) => {
+        console.log("resign res:", res);
+        alert("회원 탈퇴 완료");
+        navigate("/");
+      })
+      .catch(console.error);
+  };
+
   return (
-    <div className="w-fit h-96 px-8 flex flex-col justify-center border border-primary_-2_dark rounded-md">
+    <div className="container p-8 flex flex-col justify-center border border-primary_-2_dark rounded-md">
       <div className="flex justify-between">
         <div className="text-white text-xl font-bold">내 정보 수정하기</div>
         <button
@@ -44,6 +62,8 @@ const Modify = ({ closeModify }) => {
       />
 
       <PasswordForm onSubmitPassword={submitPasswordHandler} />
+
+      <ResignForm onResign={resignHandler} />
     </div>
   );
 };
