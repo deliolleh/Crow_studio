@@ -196,7 +196,7 @@ const Directory = () => {
           </div>
         </div>
         <div className="text-xs" style={{ padding: 15 }}>
-          <hr className="bg-component_dark border-0 m-0 absolute" style={{ height: 3, width: 292, top: 140, left: 88 }} />
+          <hr className="bg-component_dark border-0 m-0 absolute min-h-[3px]" style={{ height: 3, width: 292, top: 140, left: 88 }} />
           <div>뭐야 왜 이거 없으면 안보여?</div>
           <FillFlexParent>
             {({ width, height }) => {
