@@ -140,7 +140,7 @@ export const resign = createAsyncThunk(
       if (!err.response) {
         throw err;
       }
-      // return rejectWithValue(err.response.status);
+      return rejectWithValue(err.response.status);
     }
   }
 );
