@@ -1,23 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
-// import { Menu, Transition } from "@headlessui/react";
-
-// import clsx from "clsx";
-// import { Tree } from "react-arborist";
-// import { FillFlexParent } from "./directory/fill-flex-parent.tsx";
-// // import { dirData } from "./directory/dirData";
-
-// import * as icons from "react-icons/md";
-// import { IoDocumentOutline } from "react-icons/io5";
-// import styles from "./directory/dir-data.module.css";
 
 // import svg
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
 // import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
-import * as iconsi from "react-icons/io5";
+// import * as iconsi from "react-icons/io5";
 
 import { getDirectoryList } from "../../../../redux/projectSlice";
 import {
@@ -30,75 +21,21 @@ import {
 
 import DirectoryList from "./directory/DirectoryList";
 
-// dropdown func
-// function classNames(...classes) {
-//   return classes.filter(Boolean).join(" ");
-// }
-
-// tree view func (React Arborist)
-// function Node({ node, style, dragHandle }) {
-//   const Icon = node.data.icon || IoDocumentOutline;
-//   return (
-//     <div
-//       ref={dragHandle}
-//       style={style}
-//       className={clsx(styles.node, node.state)}
-//       onClick={() => node.isInternal && node.toggle()}
-//     >
-//       <FolderArrow node={node} />
-//       <span>
-//         <Icon />
-//       </span>
-//       <span>{node.isEditing ? <Input node={node} /> : node.data.name}</span>
-//       <span>{node.data.unread === 0 ? null : node.data.unread}</span>
-//     </div>
-//   );
-// }
-
-// function Input({ node }) {
-//   return (
-//     <input
-//       autoFocus
-//       type="text"
-//       defaultValue={node.data.name}
-//       onFocus={(e) => e.currentTarget.select()}
-//       onBlur={() => node.reset()}
-//       onKeyDown={(e) => {
-//         if (e.key === "Escape") node.reset();
-//         if (e.key === "Enter") node.submit(e.currentTarget.value);
-//       }}
-//     />
-//   );
-// }
-
-// function FolderArrow({ node }) {
-//   if (node.isLeaf) return <span></span>;
-//   return (
-//     <span>
-//       {node.isOpen ? <icons.MdArrowDropDown /> : <icons.MdArrowRight />}
-//     </span>
-//   );
-// }
-
-// function Cursor({ top, left }) {
-//   return <div className={styles.dropCursor} style={{ top, left }}></div>;
-// }
-
-const TEAM_SEQ = 3;
-const TYPE_DIRECTORY = 1;
-const TYPE_FILE = 2;
-const DIRECTORY_DATA = {
-  rootPath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
-  rootName: ``,
-};
-
 const Directory = ({ showFileContent }) => {
   const dispatch = useDispatch();
-  const [term, setTerm] = useState("");
-
+  const { teamSeq } = useParams();
   const [curItems, setCurItems] = useState([]);
   // const [newFileName, setNewFileName] = useState("");
   // const [newDirectoryName, setNewDirectoryName] = useState("");
+
+  // const TEAM_SEQ = 3;
+  const TYPE_DIRECTORY = 1;
+  const TYPE_FILE = 2;
+  const DIRECTORY_DATA = {
+    // rootPath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
+    rootPath: `${teamSeq}`,
+    rootName: `root`,
+  };
 
   const dispatchGetDirectoryList = () => {
     dispatch(getDirectoryList(DIRECTORY_DATA))
@@ -122,9 +59,9 @@ const Directory = ({ showFileContent }) => {
     }
     const fileData = {
       fileTitle: newDirectoryName,
-      filePath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
+      filePath: `/home/ubuntu/crow_data/${teamSeq}`,
     };
-    dispatch(createFile({ teamSeq: TEAM_SEQ, type: TYPE_DIRECTORY, fileData }))
+    dispatch(createFile({ teamSeq, type: TYPE_DIRECTORY, fileData }))
       .unwrap()
       .then(() => {
         console.log(`/${newDirectoryName} 생성 완료`);
@@ -141,12 +78,50 @@ const Directory = ({ showFileContent }) => {
     }
     const fileData = {
       fileTitle: newFileName,
-      filePath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
+      filePath: `/home/ubuntu/crow_data/${teamSeq}`,
     };
-    dispatch(createFile({ teamSeq: TEAM_SEQ, type: TYPE_FILE, fileData }))
+    dispatch(createFile({ teamSeq, type: TYPE_FILE, fileData }))
       .unwrap()
       .then(() => {
         console.log(`${newFileName} 생성 완료`);
+        dispatchGetDirectoryList();
+      })
+      .catch(console.error);
+  };
+
+  const clickItemHandler = (path, type) => {
+    console.log("path,  type:", path, type);
+    showFileContent(type, path);
+  };
+
+  const renameItemHandler = (path, name) => {
+    const newName = prompt("변경할 이름 입력", name);
+    const renameData = {
+      filePath: path,
+      oldFileName: name,
+      fileTitle: newName,
+    };
+    dispatch(renameFile(renameData))
+      .unwrap()
+      .then(() => {
+        console.log(`${name} -> ${newName} 변경 성공`);
+        dispatchGetDirectoryList();
+      })
+      .catch(console.error);
+  };
+
+  const deleteItemHandler = (path, typeName, name) => {
+    if (!window.confirm(`${name} 삭제할거임?`)) {
+      return;
+    }
+    const targetType = typeName === "directory" ? "1" : "2";
+    const targetData = {
+      filePath: path,
+    };
+    dispatch(deleteFile({ teamSeq, type: targetType, fileData: targetData }))
+      .unwrap()
+      .then((res) => {
+        console.log("삭제 성공 res:", res);
         dispatchGetDirectoryList();
       })
       .catch(console.error);
@@ -167,35 +142,6 @@ const Directory = ({ showFileContent }) => {
             <IcSpan>
               <IcNewDir alt="IcNewDir" onClick={createDirectoryHandler} />
             </IcSpan>
-
-            {/* dropdown */}
-            {/* <Menu as="div" className="relative">
-              <Menu.Button>
-                <IcSpan className="flex">
-                  <IcToggle alt="IcToggle" aria-hidden="true" />
-                </IcSpan>
-              </Menu.Button>
-
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute left-6 -top-2 z-10 mt-2 w-36 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <div className="py-1">
-                    <Menu.Item>
-                      <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
-                        zip 파일로 다운로드
-                      </div>
-                    </Menu.Item>
-                  </div>
-                </Menu.Items>
-              </Transition>
-            </Menu> */}
           </div>
         </div>
 
@@ -204,9 +150,14 @@ const Directory = ({ showFileContent }) => {
             className="bg-component_dark border-0 m-0 absolute min-h-[3px]"
             style={{ height: 3, width: 292, top: 140, left: 88 }}
           />
-          <div>뭐야 왜 이거 없으면 안보여?</div>
 
-          <DirectoryList curItems={curItems} />
+          {/* 디렉터리 파일, 폴더 모음 */}
+          <DirectoryList
+            curItems={curItems}
+            onClickItem={clickItemHandler}
+            onRename={renameItemHandler}
+            onDelete={deleteItemHandler}
+          />
         </div>
       </DirectoryContainer>
     </React.Fragment>
