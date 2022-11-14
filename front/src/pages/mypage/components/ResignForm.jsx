@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 
-const ResignForm = ({ onSubmitNickname, initialNickname }) => {
-  const submitHandler = (e) => {
-    e.preventDefault();
-    // const nicknameData = { userNickname: inputNickname };
-    // onSubmitNickname(JSON.stringify(nicknameData));
+const ResignForm = ({ onResign }) => {
+  const submitHandler = () => {
+    onResign();
   };
 
   return (
