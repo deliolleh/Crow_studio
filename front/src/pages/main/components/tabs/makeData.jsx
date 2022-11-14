@@ -24,20 +24,17 @@ export const MakeEditorData = (
     editorRef.current?.focus();
   }, [file.name]);
 
-  // useEffect(() => {
-  //   document.addEventListener("keydown", detectKeyDown, false);
-  // });
-
-  // const detectKeyDown = (e) => {};
-
-  // Formatting
+  // 포맷팅 영역
   const format = async () => {
-    // When formatting Button Click, useRef of that part's value get
-    const sendCode = editorRef.current.getValue();
+    // console.log(editorRef.current.getValue());
+    const rawCode = editorRef.current.getValue();
+    const sendCode = rawCode.slice(1, rawCode.length - 1);
+    console.log(sendCode);
+    // console.log(sendCode);
     const body = {
-      text: sendCode,
+      text: JSON.stringify(sendCode),
     };
-    // console.log(body);
+    console.log(body);
     await editorApi.formatPut(language, body).then((res) => {
       const number = res.data.data;
       console.log("dataCome ", res.data.data);
@@ -47,9 +44,9 @@ export const MakeEditorData = (
       editorApi
         .formatGet(language, body2)
         .then((res) => {
-          console.log("updateCode: ", res.data.data);
-          const summaryCode = res.data.data.trim();
-          editorRef.current.getModel().setValue(summaryCode);
+          const updateCode = res.data.data.slice(1, res.data.data.length - 1);
+          console.log("updateCode: ", updateCode);
+          editorRef.current.getModel().setValue(updateCode);
         })
         .catch((err) => console.error(err));
     });
@@ -65,6 +62,16 @@ export const MakeEditorData = (
       .lint(language, body)
       .then((res) => {
         console.log(res.data);
+        const data = res.data.data;
+        const index = res.data.index;
+        const length = res.data.data.length;
+        let lintResult = [];
+        for (let i = 0; i < length; i++) {
+          const sentence = `Line ${index[i]}: ${data[i]}`;
+          lintResult.push(sentence);
+        }
+        lintResult.sort();
+        console.log("lineResult: ", lintResult);
       })
       .catch((err) => {
         console.error(err);
@@ -91,17 +98,12 @@ export const MakeEditorData = (
             // defaultValue={
             //   i + 1 === 1 ? files["script.js"].value : files["style.css"].value
             // }
-            defaultValue={"#welcome python"}
-            onMount={(editor) => {
-              editorRef.current = editor;
-              // console.log(editor);
-            }}
+            defaultValue={""}
+            onMount={(editor) => (editorRef.current = editor)}
             options={{
               scrollBeyondLastLine: false,
               fontSize: "14px",
               fontFamily: "JetBrains Mono",
-              autoIndent: "advanced",
-              wrappingIndent: "same",
             }}
           />
         </div>
