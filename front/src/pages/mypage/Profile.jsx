@@ -27,7 +27,7 @@ const Profile = ({ openModify, userSeq }) => {
         {+userSeq === mySeq && (
           <button
             onClick={openModifyHandler}
-            className="sm:w-[169px] w-auto h-[36px] py-2 px-2 text-sm font-bold text-primary_dark hover:text-black bg-component_item_bg_dark border hover:bg-point_light_yellow border-primary_-2_dark hover:border-white rounded-md"
+            className="sm:w-[169px] w-auto h-[36px] p-2 text-sm font-bold text-primary_dark hover:text-black bg-component_item_bg_dark border hover:bg-point_light_yellow border-primary_-2_dark hover:border-white rounded-md"
           >
             내 정보 수정하기
           </button>

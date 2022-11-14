@@ -50,7 +50,7 @@ const TeamDetailHeader = (props) => {
   };
 
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between items-center md:mb-5 mb-2">
       {/* isModify가 아니면 팀 이름, isModify이면 팀 이름 변경 input 나옴 */}
       {!isModify ? (
         <TeamName onOpenModify={openModifyHandler}>{teamName}</TeamName>

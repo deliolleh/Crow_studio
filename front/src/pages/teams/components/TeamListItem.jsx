@@ -15,22 +15,24 @@ const TeamListItem = ({ team, clickTeam }) => {
   return (
     <div
       onClick={clickTeamListItemHandler}
-      className="flex items-center gap-2 bg-component_item_bg_dark hover:cursor-pointer rounded-md"
+      className="md:w-full w-[285px] flex items-center bg-component_item_bg_dark hover:cursor-pointer rounded-md"
     >
-      <div className="w-48 text-white font-bold bg-point_purple h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
+      <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
         {teamName}
       </div>
-      {/* 팀장 */}
-      <Member isLeader={true} teamLeaderNickname={teamLeaderNickname} />
-      {/* 팀원들 */}
-      <div className="flex">
-        {members.map((member) => (
-          <Member
-            key={`member${member.memberSeq}`}
-            isLeader={false}
-            memberNickname={member.memberNickname}
-          />
-        ))}
+      <div className="flex md:flex-row flex-col">
+        {/* 팀장 */}
+        <Member isLeader={true} teamLeaderNickname={teamLeaderNickname} />
+        {/* 팀원들 */}
+        <div className="flex md:flex-row flex-col">
+          {members.map((member) => (
+            <Member
+              key={`member${member.memberSeq}`}
+              isLeader={false}
+              memberNickname={member.memberNickname}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
