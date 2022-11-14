@@ -131,9 +131,10 @@ export const searchUser = createAsyncThunk(
 
 export const resign = createAsyncThunk(
   "user/resign",
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, dispatch }) => {
     try {
       const response = await userApi.resign();
+      dispatch(logout());
       return response.data;
     } catch (err) {
       if (!err.response) {
