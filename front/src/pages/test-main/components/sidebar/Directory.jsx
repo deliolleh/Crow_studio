@@ -1,21 +1,21 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { Menu, Transition } from "@headlessui/react";
+// import { Menu, Transition } from "@headlessui/react";
 
-import clsx from "clsx";
-import { Tree } from "react-arborist";
-// import { dirData } from "./directory/dirData";
-import { FillFlexParent } from "./directory/fill-flex-parent.tsx";
+// import clsx from "clsx";
+// import { Tree } from "react-arborist";
+// import { FillFlexParent } from "./directory/fill-flex-parent.tsx";
+// // import { dirData } from "./directory/dirData";
 
-import * as icons from "react-icons/md";
-import { IoDocumentOutline } from "react-icons/io5";
-import styles from "./directory/dir-data.module.css";
+// import * as icons from "react-icons/md";
+// import { IoDocumentOutline } from "react-icons/io5";
+// import styles from "./directory/dir-data.module.css";
 
 // import svg
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
-import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
+// import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
 import * as iconsi from "react-icons/io5";
 
@@ -28,59 +28,61 @@ import {
   saveFileContent,
 } from "../../../../redux/fileSlice";
 
+import DirectoryList from "./directory/DirectoryList";
+
 // dropdown func
 // function classNames(...classes) {
 //   return classes.filter(Boolean).join(" ");
 // }
 
 // tree view func (React Arborist)
-function Node({ node, style, dragHandle }) {
-  const Icon = node.data.icon || IoDocumentOutline;
-  return (
-    <div
-      ref={dragHandle}
-      style={style}
-      className={clsx(styles.node, node.state)}
-      onClick={() => node.isInternal && node.toggle()}
-    >
-      <FolderArrow node={node} />
-      <span>
-        <Icon />
-      </span>
-      <span>{node.isEditing ? <Input node={node} /> : node.data.name}</span>
-      <span>{node.data.unread === 0 ? null : node.data.unread}</span>
-    </div>
-  );
-}
+// function Node({ node, style, dragHandle }) {
+//   const Icon = node.data.icon || IoDocumentOutline;
+//   return (
+//     <div
+//       ref={dragHandle}
+//       style={style}
+//       className={clsx(styles.node, node.state)}
+//       onClick={() => node.isInternal && node.toggle()}
+//     >
+//       <FolderArrow node={node} />
+//       <span>
+//         <Icon />
+//       </span>
+//       <span>{node.isEditing ? <Input node={node} /> : node.data.name}</span>
+//       <span>{node.data.unread === 0 ? null : node.data.unread}</span>
+//     </div>
+//   );
+// }
 
-function Input({ node }) {
-  return (
-    <input
-      autoFocus
-      type="text"
-      defaultValue={node.data.name}
-      onFocus={(e) => e.currentTarget.select()}
-      onBlur={() => node.reset()}
-      onKeyDown={(e) => {
-        if (e.key === "Escape") node.reset();
-        if (e.key === "Enter") node.submit(e.currentTarget.value);
-      }}
-    />
-  );
-}
+// function Input({ node }) {
+//   return (
+//     <input
+//       autoFocus
+//       type="text"
+//       defaultValue={node.data.name}
+//       onFocus={(e) => e.currentTarget.select()}
+//       onBlur={() => node.reset()}
+//       onKeyDown={(e) => {
+//         if (e.key === "Escape") node.reset();
+//         if (e.key === "Enter") node.submit(e.currentTarget.value);
+//       }}
+//     />
+//   );
+// }
 
-function FolderArrow({ node }) {
-  if (node.isLeaf) return <span></span>;
-  return (
-    <span>
-      {node.isOpen ? <icons.MdArrowDropDown /> : <icons.MdArrowRight />}
-    </span>
-  );
-}
+// function FolderArrow({ node }) {
+//   if (node.isLeaf) return <span></span>;
+//   return (
+//     <span>
+//       {node.isOpen ? <icons.MdArrowDropDown /> : <icons.MdArrowRight />}
+//     </span>
+//   );
+// }
 
-function Cursor({ top, left }) {
-  return <div className={styles.dropCursor} style={{ top, left }}></div>;
-}
+// function Cursor({ top, left }) {
+//   return <div className={styles.dropCursor} style={{ top, left }}></div>;
+// }
 
 const TEAM_SEQ = 3;
 const TYPE_DIRECTORY = 1;
@@ -90,7 +92,7 @@ const DIRECTORY_DATA = {
   rootName: ``,
 };
 
-const Directory = () => {
+const Directory = ({ showFileContent }) => {
   const dispatch = useDispatch();
   const [term, setTerm] = useState("");
 
@@ -103,19 +105,7 @@ const Directory = () => {
       .unwrap()
       .then((res) => {
         console.log("directoryList res:", res);
-        setCurItems(
-          res.fileDirectory.map((el, i) => {
-            const elementData = {
-              id: `${i + 1}`,
-              name: el.name,
-              unread: 0,
-              icon: el.name.includes(".py")
-                ? iconsi.IoLogoPython
-                : iconsi.IoFolderOpenOutline,
-            };
-            return elementData;
-          })
-        );
+        setCurItems(res.fileDirectory.map((el) => el));
       })
       .catch(console.error);
   };
@@ -163,7 +153,7 @@ const Directory = () => {
   };
 
   return (
-    <>
+    <React.Fragment>
       <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
         <div
           className="flex justify-between items-center"
@@ -179,7 +169,7 @@ const Directory = () => {
             </IcSpan>
 
             {/* dropdown */}
-            <Menu as="div" className="relative">
+            {/* <Menu as="div" className="relative">
               <Menu.Button>
                 <IcSpan className="flex">
                   <IcToggle alt="IcToggle" aria-hidden="true" />
@@ -199,74 +189,37 @@ const Directory = () => {
                   <div className="py-1">
                     <Menu.Item>
                       <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
-                        파일 업로드
-                      </div>
-                    </Menu.Item>
-                    <Menu.Item>
-                      <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
-                        폴더 업로드
-                      </div>
-                    </Menu.Item>
-                    <Menu.Item>
-                      <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
                         zip 파일로 다운로드
-                      </div>
-                    </Menu.Item>
-                    <Menu.Item>
-                      <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
-                        이름 바꾸기
-                      </div>
-                    </Menu.Item>
-                    <Menu.Item>
-                      <div className="block px-4 py-2 text-xs cursor-pointer text-white hover:bg-point_purple_op20">
-                        삭제
                       </div>
                     </Menu.Item>
                   </div>
                 </Menu.Items>
               </Transition>
-            </Menu>
+            </Menu> */}
           </div>
         </div>
+
         <div className="text-xs" style={{ padding: 15 }}>
           <hr
             className="bg-component_dark border-0 m-0 absolute min-h-[3px]"
             style={{ height: 3, width: 292, top: 140, left: 88 }}
           />
           <div>뭐야 왜 이거 없으면 안보여?</div>
-          <FillFlexParent>
-            {({ width, height }) => {
-              return (
-                <Tree
-                  // initialData={dirData}
-                  // initialData={curItems}
-                  data={curItems}
-                  width={width}
-                  // height={height}
-                  height={600}
-                  rowHeight={32}
-                  renderCursor={Cursor}
-                  searchTerm={term}
-                  paddingBottom={32}
-                >
-                  {Node}
-                </Tree>
-              );
-            }}
-          </FillFlexParent>
+
+          <DirectoryList curItems={curItems} />
         </div>
       </DirectoryContainer>
-    </>
+    </React.Fragment>
   );
 };
 
 export default Directory;
 
-// styled
 const DirectoryContainer = styled.div`
   border-radius: 0 10px 10px 0;
   height: 100vh;
 `;
+
 const IcSpan = styled.span`
   padding: 0.5rem;
   cursor: pointer;
