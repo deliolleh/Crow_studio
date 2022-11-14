@@ -9,6 +9,8 @@ const initialState = {
     myEmail: "",
     myNickname: "",
     myImageURL: "",
+    myGitUsername: "",
+    myGitToken: "",
   },
 };
 
@@ -46,7 +48,7 @@ export const login = createAsyncThunk(
   }
 );
 
-export const getUser = createAsyncThunk("user/getuser", async (_) => {
+export const getUser = createAsyncThunk("user/getUser", async (_) => {
   try {
     const response = await userApi.getUser();
     return response.data;
@@ -129,6 +131,37 @@ export const searchUser = createAsyncThunk(
   }
 );
 
+export const resign = createAsyncThunk(
+  "user/resign",
+  async (_, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await userApi.resign();
+      dispatch(logout());
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+      return rejectWithValue(err.response.status);
+    }
+  }
+);
+
+export const updateGitAuth = createAsyncThunk(
+  "user/updateGitAuth",
+  async (credentialsData, { rejectWithValue }) => {
+    try {
+      const response = await userApi.updateGitAuth(credentialsData);
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+      return rejectWithValue(err.response.status);
+    }
+  }
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -141,13 +174,22 @@ export const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getUser.fulfilled, (state, action) => {
-        const { userId, userNickname, userProfile, userSeq } = action.payload;
+        const {
+          userId,
+          userNickname,
+          userProfile,
+          userSeq,
+          userGitUsername,
+          userGitToken,
+        } = action.payload;
         state.value = {
           isLoggedIn: true,
           myEmail: userId,
           myNickname: userNickname,
           myImageURL: userProfile,
           mySeq: userSeq,
+          myGitUsername: userGitUsername,
+          myGitToken: userGitToken,
         };
       })
       .addCase(getUser.rejected, (state) => {

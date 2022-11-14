@@ -12,10 +12,12 @@ import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
 import Main from "./pages/main/Main";
 import Mypage from "./pages/mypage/Mypage";
-import ProjectCreate from "./pages/project-create/ProjectCreate";
-import Teams from "./pages/team/Teams";
-import TeamCreate from "./pages/team/TeamCreate";
-import TeamDetail from "./pages/team/TeamDetail";
+import Teams from "./pages/teams/Teams";
+import TeamCreate from "./pages/team-create/TeamCreate";
+import TeamDetail from "./pages/team-detail/TeamDetail";
+import Test from "./pages/test/Test";
+import TestMain from "./pages/test-main/TestMain";
+import NotFound from "./pages/not-found/NotFound";
 
 const router = createBrowserRouter([
   {
@@ -47,10 +49,6 @@ const router = createBrowserRouter([
     element: <Mypage />,
   },
   {
-    path: "/project/create",
-    element: <ProjectCreate />,
-  },
-  {
     path: "/teams",
     element: (
       <PrivateRoute>
@@ -73,6 +71,30 @@ const router = createBrowserRouter([
         <TeamCreate />
       </PrivateRoute>
     ),
+  },
+  {
+    path: "/test",
+    element: (
+      <PrivateRoute>
+        <Test />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/test/main",
+    element: (
+      <PrivateRoute>
+        <TestMain />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/project/:teamSeq",
+    element: <TestMain />,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 
