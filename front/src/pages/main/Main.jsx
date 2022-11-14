@@ -5,9 +5,11 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { useLoading } from "@rest-hooks/hooks";
 import styled from "styled-components";
 import SplitPane from "react-split-pane";
+import { useSelector } from "react-redux";
+import { useLoading } from "@rest-hooks/hooks";
+import { ResizeObserver } from "@juggle/resize-observer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Tab, Panel, helpers, ExtraButton } from "@react-tabtab-next/tabtab";
 
@@ -23,10 +25,14 @@ import Settings from "./components/sidebar/Settings";
 import CustomTabs from "./components/tabs/CustomTabs";
 import CustomTabs2 from "./components/tabs/CustomTabs2";
 
+// api
+import projectApi from "../../api/projectApi";
+
 // tabtab dummy data
 import {
   MakeEditorData,
   MakeConsoleData,
+  CompileEditor,
 } from "../main/components/tabs/makeData";
 
 // svg
@@ -40,13 +46,6 @@ const SidebarItems = styled.div`
   margin-left: 3px;
 `;
 
-// const ListGrid = styled.div`
-//   display: grid;
-//   grid-template-columns: 1fr 1fr 1fr;
-//   grid-gap: 8px;
-// `;
-
-
 // beautiful-dnd
 // fake data simple ver.
 const elements = [
@@ -54,68 +53,104 @@ const elements = [
   { id: "two", content: "two" },
 ];
 
-// // fake data generator complex ver.
-// const getItems = (count, prefix) =>
-//   Array.from({ length: count }, (v, k) => k).map((k) => {
-//     const randomId = Math.floor(Math.random() * 1000);
-//     return {
-//       id: `item-${randomId}`,
-//       prefix,
-//       content: `item ${randomId}`
-//     };
-//   });
-
-// const removeFromList = (list, index) => {
-//   const result = Array.from(list);
-//   const [removed] = result.splice(index, 1);
-//   return [removed, result];
-// };
-
-// const addToList = (list, index, element) => {
-//   const result = Array.from(list);
-//   result.splice(index, 0, element);
-//   return result;
-// };
-
-// const lists = ["pane1", "pane2"];
-
-// const generateLists = () =>
-//   lists.reduce(
-//     (acc, listKey) => ({ ...acc, [listKey]: getItems(2, listKey) }),
-//     {}
-//   );
-
 const Main = () => {
+  // const teamSeq = useSelector((state) => state.team.value.teamSeq);
+  const teamSeq = 4;
+  useEffect(() => {
+    projectApi.directoryList(teamSeq).then((res) => {
+      console.log(res.data);
+    });
+  });
+
+  // save-env state
+  // horizontal split 상단 높이 비율
+  // https://www.kindacode.com/article/react-get-the-width-height-of-a-dynamic-element/ 참고 중
+
+  const horEl = document.getElementsByClassName("horizontal Pane1")[0];
+  const verEl = document.getElementsByClassName("vertical Pane1")[0];
+
+  // ResizeObserver
+  const ro = new ResizeObserver((entries) => {
+    for (let entry of entries) {
+      const cr = entry.contentRect;
+      console.log("Element:", entry.target);
+      console.log(`Element size: ${cr.width}px x ${cr.height}px`);
+      console.log(`Element padding: ${cr.top}px ; ${cr.left}px`);
+    }
+    // document.scrollingElement.scrollTop = document.scrollingElement.scrollHeight;
+  });
+
+  const horRef = useRef();
+
+  const [horizontalSplit, setHorizontalSplit] = useState("75%");
+  // const changeHorizontalSplitHandler = (x) => {
+  //   setHorizontalSplit(x);
+  // }
+  // This function calculates height
+  const getHorHeightSize = () => {
+    // document.getElementsByClassName('horizontal Pane1')[0].ref="horRef";
+    // document.getElementsByClassName('horizontal Pane1')[0].setAttribute("ref", "horRef");
+    horEl.setAttribute("ref", "horRef");
+    const newHeight = horRef.current.clientHeight;
+    setHorizontalSplit(newHeight + "px");
+    console.log(newHeight);
+    console.log(horizontalSplit);
+  };
+
+  // vertical split 좌측 넓이 비율
+  const verRef = useRef();
+  const [verticalSplit, setVerticalSplit] = useState("50%");
+  // const changeVerticalSplitHandler = (x) => {
+  //   setVerticalSplit(x);
+  // }
+  // This function calculates height
+  const getVerWidthSize = () => {
+    // document.getElementsByClassName('vertical Pane1')[0].ref="verRef";
+    // document.getElementsByClassName('vertical Pane1')[0].setAttribute("ref", "verRef");
+    verEl.setAttribute("ref", "verRef");
+    const newWidth = verRef.current.clientWidth;
+    setVerticalSplit(newWidth + "px");
+    console.log(newWidth);
+    console.log(verticalSplit);
+  };
+
+  // Update 'width' and 'height' when the window resizes
+  useEffect(() => {
+    window.addEventListener("resize", [getHorHeightSize, getVerWidthSize]);
+    console.log("리사이즈 이벤트 리스너");
+    // Observe one or multiple elements
+    // ro.observe(horEl);
+    // ro.observe(verEl);
+    return () => {
+      // 메모리 누수 방지를 위한 클린업
+      window.removeEventListener("resize", [getHorHeightSize, getVerWidthSize]);
+      console.log("이벤트 리스너 지움");
+    };
+  }, [horEl, verEl]);
+
+  // 마지막으로 띄운 파일들
+  // 마지막으로 띄운 사이드바
+
   // sidebar click event
   const [com, setCom] = useState("디렉토리");
+  // const [com, setCom] = useState(어쩌구 !== null ? 어쩌구 : "디렉토리");
 
   const showComponentHandler = (x) => {
     setCom(x);
   };
 
   // split pane size
-  // useRef ver.
   const sidebarSizeRef = useRef();
   const [sidebarSize, setSidebarSize] = useState(0);
-  
+
   useEffect(() => {
     setSidebarSize(sidebarSizeRef.current.getBoundingClientRect().width);
-    // setSideBarSize(sidebarSizeRef.current.offsetWidth);
-    console.log("sidebarSize: " + sidebarSize);
-    console.log(
-      "sidebarSizeRef.current.getBoundingClientRect().width: " +
-      sidebarSizeRef.current.getBoundingClientRect().width
-      );
-    }, [sidebarSize]);
-
-  // editor pane height size  
-  // const [editorPaneSize, setEditorPaneSize] = useState(0);
-  // const editorPaneSizeRef = useRef(null)
-
-  // useEffect(() => {
-  //   setEditorPaneSize(editorPaneSizeRef.current.offsetHeight);
-  // })
-
+    // console.log("sidebarSize: " + sidebarSize);
+    // console.log(
+    //   "sidebarSizeRef.current.getBoundingClientRect().width: " +
+    //   sidebarSizeRef.current.getBoundingClientRect().width
+    //   );
+  }, [sidebarSize]);
 
   // Beautiful-dnd
   // simple ver.
@@ -128,44 +163,17 @@ const Main = () => {
     setItems(newItems);
   };
 
-  // // complex ver.
-  // const [elements, setElements] = React.useState(generateLists());
-
-  // useEffect(() => {
-  //   setElements(generateLists());
-  // }, []);
-
-  // const onDragEnd = (result) => {
-  //   if (!result.destination) {
-  //     return;
-  //   }
-  //   const listCopy = { ...elements };
-
-  //   const sourceList = listCopy[result.source.droppableId];
-  //   const [removedElement, newSourceList] = removeFromList(
-  //     sourceList,
-  //     result.source.index
-  //   );
-  //   listCopy[result.source.droppableId] = newSourceList;
-  //   const destinationList = listCopy[result.destination.droppableId];
-  //   listCopy[result.destination.droppableId] = addToList(
-  //     destinationList,
-  //     result.destination.index,
-  //     removedElement
-  //   );
-
-  //   setElements(listCopy);
-  // };
-
   // tabtab
   const [activeEditor1Tab, setActiveEditor1Tab] = useState(0);
   const [activeEditor2Tab, setActiveEditor2Tab] = useState(0);
   const [activeTab2, setActiveTab2] = useState(0);
-  const [editor1Tabs, setEditor1Tabs] = useState(MakeEditorData(2, "Editor Tab"));
-  const [editor2Tabs, setEditor2Tabs] = useState(MakeEditorData(2, "Editor Tab"));
-  const [consoleTabs, setConsoleTabs] = useState(
-    MakeConsoleData(1, "Console Tab")
+  const [editor1Tabs, setEditor1Tabs] = useState(
+    MakeEditorData(2, "Editor Tab")
   );
+  const [editor2Tabs, setEditor2Tabs] = useState(
+    MakeEditorData(2, "Editor Tab")
+  );
+  const [consoleTabs, setConsoleTabs] = useState(MakeConsoleData(1, "Console"));
 
   // Editor 1
   const closableEditor1TabItems = useMemo(() => {
@@ -189,13 +197,16 @@ const Main = () => {
     setActiveEditor1Tab(index);
   }, []);
 
-  const handleEditor1TabSequenceChange = useCallback(({ oldIndex, newIndex }) => {
-    console.log({ oldIndex, newIndex });
-    setEditor1Tabs((editor1Tabs) =>
-      helpers.simpleSwitch(editor1Tabs, oldIndex, newIndex)
-    );
-    setActiveEditor1Tab(newIndex);
-  }, []);
+  const handleEditor1TabSequenceChange = useCallback(
+    ({ oldIndex, newIndex }) => {
+      console.log({ oldIndex, newIndex });
+      setEditor1Tabs((editor1Tabs) =>
+        helpers.simpleSwitch(editor1Tabs, oldIndex, newIndex)
+      );
+      setActiveEditor1Tab(newIndex);
+    },
+    []
+  );
 
   // Editor 2
   const closableEditor2TabItems = useMemo(() => {
@@ -219,13 +230,16 @@ const Main = () => {
     setActiveEditor2Tab(index);
   }, []);
 
-  const handleEditor2TabSequenceChange = useCallback(({ oldIndex, newIndex }) => {
-    console.log({ oldIndex, newIndex });
-    setEditor2Tabs((editor2Tabs) =>
-      helpers.simpleSwitch(editor2Tabs, oldIndex, newIndex)
-    );
-    setActiveEditor2Tab(newIndex);
-  }, []);
+  const handleEditor2TabSequenceChange = useCallback(
+    ({ oldIndex, newIndex }) => {
+      console.log({ oldIndex, newIndex });
+      setEditor2Tabs((editor2Tabs) =>
+        helpers.simpleSwitch(editor2Tabs, oldIndex, newIndex)
+      );
+      setActiveEditor2Tab(newIndex);
+    },
+    []
+  );
 
   // console
   const closableTabItems2 = useMemo(() => {
@@ -306,34 +320,19 @@ const Main = () => {
                 ref={provided.innerRef}
                 style={
                   com === ""
-                    ? { 
-                      display: "flex",
-                      width: `calc(100vw - 108px)`,
-                      height: "100vh",
-                    }
+                    ? {
+                        display: "flex",
+                        width: `calc(100vw - 108px)`,
+                        height: "100vh",
+                      }
                     : {
-                      display: "flex",
-                      width: `calc(100vw - ${sidebarSize}px - 23px)`,
-                      height: "100vh",
-                    }
+                        display: "flex",
+                        width: `calc(100vw - ${sidebarSize}px - 23px)`,
+                        height: "100vh",
+                      }
                 }
               >
                 <SplitPane
-                  // style={
-                  //   com === ""
-                  //     ? {
-                  //         position: "static",
-                  //         overflow: "auto",
-                  //         width: `calc(100vw - 108px)`,
-                  //         height: `calc(100vh - 300px)`,
-                  //       }
-                  //     : {
-                  //         position: "static",
-                  //         overflow: "auto",
-                  //         width: `calc(100vw - ${sidebarSize}px - 23px)`,
-                  //         height: `calc(100vh - 300px)`,
-                  //       }
-                  // }
                   style={{ position: "static" }}
                   split="horizontal"
                   defaultSize="75%"
@@ -341,21 +340,6 @@ const Main = () => {
                   maxSize={670}
                 >
                   <SplitPane
-                    // style={
-                    //   com === ""
-                    //     ? {
-                    //         position: "static",
-                    //         overflow: "auto",
-                    //         width: `calc(100vw - 108px)`,
-                    //         height: "75%",
-                    //       }
-                    //     : {
-                    //         position: "static",
-                    //         overflow: "auto",
-                    //         width: `calc(100vw - ${sidebarSize}px - 23px)`,
-                    //         height: "75%",
-                    //       }
-                    // }
                     split="vertical"
                     defaultSize="50%"
                     minSize={31}
@@ -368,11 +352,6 @@ const Main = () => {
                         index={index}
                       >
                         {(provided, snapshot) => (
-                          // <Tabs2
-                          //   provided={provided}
-                          //   snapshot={snapshot}
-                          //   item={item}
-                          // />
                           <CustomTabs
                             // beautiful-dnd
                             provided={provided}
@@ -397,11 +376,15 @@ const Main = () => {
                                   }
                             }
                             activeIndex={
-                              item.id === "one" ? activeEditor1Tab : activeEditor2Tab
+                              item.id === "one"
+                                ? activeEditor1Tab
+                                : activeEditor2Tab
                               // activeEditor1Tab
                             }
                             panelItems={
-                              item.id === "one" ? editor1PanelItems : editor2PanelItems
+                              item.id === "one"
+                                ? editor1PanelItems
+                                : editor2PanelItems
                               // editor1PanelItems
                             }
                             closableTabItems={
@@ -428,23 +411,19 @@ const Main = () => {
                     ))}
                   </SplitPane>
                   <div style={{ marginTop: "8px" }}>
-                    <CustomTabs2
-                      // style={{ marginTop: "8px" }}
-                      // className="w-full h-full"
+                    {/* <CustomTabs2
                       sidebarSize={sidebarSize}
                       // editorPaneSize={editorPaneSize}
                       com={com}
                       // tabtab
                       showModalButton={false}
                       showArrowButton={true}
-                      onTabClose={
-                        (i) => {
-                          console.log("close", i);
-                          setConsoleTabs((prev) =>
-                            prev.filter((_, idx) => idx !== i)
-                          );
-                        }
-                      }
+                      onTabClose={(i) => {
+                        console.log("close", i);
+                        setConsoleTabs((prev) =>
+                          prev.filter((_, idx) => idx !== i)
+                        );
+                      }}
                       activeIndex={activeTab2}
                       panelItems={panelItems2}
                       closableTabItems={closableTabItems2}
@@ -472,26 +451,13 @@ const Main = () => {
                           />
                         </ExtraButton>
                       }
-                    />
+                    /> */}
+                    <CompileEditor />
                   </div>
                 </SplitPane>
               </div>
             )}
           </Droppable>
-          {/*  complex ver.  */}
-          {/* <SplitPane
-            style={{ position: 'static', overflow: 'visible', width: `calc(100vw - ${sideBarSize}px - 30px)`,}}
-            split="vertical"
-            defaultSize="50%"
-          >
-            {lists.map((listKey) => (
-              <DraggableElement
-                elements={elements[listKey]}
-                key={listKey}
-                prefix={listKey}
-              />
-            ))}
-          </SplitPane> */}
         </DragDropContext>
       </div>
     </>
