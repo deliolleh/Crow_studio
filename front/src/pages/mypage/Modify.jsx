@@ -1,6 +1,8 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { modifyNickname, modifyPassword } from "../../redux/userSlice";
+import { useNavigate } from "react-router-dom";
+
+import { modifyNickname, modifyPassword, resign } from "../../redux/userSlice";
 
 import NicknameForm from "./components/NicknameForm";
 import PasswordForm from "./components/PasswordForm";
@@ -8,6 +10,7 @@ import ResignForm from "./components/ResignForm";
 
 const Modify = ({ closeModify }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { myNickname } = useSelector((state) => state.user.value);
 
   const closeModifyHandler = () => closeModify(false);
@@ -25,6 +28,17 @@ const Modify = ({ closeModify }) => {
           alert("비상!!");
         }
       });
+  };
+
+  const resignHandler = () => {
+    dispatch(resign())
+      .unwrap()
+      .then((res) => {
+        console.log("resign res:", res);
+        alert("회원 탈퇴 완료");
+        navigate("/");
+      })
+      .catch(console.error);
   };
 
   return (
@@ -46,7 +60,7 @@ const Modify = ({ closeModify }) => {
 
       <PasswordForm onSubmitPassword={submitPasswordHandler} />
 
-      <ResignForm />
+      <ResignForm onResign={resignHandler} />
     </div>
   );
 };
