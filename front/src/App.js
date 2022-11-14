@@ -17,6 +17,7 @@ import TeamCreate from "./pages/team-create/TeamCreate";
 import TeamDetail from "./pages/team-detail/TeamDetail";
 import Test from "./pages/test/Test";
 import TestMain from "./pages/test-main/TestMain";
+import NotFound from "./pages/not-found/NotFound";
 
 const router = createBrowserRouter([
   {
@@ -86,6 +87,10 @@ const router = createBrowserRouter([
         <TestMain />
       </PrivateRoute>
     ),
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 
