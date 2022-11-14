@@ -7,6 +7,7 @@ import { modifyNickname, modifyPassword, resign } from "../../redux/userSlice";
 import NicknameForm from "./components/NicknameForm";
 import PasswordForm from "./components/PasswordForm";
 import ResignForm from "./components/ResignForm";
+import GitForm from "./components/GitForm";
 
 const Modify = ({ closeModify }) => {
   const dispatch = useDispatch();
@@ -69,6 +70,8 @@ const Modify = ({ closeModify }) => {
       />
 
       <PasswordForm onSubmitPassword={submitPasswordHandler} />
+
+      <GitForm />
 
       <ResignForm onResign={resignHandler} />
     </div>
