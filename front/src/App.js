@@ -89,6 +89,10 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/project/:teamSeq",
+    element: <TestMain />,
+  },
+  {
     path: "*",
     element: <NotFound />,
   },
