@@ -1,35 +1,29 @@
 import React, { useState } from "react";
 
 const initialInputState = {
-  currentPassword: "",
-  password1: "",
-  password2: "",
+  gitUsername: "",
+  gitToken: "",
 };
 
 const initialErrorState = {
-  currentPasswordErrMsg: "",
-  password1ErrMsg: "",
-  password2ErrMsg: "",
+  gitUsernameErrMsg: "",
+  gitTokenErrMsg: "",
 };
 
-const GitForm = ({ onSubmitPassword }) => {
+const GitForm = ({ updateGitAuth }) => {
   const [inputs, setInputs] = useState(initialInputState);
   const [errMsg, setErrMsg] = useState(initialErrorState);
-  const { currentPassword, password1, password2 } = inputs;
-  const { currentPasswordErrMsg, password1ErrMsg, password2ErrMsg } = errMsg;
+  const { gitUsername, gitToken } = inputs;
+  const { gitUsernameErrMsg, gitTokenErrMsg } = errMsg;
 
   const inputChangeHandler = (e) => {
-    if (e.target.name === "currentPassword") {
+    if (e.target.name === "gitUsername") {
       setInputs((prev) => {
-        return { ...prev, currentPassword: e.target.value };
+        return { ...prev, gitUsername: e.target.value };
       });
-    } else if (e.target.name === "password1") {
+    } else if (e.target.name === "gitToken") {
       setInputs((prev) => {
-        return { ...prev, password1: e.target.value };
-      });
-    } else if (e.target.name === "password2") {
-      setInputs((prev) => {
-        return { ...prev, password2: e.target.value };
+        return { ...prev, gitToken: e.target.value };
       });
     }
   };
@@ -38,45 +32,27 @@ const GitForm = ({ onSubmitPassword }) => {
     e.preventDefault();
     let isInvalid = false;
     setErrMsg(initialErrorState);
-    if (currentPassword.trim().length === 0) {
+    if (gitUsername.trim().length === 0) {
       setErrMsg((prev) => {
-        return { ...prev, currentPasswordErrMsg: "현재 비밀번호를 입력하세요" };
+        return { ...prev, currentPasswordErrMsg: "깃 아이디를 입력하세요" };
       });
       isInvalid = true;
     }
-    if (password1.trim().length === 0) {
+    if (gitToken.trim().length === 0) {
       setErrMsg((prev) => {
-        return { ...prev, password1ErrMsg: "변경할 비밀번호를 입력하세요" };
-      });
-      isInvalid = true;
-    }
-    if (password2.trim().length === 0) {
-      setErrMsg((prev) => {
-        return {
-          ...prev,
-          password2ErrMsg: "변경할 비밀번호를 한번 더 입력하세요",
-        };
-      });
-      isInvalid = true;
-    }
-    if (password1.trim() !== password2.trim()) {
-      setErrMsg((prev) => {
-        return {
-          ...prev,
-          password2ErrMsg: "비밀번호가 일치하지 않습니다",
-        };
+        return { ...prev, password1ErrMsg: "깃 토큰을 입력하세요" };
       });
       isInvalid = true;
     }
     if (isInvalid) {
       return;
     }
-    const passwordData = JSON.stringify({
-      userPassword: currentPassword,
-      userNewPassword: password1,
-    });
+    const credentialsData = {
+      userGitUsername: gitUsername,
+      userGitToken: gitToken,
+    };
     setErrMsg(initialErrorState);
-    onSubmitPassword(passwordData);
+    updateGitAuth(credentialsData);
   };
 
   return (
@@ -85,54 +61,36 @@ const GitForm = ({ onSubmitPassword }) => {
       onSubmit={submitHandler}
       className="flex flex-col items-center"
     >
-      {/*  */}
+      {/* Git Username */}
       <div className="w-96">
-        <label htmlFor="currentPassword" className="text-primary_dark text-sm">
-          현재 비밀번호
+        <label htmlFor="gitUsername" className="text-primary_dark text-sm">
+          깃 아이디
         </label>
         <input
-          type="password"
-          id="currentPassword"
-          name="currentPassword"
+          type="text"
+          id="gitUsername"
+          name="gitUsername"
           className="w-full text-white bg-component_item_bg_+1_dark py-2 px-3 rounded-md transition"
-          value={currentPassword}
+          value={gitUsername}
           onChange={inputChangeHandler}
         />
-        <div className="h-6 mb-2 text-point_purple">
-          {currentPasswordErrMsg}
-        </div>
+        <div className="h-6 mb-2 text-point_purple">{gitUsernameErrMsg}</div>
       </div>
 
-      {/* Password 1 */}
-      <div className="w-full">
-        <label htmlFor="password1" className="">
-          변경할 비밀번호
+      {/* Git Token */}
+      <div className="w-96">
+        <label htmlFor="gitToken" className="text-primary_dark text-sm">
+          깃 토큰
         </label>
         <input
-          type="password"
-          id="password1"
-          name="password1"
+          type="text"
+          id="gitToken"
+          name="gitToken"
           className="w-full text-white bg-component_item_bg_+1_dark py-2 px-3 rounded-md transition"
-          value={password1}
+          value={gitToken}
           onChange={inputChangeHandler}
         />
-        <div className="h-6 mb-2 text-point_purple">{password1ErrMsg}</div>
-      </div>
-
-      {/* Password 2 */}
-      <div className="w-full">
-        <label htmlFor="password2" className="">
-          변경할 비밀번호 확인
-        </label>
-        <input
-          type="password"
-          id="password2"
-          name="password2"
-          className="w-full text-white bg-component_item_bg_+1_dark py-2 px-3 rounded-md transition"
-          value={password2}
-          onChange={inputChangeHandler}
-        />
-        <div className="h-6 mb-2 text-point_purple">{password2ErrMsg}</div>
+        <div className="h-6 mb-2 text-point_purple">{gitTokenErrMsg}</div>
       </div>
 
       <button

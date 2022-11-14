@@ -145,6 +145,21 @@ export const resign = createAsyncThunk(
   }
 );
 
+export const updateGitAuth = createAsyncThunk(
+  "user/updateGitAuth",
+  async (credentialsData, { rejectWithValue }) => {
+    try {
+      const response = await userApi.updateGitAuth(credentialsData);
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+      return rejectWithValue(err.response.status);
+    }
+  }
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,

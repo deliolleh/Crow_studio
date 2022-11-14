@@ -10,7 +10,7 @@ const userApi = {
   deleteQuit: () => api.delete("users/quit"),
   searchUser: (searchData) => api.post("/users/search", searchData),
   resign: () => api.delete("/users/quit"),
-  updateGitAuth: () => api.put("/edit/git"),
+  updateGitAuth: (credentialsData) => api.put("/edit/git", credentialsData),
 };
 
 export default userApi;

@@ -2,7 +2,12 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { modifyNickname, modifyPassword, resign } from "../../redux/userSlice";
+import {
+  modifyNickname,
+  modifyPassword,
+  resign,
+  updateGitAuth,
+} from "../../redux/userSlice";
 
 import NicknameForm from "./components/NicknameForm";
 import PasswordForm from "./components/PasswordForm";
@@ -52,6 +57,16 @@ const Modify = ({ closeModify }) => {
       });
   };
 
+  const updateGitAuthHandler = (credentialsData) => {
+    dispatch(updateGitAuth(credentialsData))
+      .unwrap()
+      .then((res) => {
+        console.log("res:", res);
+        alert("깃 연결 성공");
+      })
+      .catch(console.error);
+  };
+
   return (
     <div className="container p-8 flex flex-col justify-center border border-primary_-2_dark rounded-md">
       <div className="flex justify-between">
@@ -71,7 +86,7 @@ const Modify = ({ closeModify }) => {
 
       <PasswordForm onSubmitPassword={submitPasswordHandler} />
 
-      <GitForm />
+      <GitForm updateGitAuth={updateGitAuthHandler} />
 
       <ResignForm onResign={resignHandler} />
     </div>
