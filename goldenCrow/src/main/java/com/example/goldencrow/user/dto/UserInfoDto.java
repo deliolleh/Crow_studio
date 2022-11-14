@@ -1,6 +1,6 @@
 package com.example.goldencrow.user.dto;
 
-import com.example.goldencrow.user.entity.UserEntity;
+import com.example.goldencrow.user.UserEntity;
 import lombok.Data;
 
 @Data

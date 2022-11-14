@@ -9,10 +9,10 @@ import org.springframework.web.util.HtmlUtils;
 public class LiveController {
     @MessageMapping("/hello")
     @SendTo("/topic/greetings")
-    public testCode greeting(LiveCode message) throws Exception {
+    public TestCode greeting(LiveCode message) throws Exception {
         System.out.println("여기야여기!");
         Thread.sleep(1000); // simulated delay
-        return new testCode("Hello, " + HtmlUtils.htmlEscape(message.getName() + "!"));
+        return new TestCode("Hello, " + HtmlUtils.htmlEscape(message.getName() + "!"));
     }
 
 }

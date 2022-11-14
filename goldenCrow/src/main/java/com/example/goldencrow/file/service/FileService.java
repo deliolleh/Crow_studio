@@ -1,7 +1,7 @@
-package com.example.goldencrow.file.Service;
+package com.example.goldencrow.file.service;
 
 
-import com.example.goldencrow.file.FileDto.FileCreateDto;
+import com.example.goldencrow.file.fileDto.FileCreateDto;
 
 
 import com.example.goldencrow.team.entity.TeamEntity;
@@ -20,7 +20,6 @@ import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import static java.lang.System.out;
 

@@ -1,13 +1,13 @@
 package com.example.goldencrow.liveCode;
 
-public class testCode {
+public class TestCode {
 
     private String content;
 
-    public testCode() {
+    public TestCode() {
     }
 
-    public testCode(String content) {
+    public TestCode(String content) {
         this.content = content;
     }
 

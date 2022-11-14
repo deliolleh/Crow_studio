@@ -1,7 +1,7 @@
 package com.example.goldencrow.team.dto;
 
 import com.example.goldencrow.team.entity.TeamEntity;
-import com.example.goldencrow.user.entity.UserEntity;
+import com.example.goldencrow.user.UserEntity;
 import lombok.Data;
 
 import java.util.List;

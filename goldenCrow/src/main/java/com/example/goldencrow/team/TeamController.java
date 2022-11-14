@@ -2,8 +2,8 @@ package com.example.goldencrow.team;
 
 import com.example.goldencrow.team.dto.TeamDto;
 import com.example.goldencrow.team.dto.UserInfoListDto;
-import com.example.goldencrow.user.JwtService;
-import com.example.goldencrow.user.UserService;
+import com.example.goldencrow.user.service.JwtService;
+import com.example.goldencrow.user.service.UserService;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
