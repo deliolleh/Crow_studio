@@ -1,20 +1,20 @@
 package com.example.goldencrow.liveCode;
 
 public class LiveCode {
-    private String code;
+    private String name;
 
     public LiveCode() {
     }
 
-    public LiveCode(String code) {
-        this.code = code;
+    public LiveCode(String name) {
+        this.name = name;
     }
 
-    public String getCode() {
-        return code;
+    public String getName() {
+        return name;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setName(String name) {
+        this.name = name;
     }
 }
