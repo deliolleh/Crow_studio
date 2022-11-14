@@ -5,7 +5,6 @@ public class testCode {
     private String content;
 
     public testCode() {
-
     }
 
     public testCode(String content) {
