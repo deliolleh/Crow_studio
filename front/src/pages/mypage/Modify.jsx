@@ -31,6 +31,9 @@ const Modify = ({ closeModify }) => {
   };
 
   const resignHandler = () => {
+    if (!window.confirm("진짜 갈거임??")) {
+      return;
+    }
     dispatch(resign())
       .unwrap()
       .then((res) => {
