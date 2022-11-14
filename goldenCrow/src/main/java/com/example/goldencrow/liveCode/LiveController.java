@@ -10,6 +10,7 @@ public class LiveController {
     @MessageMapping("/hello")
     @SendTo("/topic/greetings")
     public testCode greeting(LiveCode message) throws Exception {
+        System.out.println("여기야여기!");
         Thread.sleep(1000); // simulated delay
         return new testCode("Hello, " + HtmlUtils.htmlEscape(message.getName() + "!"));
     }
