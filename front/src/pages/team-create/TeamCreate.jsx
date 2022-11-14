@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
 import { createTeam } from "../../redux/teamSlice";
 
@@ -89,89 +90,92 @@ const TeamCreate = () => {
   const goTeamListHandler = () => navigate("/teams");
 
   return (
-    <div>
+    <div className="flex flex-col">
       <Header />
-      <div className="p-8 flex flex-col justify-center items-center border border-primary_-2_dark rounded-md">
-        <form
-          method="post"
-          onSubmit={submitHandler}
-          className="flex flex-col items-center"
-        >
-          {/* 팀 이름 */}
-          <div className="w-80 mb-1">
-            <label htmlFor="teamName" className="">
-              팀 이름
-            </label>
-            <input
-              type="teamName"
-              id="teamName"
-              name="teamName"
-              className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
-              placeholder="팀 이름을 입력하세요"
-              required
-              value={teamName}
-              onChange={inputChangeHandler}
-            />
-            <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-              {teamNameErrMsg}
-            </div>
-          </div>
-
-          {/* 프로젝트 종류 */}
-          <div className="w-80 mb-1">
-            <label htmlFor="projectType" className="">
-              프로젝트 종류
-            </label>
-            <select
-              className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
-              id="projectType"
-              name="projectType"
-              value={projectType}
-              onChange={inputChangeHandler}
-            >
-              <option value="pure Python">pure Python</option>
-              <option value="Django">Django</option>
-              <option value="Flask">Flask</option>
-              <option value="FastAPI">FastAPI</option>
-            </select>
-            <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink"></div>
-          </div>
-
-          {/* 프로젝트 이름 */}
-          <div className="w-80 mb-1">
-            <label htmlFor="projectName" className="">
-              프로젝트 이름
-            </label>
-            <input
-              type="text"
-              id="projectName"
-              name="projectName"
-              className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
-              placeholder="프로젝트 이름을 입력하세요"
-              required
-              value={projectName}
-              onChange={inputChangeHandler}
-            />
-            <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-              {projectNameErrMsg}
-            </div>
-          </div>
-
-          {/* 팀 생성 버튼 */}
-          <button
-            type="submit"
-            className="w-80 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition mb-4"
-            onClick={submitHandler}
+      <div className="h-screen flex justify-center items-center mb-2">
+        <div className="px-16 py-12 flex flex-col w-fit h-fit justify-center items-center border border-primary_-2_dark rounded-md">
+          <div className="text-4xl font-bold text-white pb-2 mb-5">팀 생성하기</div>
+          <form
+            method="post"
+            onSubmit={submitHandler}
+            className="flex flex-col items-center"
           >
-            팀 생성
+            {/* 팀 이름 */}
+            <div className="w-80 mb-1">
+              <label htmlFor="teamName" className="">
+                팀 이름
+              </label>
+              <input
+                type="teamName"
+                id="teamName"
+                name="teamName"
+                className="mt-1 w-full text-white bg-component_item_bg_+2_dark transition:bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+                placeholder="팀 이름을 입력하세요"
+                required
+                value={teamName}
+                onChange={inputChangeHandler}
+              />
+              <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
+                {teamNameErrMsg}
+              </div>
+            </div>
+
+            {/* 프로젝트 종류 */}
+            <div className="w-80 mb-1">
+              <label htmlFor="projectType" className="">
+                프로젝트 종류
+              </label>
+              <select
+                className="mt-1 w-full text-white py-2 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+                id="projectType"
+                name="projectType"
+                value={projectType}
+                onChange={inputChangeHandler}
+              >
+                <option value="pure Python">pure Python</option>
+                <option value="Django">Django</option>
+                <option value="Flask">Flask</option>
+                <option value="FastAPI">FastAPI</option>
+              </select>
+              <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink"></div>
+            </div>
+
+            {/* 프로젝트 이름 */}
+            <div className="w-80 mb-4">
+              <label htmlFor="projectName" className="">
+                프로젝트 이름
+              </label>
+              <input
+                type="text"
+                id="projectName"
+                name="projectName"
+                className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple  rounded-md transition"
+                placeholder="프로젝트 이름을 입력하세요"
+                required
+                value={projectName}
+                onChange={inputChangeHandler}
+              />
+              <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
+                {projectNameErrMsg}
+              </div>
+            </div>
+
+            {/* 팀 생성 버튼 */}
+            <button
+              type="submit"
+              className="w-80 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition mb-2"
+              onClick={submitHandler}
+            >
+              팀 생성
+            </button>
+          </form>
+          <button
+            onClick={goTeamListHandler}
+            className="w-80 px-10 py-2 text-primary_dark bg-component_item_bg_dark border border-primary_-2_dark rounded-md"
+          >
+            팀 목록
           </button>
-        </form>
-        <button
-          onClick={goTeamListHandler}
-          className="w-80 px-10 py-2 text-primary_dark bg-component_item_bg_dark border border-primary_-2_dark rounded-md"
-        >
-          팀 목록
-        </button>
+        </div>
       </div>
     </div>
   );

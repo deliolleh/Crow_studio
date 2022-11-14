@@ -142,3 +142,10 @@ textarea::-webkit-resizer {
   border-color: transparent #797979 #797979 transparent;
   border-radius: 0 0 5px 0;
 }
+
+input:-internal-autofill-selected {
+  appearance: menulist-button;
+  background-image: none !important;
+  background-color: transparent !important;
+  color: fieldtext !important;
+}
