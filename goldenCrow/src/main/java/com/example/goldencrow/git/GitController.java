@@ -1,13 +1,13 @@
 package com.example.goldencrow.git;
 
-import com.example.goldencrow.file.Service.FileService;
-import com.example.goldencrow.user.JwtService;
+import com.example.goldencrow.user.service.JwtService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/git")
@@ -67,9 +67,8 @@ public class GitController {
         String gitPath = gitFile.get("gitPath");
         String filePath = gitFile.get("filePath");
         String branchName = gitFile.get("branchName");
-        String email = gitFile.get("email");
-        String pass = gitFile.get("pass");
-        String pushCheck = gitService.gitPush(branchName,message,gitPath,filePath,userSeq,email,pass);
+
+        String pushCheck = gitService.gitPush(branchName,message,gitPath,filePath,userSeq);
 
         return new ResponseEntity<>(pushCheck, HttpStatus.OK);
     }
@@ -81,6 +80,21 @@ public class GitController {
             return new ResponseEntity<>(branches,HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(branches,HttpStatus.OK);
+        }
+    }
+
+    @PostMapping("/{userSeq}/git-pull")
+    public ResponseEntity<String> gitPull(@RequestHeader("Authorization") String jwt,@PathVariable Long userSeq, @RequestBody Map<String,String> gitInfo) {
+        String gitPath = gitInfo.get("gitPath");
+        String email = gitInfo.get("email");
+        String pass = gitInfo.get("pass");
+        String branchName = gitInfo.get("branchName");
+        String result = gitService.gitPull(gitPath,userSeq,branchName);
+
+        if (result.equals("성공")) {
+            return new ResponseEntity<>("깃 풀 성공!", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
     }
 }

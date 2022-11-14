@@ -2,8 +2,8 @@ package com.example.goldencrow.team;
 
 import com.example.goldencrow.team.dto.TeamDto;
 import com.example.goldencrow.team.dto.UserInfoListDto;
-import com.example.goldencrow.user.JwtService;
-import com.example.goldencrow.user.UserService;
+import com.example.goldencrow.user.service.JwtService;
+import com.example.goldencrow.user.service.UserService;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -75,13 +75,20 @@ public class TeamController {
     // 팀 생성 POST
     // create
     @PostMapping("/create")
-    public ResponseEntity<Map<String, Long>> teamCreatePost(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
+    public ResponseEntity<Map<String, Long>> teamCreatePost(@RequestHeader("Authorization") String jwt,
+                                                            @RequestBody Map<String, String> req) {
 
-        if(req.get("teamName")==null) {
+        // 타입이랑
+        // 맵 안의 팀네임 프로젝트네임 타입 필요함
+
+        // 로그에 내용이 찍히는 400 or 409 : 프로젝트 생성에서 문제가 있었음
+        // 내용이 안찍히는 400 or 409 : 팀 생성에서 문제가 있었음
+
+        if(req.get("teamName")==null||req.get("projectName")==null||req.get("projectType")==null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
-        Map<String, Long> res = teamService.teamCreate(jwt, req.get("teamName"), req.get("teamGit"));
+        Map<String, Long> res = teamService.teamCreate(jwt, req);
 
         if(res==null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
