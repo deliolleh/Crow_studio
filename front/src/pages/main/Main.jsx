@@ -32,6 +32,7 @@ import projectApi from "../../api/projectApi";
 import {
   MakeEditorData,
   MakeConsoleData,
+  CompileEditor,
 } from "../main/components/tabs/makeData";
 
 // svg
@@ -410,7 +411,7 @@ const Main = () => {
                     ))}
                   </SplitPane>
                   <div style={{ marginTop: "8px" }}>
-                    <CustomTabs2
+                    {/* <CustomTabs2
                       sidebarSize={sidebarSize}
                       // editorPaneSize={editorPaneSize}
                       com={com}
@@ -450,7 +451,8 @@ const Main = () => {
                           />
                         </ExtraButton>
                       }
-                    />
+                    /> */}
+                    <CompileEditor />
                   </div>
                 </SplitPane>
               </div>
