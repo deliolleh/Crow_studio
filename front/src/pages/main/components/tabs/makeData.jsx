@@ -24,13 +24,7 @@ export const MakeEditorData = (
     editorRef.current?.focus();
   }, [file.name]);
 
-  // useEffect(() => {
-  //   document.addEventListener("keydown", detectKeyDown, false);
-  // });
-
-  // const detectKeyDown = (e) => {};
-
-  // Formatting
+  // 포맷팅 영역
   const format = async () => {
     // When formatting Button Click, useRef of that part's value get
     const sendCode = editorRef.current.getValue();
@@ -65,6 +59,16 @@ export const MakeEditorData = (
       .lint(language, body)
       .then((res) => {
         console.log(res.data);
+        const data = res.data.data;
+        const index = res.data.index;
+        const length = res.data.data.length;
+        let lintResult = [];
+        for (let i = 0; i < length; i++) {
+          const sentence = `Line ${index[i]}: ${data[i]}`;
+          lintResult.push(sentence);
+        }
+        lintResult.sort();
+        // console.log("lineResult: ", lintResult);
       })
       .catch((err) => {
         console.error(err);
@@ -91,17 +95,12 @@ export const MakeEditorData = (
             // defaultValue={
             //   i + 1 === 1 ? files["script.js"].value : files["style.css"].value
             // }
-            defaultValue={"#welcome python"}
-            onMount={(editor) => {
-              editorRef.current = editor;
-              // console.log(editor);
-            }}
+            defaultValue={""}
+            onMount={(editor) => (editorRef.current = editor)}
             options={{
               scrollBeyondLastLine: false,
               fontSize: "14px",
               fontFamily: "JetBrains Mono",
-              autoIndent: "advanced",
-              wrappingIndent: "same",
             }}
           />
         </div>
