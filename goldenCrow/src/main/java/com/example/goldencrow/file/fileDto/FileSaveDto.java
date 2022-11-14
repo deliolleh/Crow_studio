@@ -1,4 +1,4 @@
-package com.example.goldencrow.file.FileDto;
+package com.example.goldencrow.file.fileDto;
 
 import lombok.Data;
 

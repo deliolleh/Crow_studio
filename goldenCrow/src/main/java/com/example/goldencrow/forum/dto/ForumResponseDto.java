@@ -1,6 +1,6 @@
 package com.example.goldencrow.forum.dto;
 
-import com.example.goldencrow.user.entity.UserEntity;
+import com.example.goldencrow.user.UserEntity;
 
 public class ForumResponseDto {
 

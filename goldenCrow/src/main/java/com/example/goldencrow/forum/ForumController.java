@@ -2,7 +2,7 @@ package com.example.goldencrow.forum;
 
 import com.example.goldencrow.forum.dto.ForumDto;
 import com.example.goldencrow.forum.dto.ForumPageDto;
-import com.example.goldencrow.user.JwtService;
+import com.example.goldencrow.user.service.JwtService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

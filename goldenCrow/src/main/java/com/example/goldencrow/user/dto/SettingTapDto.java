@@ -7,7 +7,6 @@ public class SettingTapDto {
 
     private String name;
     private String path;
-    private int icon;
 
     public SettingTapDto() {
     }
