@@ -42,7 +42,17 @@ const Directory = ({ showFileContent }) => {
       .unwrap()
       .then((res) => {
         console.log("directoryList res:", res);
-        setCurItems(res.fileDirectory.map((el) => el));
+        setCurItems(
+          res.fileDirectory.map((el) => {
+            const element = {
+              ...el,
+              isOpened: false,
+              depth: 0,
+              children: [],
+            };
+            return element;
+          })
+        );
       })
       .catch(console.error);
   };
@@ -59,7 +69,7 @@ const Directory = ({ showFileContent }) => {
     }
     const fileData = {
       fileTitle: newDirectoryName,
-      filePath: `/home/ubuntu/crow_data/${teamSeq}`,
+      filePath: `/home/ubuntu/crow_data/${teamSeq}/thisIsProjectName`,
     };
     dispatch(createFile({ teamSeq, type: TYPE_DIRECTORY, fileData }))
       .unwrap()
@@ -89,9 +99,26 @@ const Directory = ({ showFileContent }) => {
       .catch(console.error);
   };
 
-  const clickItemHandler = (path, type) => {
-    console.log("path,  type:", path, type);
+  // 파일 클릭
+  const openFileHandler = (path, type) => {
+    console.log("path, type:", path, type);
     showFileContent(type, path);
+  };
+
+  // 폴더 클릭
+  const openFolderHandler = (name) => {
+    console.log("folder name:", name);
+    console.log("curItems:", curItems);
+    const directoryData = {
+      rootPath: `${teamSeq}/${name}`,
+      rootName: `root`,
+    };
+    dispatch(getDirectoryList(directoryData))
+      .unwrap()
+      .then((res) => {
+        console.log("name's:", res);
+      })
+      .catch(console.error);
   };
 
   const renameItemHandler = (path, name) => {
@@ -154,7 +181,8 @@ const Directory = ({ showFileContent }) => {
           {/* 디렉터리 파일, 폴더 모음 */}
           <DirectoryList
             curItems={curItems}
-            onClickItem={clickItemHandler}
+            onOpenFile={openFileHandler}
+            onOpenFolder={openFolderHandler}
             onRename={renameItemHandler}
             onDelete={deleteItemHandler}
           />
