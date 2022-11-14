@@ -26,15 +26,12 @@ export const MakeEditorData = (
 
   // 포맷팅 영역
   const format = async () => {
-    // console.log(editorRef.current.getValue());
-    const rawCode = editorRef.current.getValue();
-    const sendCode = rawCode.slice(1, rawCode.length - 1);
-    console.log(sendCode);
-    // console.log(sendCode);
+    // When formatting Button Click, useRef of that part's value get
+    const sendCode = editorRef.current.getValue();
     const body = {
-      text: JSON.stringify(sendCode),
+      text: sendCode,
     };
-    console.log(body);
+    // console.log(body);
     await editorApi.formatPut(language, body).then((res) => {
       const number = res.data.data;
       console.log("dataCome ", res.data.data);
@@ -44,9 +41,9 @@ export const MakeEditorData = (
       editorApi
         .formatGet(language, body2)
         .then((res) => {
-          const updateCode = res.data.data.slice(1, res.data.data.length - 1);
-          console.log("updateCode: ", updateCode);
-          editorRef.current.getModel().setValue(updateCode);
+          console.log("updateCode: ", res.data.data);
+          const summaryCode = res.data.data.trim();
+          editorRef.current.getModel().setValue(summaryCode);
         })
         .catch((err) => console.error(err));
     });
@@ -71,7 +68,7 @@ export const MakeEditorData = (
           lintResult.push(sentence);
         }
         lintResult.sort();
-        console.log("lineResult: ", lintResult);
+        // console.log("lineResult: ", lintResult);
       })
       .catch((err) => {
         console.error(err);
