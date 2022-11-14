@@ -1,7 +1,7 @@
 package com.example.goldencrow.file;
 
 
-import com.example.goldencrow.file.FileDto.FileCreateDto;
+import com.example.goldencrow.file.fileDto.FileCreateDto;
 import com.example.goldencrow.team.entity.TeamEntity;
 import lombok.Getter;
 import lombok.Setter;

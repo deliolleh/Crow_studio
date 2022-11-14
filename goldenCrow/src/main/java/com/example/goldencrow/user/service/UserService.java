@@ -1,15 +1,16 @@
-package com.example.goldencrow.user;
+package com.example.goldencrow.user.service;
 
 import com.example.goldencrow.common.CryptoUtil;
-import com.example.goldencrow.file.Service.ProjectService;
+import com.example.goldencrow.file.service.ProjectService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.MemberRepository;
 import com.example.goldencrow.team.repository.TeamRepository;
+import com.example.goldencrow.user.UserEntity;
+import com.example.goldencrow.user.UserRepository;
 import com.example.goldencrow.user.dto.MyInfoDto;
 import com.example.goldencrow.user.dto.SettingsDto;
 import com.example.goldencrow.user.dto.UserInfoDto;
-import com.example.goldencrow.user.entity.UserEntity;
-import com.example.goldencrow.user.repository.UserRepository;
+import com.example.goldencrow.user.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

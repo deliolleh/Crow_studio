@@ -1,8 +1,8 @@
-package com.example.goldencrow.file.Controller;
+package com.example.goldencrow.file.controller;
 
-import com.example.goldencrow.file.FileDto.FileCreateDto;
-import com.example.goldencrow.file.Service.FileService;
-import com.example.goldencrow.user.JwtService;
+import com.example.goldencrow.file.fileDto.FileCreateDto;
+import com.example.goldencrow.file.service.FileService;
+import com.example.goldencrow.user.service.JwtService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -69,9 +69,9 @@ public class FileController {
         boolean result = fileService.updateFileName(path,title,oldFileName);
 
         if (result) {
-            return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.OK);
+            return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 

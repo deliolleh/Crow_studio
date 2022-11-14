@@ -1,7 +1,6 @@
 package com.example.goldencrow.forum.dto;
 
 import com.example.goldencrow.forum.ForumEntity;
-import com.example.goldencrow.user.entity.UserEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

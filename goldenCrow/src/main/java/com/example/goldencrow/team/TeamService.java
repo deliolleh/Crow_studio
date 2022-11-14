@@ -1,6 +1,6 @@
 package com.example.goldencrow.team;
 
-import com.example.goldencrow.file.Service.ProjectService;
+import com.example.goldencrow.file.service.ProjectService;
 import com.example.goldencrow.team.dto.MemberDto;
 import com.example.goldencrow.team.dto.TeamDto;
 import com.example.goldencrow.team.dto.UserInfoListDto;
@@ -8,10 +8,10 @@ import com.example.goldencrow.team.entity.MemberEntity;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.MemberRepository;
 import com.example.goldencrow.team.repository.TeamRepository;
-import com.example.goldencrow.user.JwtService;
+import com.example.goldencrow.user.service.JwtService;
 import com.example.goldencrow.user.dto.UserInfoDto;
-import com.example.goldencrow.user.entity.UserEntity;
-import com.example.goldencrow.user.repository.UserRepository;
+import com.example.goldencrow.user.UserEntity;
+import com.example.goldencrow.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

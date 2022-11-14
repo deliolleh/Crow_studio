@@ -1,34 +1,24 @@
-package com.example.goldencrow.file.Controller;
+package com.example.goldencrow.file.controller;
 
-import com.example.goldencrow.file.Service.FileService;
-import com.example.goldencrow.file.Service.ProjectService;
-import com.example.goldencrow.user.JwtService;
+
+import com.example.goldencrow.file.service.ProjectService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import static java.lang.System.out;
+import java.util.*;
+
+
 
 @RestController
 @RequestMapping(value = "/api/projects")
 public class ProjectController {
-    private final JwtService jwtService;
-
-    private final FileService fileService;
 
     private final ProjectService projectService;
 
-    private String baseUrl = "/home/ubuntu/crow_data/";
-
-    public ProjectController(FileService fileService, JwtService jwtService, ProjectService projectService) {
-        this.fileService = fileService;
-        this.jwtService = jwtService;
+    public ProjectController(ProjectService projectService) {
         this.projectService = projectService;
     }
 
@@ -49,23 +39,14 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/{teamSeq}")
-    public ResponseEntity<Map<List<String>,List<List<String>>>> pjtRead(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
-        String baseUrl = "/home/ubuntu/crow_data/"+String.valueOf(teamSeq);
-        File teamPjt = new File(baseUrl);
-        String[] names = teamPjt.list();
-        String rootName = names[0];
-        String newUrl = baseUrl+ "/" + rootName;
+    @PostMapping("/directories")
+    public ResponseEntity<Map<String,List<Map<String,String>>>> pjtRead(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,String> rootFile) {
+        String rootPath = rootFile.get("rootPath");
+        String rootName = rootFile.get("rootName");
+        Map<String,List<Map<String,String>>> directory;
+        directory = projectService.readDirectory(rootPath,rootName);
 
-        Map<List<String>,List<List<String>>> visit = new HashMap<>();
-        List<List<String>> newValue = new ArrayList<>();
-        List<String> root = new ArrayList<>();
-        root.add(rootName);
-        root.add(newUrl);
-        visit.put(root,newValue);
-        projectService.readDirectory(newUrl,rootName,visit);
-
-        return new ResponseEntity<>(visit, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(directory, HttpStatus.ACCEPTED);
     }
 
 
