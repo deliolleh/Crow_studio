@@ -2,11 +2,17 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { modifyNickname, modifyPassword, resign } from "../../redux/userSlice";
+import {
+  modifyNickname,
+  modifyPassword,
+  resign,
+  updateGitAuth,
+} from "../../redux/userSlice";
 
 import NicknameForm from "./components/NicknameForm";
 import PasswordForm from "./components/PasswordForm";
 import ResignForm from "./components/ResignForm";
+import GitForm from "./components/GitForm";
 
 const Modify = ({ closeModify }) => {
   const dispatch = useDispatch();
@@ -41,6 +47,23 @@ const Modify = ({ closeModify }) => {
         alert("회원 탈퇴 완료");
         navigate("/");
       })
+      .catch((errorStatusCode) => {
+        if (errorStatusCode === 403) {
+          console.error(errorStatusCode);
+          alert("팀장으로 있는 동안은 탈퇴할 수 없습니다");
+        } else {
+          alert("비상!!");
+        }
+      });
+  };
+
+  const updateGitAuthHandler = (credentialsData) => {
+    dispatch(updateGitAuth(credentialsData))
+      .unwrap()
+      .then((res) => {
+        console.log("res:", res);
+        alert("깃 연결 성공");
+      })
       .catch(console.error);
   };
 
@@ -62,6 +85,8 @@ const Modify = ({ closeModify }) => {
       />
 
       <PasswordForm onSubmitPassword={submitPasswordHandler} />
+
+      <GitForm updateGitAuth={updateGitAuthHandler} />
 
       <ResignForm onResign={resignHandler} />
     </div>
