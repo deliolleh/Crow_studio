@@ -34,13 +34,16 @@ const GitForm = ({ updateGitAuth }) => {
     setErrMsg(initialErrorState);
     if (gitUsername.trim().length === 0) {
       setErrMsg((prev) => {
-        return { ...prev, currentPasswordErrMsg: "깃 아이디를 입력하세요" };
+        return { ...prev, gitUsernameErrMsg: "깃 아이디를 입력하세요" };
       });
       isInvalid = true;
     }
     if (gitToken.trim().length === 0) {
       setErrMsg((prev) => {
-        return { ...prev, password1ErrMsg: "깃 토큰을 입력하세요" };
+        return {
+          ...prev,
+          gitTokenErrMsg: "깃 토큰을 입력하세요",
+        };
       });
       isInvalid = true;
     }
