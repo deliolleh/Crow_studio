@@ -1,7 +1,7 @@
 package com.example.goldencrow.forum;
 
 import com.example.goldencrow.forum.dto.ForumDto;
-import com.example.goldencrow.user.entity.UserEntity;
+import com.example.goldencrow.user.UserEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;

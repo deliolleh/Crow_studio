@@ -1,7 +1,7 @@
-package com.example.goldencrow.file.Controller;
+package com.example.goldencrow.file.controller;
 
 
-import com.example.goldencrow.file.Service.ProjectService;
+import com.example.goldencrow.file.service.ProjectService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

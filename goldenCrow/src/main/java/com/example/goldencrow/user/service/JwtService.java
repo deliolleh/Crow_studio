@@ -1,6 +1,6 @@
-package com.example.goldencrow.user;
+package com.example.goldencrow.user.service;
 
-import com.example.goldencrow.user.repository.UserRepository;
+import com.example.goldencrow.user.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

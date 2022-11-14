@@ -1,4 +1,4 @@
-package com.example.goldencrow.user.entity;
+package com.example.goldencrow.user;
 
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;

@@ -1,7 +1,7 @@
-package com.example.goldencrow.file.Service;
+package com.example.goldencrow.file.service;
 
 
-import com.example.goldencrow.file.Repository.FileRepository;
+import com.example.goldencrow.file.FileRepository;
 
 import com.example.goldencrow.team.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
