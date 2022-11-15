@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
+
+import Tree, { useTreeState, treeHandlers } from "react-hyper-tree";
 
 // import svg
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
@@ -10,7 +12,7 @@ import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.
 
 // import * as iconsi from "react-icons/io5";
 
-import { getDirectoryList } from "../../../../redux/projectSlice";
+import { getDirectoryList, getAllFiles } from "../../../../redux/projectSlice";
 import {
   createFile,
   deleteFile,
@@ -21,12 +23,39 @@ import {
 
 import DirectoryList from "./directory/DirectoryList";
 
+const data = {
+  id: 1,
+  name: "Parent 1",
+  children: [
+    {
+      id: 2,
+      name: "Child 1",
+      children: [
+        {
+          id: 5,
+          name: "Child 1__1",
+        },
+        {
+          id: 6,
+          name: "Child 1__2",
+        },
+        {
+          id: 7,
+          name: "Child 1__3",
+        },
+      ],
+    },
+  ],
+};
+
 const Directory = ({ showFileContent }) => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
   const [curItems, setCurItems] = useState([]);
   // const [newFileName, setNewFileName] = useState("");
   // const [newDirectoryName, setNewDirectoryName] = useState("");
+
+  const [testData, setTestData] = useState({});
 
   // const TEAM_SEQ = 3;
   const TYPE_DIRECTORY = 1;
@@ -42,13 +71,30 @@ const Directory = ({ showFileContent }) => {
       .unwrap()
       .then((res) => {
         console.log("directoryList res:", res);
-        setCurItems(res.fileDirectory.map((el) => el));
+        setCurItems(
+          res.fileDirectory.map((el) => {
+            const element = {
+              ...el,
+              isOpened: false,
+              depth: 0,
+              children: [],
+            };
+            return element;
+          })
+        );
       })
       .catch(console.error);
   };
 
   useEffect(() => {
-    dispatchGetDirectoryList();
+    // dispatchGetDirectoryList();
+    dispatch(getAllFiles(teamSeq))
+      .unwrap()
+      .then((res) => {
+        console.log("res:", res);
+        setTestData(res);
+      })
+      .catch(console.error);
   }, []);
 
   // 디렉터리 생성 핸들러
@@ -59,7 +105,7 @@ const Directory = ({ showFileContent }) => {
     }
     const fileData = {
       fileTitle: newDirectoryName,
-      filePath: `/home/ubuntu/crow_data/${teamSeq}`,
+      filePath: `/home/ubuntu/crow_data/${teamSeq}/thisIsProjectName`,
     };
     dispatch(createFile({ teamSeq, type: TYPE_DIRECTORY, fileData }))
       .unwrap()
@@ -89,9 +135,26 @@ const Directory = ({ showFileContent }) => {
       .catch(console.error);
   };
 
-  const clickItemHandler = (path, type) => {
-    console.log("path,  type:", path, type);
+  // 파일 클릭
+  const openFileHandler = (path, type) => {
+    console.log("path, type:", path, type);
     showFileContent(type, path);
+  };
+
+  // 폴더 클릭
+  const openFolderHandler = (name) => {
+    console.log("folder name:", name);
+    console.log("curItems:", curItems);
+    const directoryData = {
+      rootPath: `${teamSeq}/${name}`,
+      rootName: `root`,
+    };
+    dispatch(getDirectoryList(directoryData))
+      .unwrap()
+      .then((res) => {
+        console.log("name's:", res);
+      })
+      .catch(console.error);
   };
 
   const renameItemHandler = (path, name) => {
@@ -127,6 +190,52 @@ const Directory = ({ showFileContent }) => {
       .catch(console.error);
   };
 
+  // const { required, handlers } = useTreeState({ data, id: "your_tree_id" });
+  const { required, handlers, instance } = useTreeState({
+    data: testData,
+    id: "your_tree_id",
+  });
+
+  //
+  //
+  //
+  //
+  const CustomNode = ({ node, onSelect, onToggle, onClick, setOpen }) => {
+    // const handleClick = useCallback(() => {
+    //   onSelect();
+    //   onClick(node);
+    //   console.log("node:", node);
+    // }, [node, onSelect, onClick]);
+    console.log("setOpen:", setOpen);
+
+    const handleClick = useCallback(
+      (e) => {
+        e.stopPropagation();
+        if (setOpen) {
+          setOpen(node);
+        }
+        onSelect(setOpen);
+        onClick(node);
+        console.log("node:", node);
+      },
+      [node, onSelect, onClick, setOpen]
+    );
+
+    return <div onClick={handleClick}>{node.data.name}</div>;
+  };
+  //
+  //
+  //
+  //
+
+  useEffect(() => {
+    console.log(
+      `treeHandlers.trees["your_tree_id"].instance:`,
+      treeHandlers.trees["your_tree_id"].instance
+    );
+    console.log(treeHandlers.trees["your_tree_id"].handlers);
+  }, []);
+
   return (
     <React.Fragment>
       <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
@@ -152,11 +261,22 @@ const Directory = ({ showFileContent }) => {
           />
 
           {/* 디렉터리 파일, 폴더 모음 */}
-          <DirectoryList
+          {/* <DirectoryList
             curItems={curItems}
-            onClickItem={clickItemHandler}
+            onOpenFile={openFileHandler}
+            onOpenFolder={openFolderHandler}
             onRename={renameItemHandler}
             onDelete={deleteItemHandler}
+          /> */}
+          <Tree
+            {...required}
+            {...handlers}
+            renderNode={(defaultProps) => (
+              <CustomNode
+                {...defaultProps}
+                onClick={() => console.log("defaultProps:", defaultProps)}
+              />
+            )}
           />
         </div>
       </DirectoryContainer>

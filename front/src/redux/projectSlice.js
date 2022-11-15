@@ -21,6 +21,21 @@ export const getDirectoryList = createAsyncThunk(
   }
 );
 
+export const getAllFiles = createAsyncThunk(
+  "project/getAllFiles",
+  async (teamSeq, { rejectWithValue }) => {
+    try {
+      const response = await projectApi.getAllFiles(teamSeq);
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+      return rejectWithValue(err.response.status);
+    }
+  }
+);
+
 //
 
 //

@@ -1,9 +1,12 @@
 import React from "react";
 
-const DirectoryListItem = ({ item, onClickItem, onRename, onDelete }) => {
+const DirectoryListItem = (props) => {
+  const { item, onOpenFile, onOpenFolder, onRename, onDelete } = props;
   const { path, name, type } = item;
 
-  const showContentHandler = () => onClickItem(path, type);
+  const showContentHandler = () => onOpenFile(path, type);
+
+  const showFolderHandler = () => onOpenFolder(name);
 
   const rightClickHandler = (e) => {
     e.preventDefault();
@@ -17,7 +20,7 @@ const DirectoryListItem = ({ item, onClickItem, onRename, onDelete }) => {
   return (
     <div
       className="flex gap-1 cursor-pointer text-white"
-      onClick={showContentHandler}
+      onClick={type === "file" ? showContentHandler : showFolderHandler}
       onContextMenu={rightClickHandler}
     >
       <div>{type === "file" ? "🎃" : "🎁"}</div>
