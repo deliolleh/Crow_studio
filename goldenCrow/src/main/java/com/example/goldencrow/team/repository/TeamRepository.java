@@ -1,7 +1,7 @@
 package com.example.goldencrow.team.repository;
 
 import com.example.goldencrow.team.entity.TeamEntity;
-import com.example.goldencrow.user.entity.UserEntity;
+import com.example.goldencrow.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

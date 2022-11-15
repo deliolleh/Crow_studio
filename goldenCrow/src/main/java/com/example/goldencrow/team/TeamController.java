@@ -2,8 +2,8 @@ package com.example.goldencrow.team;
 
 import com.example.goldencrow.team.dto.TeamDto;
 import com.example.goldencrow.team.dto.UserInfoListDto;
-import com.example.goldencrow.user.JwtService;
-import com.example.goldencrow.user.UserService;
+import com.example.goldencrow.user.service.JwtService;
+import com.example.goldencrow.user.service.UserService;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,12 +79,13 @@ public class TeamController {
                                                             @RequestBody Map<String, String> req) {
 
         // 타입이랑
-        // 맵 안의 팀네임 프로젝트네임 타입 필요함
+        // 맵 안의 팀네임 프로젝트타입 필요함
 
         // 로그에 내용이 찍히는 400 or 409 : 프로젝트 생성에서 문제가 있었음
         // 내용이 안찍히는 400 or 409 : 팀 생성에서 문제가 있었음
+        // 404 : 그 깃이 제대로 된 주소가 아니라서 클론을 못함
 
-        if(req.get("teamName")==null||req.get("projectName")==null||req.get("projectType")==null) {
+        if(req.get("teamName")==null||req.get("projectType")==null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
@@ -94,6 +95,8 @@ public class TeamController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         } else if(res.get("result")==409){
             return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+        } else if(res.get("result")==404) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else {
             return new ResponseEntity<>(res, HttpStatus.OK);
         }
@@ -132,7 +135,7 @@ public class TeamController {
 
     // 팀 깃 수정 PUT
     // modifyGit
-    @PutMapping("/modify/git/{teaSeq}")
+    @PutMapping("/modify/git/{teamSeq}")
     public ResponseEntity<String> teamModifyGitPut(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
 
         // 리더 권한 없으면 터질 예정임
@@ -148,6 +151,33 @@ public class TeamController {
 
         if(result.equals("success")){
             return new ResponseEntity<>(teamGit, HttpStatus.OK);
+        } else if(result.equals("403")) {
+            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
+        } else if(result.equals("404")){
+            return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    // 팀 프로젝트 타입 수정
+    @PutMapping("/modify/type/{teamSeq}")
+    public ResponseEntity<String> teamModifyTypePut(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
+
+        // 리더 권한 없으면 터질 예정임
+        // 이전 타입과 같아도 수정함
+
+        if(req.get("projectType")==null){
+            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        }
+
+        String projectType = req.get("projectType");
+
+        String result = teamService.teamModifyType(jwt, teamSeq, projectType);
+
+        if(result.equals("success")){
+            return new ResponseEntity<>(projectType, HttpStatus.OK);
         } else if(result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
         } else if(result.equals("404")){

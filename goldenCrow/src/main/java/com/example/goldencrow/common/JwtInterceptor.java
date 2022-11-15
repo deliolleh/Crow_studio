@@ -1,6 +1,6 @@
 package com.example.goldencrow.common;
 
-import com.example.goldencrow.user.JwtService;
+import com.example.goldencrow.user.service.JwtService;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
