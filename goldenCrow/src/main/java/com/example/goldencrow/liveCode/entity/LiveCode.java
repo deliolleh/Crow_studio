@@ -1,4 +1,4 @@
-package com.example.goldencrow.liveCode;
+package com.example.goldencrow.liveCode.entity;
 
 public class LiveCode {
     private String name;
