@@ -83,7 +83,7 @@ const PasswordForm = ({ onSubmitPassword }) => {
     <form
       method="post"
       onSubmit={submitHandler}
-      className="h-fit flex flex-col items-center mb-8 text-primary_dark"
+      className="flex flex-col items-center mb-8 text-primary_dark"
     >
       {/*  */}
       <div className="w-80">

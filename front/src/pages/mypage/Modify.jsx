@@ -14,6 +14,8 @@ import PasswordForm from "./components/PasswordForm";
 import ResignForm from "./components/ResignForm";
 import GitForm from "./components/GitForm";
 
+import { IoClose } from "react-icons/io5";
+
 const Modify = ({ closeModify }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -68,15 +70,10 @@ const Modify = ({ closeModify }) => {
   };
 
   return (
-    <div className="lg:w-[700px] md:w-[400px] sm:w-[600px] w-[400px] sm:h-80 p-8 flex flex-col justify-center border border-primary_-2_dark rounded-md overflow-scroll">
-      <div className="flex justify-between mb-5 mt-3 h-fit">
+    <div className="lg:w-[700px] md:w-[400px] sm:w-[600px] w-[400px] sm:h-96 p-8 flex flex-col border border-primary_-2_dark rounded-md overflow-auto">
+      <div className="flex mb-5 mt-3 justify-between items-center">
         <div className="text-white text-xl font-bold">내 정보 수정하기</div>
-        <button
-          className="text-white text-xl font-bold cursor-pointer"
-          onClick={closeModifyHandler}
-        >
-          X
-        </button>
+        <IoClose className="text-white text-xl font-bold cursor-pointer mt-1" onClick={closeModifyHandler} />
       </div>
 
       <NicknameForm
