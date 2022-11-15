@@ -20,17 +20,12 @@ public class LiveController {
     public LiveController(LiveFileService liveFileService) {
         this.liveFileService = liveFileService;
     }
-    @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
-    public TestCode greeting(LiveCode message) throws Exception {
-        Thread.sleep(1000); // simulated delay
-        return new TestCode("Hello, " + HtmlUtils.htmlEscape(message.getName() + "!"));
-    }
+
 
     @PostMapping("/api/hi")
     public ResponseEntity<String> testCode (@RequestHeader("Authorization") String jwt, @RequestBody Map<String,String> lfe) {
         LiveFileEntity lfet = new LiveFileEntity(lfe.get("content"),lfe.get("path"));
-        liveFileService.insertLive(lfet);
+        //liveFileService.insertLive(lfet);
         return new ResponseEntity<>("Hello", HttpStatus.OK);
     }
 
