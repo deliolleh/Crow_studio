@@ -22,7 +22,7 @@ public class SocketController {
     @SendTo("/topic/fileContent")
     public FileContentSaveDto saveContent(FileContentSaveDto body) throws Exception {
         Thread.sleep(200); // simulated delay
-        FileContentSaveDto fileContentSaveDto = new FileContentSaveDto(body.getContent(), body.getPath());
+        FileContentSaveDto fileContentSaveDto = new FileContentSaveDto("뭐요", "뭘봐요");
         System.out.println("here!here!!");
         liveFileService.insertLive(fileContentSaveDto);
         return fileContentSaveDto;
