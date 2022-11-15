@@ -5,6 +5,11 @@ import styled from "styled-components";
 
 import Tree, { useTreeState, treeHandlers } from "react-hyper-tree";
 
+import TreeView from "@mui/lab/TreeView";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import TreeItem from "@mui/lab/TreeItem";
+
 // import svg
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
@@ -22,6 +27,27 @@ import {
 } from "../../../../redux/fileSlice";
 
 import DirectoryList from "./directory/DirectoryList";
+
+// const data = {
+//   id: "root",
+//   name: "Parent",
+//   children: [
+//     {
+//       id: "1",
+//       name: "Child - 1",
+//     },
+//     {
+//       id: "3",
+//       name: "Child - 3",
+//       children: [
+//         {
+//           id: "4",
+//           name: "Child - 4",
+//         },
+//       ],
+//     },
+//   ],
+// };
 
 const Directory = ({ showFileContent }) => {
   const dispatch = useDispatch();
@@ -70,7 +96,7 @@ const Directory = ({ showFileContent }) => {
         setTestData(res);
       })
       .catch(console.error);
-  }, []);
+  }, [dispatch, teamSeq]);
 
   // 디렉터리 생성 핸들러
   const createDirectoryHandler = () => {
@@ -165,51 +191,13 @@ const Directory = ({ showFileContent }) => {
       .catch(console.error);
   };
 
-  // const { required, handlers } = useTreeState({ data, id: "your_tree_id" });
-  const { required, handlers, instance } = useTreeState({
-    data: testData,
-    id: "your_tree_id",
-  });
-
-  //
-  //
-  //
-  //
-  const CustomNode = ({ node, onSelect, onToggle, onClick, setOpen }) => {
-    // const handleClick = useCallback(() => {
-    //   onSelect();
-    //   onClick(node);
-    //   console.log("node:", node);
-    // }, [node, onSelect, onClick]);
-    console.log("setOpen:", setOpen);
-
-    const handleClick = useCallback(
-      (e) => {
-        e.stopPropagation();
-        if (setOpen) {
-          setOpen(node);
-        }
-        onSelect(setOpen);
-        onClick(node);
-        console.log("node:", node);
-      },
-      [node, onSelect, onClick, setOpen]
-    );
-
-    return <div onClick={handleClick}>{node.data.name}</div>;
-  };
-  //
-  //
-  //
-  //
-
-  useEffect(() => {
-    console.log(
-      `treeHandlers.trees["your_tree_id"].instance:`,
-      treeHandlers.trees["your_tree_id"].instance
-    );
-    console.log(treeHandlers.trees["your_tree_id"].handlers);
-  }, []);
+  const renderTree = (nodes) => (
+    <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
+      {Array.isArray(nodes.children)
+        ? nodes.children.map((node) => renderTree(node))
+        : null}
+    </TreeItem>
+  );
 
   return (
     <React.Fragment>
@@ -243,16 +231,20 @@ const Directory = ({ showFileContent }) => {
             onRename={renameItemHandler}
             onDelete={deleteItemHandler}
           /> */}
-          <Tree
-            {...required}
-            {...handlers}
-            renderNode={(defaultProps) => (
-              <CustomNode
-                {...defaultProps}
-                onClick={() => console.log("defaultProps:", defaultProps)}
-              />
-            )}
-          />
+
+          <TreeView
+            aria-label="rich object"
+            defaultCollapseIcon={<ExpandMoreIcon />}
+            defaultExpanded={["root"]}
+            defaultExpandIcon={<ChevronRightIcon />}
+            sx={{ flexGrow: 1, overflowY: "auto" }}
+            onNodeSelect={(e, nodeIds) => {
+              console.log("e.target:", e.target);
+              console.log("nodeIds:", nodeIds);
+            }}
+          >
+            {renderTree(testData)}
+          </TreeView>
         </div>
       </DirectoryContainer>
     </React.Fragment>
