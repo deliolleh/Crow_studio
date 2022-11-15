@@ -1,17 +1,12 @@
 package com.example.goldencrow.liveCode.controller;
 
 import com.example.goldencrow.liveCode.dto.FileContentSaveDto;
-import com.example.goldencrow.liveCode.entity.LiveCode;
-import com.example.goldencrow.liveCode.entity.LiveFileEntity;
-import com.example.goldencrow.liveCode.entity.TestCode;
 import com.example.goldencrow.liveCode.service.LiveFileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.util.HtmlUtils;
 
-import java.io.File;
 import java.util.Map;
 
 @Controller

@@ -44,10 +44,8 @@ public class LiveFileService {
         if (!lfe.isPresent()) {
             liveFileEntity = new LiveFileEntity(body.getContent(), body.getPath());
             mongoTemplate.insert(liveFileEntity);
-            System.out.println(liveFileEntity);
         } else {
             liveFileEntity = lfe.get();
-            System.out.println(lfe.get().getId());
             liveFileEntity.setContent(body.getContent());
             liveFileRepository.save(liveFileEntity);
         }
