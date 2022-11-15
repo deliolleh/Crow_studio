@@ -82,52 +82,75 @@ const Main = () => {
   });
 
   const horRef = useRef();
-
-  const [horizontalSplit, setHorizontalSplit] = useState("75%");
+  const [horizontalSplit, setHorizontalSplit] = useState("50%");
   // const changeHorizontalSplitHandler = (x) => {
   //   setHorizontalSplit(x);
   // }
   // This function calculates height
-  const getHorHeightSize = () => {
-    // document.getElementsByClassName('horizontal Pane1')[0].ref="horRef";
-    // document.getElementsByClassName('horizontal Pane1')[0].setAttribute("ref", "horRef");
-    horEl.setAttribute("ref", "horRef");
-    const newHeight = horRef.current.clientHeight;
-    setHorizontalSplit(newHeight + "px");
-    console.log(newHeight);
-    console.log(horizontalSplit);
-  };
+  // const getHorHeightSize = () => {
+  //   // document.getElementsByClassName('horizontal Pane1')[0].ref="horRef";
+  //   // document.getElementsByClassName('horizontal Pane1')[0].setAttribute("ref", "horRef");
+  //   horEl.setAttribute("ref", "horRef");
+  //   const newHeight = horRef.current.clientHeight;
+  //   setHorizontalSplit(newHeight + "px");
+  //   console.log(newHeight);
+  //   console.log(horizontalSplit);
+  // };
 
   // vertical split 좌측 넓이 비율
   const verRef = useRef();
-  const [verticalSplit, setVerticalSplit] = useState("50%");
+  const [verticalSplit, setVerticalSplit] = useState("75%");
   // const changeVerticalSplitHandler = (x) => {
   //   setVerticalSplit(x);
   // }
   // This function calculates height
-  const getVerWidthSize = () => {
-    // document.getElementsByClassName('vertical Pane1')[0].ref="verRef";
-    // document.getElementsByClassName('vertical Pane1')[0].setAttribute("ref", "verRef");
-    verEl.setAttribute("ref", "verRef");
-    const newWidth = verRef.current.clientWidth;
-    setVerticalSplit(newWidth + "px");
-    console.log(newWidth);
-    console.log(verticalSplit);
+  // const getVerWidthSize = () => {
+  //   // document.getElementsByClassName('vertical Pane1')[0].ref="verRef";
+  //   // document.getElementsByClassName('vertical Pane1')[0].setAttribute("ref", "verRef");
+  //   verEl.setAttribute("ref", "verRef");
+  //   const newWidth = verRef.current.clientWidth;
+  //   setVerticalSplit(newWidth + "px");
+  //   console.log(newWidth);
+  //   console.log(verticalSplit);
+  // };
+
+  const checkSize = (type) => {
+    if (type === "vertical") {
+      console.log("verRef: ", verRef.current.state);
+      const percentage =
+        parseInt(
+          (verRef.current.state.draggedSize / verRef.current.props.maxSize) *
+            100
+        ) + "%";
+      console.log(percentage);
+      setVerticalSplit(percentage);
+    } else {
+      const percenteage =
+        parseInt(
+          (horRef.current.state.draggedSize / horRef.current.props.maxSize) *
+            100
+        ) + "%";
+      console.log(percenteage);
+      setHorizontalSplit(percenteage);
+      // console.log("hoRef: ", horRef.current);
+      // console.log("hoRef-props-width: ", horRef.current.props.maxSize);
+      // console.log("hoRef-drag-width: ", horRef.current.state.draggedSize);
+    }
   };
 
   // Update 'width' and 'height' when the window resizes
-  useEffect(() => {
-    window.addEventListener("resize", [getHorHeightSize, getVerWidthSize]);
-    console.log("리사이즈 이벤트 리스너");
-    // Observe one or multiple elements
-    // ro.observe(horEl);
-    // ro.observe(verEl);
-    return () => {
-      // 메모리 누수 방지를 위한 클린업
-      window.removeEventListener("resize", [getHorHeightSize, getVerWidthSize]);
-      console.log("이벤트 리스너 지움");
-    };
-  }, [horEl, verEl]);
+  // useEffect(() => {
+  //   window.addEventListener("resize", [getHorHeightSize, getVerWidthSize]);
+  //   console.log("리사이즈 이벤트 리스너");
+  //   // Observe one or multiple elements
+  //   // ro.observe(horEl);
+  //   // ro.observe(verEl);
+  //   return () => {
+  //     // 메모리 누수 방지를 위한 클린업
+  //     window.removeEventListener("resize", [getHorHeightSize, getVerWidthSize]);
+  //     console.log("이벤트 리스너 지움");
+  //   };
+  // }, [horEl, verEl]);
 
   // 마지막으로 띄운 파일들
   // 마지막으로 띄운 사이드바
@@ -336,15 +359,21 @@ const Main = () => {
                 <SplitPane
                   style={{ position: "static" }}
                   split="horizontal"
-                  defaultSize="75%"
+                  defaultSize={verticalSplit}
                   minSize={31}
                   maxSize={670}
+                  className="vertical Pane1"
+                  ref={verRef}
+                  onDragFinished={() => checkSize("vertical")}
                 >
                   <SplitPane
                     split="vertical"
-                    defaultSize="50%"
+                    defaultSize={horizontalSplit}
                     minSize={31}
                     maxSize={1100}
+                    onDragFinished={() => checkSize("horizontal")}
+                    className="horizontal Pane1"
+                    ref={horRef}
                   >
                     {items.map((item, index) => (
                       <Draggable
