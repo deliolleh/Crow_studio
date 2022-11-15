@@ -16,8 +16,8 @@ import java.util.List;
 @Getter @Setter
 public class LiveFileEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private ObjectId liveFileSeq;
+    @Id
+    private ObjectId id;
 
     @Lob
     private String content;
