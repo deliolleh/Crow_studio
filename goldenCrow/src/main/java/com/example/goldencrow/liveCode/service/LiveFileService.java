@@ -19,14 +19,16 @@ public class LiveFileService {
     public FileContentSaveDto insertLive(FileContentSaveDto body) {
         Optional<LiveFileEntity> lfe = liveFileRepository.findByPath(body.getPath());
         LiveFileEntity liveFileEntity;
-
+        System.out.println("여기까진 옴!");
         if (!lfe.isPresent()) {
             liveFileEntity = mongoTemplate.insert(lfe.get());
+            System.out.println(liveFileEntity.getLiveFileSeq());
         } else {
             lfe.get().setContent(body.getContent());
             liveFileEntity = liveFileRepository.save(lfe.get());
+            System.out.println(liveFileEntity.getLiveFileSeq());
         }
-
+        System.out.println("여기서 막힘!!");
         FileContentSaveDto fileContentSaveDto = new FileContentSaveDto(liveFileEntity.getContent(), liveFileEntity.getPath());
 
         return fileContentSaveDto;
