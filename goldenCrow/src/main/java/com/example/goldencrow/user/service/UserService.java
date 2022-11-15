@@ -12,7 +12,6 @@ import com.example.goldencrow.user.dto.SettingsDto;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,124 +21,164 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
+import static com.example.goldencrow.common.Constants.*;
+
+/**
+ * 사용자와 관련된 입출력을 처리하는 서비스
+ */
 @Service
 public class UserService {
 
-    final String BASE_PATH = "/home/ubuntu/crow_data/userprofile/";
+    final String BASE_PROFILE_PATH = "/home/ubuntu/crow_data/userprofile/";
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final TeamRepository teamRepository;
+    private final MemberRepository memberRepository;
 
-    @Autowired
-    private TeamRepository teamRepository;
+    private final JwtService jwtService;
+    private final ProjectService projectService;
 
-    @Autowired
-    private MemberRepository memberRepository;
+    public UserService(UserRepository userRepository, TeamRepository teamRepository, MemberRepository memberRepository,
+                       JwtService jwtService, ProjectService projectService) {
+        this.userRepository = userRepository;
+        this.teamRepository = teamRepository;
+        this.memberRepository = memberRepository;
+        this.jwtService = jwtService;
+        this.projectService = projectService;
+    }
 
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private ProjectService projectService;
-
-    // 회원가입
+    /**
+     * 회원가입 내부 로직
+     *
+     * @param userId       가입하려는 Id
+     * @param userPassword 가입하려는 Password
+     * @param userNickname 가입하려는 닉네임
+     * @return 회원가입 성공 시 jwt 반환, 성패에 따른 result 반환
+     */
     public Map<String, String> signupService(String userId, String userPassword, String userNickname) {
 
-        Map<String, String> res = new HashMap<>();
-
-        // 존재하는 아이디인지 체크
-        if (userRepository.findUserEntityByUserId(userId).isPresent()) {
-            // 존재할 경우, result에서 결과를 전달함
-            res.put("result", "duplicate error");
-            System.out.println("duplicate error");
-
-        } else {
-            // 존재하지 않을 경우, 회원가입 진행
-
-            // 아이디와 닉네임만 받아서 엔티티 생성
-            // 비밀번호 인코딩해서 엔티티에 기록
-            // 리프레시토큰 발급해와서 엔티티에 기록
-            UserEntity userEntity = new UserEntity(userId, userNickname);
-            userEntity.setUserPassWord(CryptoUtil.Sha256.hash(userPassword));
-            userEntity.setUserRefresh("");
-
-            // 일단 이 상태로 등록한 다음
-            userRepository.saveAndFlush(userEntity);
-            System.out.println("일단 저장");
-
-            // userSeq를 다시 읽어와서
-            // 액세스 토큰과 리프레시 토큰을 만듦
-            Long userSeq = userRepository.findUserEntityByUserId(userId).get().getUserSeq();
-            userEntity.setUserSeq(userSeq);
-            userEntity.setUserRefresh(jwtService.createRefresh(userSeq));
-
-            // 리프레시 토큰 저장된 상태로 업데이트
-            userRepository.save(userEntity);
-            System.out.println("업데이트");
-
-            // 액세스 토큰 발급
-            String jwt = jwtService.createAccess(userSeq);
-            res.put("result", "success");
-            res.put("jwt", jwt);
-
-        }
-
-        return res;
-    }
-
-    // 로그인
-    public Map<String, String> loginService(String userId, String userPassword) {
-
-        Map<String, String> res = new HashMap<>();
-
-        // 존재하는 아이디인지 체크
-        if (userRepository.findUserEntityByUserId(userId).isPresent()) {
-
-            // 존재할 경우 일치하는지 검증
-            UserEntity userEntity = userRepository.findUserEntityByUserId(userId).get();
-            String checkPassword = CryptoUtil.Sha256.hash(userPassword);
-
-            if (userEntity.getUserPassWord().equals(checkPassword)) {
-                // 만약 비번이 같으면
-                // 액세스 토큰 발급
-                String jwt = jwtService.createAccess(userEntity.getUserSeq());
-                res.put("result", "success");
-                res.put("jwt", jwt);
-            } else {
-                // 비번이 틀렸으면
-                res.put("result", "wrong password");
-            }
-
-        } else {
-            res.put("result", "have to sign up");
-        }
-
-        return res;
-    }
-
-    // 회원정보조회
-    public MyInfoDto infoService(String jwt) {
-
-        MyInfoDto myInfoDto = new MyInfoDto();
+        Map<String, String> serviceRes = new HashMap<>();
 
         try {
-            UserEntity userEntity = userRepository.findById(jwtService.JWTtoUserSeq(jwt)).get();
-            myInfoDto = new MyInfoDto(userEntity);
 
+            // 존재하는 Id인지 체크
+            if (userRepository.findUserEntityByUserId(userId).isPresent()) {
+                // user Table에 해당 Id가 이미 존재하므로 가입 불가
+                serviceRes.put("result", DUPLICATE);
+
+            } else {
+                // user Table에 해당 Id가 등록되어 있지 않으므로 가입 진행
+
+                // user Entity 생성
+                // 비밀번호를 Sha256으로 인코딩해서 기록
+                // DB에 등록
+                UserEntity userEntity = new UserEntity(userId, userNickname);
+                userEntity.setUserPassWord(CryptoUtil.Sha256.hash(userPassword));
+                userRepository.saveAndFlush(userEntity);
+
+                // 액세스 토큰 발급
+                Long userSeq = userEntity.getUserSeq();
+                String jwt = jwtService.createAccess(userSeq);
+                serviceRes.put("result", SUCCESS);
+                serviceRes.put("jwt", jwt);
+
+            }
+
+        } catch (Exception e) {
+            serviceRes.put("result", UNKNOWN);
+
+        }
+
+        return serviceRes;
+
+    }
+
+    /**
+     * 로그인 내부 로직
+     *
+     * @param userId       로그인 하려는 Id
+     * @param userPassword 로그인 하려는 Password
+     * @return 로그인 성공 시 jwt 반환, 성패에 따른 result 반환
+     */
+    public Map<String, String> loginService(String userId, String userPassword) {
+
+        Map<String, String> serviceRes = new HashMap<>();
+
+        try {
+
+            // 존재하는 Id인지 체크
+            if (userRepository.findUserEntityByUserId(userId).isPresent()) {
+                // Id가 존재함을 확인함
+                UserEntity userEntity = userRepository.findUserEntityByUserId(userId).get();
+                String checkPassword = CryptoUtil.Sha256.hash(userPassword);
+
+                // 비밀번호가 올바른지 확인함
+                if (userEntity.getUserPassWord().equals(checkPassword)) {
+                    // 인코딩한 비밀번호가 저장된 DB 정보와 같으면 로그인 성공
+                    // 액세스 토큰 발급
+                    String jwt = jwtService.createAccess(userEntity.getUserSeq());
+                    serviceRes.put("result", SUCCESS);
+                    serviceRes.put("jwt", jwt);
+
+                } else {
+                    // 저장된 DB 정보와 일치하지 않을 경우 로그인 실패
+                    serviceRes.put("result", WRONG);
+                }
+
+            } else {
+                // 가입되지 않은 Id임
+                serviceRes.put("result", NO_SUCH);
+            }
+
+        } catch (Exception e) {
+            serviceRes.put("result", UNKNOWN);
+
+        }
+
+        return serviceRes;
+
+    }
+
+    /**
+     * 각 회원의 정보를 조회하는 내부 로직
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @return 당사자가 조회 가능한 사용자 정보 반환
+     */
+    public MyInfoDto myInfoService(String jwt) {
+
+        try {
+            // jwt가 인증하는 사용자의 UserEntity를 추출
+            Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
+
+            // 해당하는 사용자가 존재하는지 확인
+            if(!userEntityOptional.isPresent()) {
+                // 해당하는 사용자가 없음
+                MyInfoDto myInfoDto = new MyInfoDto();
+                myInfoDto.setResult(NO_SUCH);
+                return myInfoDto;
+            }
+
+            UserEntity userEntity = userEntityOptional.get();
+
+            // myInfoDto 생성
+            MyInfoDto myInfoDto = new MyInfoDto(userEntity);
             if (userEntity.getUserGitToken() == null) {
                 myInfoDto.setUserGitToken("");
             } else {
                 myInfoDto.setUserGitToken(userEntity.getUserGitToken());
             }
 
-            myInfoDto.setResult(UserInfoDto.Result.SUCCESS);
+            // 위의 과정을 무사히 통과했으므로
+            myInfoDto.setResult(SUCCESS);
+            return myInfoDto;
 
         } catch (Exception e) {
-            myInfoDto.setResult(UserInfoDto.Result.FAILURE);
-            throw new RuntimeException(e);
-        }
+            MyInfoDto myInfoDto = new MyInfoDto();
+            myInfoDto.setResult(UNKNOWN);
+            return myInfoDto;
 
-        return myInfoDto;
+        }
 
     }
 
@@ -151,7 +190,6 @@ public class UserService {
         try {
             // jwt에서 userSeq를 뽑아내고
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
-            System.out.println(userSeq);
 
             // userSeq로 userEntity를 뽑아낸 다음
             UserEntity userEntity = userRepository.findById(userSeq).get();

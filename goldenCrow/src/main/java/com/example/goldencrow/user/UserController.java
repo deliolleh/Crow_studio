@@ -3,7 +3,6 @@ package com.example.goldencrow.user;
 import com.example.goldencrow.user.dto.MyInfoDto;
 import com.example.goldencrow.user.dto.SettingsDto;
 import com.example.goldencrow.user.dto.UserInfoDto;
-import com.example.goldencrow.user.service.JwtService;
 import com.example.goldencrow.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,106 +13,147 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.goldencrow.common.Constants.*;
+
+/**
+ * 사용자와 관련된 입출력을 처리하는 컨트롤러
+ * @url /api/users
+ */
 @RestController
 @RequestMapping(value = "/api/users")
 public class UserController {
 
-    private final String SUCCESS = "SUCCESS";
-    private final String FAILURE = "FAILURE";
-    private final String FORBIDDEN = "FORBIDDEN";
-    private final String CONFLICT = "CONFLICT";
     private final UserService userService;
-    private final JwtService jwtService;
 
-    public UserController(UserService userService, JwtService jwtService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.jwtService = jwtService;
     }
 
-    // 회원가입
+    /**
+     * 회원가입 API
+     *
+     * @param req "userId", "userPassword", "userNickname"을 key로 가지는 String map
+     * @return 회원가입 성공 시 jwt 반환, 성패에 따른 result 반환
+     */
     @PostMapping("/signup")
     public ResponseEntity<Map<String, String>> signupPost(@RequestBody Map<String, String> req) {
 
-        String userId = req.get("userId");
-        String userPassword = req.get("userPassword");
-        String userNickname = req.get("userNickname");
 
-        // 셋 중 하나라도 비면 401
-        if (userId == null || userPassword == null || userNickname == null) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
 
-        // 일단 성공하면 이렇게 반환될 겁니다
-        Map<String, String> temp = userService.signupService(userId, userPassword, userNickname);
+        if (req.containsKey("userId") && req.containsKey("userPassword") && req.containsKey("userNickname")) {
 
-        if (temp.get("result").equals("success")) {
-            Map<String, String> res = new HashMap<>();
-            res.put("jwt", temp.get("jwt"));
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            String userId = req.get("userId");
+            String userPassword = req.get("userPassword");
+            String userNickname = req.get("userNickname");
+
+            Map<String, String> res = userService.signupService(userId, userPassword, userNickname);
+            String result = res.get("result");
+
+            if (result.equals(SUCCESS)) {
+                return new ResponseEntity<>(res, HttpStatus.OK);
+            } else if (result.equals(DUPLICATE)) {
+                return new ResponseEntity<>(res, HttpStatus.CONFLICT);
+            } else {
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
+
         } else {
-            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+            Map<String, String> res = new HashMap<>();
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
+
     }
 
     // 로그인
+
+    /**
+     * 로그인 API
+     *
+     * @param req "userId", "userPassword"를 key로 가지는 String map
+     * @return 로그인 성공 시 jwt 반환, 성패에 따른 result 반환
+     */
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> loginPost(@RequestBody Map<String, String> req) {
 
-        String userId = req.get("userId");
-        String userPassword = req.get("userPassword");
+        if(req.containsKey("userId") && req.containsKey("userPassword")) {
 
-        if (userId == null || userPassword == null) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
+            String userId = req.get("userId");
+            String userPassword = req.get("userPassword");
 
-        // 일단 성공하면 이렇게 반환될 겁니다
-        Map<String, String> temp = userService.loginService(userId, userPassword);
+            Map<String, String> res = userService.loginService(userId, userPassword);
+            String result = res.get("result");
 
-        if (temp.get("result").equals("success")) {
+            if (result.equals(SUCCESS)) {
+                return new ResponseEntity<>(res, HttpStatus.OK);
+            } else if (result.equals(WRONG) || result.equals(NO_SUCH)) {
+                return new ResponseEntity<>(res, HttpStatus.CONFLICT);
+            } else {
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
+
+        } else {
             Map<String, String> res = new HashMap<>();
-            res.put("jwt", temp.get("jwt"));
-            return new ResponseEntity<>(res, HttpStatus.OK);
-        } else {
-            // 비번이 틀렸거나 없는 정보입니다
-            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    // 회원정보 조회
+    /**
+     * 각 회원의 정보를 조회하는 API
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @return 당사자가 조회 가능한 사용자 정보 반환
+     */
     @GetMapping("/info")
-    public ResponseEntity<MyInfoDto> infoGet(@RequestHeader("Authorization") String jwt) {
+    public ResponseEntity<MyInfoDto> myInfoGet(@RequestHeader("Authorization") String jwt) {
 
-        // 일단 성공하면 이렇게 반환될 겁니다
-        MyInfoDto myInfoDto = userService.infoService(jwt);
-        UserInfoDto.Result result = myInfoDto.getResult();
+        MyInfoDto myInfoDtoRes = userService.myInfoService(jwt);
+        String result = myInfoDtoRes.getResult();
 
-        if (result == UserInfoDto.Result.EXPIRE) {
-            // 액세스 토큰 재발급 요청하세요...
-            return new ResponseEntity<>(myInfoDto, HttpStatus.OK);
-        } else if (result == UserInfoDto.Result.SUCCESS) {
-            return new ResponseEntity<>(myInfoDto, HttpStatus.OK);
+        if (result.equals(SUCCESS)) {
+            return new ResponseEntity<>(myInfoDtoRes, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(myInfoDtoRes, HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    // 닉네임 수정
+    /**
+     * 사용자 닉네임을 수정하는 API
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param req "userNickname"을 key로 가지는 String map
+     * @return 변경된 닉네임 반환
+     */
     @PutMapping("/edit/nickname")
-    public ResponseEntity<String> editNicknamePut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
+    public ResponseEntity<Map<String, String>> editNicknamePut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
 
-        if (req.get("userNickname") == null) {
-            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
-        }
+        Map<String, String> res = new HashMap<>();
 
-        String userNickname = req.get("userNickname");
+        if(req.containsKey("userNickname")) {
 
-        // 일단 성공하면 이렇게 반환될 겁니다
-        if (userService.editNicknameService(jwt, userNickname).equals("success")) {
-            return new ResponseEntity<>(userNickname, HttpStatus.OK);
+            String userNickname = req.get("userNickname");
+
+            Map<String, String> serviceRes = userService.editNicknameService(jwt, userNickname);
+            String result = serviceRes.get("result");
+
+            if (result.equals(SUCCESS)) {
+                res.put("result", SUCCESS);
+
+                return new ResponseEntity<>(res, HttpStatus.OK);
+
+            } else {
+                res.put("result", UNKNOWN);
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+
+            }
+
         } else {
-            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+
         }
 
     }
