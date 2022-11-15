@@ -3,6 +3,7 @@ package com.example.goldencrow.liveCode.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "liveFile")
-@Getter
+@Getter @Setter
 public class LiveFileEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private ObjectId liveFileSeq;
+    @Id
+    private ObjectId id;
 
     @Lob
     private String content;
@@ -29,4 +30,5 @@ public class LiveFileEntity {
         this.content = content;
         this.path = path;
     }
+
 }
