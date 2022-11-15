@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
-import Tree, { useTreeState } from "react-hyper-tree";
+import Tree, { useTreeState, treeHandlers } from "react-hyper-tree";
 
 // import svg
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
@@ -12,7 +12,7 @@ import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.
 
 // import * as iconsi from "react-icons/io5";
 
-import { getDirectoryList } from "../../../../redux/projectSlice";
+import { getDirectoryList, getAllFiles } from "../../../../redux/projectSlice";
 import {
   createFile,
   deleteFile,
@@ -55,6 +55,8 @@ const Directory = ({ showFileContent }) => {
   // const [newFileName, setNewFileName] = useState("");
   // const [newDirectoryName, setNewDirectoryName] = useState("");
 
+  const [testData, setTestData] = useState({});
+
   // const TEAM_SEQ = 3;
   const TYPE_DIRECTORY = 1;
   const TYPE_FILE = 2;
@@ -85,7 +87,14 @@ const Directory = ({ showFileContent }) => {
   };
 
   useEffect(() => {
-    dispatchGetDirectoryList();
+    // dispatchGetDirectoryList();
+    dispatch(getAllFiles(teamSeq))
+      .unwrap()
+      .then((res) => {
+        console.log("res:", res);
+        setTestData(res);
+      })
+      .catch(console.error);
   }, []);
 
   // 디렉터리 생성 핸들러
@@ -181,12 +190,51 @@ const Directory = ({ showFileContent }) => {
       .catch(console.error);
   };
 
-  const { required, handlers } = useTreeState({ data, id: "your_tree_id" });
+  // const { required, handlers } = useTreeState({ data, id: "your_tree_id" });
+  const { required, handlers, instance } = useTreeState({
+    data: testData,
+    id: "your_tree_id",
+  });
 
-  const clickTreeHandler = (e) => {
-    console.log(e);
-    console.log("clicked");
+  //
+  //
+  //
+  //
+  const CustomNode = ({ node, onSelect, onToggle, onClick, setOpen }) => {
+    // const handleClick = useCallback(() => {
+    //   onSelect();
+    //   onClick(node);
+    //   console.log("node:", node);
+    // }, [node, onSelect, onClick]);
+    console.log("setOpen:", setOpen);
+
+    const handleClick = useCallback(
+      (e) => {
+        e.stopPropagation();
+        if (setOpen) {
+          setOpen(node);
+        }
+        onSelect(setOpen);
+        onClick(node);
+        console.log("node:", node);
+      },
+      [node, onSelect, onClick, setOpen]
+    );
+
+    return <div onClick={handleClick}>{node.data.name}</div>;
   };
+  //
+  //
+  //
+  //
+
+  useEffect(() => {
+    console.log(
+      `treeHandlers.trees["your_tree_id"].instance:`,
+      treeHandlers.trees["your_tree_id"].instance
+    );
+    console.log(treeHandlers.trees["your_tree_id"].handlers);
+  }, []);
 
   return (
     <React.Fragment>
@@ -220,7 +268,16 @@ const Directory = ({ showFileContent }) => {
             onRename={renameItemHandler}
             onDelete={deleteItemHandler}
           /> */}
-          <Tree {...required} {...handlers} onClick={clickTreeHandler} />
+          <Tree
+            {...required}
+            {...handlers}
+            renderNode={(defaultProps) => (
+              <CustomNode
+                {...defaultProps}
+                onClick={() => console.log("defaultProps:", defaultProps)}
+              />
+            )}
+          />
         </div>
       </DirectoryContainer>
     </React.Fragment>
