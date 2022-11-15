@@ -23,6 +23,7 @@ public class SocketController {
     public FileContentSaveDto saveContent(FileContentSaveDto body) throws Exception {
         Thread.sleep(200); // simulated delay
         FileContentSaveDto fileContentSaveDto = new FileContentSaveDto(body.getContent(), body.getPath());
+        System.out.println("here!here!!");
         liveFileService.insertLive(fileContentSaveDto);
         return fileContentSaveDto;
     }
