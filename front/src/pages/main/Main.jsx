@@ -37,6 +37,7 @@ import {
 
 // svg
 import { ReactComponent as IcAdd } from "../../assets/icons/ic_add.svg";
+import { MdDragHandle } from "react-icons/md";
 
 // styled
 const SidebarItems = styled.div`
@@ -274,7 +275,7 @@ const Main = () => {
   return (
     <>
       <Header />
-      <div className="flex">
+      <div className="flex mx-3">
         {/* useRef ver. */}
         <div ref={sidebarSizeRef} className="flex">
           <Sidebar onClickIcon={showComponentHandler} com={com} />
@@ -312,7 +313,7 @@ const Main = () => {
             </SidebarItems>
           )}
         </div>
-        <DragDropContext onDragEnd={onDragEnd}>
+        <DragDropContext onDragEnd={onDragEnd} className="">
           <Droppable droppableId="droppable">
             {(provided) => (
               <div
@@ -327,7 +328,7 @@ const Main = () => {
                       }
                     : {
                         display: "flex",
-                        width: `calc(100vw - ${sidebarSize}px - 23px)`,
+                        width: `calc(100vw - ${sidebarSize}px - 34px)`,
                         height: "100vh",
                       }
                 }
