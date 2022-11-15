@@ -18,8 +18,8 @@ import java.io.File;
 public class SocketController {
     private final LiveFileService liveFileService;
 
-    @MessageMapping("/saveContent")
-    @SendTo("/topic/fileContent")
+    @MessageMapping("/code/share")
+    @SendTo("/topic/content")
     public FileContentSaveDto saveContent(FileContentSaveDto body) throws Exception {
         Thread.sleep(200); // simulated delay
         FileContentSaveDto fileContentSaveDto = new FileContentSaveDto("뭐요", "뭘봐요");
