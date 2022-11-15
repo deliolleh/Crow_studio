@@ -43,15 +43,15 @@ const IcSpan = styled.span`
 const Sidebar = ({ onClickIcon, com }) => {
   const classRef = useRef(null);
 
-  useEffect(() => {
-    console.log("className: ", classRef.current.className);
-    // 👇️ check if element contains class
-    if (classRef.current.classList.contains("activeIcon")) {
-      console.log("Element contains class");
-    } else {
-      console.log("Element does NOT contain class");
-    }
-  }, []);
+  // useEffect(() => {
+  // console.log("className: ", classRef.current.className);
+  // 👇️ check if element contains class
+  // if (classRef.current.classList.contains("activeIcon")) {
+  //   console.log("Element contains class");
+  // } else {
+  //   console.log("Element does NOT contain class");
+  // }
+  // }, []);
 
   return (
     <>
