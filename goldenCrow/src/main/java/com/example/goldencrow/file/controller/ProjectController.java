@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.io.File;
 import java.util.*;
 
 
@@ -40,14 +41,19 @@ public class ProjectController {
     }
 
     @PostMapping("/directories")
-    public ResponseEntity<Map<String,List<Map<String,String>>>> pjtRead(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,String> rootFile) {
-        String rootPath = rootFile.get("rootPath");
-        String rootName = rootFile.get("rootName");
-        Map<String,List<Map<String,String>>> directory;
-        directory = projectService.readDirectory(rootPath,rootName);
+    public ResponseEntity<Map<Object, Object>> pjtRead(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
+        String baseUrl = "/home/ubuntu/crow_data/"+String.valueOf(teamSeq);
+        File teamPjt = new File(baseUrl);
+        String[] names = teamPjt.list();
+        String rootName = names[0];
+        String newUrl = baseUrl+ "/" + rootName;
 
-        return new ResponseEntity<>(directory, HttpStatus.ACCEPTED);
+        Map<Object, Object> visit = new HashMap<>();
+        projectService.readDirectory(newUrl,rootName,visit);
+
+        return new ResponseEntity<>(visit, HttpStatus.ACCEPTED);
     }
+
 
 
     @PostMapping("/projectDeleter")
