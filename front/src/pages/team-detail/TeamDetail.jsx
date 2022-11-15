@@ -10,7 +10,30 @@ import TeamDetailHeader from "./components/TeamDetailHeader";
 
 import Member from "./components/Member";
 
+import Modal from 'react-modal';
+
 import { IoAdd } from "react-icons/io5";
+import { IoClose } from "react-icons/io5";
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    width: 'auto',
+    height: 'auto',
+    marginRight: '-50%',
+    borderRadius: '10px',
+    backgroundColor: '#3C3C3C',
+    transform: 'translate(-50%, -50%)',
+  },
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+};
+// Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
+Modal.setAppElement('#root');
 
 const TeamDetail = () => {
   const dispatch = useDispatch();
@@ -103,12 +126,74 @@ const TeamDetail = () => {
       .catch(console.error);
   };
 
+  // Modal
+  let subtitle;
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  function openModal() {
+    setIsOpen(true);
+    console.log("떴냐 모달?")
+  }
+
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = '#fff';
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
   return (
     <React.Fragment>
       <div className="flex flex-col">   
         <Header />
-
-        <div className="m-3 mb-6 flex w-screen md:h-screen h-fit items-center justify-center overflow-auto">
+        {/* Modal */}
+        <Modal
+          isOpen={modalIsOpen}
+          onAfterOpen={afterOpenModal}
+          onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="Example Modal"
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-white font-bold" ref={(_subtitle) => (subtitle = _subtitle)}>Hello</h2>
+            <IoClose className="cursor-pointer text-primary_dark ml-2" onClick={closeModal} />
+          </div>
+          <div className="flex flex-col">
+            <div className="flex justify-between items-center mb-2">
+              <div className="text-sm mr-2">유저검색</div>
+              <form onSubmit={submitSearchUserHandler}>
+                <input
+                  type="text"
+                  name="searchUser"
+                  id="searchUser"
+                  onChange={searchUserChangeHandler}
+                  value={searchUserName}
+                  className="rounded-md bg-component_item_bg_+2_dark px-4 py-1 text-sm font-medium text-white text-left appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
+                />
+              </form>
+            </div>
+            <div>
+              <div className="text-point_purple_op20 text-xs ml-14 mb-1">
+                닉네임을 누르면 해당 유저가 팀에 추가됩니다.
+              </div>
+              {searchResults?.map((user) => (
+                <div
+                  key={user.userId}
+                  className="hover:cursor-pointer px-4 py-1 text-sm font-bold ml-14 rounded-md text-point_yellow hover:bg-point_yellow_+2 hover:text-black"
+                  onClick={() =>
+                    addUserHandler(user.userSeq, user.userNickname)
+                  }
+                >
+                  {user.userNickname}
+                </div>
+              ))}
+            </div>
+          </div>
+        </Modal>
+        {/* team detail */}
+        <div className="flex items-center justify-center m-3 mb-6 w-screen h-screen overflow-auto">
           <div className="p-8 lg:w-4/5 w-fit h-fit flex flex-col justify-center border border-primary_-2_dark rounded-md">
             <TeamDetailHeader
               teamName={teamName}
@@ -145,18 +230,14 @@ const TeamDetail = () => {
                 ))}
 
                 <div className="flex flex-col items-center px-2 md:py-2 pb-2">
-                  {/* <div className="bg-point_light_yellow w-11 h-11 rounded-full"></div> */}
 
                   {/* isSearch가 아니면 + 버튼, isSearch이면 유저 검색 입력창 나옴 */}
                   {!isSearch ? (
-                    // <button
-                    //   className="text-white text-sm cursor-pointer"
-                    //   onClick={openSearchInputHandler}
-                    // >
-                    //   ➕
-                    // </button>
-                    <IoAdd className="text-white cursor-pointer"
-                      onClick={openSearchInputHandler}/>
+                    <IoAdd
+                      className="text-white cursor-pointer"
+                      // onClick={openSearchInputHandler}
+                      onClick={openModal}
+                    />
                   ) : (
                     <div className="flex gap-1">
                       <div>유저검색</div>
@@ -169,12 +250,7 @@ const TeamDetail = () => {
                           value={searchUserName}
                         />
                       </form>
-                      <span
-                        onClick={closeSearchInputHandler}
-                        className="cursor-pointer"
-                      >
-                        ❌
-                      </span>
+                      <IoClose className="cursor-pointer text-primary_dark ml-2" onClick={closeSearchInputHandler} />
 
                       <div>
                         {searchResults?.map((user) => (
