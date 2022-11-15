@@ -40,7 +40,7 @@ public class ProjectController {
         }
     }
 
-    @PostMapping("/directories")
+    @GetMapping("/directories/{teamSeq}")
     public ResponseEntity<Map<Object, Object>> pjtRead(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
         String baseUrl = "/home/ubuntu/crow_data/"+String.valueOf(teamSeq);
         File teamPjt = new File(baseUrl);
