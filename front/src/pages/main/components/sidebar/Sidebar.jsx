@@ -56,7 +56,7 @@ const Sidebar = ({ onClickIcon, com }) => {
   return (
     <>
       <SidebarContainer
-        className="ml-3 mb-3 bg-component_item_bg_dark"
+        className="mb-3 bg-component_item_bg_dark"
         style={
           com === ""
             ? { borderRadius: "10px" }

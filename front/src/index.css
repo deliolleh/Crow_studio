@@ -52,6 +52,7 @@ hr {
   /* height: calc(100% - 120px); */
   min-width: 0%;
   min-height: 0%;
+  height: 100%;
 }
 
 .Resizer {
@@ -70,27 +71,33 @@ hr {
 }
 
 .Resizer.horizontal {
-  height: 11px;
-  margin: -5px 0;
+  height: 4px;
+  margin-bottom: -7px;
   cursor: row-resize;
   width: 100vw;
+  border-radius: 5px;
 }
 
 .Resizer.horizontal:hover {
-  border-top: 5px solid greenyellow;
-  border-bottom: 5px solid greenyellow;
+  /* border-top: 2px solid greenyellow;
+  border-bottom: 2px solid greenyellow; */
+  background-color:greenyellow;
+  background-size: 2px;
 }
 
 .Resizer.vertical {
-  width: 11px;
+  width: 4px;
   height: 100vh;
-  margin: 0 -5px;
+  margin-right: -7px;
   cursor: col-resize;
+  border-radius: 5px;
 }
 
 .Resizer.vertical:hover {
-  border-left: 5px solid greenyellow;
-  border-right: 5px solid greenyellow;
+  /* border-left: 2px solid greenyellow;
+  border-right: 2px solid greenyellow; */
+  background-color:greenyellow;
+  background-size: 2px;
 }
 .Resizer.disabled {
   cursor: not-allowed;
@@ -105,6 +112,10 @@ code {
     "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu",
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.kSMuXp {
+  padding: 0 20px 0 20px !important;
 }
 
 .terminalContainer form {

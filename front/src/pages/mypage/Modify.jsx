@@ -68,8 +68,8 @@ const Modify = ({ closeModify }) => {
   };
 
   return (
-    <div className="container p-8 flex flex-col justify-center border border-primary_-2_dark rounded-md">
-      <div className="flex justify-between">
+    <div className="lg:w-[700px] md:w-[400px] sm:w-[600px] w-[400px] sm:h-80 p-8 flex flex-col justify-center border border-primary_-2_dark rounded-md overflow-scroll">
+      <div className="flex justify-between mb-5 mt-3 h-fit">
         <div className="text-white text-xl font-bold">내 정보 수정하기</div>
         <button
           className="text-white text-xl font-bold cursor-pointer"
