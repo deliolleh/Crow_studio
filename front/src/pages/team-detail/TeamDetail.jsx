@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { getTeam, addMember, deleteMember } from "../../redux/teamSlice";
 import { searchUser } from "../../redux/userSlice";
@@ -37,6 +37,7 @@ Modal.setAppElement("#root");
 
 const TeamDetail = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { teamSeq } = useParams();
   const { mySeq, myNickname } = useSelector((state) => state.user.value);
@@ -145,6 +146,8 @@ const TeamDetail = () => {
   function closeModal() {
     setIsOpen(false);
   }
+
+  const goProjectHandler = () => navigate(`/project/${teamSeq}`);
 
   return (
     <React.Fragment>
@@ -296,7 +299,7 @@ const TeamDetail = () => {
             </div>
 
             {/* 프로젝트 타입 */}
-            <div className="flex items-center md:w-full w-[285px] h-fit bg-component_item_bg_dark rounded-md">
+            <div className="flex items-center mb-2 md:w-full w-[285px] h-fit bg-component_item_bg_dark rounded-md">
               <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
                 프로젝트 타입
               </div>
@@ -304,6 +307,13 @@ const TeamDetail = () => {
                 <div className="text-white text-sm p-2">{projectType}</div>
               </div>
             </div>
+
+            <button
+              onClick={goProjectHandler}
+              className="w-72 h-12 mt-14 text-xl font-bold bg-point_light_yellow text-component_dark hover:bg-point_yellow rounded-md transition"
+            >
+              프로젝트로 이동
+            </button>
           </div>
         </div>
       </div>
