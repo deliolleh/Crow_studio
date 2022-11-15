@@ -1,4 +1,4 @@
-package com.example.goldencrow.liveCode;
+package com.example.goldencrow.liveCode.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

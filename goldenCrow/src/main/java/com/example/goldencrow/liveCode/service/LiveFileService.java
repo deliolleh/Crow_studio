@@ -1,5 +1,6 @@
-package com.example.goldencrow.liveCode;
+package com.example.goldencrow.liveCode.service;
 
+import com.example.goldencrow.liveCode.entity.LiveFileEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
