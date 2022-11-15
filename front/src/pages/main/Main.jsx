@@ -37,7 +37,7 @@ import {
 
 // svg
 import { ReactComponent as IcAdd } from "../../assets/icons/ic_add.svg";
-import { MdDragHandle } from "react-icons/md";
+import userApi from "../../api/userApi";
 
 // styled
 const SidebarItems = styled.div`
@@ -57,62 +57,28 @@ const elements = [
 const Main = () => {
   // const teamSeq = useSelector((state) => state.team.value.teamSeq);
   const teamSeq = 4;
+
+  // useEffect(() => {
+  //   projectApi.directoryList(teamSeq).then((res) => {
+  //     console.log(res.data);
+  //   });
+  // });
+
   useEffect(() => {
-    projectApi.directoryList(teamSeq).then((res) => {
-      console.log(res.data);
-    });
-  });
-
-  // save-env state
-  // horizontal split 상단 높이 비율
-  // https://www.kindacode.com/article/react-get-the-width-height-of-a-dynamic-element/ 참고 중
-
-  const horEl = document.getElementsByClassName("horizontal Pane1")[0];
-  const verEl = document.getElementsByClassName("vertical Pane1")[0];
-
-  // ResizeObserver
-  const ro = new ResizeObserver((entries) => {
-    for (let entry of entries) {
-      const cr = entry.contentRect;
-      console.log("Element:", entry.target);
-      console.log(`Element size: ${cr.width}px x ${cr.height}px`);
-      console.log(`Element padding: ${cr.top}px ; ${cr.left}px`);
-    }
-    // document.scrollingElement.scrollTop = document.scrollingElement.scrollHeight;
-  });
+    userApi
+      .getPersonalSetting()
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => console.error(err));
+  }, []);
 
   const horRef = useRef();
   const [horizontalSplit, setHorizontalSplit] = useState("50%");
-  // const changeHorizontalSplitHandler = (x) => {
-  //   setHorizontalSplit(x);
-  // }
-  // This function calculates height
-  // const getHorHeightSize = () => {
-  //   // document.getElementsByClassName('horizontal Pane1')[0].ref="horRef";
-  //   // document.getElementsByClassName('horizontal Pane1')[0].setAttribute("ref", "horRef");
-  //   horEl.setAttribute("ref", "horRef");
-  //   const newHeight = horRef.current.clientHeight;
-  //   setHorizontalSplit(newHeight + "px");
-  //   console.log(newHeight);
-  //   console.log(horizontalSplit);
-  // };
 
   // vertical split 좌측 넓이 비율
   const verRef = useRef();
   const [verticalSplit, setVerticalSplit] = useState("75%");
-  // const changeVerticalSplitHandler = (x) => {
-  //   setVerticalSplit(x);
-  // }
-  // This function calculates height
-  // const getVerWidthSize = () => {
-  //   // document.getElementsByClassName('vertical Pane1')[0].ref="verRef";
-  //   // document.getElementsByClassName('vertical Pane1')[0].setAttribute("ref", "verRef");
-  //   verEl.setAttribute("ref", "verRef");
-  //   const newWidth = verRef.current.clientWidth;
-  //   setVerticalSplit(newWidth + "px");
-  //   console.log(newWidth);
-  //   console.log(verticalSplit);
-  // };
 
   const checkSize = (type) => {
     if (type === "vertical") {
@@ -138,23 +104,6 @@ const Main = () => {
     }
   };
 
-  // Update 'width' and 'height' when the window resizes
-  // useEffect(() => {
-  //   window.addEventListener("resize", [getHorHeightSize, getVerWidthSize]);
-  //   console.log("리사이즈 이벤트 리스너");
-  //   // Observe one or multiple elements
-  //   // ro.observe(horEl);
-  //   // ro.observe(verEl);
-  //   return () => {
-  //     // 메모리 누수 방지를 위한 클린업
-  //     window.removeEventListener("resize", [getHorHeightSize, getVerWidthSize]);
-  //     console.log("이벤트 리스너 지움");
-  //   };
-  // }, [horEl, verEl]);
-
-  // 마지막으로 띄운 파일들
-  // 마지막으로 띄운 사이드바
-
   // sidebar click event
   const [com, setCom] = useState("디렉토리");
   // const [com, setCom] = useState(어쩌구 !== null ? 어쩌구 : "디렉토리");
@@ -169,11 +118,6 @@ const Main = () => {
 
   useEffect(() => {
     setSidebarSize(sidebarSizeRef.current.getBoundingClientRect().width);
-    // console.log("sidebarSize: " + sidebarSize);
-    // console.log(
-    //   "sidebarSizeRef.current.getBoundingClientRect().width: " +
-    //   sidebarSizeRef.current.getBoundingClientRect().width
-    //   );
   }, [sidebarSize]);
 
   // Beautiful-dnd
@@ -190,14 +134,12 @@ const Main = () => {
   // tabtab
   const [activeEditor1Tab, setActiveEditor1Tab] = useState(0);
   const [activeEditor2Tab, setActiveEditor2Tab] = useState(0);
-  const [activeTab2, setActiveTab2] = useState(0);
   const [editor1Tabs, setEditor1Tabs] = useState(
     MakeEditorData(2, "Editor Tab")
   );
   const [editor2Tabs, setEditor2Tabs] = useState(
     MakeEditorData(2, "Editor Tab")
   );
-  const [consoleTabs, setConsoleTabs] = useState(MakeConsoleData(1, "Console"));
 
   // Editor 1
   const closableEditor1TabItems = useMemo(() => {
@@ -265,36 +207,6 @@ const Main = () => {
     []
   );
 
-  // console
-  const closableTabItems2 = useMemo(() => {
-    return consoleTabs.map((tab, index) => {
-      return (
-        <Tab closable key={index}>
-          {tab.title}
-        </Tab>
-      );
-    });
-  }, [consoleTabs]);
-
-  const panelItems2 = useMemo(() => {
-    return consoleTabs.map((tab, index) => {
-      return <Panel key={index}>{tab.content}</Panel>;
-    });
-  }, [consoleTabs]);
-
-  const handleTabChange2 = useCallback((index) => {
-    console.log("select tab", index);
-    setActiveTab2(index);
-  }, []);
-
-  const handleTabSequenceChange2 = useCallback(({ oldIndex, newIndex }) => {
-    console.log({ oldIndex, newIndex });
-    setConsoleTabs((consoleTabs) =>
-      helpers.simpleSwitch(consoleTabs, oldIndex, newIndex)
-    );
-    setActiveTab2(newIndex);
-  }, []);
-
   return (
     <>
       <Header />
@@ -332,7 +244,11 @@ const Main = () => {
           )}
           {com === "세팅" && (
             <SidebarItems>
-              <Settings />
+              <Settings
+                verticalSplit={verticalSplit}
+                horizontalSplit={horizontalSplit}
+                com={com}
+              />
             </SidebarItems>
           )}
         </div>
@@ -441,47 +357,6 @@ const Main = () => {
                     ))}
                   </SplitPane>
                   <div style={{ marginTop: "8px" }}>
-                    {/* <CustomTabs2
-                      sidebarSize={sidebarSize}
-                      // editorPaneSize={editorPaneSize}
-                      com={com}
-                      // tabtab
-                      showModalButton={false}
-                      showArrowButton={true}
-                      onTabClose={(i) => {
-                        console.log("close", i);
-                        setConsoleTabs((prev) =>
-                          prev.filter((_, idx) => idx !== i)
-                        );
-                      }}
-                      activeIndex={activeTab2}
-                      panelItems={panelItems2}
-                      closableTabItems={closableTabItems2}
-                      onTabChange={handleTabChange2}
-                      onTabSequenceChange={handleTabSequenceChange2}
-                      ExtraButton={
-                        <ExtraButton
-                          onClick={(e) => {
-                            setConsoleTabs((prev) => {
-                              const newTabs = [...prev];
-                              const newItem = MakeConsoleData(
-                                1,
-                                "New Tab " + (newTabs.length + 1),
-                                false
-                              )[0];
-                              newTabs.push(newItem);
-                              return newTabs;
-                            });
-                            setActiveTab2(consoleTabs.length);
-                          }}
-                        >
-                          <IcAdd
-                            style={{ width: "10px", height: "10px" }}
-                            alt="add-icon"
-                          />
-                        </ExtraButton>
-                      }
-                    /> */}
                     <CompileEditor />
                   </div>
                 </SplitPane>
