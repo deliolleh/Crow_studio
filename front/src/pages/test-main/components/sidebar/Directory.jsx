@@ -8,14 +8,13 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import TreeItem from "@mui/lab/TreeItem";
 
-// import svg
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
 // import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
 // import * as iconsi from "react-icons/io5";
 
-import { getDirectoryList, getAllFiles } from "../../../../redux/projectSlice";
+import { getAllFiles } from "../../../../redux/projectSlice";
 import {
   createFile,
   deleteFile,
@@ -24,23 +23,21 @@ import {
   saveFileContent,
 } from "../../../../redux/fileSlice";
 
+// const TEAM_SEQ = 3;
+const TYPE_DIRECTORY = 1;
+const TYPE_FILE = 2;
+const DIRECTORY_DATA = {
+  // rootPath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
+  // rootPath: `${TEAM_SEQ}`,
+  rootName: `root`,
+};
+
 const Directory = ({ showFileContent }) => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
-  // const [newFileName, setNewFileName] = useState("");
-  // const [newDirectoryName, setNewDirectoryName] = useState("");
   const [curPath, setCurPath] = useState("");
 
   const [testData, setTestData] = useState({});
-
-  // const TEAM_SEQ = 3;
-  const TYPE_DIRECTORY = 1;
-  const TYPE_FILE = 2;
-  const DIRECTORY_DATA = {
-    // rootPath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
-    rootPath: `${teamSeq}`,
-    rootName: `root`,
-  };
 
   useEffect(() => {
     dispatch(getAllFiles(teamSeq))
@@ -58,10 +55,6 @@ const Directory = ({ showFileContent }) => {
     if (newDirectoryName.trim().length === 0) {
       return;
     }
-    // const fileData = {
-    //   fileTitle: newDirectoryName,
-    //   filePath: `/home/ubuntu/crow_data/${teamSeq}/thisIsProjectName`,
-    // };
     const fileData = {
       fileTitle: newDirectoryName,
       filePath: curPath,
@@ -72,10 +65,7 @@ const Directory = ({ showFileContent }) => {
         console.log(`/${newDirectoryName} 생성 완료`);
         dispatch(getAllFiles(teamSeq))
           .unwrap()
-          .then((res) => {
-            console.log("res:", res);
-            setTestData(res);
-          })
+          .then(setTestData)
           .catch(console.error);
       })
       .catch(console.error);
@@ -87,10 +77,6 @@ const Directory = ({ showFileContent }) => {
     if (newFileName.trim().length === 0) {
       return;
     }
-    // const fileData = {
-    //   fileTitle: newFileName,
-    //   filePath: `/home/ubuntu/crow_data/${teamSeq}`,
-    // };
     const fileData = {
       fileTitle: newFileName,
       filePath: curPath,
@@ -101,10 +87,7 @@ const Directory = ({ showFileContent }) => {
         console.log(`${newFileName} 생성 완료`);
         dispatch(getAllFiles(teamSeq))
           .unwrap()
-          .then((res) => {
-            console.log("res:", res);
-            setTestData(res);
-          })
+          .then(setTestData)
           .catch(console.error);
       })
       .catch(console.error);
@@ -114,21 +97,6 @@ const Directory = ({ showFileContent }) => {
   const openFileHandler = (path, type) => {
     console.log("path, type:", path, type);
     showFileContent(type, path);
-  };
-
-  // 폴더 클릭
-  const openFolderHandler = (name) => {
-    console.log("folder name:", name);
-    const directoryData = {
-      rootPath: `${teamSeq}/${name}`,
-      rootName: `root`,
-    };
-    dispatch(getDirectoryList(directoryData))
-      .unwrap()
-      .then((res) => {
-        console.log("name's:", res);
-      })
-      .catch(console.error);
   };
 
   // 이름 변경
@@ -166,12 +134,7 @@ const Directory = ({ showFileContent }) => {
 
   // 트리 생성
   const renderTree = (nodes) => (
-    <TreeItem
-      key={nodes.id}
-      nodeId={nodes.id}
-      // nodeId={Math.random().toString()}
-      label={nodes.name}
-    >
+    <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
       {Array.isArray(nodes.children)
         ? nodes.children.map((node) => renderTree(node))
         : null}
@@ -182,9 +145,8 @@ const Directory = ({ showFileContent }) => {
   const nodeSelectHandler = (e, nodeIds) => {
     console.log(e.target.innerText);
     if (e.target.innerText && !e.target.innerText.includes(".")) {
-      // console.log("nodeIds:", nodeIds);
       setCurPath(nodeIds);
-    } else {
+    } else if (e.target.innerText && e.target.innerText.includes(".")) {
       openFileHandler(nodeIds, TYPE_FILE);
     }
   };
