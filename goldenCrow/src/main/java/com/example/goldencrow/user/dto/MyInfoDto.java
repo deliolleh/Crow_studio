@@ -25,7 +25,7 @@ public class MyInfoDto {
         this.userNickname = userEntity.getUserNickname();
         this.userProfile = userEntity.getUserProfile();
 
-        if(userEntity.getUserGitUsername()==null) {
+        if (userEntity.getUserGitUsername() == null) {
             this.userGitUsername = "";
         } else {
             this.userGitUsername = userEntity.getUserGitUsername();

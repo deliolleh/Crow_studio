@@ -68,9 +68,9 @@ public class TeamService {
 
                     // 그 멤버들의 dto로 채우고
                     List<MemberEntity> memberEntityList = memberRepository.findAllByTeam_TeamSeq(teamEntity.getTeamSeq());
-                    for(MemberEntity mm : memberEntityList) {
+                    for (MemberEntity mm : memberEntityList) {
                         // 리더와 다를 때만 넣어준다
-                        if(mm.getUser().getUserSeq()!=leaderSeq){
+                        if (mm.getUser().getUserSeq() != leaderSeq) {
                             memberDtoList.add(new MemberDto(mm));
                         }
                     }
@@ -104,7 +104,7 @@ public class TeamService {
 
             Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeq(teamSeq);
 
-            if(!teamEntityOptional.isPresent()) {
+            if (!teamEntityOptional.isPresent()) {
                 TeamDto teamDto = new TeamDto();
                 teamDto.setTeamName("400");
                 return teamDto;
@@ -113,7 +113,7 @@ public class TeamService {
             // 그 userSeq와 teamSeq를 가지는 멤버를 뽑아옴
             Optional<MemberEntity> memberEntityOptional = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(userSeq, teamSeq);
 
-            if(memberEntityOptional.isPresent()) {
+            if (memberEntityOptional.isPresent()) {
                 // 존재할 경우 : 팀 내부를 볼 권한이 있다
 
                 // 그럼...
@@ -127,9 +127,9 @@ public class TeamService {
 
                 // 팀 시퀀스에 해당하는 멤버 리스트를 다 뽑아와서
                 List<MemberEntity> memberEntityList = memberRepository.findAllByTeam_TeamSeq(teamSeq);
-                for(MemberEntity mm : memberEntityList) {
+                for (MemberEntity mm : memberEntityList) {
                     // 리더와 다를 때만 넣어준다
-                    if(mm.getUser().getUserSeq()!=leaderSeq){
+                    if (mm.getUser().getUserSeq() != leaderSeq) {
                         memberDtoList.add(new MemberDto(mm));
                     }
                 }
@@ -161,13 +161,13 @@ public class TeamService {
         String projectType = req.get("projectType");
 
         Integer type;
-        if(projectType.equals("pure Python")) {
+        if (projectType.equals("pure Python")) {
             type = 1;
-        } else if(projectType.equals("Django")){
+        } else if (projectType.equals("Django")) {
             type = 2;
-        } else if(projectType.equals("Flask")) {
+        } else if (projectType.equals("Flask")) {
             type = 3;
-        } else if(projectType.equals("FastAPI")) {
+        } else if (projectType.equals("FastAPI")) {
             type = 4;
         } else {
             return null;
@@ -201,12 +201,12 @@ public class TeamService {
             // 아니... 알아서 오토인크리먼트를 해버려서 시퀀스를 바로 갖다 써도 되는구나...
             Long teamSeq = savedTeamEntity.getTeamSeq();
 
-            if(teamGit==null) {
+            if (teamGit == null) {
                 // git이 비어있는 상태이므로 클론 받아오지 않는다. createProject 한다
 
                 String projectCreateResult = projectService.createProject("/home/ubuntu/crow_data", type, teamName, teamSeq);
 
-                if(projectCreateResult.equals("1")) {
+                if (projectCreateResult.equals("1")) {
                     // 성공
                     res.put("result", new Long(200));
                     res.put("teamSeq", teamSeq);
@@ -218,10 +218,10 @@ public class TeamService {
                     // 등록되었던 팀과 멤버를 삭제한다
                     teamRepository.delete(teamRepository.findByTeamSeq(teamSeq).get());
 
-                    if(projectCreateResult.equals("프로젝트 생성에 실패했습니다")){
+                    if (projectCreateResult.equals("프로젝트 생성에 실패했습니다")) {
                         // 아무것도 못함
                         return null;
-                    } else if(projectCreateResult.equals("이미 폴더가 존재합니다")||
+                    } else if (projectCreateResult.equals("이미 폴더가 존재합니다") ||
                             projectCreateResult.equals("이미 파일이 존재합니다")) {
                         // 충돌나서 못만들었음
                         res.put("result", new Long(409));
@@ -236,7 +236,7 @@ public class TeamService {
                 // 쓰여진 이 주소에서 git clone 하겠다는 말이므로 받아온다.
                 String gitCloneResult = gitService.gitClone(teamGit, teamSeq, teamName);
 
-                if(gitCloneResult.equals("Success")){
+                if (gitCloneResult.equals("Success")) {
                     // 성공
                     res.put("result", new Long(200));
                     res.put("teamSeq", teamSeq);
@@ -248,11 +248,11 @@ public class TeamService {
                     // 등록되었던 팀과 멤버를 삭제한다
                     teamRepository.delete(teamRepository.findByTeamSeq(teamSeq).get());
 
-                    if(gitCloneResult.equals("폴더 생성에 실패했습니다")){
+                    if (gitCloneResult.equals("폴더 생성에 실패했습니다")) {
                         // 아무것도 못함
                         return null;
-                    } else if(gitCloneResult.equals("해당 폴더가 존재하지 않습니다.")||
-                            gitCloneResult.equals("해당 팀이 존재하지 않습니다")){
+                    } else if (gitCloneResult.equals("해당 폴더가 존재하지 않습니다.") ||
+                            gitCloneResult.equals("해당 팀이 존재하지 않습니다")) {
                         // 못 찾아서 못 만들었음
                         res.put("result", new Long(404));
                     } else {
@@ -282,7 +282,7 @@ public class TeamService {
 
             Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
 
-            if(!teamEntityFoundCheck.isPresent()) {
+            if (!teamEntityFoundCheck.isPresent()) {
                 // 그런 팀 없다
                 return "404";
             }
@@ -293,7 +293,7 @@ public class TeamService {
 
                 Optional<TeamEntity> teamEntityConflictCheck = teamRepository.findTeamEntityByTeamLeaderAndTeamName(userRepository.findByUserSeq(userSeq), teamName);
 
-                if(teamEntityConflictCheck.isPresent()) {
+                if (teamEntityConflictCheck.isPresent()) {
                     // 중복되는 팀 리더와 팀 명이 있음
                     return "409";
                 }
@@ -322,7 +322,7 @@ public class TeamService {
 
             Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
 
-            if(!teamEntityFoundCheck.isPresent()) {
+            if (!teamEntityFoundCheck.isPresent()) {
                 // 그런 팀 없다
                 return "404";
             }
@@ -355,7 +355,7 @@ public class TeamService {
 
             Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
 
-            if(!teamEntityFoundCheck.isPresent()) {
+            if (!teamEntityFoundCheck.isPresent()) {
                 // 그런 팀 없다
                 return "404";
             }
@@ -366,13 +366,13 @@ public class TeamService {
                 // 내가 리더면
                 TeamEntity teamEntity = teamEntityOptional.get();
 
-                if(projectType.equals("pure Python")) {
+                if (projectType.equals("pure Python")) {
                     teamEntity.setType(1);
-                } else if(projectType.equals("Django")){
+                } else if (projectType.equals("Django")) {
                     teamEntity.setType(2);
-                } else if(projectType.equals("Flask")) {
+                } else if (projectType.equals("Flask")) {
                     teamEntity.setType(3);
-                } else if(projectType.equals("FastAPI")) {
+                } else if (projectType.equals("FastAPI")) {
                     teamEntity.setType(4);
                 } else {
                     return null;
@@ -401,7 +401,7 @@ public class TeamService {
 
             Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
 
-            if(!teamEntityFoundCheck.isPresent()) {
+            if (!teamEntityFoundCheck.isPresent()) {
                 return "404";
             }
 
@@ -416,7 +416,7 @@ public class TeamService {
                 // 하지만 파일을 직접 날리긴 해야해!!
                 List<Long> teamSeqList = new ArrayList<>();
                 teamSeqList.add(teamSeq);
-                if(projectService.deleteProject(teamSeqList).equals("fail!")) {
+                if (projectService.deleteProject(teamSeqList).equals("fail!")) {
                     return "501";
                 }
 
@@ -439,7 +439,7 @@ public class TeamService {
 
             Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
 
-            if(!teamEntityFoundCheck.isPresent()) {
+            if (!teamEntityFoundCheck.isPresent()) {
                 UserInfoListDto userInfoListDto = new UserInfoListDto();
                 userInfoListDto.setResult("404");
                 return userInfoListDto;
@@ -529,7 +529,7 @@ public class TeamService {
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
             // 자기 자신이 아닌게 맞는지 체크
-            if(userSeq==memberSeq) {
+            if (userSeq == memberSeq) {
                 return "409";
             }
 
@@ -565,7 +565,7 @@ public class TeamService {
     }
 
     // 팀장 위임
-    public String memberBeLeader(String jwt, Long teamSeq, Long memberSeq){
+    public String memberBeLeader(String jwt, Long teamSeq, Long memberSeq) {
 
         try {
 
@@ -573,7 +573,7 @@ public class TeamService {
             Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
             // 자기 자신이 아닌게 맞는지 체크
-            if(userSeq==memberSeq) {
+            if (userSeq == memberSeq) {
                 return "409";
             }
 
@@ -617,7 +617,7 @@ public class TeamService {
 
             Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
 
-            if(!teamEntityFoundCheck.isPresent()) {
+            if (!teamEntityFoundCheck.isPresent()) {
                 return "404";
             }
 
@@ -627,10 +627,10 @@ public class TeamService {
             // 저 팀 시퀀스를 가지고 내가 속한 멤버가 있는지 확인
             Optional<MemberEntity> memberEntityOptional = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(userSeq, teamSeq);
 
-            if(memberEntityOptional.isPresent()){
+            if (memberEntityOptional.isPresent()) {
                 // 있다면 그 팀 리더가 내가 아닌 게 맞는지 확인
                 Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
-                if(!teamEntityOptional.isPresent()){
+                if (!teamEntityOptional.isPresent()) {
                     // 내가 리더가 아니라면
                     // 그 멤버 엔티티만 찾아서 삭제하면 됨
                     MemberEntity memberEntity = memberEntityOptional.get();

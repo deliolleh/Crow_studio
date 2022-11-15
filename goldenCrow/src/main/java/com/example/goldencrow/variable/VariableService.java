@@ -1,6 +1,5 @@
 package com.example.goldencrow.variable;
 
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.http.HttpMethod;
@@ -13,7 +12,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 
 @Service
 public class VariableService {

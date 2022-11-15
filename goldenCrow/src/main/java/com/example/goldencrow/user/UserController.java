@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value="/api/users")
+@RequestMapping(value = "/api/users")
 public class UserController {
 
     private final String SUCCESS = "SUCCESS";
@@ -39,14 +39,14 @@ public class UserController {
         String userNickname = req.get("userNickname");
 
         // 셋 중 하나라도 비면 401
-        if(userId==null || userPassword==null || userNickname==null){
+        if (userId == null || userPassword == null || userNickname == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
         // 일단 성공하면 이렇게 반환될 겁니다
         Map<String, String> temp = userService.signupService(userId, userPassword, userNickname);
 
-        if(temp.get("result").equals("success")){
+        if (temp.get("result").equals("success")) {
             Map<String, String> res = new HashMap<>();
             res.put("jwt", temp.get("jwt"));
             return new ResponseEntity<>(res, HttpStatus.OK);
@@ -57,19 +57,19 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> loginPost(@RequestBody Map<String, String> req){
+    public ResponseEntity<Map<String, String>> loginPost(@RequestBody Map<String, String> req) {
 
         String userId = req.get("userId");
         String userPassword = req.get("userPassword");
 
-        if(userId==null || userPassword==null){
+        if (userId == null || userPassword == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
         // 일단 성공하면 이렇게 반환될 겁니다
         Map<String, String> temp = userService.loginService(userId, userPassword);
 
-        if(temp.get("result").equals("success")){
+        if (temp.get("result").equals("success")) {
             Map<String, String> res = new HashMap<>();
             res.put("jwt", temp.get("jwt"));
             return new ResponseEntity<>(res, HttpStatus.OK);
@@ -88,10 +88,10 @@ public class UserController {
         MyInfoDto myInfoDto = userService.infoService(jwt);
         UserInfoDto.Result result = myInfoDto.getResult();
 
-        if(result==UserInfoDto.Result.EXPIRE) {
+        if (result == UserInfoDto.Result.EXPIRE) {
             // 액세스 토큰 재발급 요청하세요...
             return new ResponseEntity<>(myInfoDto, HttpStatus.OK);
-        } else if(result== UserInfoDto.Result.SUCCESS) {
+        } else if (result == UserInfoDto.Result.SUCCESS) {
             return new ResponseEntity<>(myInfoDto, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -103,14 +103,14 @@ public class UserController {
     @PutMapping("/edit/nickname")
     public ResponseEntity<String> editNicknamePut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
 
-        if(req.get("userNickname")==null){
+        if (req.get("userNickname") == null) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
         String userNickname = req.get("userNickname");
 
         // 일단 성공하면 이렇게 반환될 겁니다
-        if(userService.editNicknameService(jwt, userNickname).equals("success")) {
+        if (userService.editNicknameService(jwt, userNickname).equals("success")) {
             return new ResponseEntity<>(userNickname, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -129,7 +129,7 @@ public class UserController {
         String result = userService.editProfileService(jwt, multipartFile);
 
         // 실패시!!! 이렇게 반환될 겁니다
-        if(result.equals("error")) {
+        if (result.equals("error")) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(result, HttpStatus.OK);
@@ -139,10 +139,10 @@ public class UserController {
 
     // 프로필사진 삭제
     @DeleteMapping("/edit/profile")
-    public ResponseEntity<String> deleteProfileDelete(@RequestHeader("Authorization") String jwt){
+    public ResponseEntity<String> deleteProfileDelete(@RequestHeader("Authorization") String jwt) {
 
         // 일단 성공하면 이렇게 반환될 겁니다
-        if(userService.deleteProfileService(jwt).equals("success")) {
+        if (userService.deleteProfileService(jwt).equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -154,16 +154,16 @@ public class UserController {
     @PutMapping("/edit/password")
     public ResponseEntity<String> editPasswordPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
 
-        if(req.get("userPassword")==null || req.get("userNewPassword")==null){
+        if (req.get("userPassword") == null || req.get("userNewPassword") == null) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
         String result = userService.editPasswordService(jwt, req);
 
         // 일단 성공하면 이렇게 반환될 겁니다
-        if(result.equals("success")) {
+        if (result.equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else if(result.equals("409")){
+        } else if (result.equals("409")) {
             return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -172,16 +172,16 @@ public class UserController {
     }
 
     // 깃 정보 수정
-    public ResponseEntity<String> editGitPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req){
+    public ResponseEntity<String> editGitPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
 
-        if(req.get("userGitId")==null || req.get("userGitPassword")==null){
+        if (req.get("userGitId") == null || req.get("userGitPassword") == null) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
         String result = userService.editGitService(jwt, req);
 
         // 일단 성공하면 이렇게 반환될 겁니다
-        if(result.equals("success")) {
+        if (result.equals("success")) {
             return new ResponseEntity<>(req.get("userGitId"), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -191,14 +191,14 @@ public class UserController {
 
     // 회원탈퇴
     @DeleteMapping("/quit")
-    public ResponseEntity<String> quitDelete(@RequestHeader("Authorization") String jwt){
+    public ResponseEntity<String> quitDelete(@RequestHeader("Authorization") String jwt) {
 
         String result = userService.quitUser(jwt);
 
         // 일단 성공하면 이렇게 반환될 겁니다
-        if(result.equals("success")) {
+        if (result.equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else if(result.equals("403")){
+        } else if (result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -208,10 +208,10 @@ public class UserController {
 
     // 개인 환경 세팅 저장
     @PutMapping("/personal")
-    public ResponseEntity<String> personalPost(@RequestHeader("Authorization") String jwt, @RequestBody SettingsDto req){
+    public ResponseEntity<String> personalPost(@RequestHeader("Authorization") String jwt, @RequestBody SettingsDto req) {
 
         // 일단 성공하면 이렇게 반환될 겁니다
-        if(userService.personalPost(jwt, req).equals("success")) {
+        if (userService.personalPost(jwt, req).equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -221,11 +221,11 @@ public class UserController {
 
     // 개인 환경 세팅 조회
     @GetMapping("/personal")
-    public ResponseEntity<SettingsDto> personalGet(@RequestHeader("Authorization") String jwt){
+    public ResponseEntity<SettingsDto> personalGet(@RequestHeader("Authorization") String jwt) {
 
         SettingsDto settingsDto = userService.personalGet(jwt);
 
-        if(settingsDto.getResult().equals("success")){
+        if (settingsDto.getResult().equals("success")) {
             return new ResponseEntity<>(settingsDto, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -235,11 +235,11 @@ public class UserController {
 
     // (남의) 마이페이지 조회
     @GetMapping("/mypage/{userSeq}")
-    public ResponseEntity<UserInfoDto> mypageGet(@PathVariable Long userSeq){
+    public ResponseEntity<UserInfoDto> mypageGet(@PathVariable Long userSeq) {
 
         UserInfoDto userInfoDto = userService.mypage(userSeq);
 
-        if(userInfoDto.getResult()== UserInfoDto.Result.SUCCESS){
+        if (userInfoDto.getResult() == UserInfoDto.Result.SUCCESS) {
             return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -249,14 +249,14 @@ public class UserController {
 
     // 사용자 검색하기
     @PostMapping("/search")
-    public ResponseEntity<List<UserInfoDto>> searchUserGet(@RequestBody Map<String, String> req){
+    public ResponseEntity<List<UserInfoDto>> searchUserGet(@RequestBody Map<String, String> req) {
 
         String word = req.get("searchWord");
 
         // 내가 속한 것만 골라서 반환
         List<UserInfoDto> userInfoDtoList = userService.searchUser(word);
 
-        if(userInfoDtoList==null) {
+        if (userInfoDtoList == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         } else {
             // 리스트가 비어있어도 잘못된 게 아니기 때문에 그건 거르지 않는다

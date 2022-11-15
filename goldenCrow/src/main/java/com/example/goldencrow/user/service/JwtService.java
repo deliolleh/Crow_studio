@@ -28,7 +28,7 @@ public class JwtService {
     private long refreshTokenValidTime = Duration.ofDays(100).toMillis(); // 만료시간 100일
 
     // 액세스 토큰 만들기
-    public String createAccess(Long userSeq){
+    public String createAccess(Long userSeq) {
 
         // 헤더 설정
         Map<String, Object> headers = new HashMap<>();
@@ -40,7 +40,7 @@ public class JwtService {
         payloads.put("jti", userSeq);
 
         Date ext = new Date();
-        ext.setTime(ext.getTime()+accessTokenValidTime);
+        ext.setTime(ext.getTime() + accessTokenValidTime);
 
         // 토큰 빌드
         String jwt = Jwts.builder()
@@ -55,7 +55,7 @@ public class JwtService {
     }
 
     // 리프레시 토큰 만들기
-    public String createRefresh(Long userSeq){
+    public String createRefresh(Long userSeq) {
 
         // 헤더 설정
         Map<String, Object> headers = new HashMap<>();
@@ -67,7 +67,7 @@ public class JwtService {
         payloads.put("jti", userSeq);
 
         Date ext = new Date();
-        ext.setTime(ext.getTime()+refreshTokenValidTime);
+        ext.setTime(ext.getTime() + refreshTokenValidTime);
 
         // 토큰 빌드
         String jwt = Jwts.builder()
@@ -95,7 +95,7 @@ public class JwtService {
             claimMap.put("result", "success");
 
             // 이 값으로 유저찾아서 없으면 터트림
-            if(!userRepository.findById(Long.valueOf(String.valueOf(claimMap.get("jti")))).isPresent()) {
+            if (!userRepository.findById(Long.valueOf(String.valueOf(claimMap.get("jti")))).isPresent()) {
                 claimMap.put("result", "error");
             }
 
@@ -104,7 +104,7 @@ public class JwtService {
             System.out.println(e);
             claimMap.put("result", "expire");
 
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
             claimMap.put("result", "error");
         }

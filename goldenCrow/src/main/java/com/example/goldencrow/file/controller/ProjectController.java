@@ -1,6 +1,5 @@
 package com.example.goldencrow.file.controller;
 
-
 import com.example.goldencrow.file.service.ProjectService;
 
 import org.springframework.http.HttpStatus;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.*;
-
 
 
 @RestController
@@ -21,7 +19,6 @@ public class ProjectController {
     public ProjectController(ProjectService projectService) {
         this.projectService = projectService;
     }
-
 
 
     @PostMapping("/{teamSeq}")
@@ -40,22 +37,22 @@ public class ProjectController {
     }
 
     @PostMapping("/directories")
-    public ResponseEntity<Map<String,List<Map<String,String>>>> pjtRead(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,String> rootFile) {
+    public ResponseEntity<Map<String, List<Map<String, String>>>> pjtRead(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String, String> rootFile) {
         String rootPath = rootFile.get("rootPath");
         String rootName = rootFile.get("rootName");
-        Map<String,List<Map<String,String>>> directory;
-        directory = projectService.readDirectory(rootPath,rootName);
+        Map<String, List<Map<String, String>>> directory;
+        directory = projectService.readDirectory(rootPath, rootName);
 
         return new ResponseEntity<>(directory, HttpStatus.ACCEPTED);
     }
 
 
     @PostMapping("/projectDeleter")
-    public ResponseEntity<String> deletePjt(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,List<Long>> teamSeqs) {
+    public ResponseEntity<String> deletePjt(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String, List<Long>> teamSeqs) {
         String check = projectService.deleteProject(teamSeqs.get("teamSeqs"));
         if (check.equals("fail!")) {
-            return new ResponseEntity<>(check,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(check, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("성공!",HttpStatus.OK);
+        return new ResponseEntity<>("성공!", HttpStatus.OK);
     }
 }

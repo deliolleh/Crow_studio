@@ -18,7 +18,7 @@ public class ApiTestDto {
 
     /**
      * api 요청의 method
-     * OPTION. GET, POST, PUT, DELETE
+     * OPTION. "GET", "POST", "PUT", "DELETE"
      */
     private String type;
 

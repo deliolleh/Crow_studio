@@ -10,7 +10,6 @@ import com.example.goldencrow.user.UserRepository;
 import com.example.goldencrow.user.dto.MyInfoDto;
 import com.example.goldencrow.user.dto.SettingsDto;
 import com.example.goldencrow.user.dto.UserInfoDto;
-import com.example.goldencrow.user.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +43,12 @@ public class UserService {
     private ProjectService projectService;
 
     // 회원가입
-    public Map<String, String> signupService(String userId, String userPassword, String userNickname){
+    public Map<String, String> signupService(String userId, String userPassword, String userNickname) {
 
         Map<String, String> res = new HashMap<>();
 
         // 존재하는 아이디인지 체크
-        if(userRepository.findUserEntityByUserId(userId).isPresent()) {
+        if (userRepository.findUserEntityByUserId(userId).isPresent()) {
             // 존재할 경우, result에서 결과를 전달함
             res.put("result", "duplicate error");
             System.out.println("duplicate error");
@@ -94,13 +93,13 @@ public class UserService {
         Map<String, String> res = new HashMap<>();
 
         // 존재하는 아이디인지 체크
-        if(userRepository.findUserEntityByUserId(userId).isPresent()) {
+        if (userRepository.findUserEntityByUserId(userId).isPresent()) {
 
             // 존재할 경우 일치하는지 검증
             UserEntity userEntity = userRepository.findUserEntityByUserId(userId).get();
             String checkPassword = CryptoUtil.Sha256.hash(userPassword);
 
-            if(userEntity.getUserPassWord().equals(checkPassword)){
+            if (userEntity.getUserPassWord().equals(checkPassword)) {
                 // 만약 비번이 같으면
                 // 액세스 토큰 발급
                 String jwt = jwtService.createAccess(userEntity.getUserSeq());
@@ -119,7 +118,7 @@ public class UserService {
     }
 
     // 회원정보조회
-    public MyInfoDto infoService(String jwt){
+    public MyInfoDto infoService(String jwt) {
 
         MyInfoDto myInfoDto = new MyInfoDto();
 
@@ -127,7 +126,7 @@ public class UserService {
             UserEntity userEntity = userRepository.findById(jwtService.JWTtoUserSeq(jwt)).get();
             myInfoDto = new MyInfoDto(userEntity);
 
-            if(userEntity.getUserGitToken()==null) {
+            if (userEntity.getUserGitToken() == null) {
                 myInfoDto.setUserGitToken("");
             } else {
                 myInfoDto.setUserGitToken(userEntity.getUserGitToken());
@@ -145,7 +144,7 @@ public class UserService {
     }
 
     // 닉네임수정
-    public String editNicknameService(String jwt, String userNickname){
+    public String editNicknameService(String jwt, String userNickname) {
 
         // jwt 체크는 인터셉터에서 해서 넘어왔을테니까
 
@@ -175,7 +174,7 @@ public class UserService {
     }
 
     // 프로필사진 수정
-    public String editProfileService(String jwt, MultipartFile multipartFile){
+    public String editProfileService(String jwt, MultipartFile multipartFile) {
 
         // jwt 체크는 인터셉터에서 해서 넘어왔을테니까
 
@@ -187,7 +186,7 @@ public class UserService {
             UserEntity userEntity = userRepository.findById(userSeq).get();
             String pastProfile = userEntity.getUserProfile();
 
-            if(pastProfile!=null){
+            if (pastProfile != null) {
                 // null 이 아니라는 것은 기존에 업로드한 이미지가 있다는 뜻
                 // 그 주소로 가서 파일 삭제
                 Files.delete(Paths.get(pastProfile));
@@ -217,7 +216,7 @@ public class UserService {
                 byte[] buffer = new byte[1024];
 
                 // 끝까지 읽기
-                while((readCount = inputStream.read(buffer))!=-1) {
+                while ((readCount = inputStream.read(buffer)) != -1) {
                     fileOutputStream.write(buffer, 0, readCount);
                 }
 
@@ -254,7 +253,7 @@ public class UserService {
             UserEntity userEntity = userRepository.findById(userSeq).get();
             String pastProfile = userEntity.getUserProfile();
 
-            if(pastProfile!=null){
+            if (pastProfile != null) {
                 // null 이 아니라는 것은 기존에 업로드한 이미지가 있다는 뜻
                 // 그 주소로 가서 파일 삭제
                 Files.delete(Paths.get(pastProfile));
@@ -267,14 +266,14 @@ public class UserService {
             // 성공 여부 반환
             return "success";
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return "error";
         }
     }
 
     // 비밀번호 수정
-    public String editPasswordService(String jwt, Map<String, String> req){
+    public String editPasswordService(String jwt, Map<String, String> req) {
 
         // jwt 체크는 인터셉터에서 해서 넘어왔을테니까
 
@@ -289,7 +288,7 @@ public class UserService {
             String originPW = userEntity.getUserPassWord();
             String testPW = CryptoUtil.Sha256.hash(req.get("userPassword"));
 
-            if(originPW.equals(testPW)) {
+            if (originPW.equals(testPW)) {
                 // userEntity의 비밀번호 부분을 req에서 꺼내온 값으로 수정
                 userEntity.setUserPassWord(CryptoUtil.Sha256.hash(req.get("userNewPassword")));
                 userRepository.saveAndFlush(userEntity);
@@ -347,12 +346,12 @@ public class UserService {
             List<TeamEntity> teamEntityList = teamRepository.findAllByTeamLeader_UserSeq(userSeq);
             List<Long> teamSeqList = new ArrayList<>();
 
-            for(TeamEntity t : teamEntityList){
+            for (TeamEntity t : teamEntityList) {
                 // 그 팀들마다 팀원 수를 세아림
 
                 int count = memberRepository.countAllByTeam(t);
 
-                if(count>=2) {
+                if (count >= 2) {
                     // 1인팀이 아닌 팀이 하나라도 있을 경우
                     // 탐색을 중지하고 탈퇴 불가 처리
                     return "403";
@@ -367,7 +366,7 @@ public class UserService {
             // 그렇다면 내가 리더인 팀은 전부 단일팀이라는 의미
             // 탈퇴 시에 서버에서 삭제해주어야 함
 
-            if(projectService.deleteProject(teamSeqList).equals("fail!")){
+            if (projectService.deleteProject(teamSeqList).equals("fail!")) {
                 return "error";
             }
 
@@ -470,7 +469,7 @@ public class UserService {
         List<UserEntity> userEntityList = userRepository.findAllByUserIdContainingOrUserNicknameContaining(word, word);
         List<UserInfoDto> userInfoDtoList = new ArrayList<>();
 
-        for(UserEntity u : userEntityList) {
+        for (UserEntity u : userEntityList) {
             userInfoDtoList.add(new UserInfoDto(u));
         }
 
