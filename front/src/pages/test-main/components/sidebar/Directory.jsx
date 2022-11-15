@@ -19,7 +19,7 @@ import {
   createFile,
   deleteFile,
   renameFile,
-  getFileContent,
+  // getFileContent,
   saveFileContent,
 } from "../../../../redux/fileSlice";
 
@@ -36,6 +36,7 @@ const Directory = ({ showFileContent }) => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
   const [curPath, setCurPath] = useState("");
+  const [curName, setCurName] = useState("");
 
   const [testData, setTestData] = useState({});
 
@@ -94,40 +95,50 @@ const Directory = ({ showFileContent }) => {
   };
 
   // 파일 클릭
-  const openFileHandler = (path, type) => {
-    console.log("path, type:", path, type);
-    showFileContent(type, path);
-  };
+  const openFileHandler = (path, type) => showFileContent(type, path);
 
   // 이름 변경
-  const renameItemHandler = (path, name) => {
-    const newName = prompt("변경할 이름 입력", name);
+  const renameHandler = () => {
+    const newName = prompt("변경할 이름 입력", curName);
+    if (newName === curName) {
+      return;
+    } else if (!newName) {
+      return;
+    }
     const renameData = {
-      filePath: path,
-      oldFileName: name,
+      filePath: curPath,
+      oldFileName: curName,
       fileTitle: newName,
     };
     dispatch(renameFile(renameData))
       .unwrap()
       .then(() => {
-        console.log(`${name} -> ${newName} 변경 성공`);
+        console.log(`${curName} -> ${newName} 변경 성공`);
+        dispatch(getAllFiles(teamSeq))
+          .unwrap()
+          .then(setTestData)
+          .catch(console.error);
       })
       .catch(console.error);
   };
 
   // 삭제
-  const deleteItemHandler = (path, typeName, name) => {
-    if (!window.confirm(`${name} 삭제할거임?`)) {
+  const deleteHandler = () => {
+    if (!window.confirm(`${curName} 삭제할거임?`)) {
       return;
     }
-    const targetType = typeName === "directory" ? "1" : "2";
+    const targetType = curName.includes(".") ? "2" : "1";
     const targetData = {
-      filePath: path,
+      filePath: curPath,
     };
     dispatch(deleteFile({ teamSeq, type: targetType, fileData: targetData }))
       .unwrap()
       .then((res) => {
         console.log("삭제 성공 res:", res);
+        dispatch(getAllFiles(teamSeq))
+          .unwrap()
+          .then(setTestData)
+          .catch(console.error);
       })
       .catch(console.error);
   };
@@ -143,10 +154,9 @@ const Directory = ({ showFileContent }) => {
 
   // 노드 선택
   const nodeSelectHandler = (e, nodeIds) => {
-    console.log(e.target.innerText);
-    if (e.target.innerText && !e.target.innerText.includes(".")) {
-      setCurPath(nodeIds);
-    } else if (e.target.innerText && e.target.innerText.includes(".")) {
+    setCurName(e.target.innerText);
+    setCurPath(nodeIds);
+    if (e.target.innerText && e.target.innerText.includes(".")) {
       openFileHandler(nodeIds, TYPE_FILE);
     }
   };
@@ -169,6 +179,12 @@ const Directory = ({ showFileContent }) => {
             </IcSpan>
             <IcSpan>
               <IcNewDir alt="IcNewDir" onClick={createDirectoryHandler} />
+            </IcSpan>
+            <IcSpan>
+              <div onClick={renameHandler}>✏</div>
+            </IcSpan>
+            <IcSpan>
+              <div onClick={deleteHandler}>🪓</div>
             </IcSpan>
           </div>
         </div>
