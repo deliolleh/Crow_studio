@@ -26,7 +26,7 @@ const NicknameForm = ({ onSubmitNickname, initialNickname }) => {
     <form
       method="post"
       onSubmit={submitHandler}
-      className="flex flex-col items-center mb-8 h-fit"
+      className="flex flex-col items-center mb-8"
     >
       <div className="w-80 mb-1">
         <label htmlFor="nickname" className="text-primary_dark text-sm">
