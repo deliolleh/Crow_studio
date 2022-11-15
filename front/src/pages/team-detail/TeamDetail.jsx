@@ -10,30 +10,30 @@ import TeamDetailHeader from "./components/TeamDetailHeader";
 
 import Member from "./components/Member";
 
-import Modal from 'react-modal';
+import Modal from "react-modal";
 
 import { IoAdd } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
 
 const customStyles = {
   content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    width: 'auto',
-    height: 'auto',
-    marginRight: '-50%',
-    borderRadius: '10px',
-    backgroundColor: '#3C3C3C',
-    transform: 'translate(-50%, -50%)',
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    width: "auto",
+    height: "auto",
+    marginRight: "-50%",
+    borderRadius: "10px",
+    backgroundColor: "#3C3C3C",
+    transform: "translate(-50%, -50%)",
   },
   overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 };
 // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
 const TeamDetail = () => {
   const dispatch = useDispatch();
@@ -47,6 +47,8 @@ const TeamDetail = () => {
     teamLeaderNickname,
     teamLeaderSeq,
     memberDtoList: members,
+    projectType,
+    teamGit,
   } = team;
 
   const [isSearch, setIsSearch] = useState(false);
@@ -132,12 +134,12 @@ const TeamDetail = () => {
 
   function openModal() {
     setIsOpen(true);
-    console.log("떴냐 모달?")
+    console.log("떴냐 모달?");
   }
 
   function afterOpenModal() {
     // references are now sync'd and can be accessed.
-    subtitle.style.color = '#fff';
+    subtitle.style.color = "#fff";
   }
 
   function closeModal() {
@@ -146,7 +148,7 @@ const TeamDetail = () => {
 
   return (
     <React.Fragment>
-      <div className="flex flex-col">   
+      <div className="flex flex-col">
         <Header />
         {/* Modal */}
         <Modal
@@ -157,8 +159,16 @@ const TeamDetail = () => {
           contentLabel="Example Modal"
         >
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-white font-bold" ref={(_subtitle) => (subtitle = _subtitle)}>Hello</h2>
-            <IoClose className="cursor-pointer text-primary_dark ml-2" onClick={closeModal} />
+            <h2
+              className="text-white font-bold"
+              ref={(_subtitle) => (subtitle = _subtitle)}
+            >
+              Hello
+            </h2>
+            <IoClose
+              className="cursor-pointer text-primary_dark ml-2"
+              onClick={closeModal}
+            />
           </div>
           <div className="flex flex-col">
             <div className="flex justify-between items-center mb-2">
@@ -230,7 +240,6 @@ const TeamDetail = () => {
                 ))}
 
                 <div className="flex flex-col items-center px-2 md:py-2 pb-2">
-
                   {/* isSearch가 아니면 + 버튼, isSearch이면 유저 검색 입력창 나옴 */}
                   {!isSearch ? (
                     <IoAdd
@@ -250,7 +259,10 @@ const TeamDetail = () => {
                           value={searchUserName}
                         />
                       </form>
-                      <IoClose className="cursor-pointer text-primary_dark ml-2" onClick={closeSearchInputHandler} />
+                      <IoClose
+                        className="cursor-pointer text-primary_dark ml-2"
+                        onClick={closeSearchInputHandler}
+                      />
 
                       <div>
                         {searchResults?.map((user) => (
@@ -271,13 +283,25 @@ const TeamDetail = () => {
               </div>
             </div>
 
-            {/* 프로젝트 경로 */}
-            <div className="flex items-center md:w-full w-[285px] h-fit bg-component_item_bg_dark rounded-md">
+            {/* 팀 깃 주소 */}
+            <div className="flex items-center mb-2 md:w-full w-[285px] h-fit bg-component_item_bg_dark rounded-md">
               <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
-                프로젝트
+                깃
               </div>
               <div className="flex">
-                <div className="text-white text-sm p-2">/까마귀공방</div>
+                <div className="text-white text-sm p-2">
+                  {teamGit ? teamGit : "-"}
+                </div>
+              </div>
+            </div>
+
+            {/* 프로젝트 타입 */}
+            <div className="flex items-center md:w-full w-[285px] h-fit bg-component_item_bg_dark rounded-md">
+              <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
+                프로젝트 타입
+              </div>
+              <div className="flex">
+                <div className="text-white text-sm p-2">{projectType}</div>
               </div>
             </div>
           </div>
