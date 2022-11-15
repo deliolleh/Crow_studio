@@ -23,31 +23,6 @@ import {
 
 import DirectoryList from "./directory/DirectoryList";
 
-const data = {
-  id: 1,
-  name: "Parent 1",
-  children: [
-    {
-      id: 2,
-      name: "Child 1",
-      children: [
-        {
-          id: 5,
-          name: "Child 1__1",
-        },
-        {
-          id: 6,
-          name: "Child 1__2",
-        },
-        {
-          id: 7,
-          name: "Child 1__3",
-        },
-      ],
-    },
-  ],
-};
-
 const Directory = ({ showFileContent }) => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
