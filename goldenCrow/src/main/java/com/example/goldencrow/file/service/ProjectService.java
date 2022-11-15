@@ -57,54 +57,33 @@ public class ProjectService {
 //    }
 
     /**
-     * 해당 파일의 바로 하위 파일만 보내주는 함수
+     * 파일 경로를 모두 찾아서 HashMap으로 반환해주는 함수
      * @param rootPath
      * @param rootName
-     * @return 
+     * @param visit
+     * @return
      */
-    public Map<String,List<Map<String,String>>> readDirectory(String rootPath, String rootName){
-        Map<String,List<Map<String,String>>> fileTree = new TreeMap<>();
-        List<Map<String,String>> childTree = new ArrayList<>();
-
-        File file;
-
-        if (rootName.equals("root")) {
-            String baseUrl = "/home/ubuntu/crow_data/" + rootPath;
-            file = new File(baseUrl);
-        } else {
-            file = new File(rootPath);
-        }
-
-        File files[] = file.listFiles();
-        String names[] = file.list();
-
-        try {
-            if (files.length == 0 || names.length == 0) {
-                fileTree.put("fileDirectory",childTree);
-                return fileTree;
+    public Map<Object, Object> readDirectory(String rootPath, String rootName, Map<Object,Object> visit){
+        File file = new File(rootPath);
+        visit.put("id",rootPath);
+        visit.put("name",rootName);
+        if (file.isDirectory()) {
+            List<Object> child = new ArrayList<>();
+            File[] files  = file.listFiles();
+            String[] names = file.list();
+            for (int i = 0; i < files.length; i++) {
+                File dir = files[i];
+                String name = names[i];
+                String thisPath = dir.getPath();
+                Map<Object,Object> children = new HashMap<>();
+                child.add(readDirectory(thisPath,name,children));
             }
-        } catch (NullPointerException e) {
-            return fileTree;
+            visit.put("children",child);
         }
 
-        for (int i = 0; i < files.length; i++) {
-            File dir = files[i];
-            String fileName = names[i];
-            String thisPath = dir.getPath();
-            Map<String,String> here = new HashMap<>();
-            here.put("name",fileName);
-            here.put("path",thisPath);
-            if (dir.isDirectory()) {
-                here.put("type","directory");
-            } else {
-                here.put("type", "file");
-            }
-            childTree.add(here);
-        }
-        fileTree.put("fileDirectory",childTree);
-        out.println(fileTree);
-        return fileTree;
+        return visit;
     }
+
 
     /**
      * 모든 경로를 재귀적으로 찾고, db에 저장
