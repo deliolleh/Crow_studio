@@ -1,4 +1,4 @@
-package com.example.goldencrow.liveCode;
+package com.example.goldencrow.liveCode.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -12,14 +12,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        System.out.println("여기임여기");
         config.enableSimpleBroker("/topic");
         config.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        System.out.println("here");
         registry.addEndpoint("/api/share").setAllowedOriginPatterns("*").withSockJS();
     }
 
