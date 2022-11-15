@@ -3,6 +3,8 @@ import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
+import Tree, { useTreeState } from "react-hyper-tree";
+
 // import svg
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
@@ -20,6 +22,31 @@ import {
 } from "../../../../redux/fileSlice";
 
 import DirectoryList from "./directory/DirectoryList";
+
+const data = {
+  id: 1,
+  name: "Parent 1",
+  children: [
+    {
+      id: 2,
+      name: "Child 1",
+      children: [
+        {
+          id: 5,
+          name: "Child 1__1",
+        },
+        {
+          id: 6,
+          name: "Child 1__2",
+        },
+        {
+          id: 7,
+          name: "Child 1__3",
+        },
+      ],
+    },
+  ],
+};
 
 const Directory = ({ showFileContent }) => {
   const dispatch = useDispatch();
@@ -154,6 +181,13 @@ const Directory = ({ showFileContent }) => {
       .catch(console.error);
   };
 
+  const { required, handlers } = useTreeState({ data, id: "your_tree_id" });
+
+  const clickTreeHandler = (e) => {
+    console.log(e);
+    console.log("clicked");
+  };
+
   return (
     <React.Fragment>
       <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
@@ -179,13 +213,14 @@ const Directory = ({ showFileContent }) => {
           />
 
           {/* 디렉터리 파일, 폴더 모음 */}
-          <DirectoryList
+          {/* <DirectoryList
             curItems={curItems}
             onOpenFile={openFileHandler}
             onOpenFolder={openFolderHandler}
             onRename={renameItemHandler}
             onDelete={deleteItemHandler}
-          />
+          /> */}
+          <Tree {...required} {...handlers} onClick={clickTreeHandler} />
         </div>
       </DirectoryContainer>
     </React.Fragment>
