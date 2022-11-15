@@ -12,18 +12,24 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.util.HtmlUtils;
 
 import java.io.File;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 public class SocketController {
     private final LiveFileService liveFileService;
 
-    @MessageMapping("/code/share")
+    /**
+     * 내용을 입력받은 다음, DB에 있는 content를 업데이트
+     * @param body FileContentSaveDto
+     * @return
+     * @throws Exception
+     */
+    @MessageMapping("/share")
     @SendTo("/topic/content")
-    public FileContentSaveDto saveContent(FileContentSaveDto body) throws Exception {
-        Thread.sleep(200); // simulated delay
-        FileContentSaveDto fileContentSaveDto = new FileContentSaveDto("뭐요", "뭘봐요");
-        System.out.println("here!here!!");
+    public FileContentSaveDto saveContent(Map<String,String> body) throws Exception {
+        Thread.sleep(20);
+        FileContentSaveDto fileContentSaveDto = new FileContentSaveDto(body.get("content"), body.get("path"));
         liveFileService.insertLive(fileContentSaveDto);
         return fileContentSaveDto;
     }

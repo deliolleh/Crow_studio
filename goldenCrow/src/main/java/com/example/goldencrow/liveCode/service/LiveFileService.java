@@ -16,21 +16,42 @@ public class LiveFileService {
     @Autowired
     public LiveFileRepository liveFileRepository;
 
+    /**
+     * 받은 content를 저장하는 함수
+     * @param body FileContentSaveDto
+     * @return fileContentSaveDto
+     */
     public FileContentSaveDto insertLive(FileContentSaveDto body) {
+
         Optional<LiveFileEntity> lfe = liveFileRepository.findByPath(body.getPath());
-        LiveFileEntity liveFileEntity;
-        System.out.println("여기까진 옴!");
-        if (!lfe.isPresent()) {
-            liveFileEntity = mongoTemplate.insert(lfe.get());
-            System.out.println(liveFileEntity.getLiveFileSeq());
-        } else {
-            lfe.get().setContent(body.getContent());
-            liveFileEntity = liveFileRepository.save(lfe.get());
-            System.out.println(liveFileEntity.getLiveFileSeq());
-        }
-        System.out.println("여기서 막힘!!");
+
+        LiveFileEntity liveFileEntity = validate(lfe,body);
+
         FileContentSaveDto fileContentSaveDto = new FileContentSaveDto(liveFileEntity.getContent(), liveFileEntity.getPath());
 
         return fileContentSaveDto;
+    }
+
+    /**
+     * Optional Entity가 존재하는지 확인하는 함수
+     * @param lfe
+     * @param body
+     * @return liveFileEntity
+     */
+    public LiveFileEntity validate(Optional<LiveFileEntity> lfe, FileContentSaveDto body) {
+        LiveFileEntity liveFileEntity;
+
+        if (!lfe.isPresent()) {
+            liveFileEntity = new LiveFileEntity(body.getContent(), body.getPath());
+            mongoTemplate.insert(liveFileEntity);
+            System.out.println(liveFileEntity);
+        } else {
+            liveFileEntity = lfe.get();
+            System.out.println(lfe.get().getId());
+            liveFileEntity.setContent(body.getContent());
+            liveFileRepository.save(liveFileEntity);
+        }
+
+        return liveFileEntity;
     }
 }
