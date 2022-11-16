@@ -20,7 +20,11 @@ const Intro = () => {
     <div className="flex flex-col">
       <Header />
       <div className="flex flex-col h-screen justify-center justify-items-center items-center overflow-auto">
-        <div className="text-center">logo</div>
+        <img
+          className="w-20 rounded-full"
+          src={require("../../assets/images/logo.png")}
+          alt="logo-img"
+        />
         <div className="text-7xl font-bold text-center text-white mt-5">
           까마귀공방
         </div>

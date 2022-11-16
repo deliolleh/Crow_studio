@@ -122,7 +122,7 @@ const Settings = ({ verticalSplit, horizontalSplit, com }) => {
               에디터 폰트 크기
             </label>
             <input
-              className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
+              className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left appearance-none shadow-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
               style={{ height: 28, width: 217 }}
               id="editorFontSize"
               type="text"
