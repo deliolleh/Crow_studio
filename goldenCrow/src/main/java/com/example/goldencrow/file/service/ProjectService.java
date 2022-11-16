@@ -19,12 +19,6 @@ import static java.lang.System.out;
 @Service
 public class ProjectService {
 
-    @Autowired
-    private FileRepository fileRepository;
-
-    @Autowired
-    private TeamRepository teamRepository;
-
     private FileService fileService;
 
     /**

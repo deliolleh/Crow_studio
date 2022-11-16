@@ -38,6 +38,11 @@ public class GitService {
         List<String> gitInfo = new ArrayList<>();
         String email = userRepository.getReferenceById(userSeq).getUserGitUsername();
         String token = userRepository.getReferenceById(userSeq).getUserGitToken();
+
+        gitInfo.add("깃 정보가 없습니다.");
+        if (email == null || token == null) {
+            return gitInfo;
+        }
         gitInfo.add(email);
         gitInfo.add(token);
         return gitInfo;
@@ -264,12 +269,17 @@ public class GitService {
         }
 
         List<String> gitInfo = getGitInfo(userSeq);
+
+        if (gitInfo.size() < 2) {
+            return "깃 정보가 없습니다.";
+        }
+
         String email = gitInfo.get(0);
         String pass = gitInfo.get(1);
 
-        String newGitUrl = newRemoteUrl(gitUrl, email, pass);
-        System.out.println(newGitUrl);
-        boolean setNew = setNewUrl(newGitUrl, gitPath);
+        String newGitUrl = newRemoteUrl(gitUrl,email,pass);
+
+        boolean setNew = setNewUrl(newGitUrl,gitPath);
 
         if (!setNew) {
             return "새로운 url 설정에 실패했습니다.";
@@ -289,30 +299,6 @@ public class GitService {
         if (!returnOld) {
             return "url 재설정에 실패했습니다.";
         }
-
-//        UserEntity user = userRepository.findByUserSeq(userSeq);
-//        String email = user.getUserGitId();
-//        String pass = user.getUserPassWord();
-
-//        ProcessBuilder setEmail = new ProcessBuilder(email);
-//
-//        try {
-//            setEmail.start().waitFor();;
-//        } catch (IOException e) {
-//            return e.getMessage();
-//        } catch (InterruptedException e) {
-//            return e.getMessage();
-//        }
-//
-//        ProcessBuilder setPass = new ProcessBuilder(pass);
-//
-//        try {
-//            setPass.start().waitFor();
-//        } catch (IOException e) {
-//            return e.getMessage();
-//        } catch (InterruptedException e) {
-//            return e.getMessage();
-//        }
 
         return "Success";
     }
@@ -481,6 +467,11 @@ public class GitService {
         String gitUrl = getRemoteUrl(gitPath);
 
         List<String> gitInfo = getGitInfo(userSeq);
+
+        if (gitInfo.size() < 2) {
+            return "깃 정보가 없습니다.";
+        }
+
         String email = gitInfo.get(0);
         String pass = gitInfo.get(1);
 

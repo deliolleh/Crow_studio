@@ -11,6 +11,7 @@ import api from "./api";
 const projectApi = {
   directoryList: (directoryData) =>
     api.post("/projects/directories/", directoryData),
+  getAllFiles: (teamSeq) => api.get(`/projects/directories/${teamSeq}`),
 };
 
 export default projectApi;
