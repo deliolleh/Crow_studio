@@ -83,61 +83,61 @@ const PasswordForm = ({ onSubmitPassword }) => {
     <form
       method="post"
       onSubmit={submitHandler}
-      className="flex flex-col items-center"
+      className="flex flex-col items-center mb-8 text-primary_dark"
     >
       {/*  */}
-      <div className="w-96">
-        <label htmlFor="currentPassword" className="text-primary_dark text-sm">
+      <div className="w-80">
+        <label htmlFor="currentPassword" className="text-sm">
           현재 비밀번호
         </label>
         <input
           type="password"
           id="currentPassword"
           name="currentPassword"
-          className="w-full text-white bg-component_item_bg_+1_dark py-2 px-3 rounded-md transition"
+          className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
           value={currentPassword}
           onChange={inputChangeHandler}
         />
-        <div className="h-6 mb-2 text-point_purple">
+        <div className="h-6 font-normal mt-1 ml-3 mb-0.5 text-sm text-point_purple">
           {currentPasswordErrMsg}
         </div>
       </div>
 
       {/* Password 1 */}
-      <div className="w-full">
-        <label htmlFor="password1" className="">
+      <div className="w-80">
+        <label htmlFor="password1" className="text-sm">
           변경할 비밀번호
         </label>
         <input
           type="password"
           id="password1"
           name="password1"
-          className="w-full text-white bg-component_item_bg_+1_dark py-2 px-3 rounded-md transition"
+          className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
           value={password1}
           onChange={inputChangeHandler}
         />
-        <div className="h-6 mb-2 text-point_purple">{password1ErrMsg}</div>
+        <div className="h-6 font-normal mt-1 ml-3 mb-0.5 text-sm text-point_purple">{password1ErrMsg}</div>
       </div>
 
       {/* Password 2 */}
-      <div className="w-full">
-        <label htmlFor="password2" className="">
+      <div className="w-80 mb-2">
+        <label htmlFor="password2" className="text-sm">
           변경할 비밀번호 확인
         </label>
         <input
           type="password"
           id="password2"
           name="password2"
-          className="w-full text-white bg-component_item_bg_+1_dark py-2 px-3 rounded-md transition"
+          className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
           value={password2}
           onChange={inputChangeHandler}
         />
-        <div className="h-6 mb-2 text-point_purple">{password2ErrMsg}</div>
+        <div className="h-6 font-normal mt-1 ml-3 mb-0.5 text-sm text-point_purple">{password2ErrMsg}</div>
       </div>
 
       <button
         type="submit"
-        className="w-full text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition"
+        className="w-80 text-md font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition"
         onClick={submitHandler}
       >
         변경하기
