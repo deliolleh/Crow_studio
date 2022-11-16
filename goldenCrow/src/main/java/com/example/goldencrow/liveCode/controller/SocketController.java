@@ -26,6 +26,7 @@ public class SocketController {
     public FileContentSaveDto saveContent(@DestinationVariable Long teamSeq, @DestinationVariable String fileName, Map<String,String> body) throws Exception {
         FileContentSaveDto fileContentSaveDto = new FileContentSaveDto(body.get("content"), body.get("path"));
         liveFileService.insertLive(fileContentSaveDto);
+        System.out.println(fileContentSaveDto.getPath());
         return fileContentSaveDto;
     }
 }
