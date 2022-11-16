@@ -17,6 +17,7 @@ import static com.example.goldencrow.common.Constants.*;
 
 /**
  * 사용자와 관련된 입출력을 처리하는 컨트롤러
+ *
  * @url /api/users
  */
 @RestController
@@ -34,11 +35,10 @@ public class UserController {
      *
      * @param req "userId", "userPassword", "userNickname"을 key로 가지는 String map
      * @return 회원가입 성공 시 jwt 반환, 성패에 따른 result 반환
+     * @status 200, 400, 409
      */
     @PostMapping("/signup")
     public ResponseEntity<Map<String, String>> signupPost(@RequestBody Map<String, String> req) {
-
-
 
         if (req.containsKey("userId") && req.containsKey("userPassword") && req.containsKey("userNickname")) {
 
@@ -65,18 +65,17 @@ public class UserController {
 
     }
 
-    // 로그인
-
     /**
      * 로그인 API
      *
      * @param req "userId", "userPassword"를 key로 가지는 String map
      * @return 로그인 성공 시 jwt 반환, 성패에 따른 result 반환
+     * @status 200, 400, 409
      */
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> loginPost(@RequestBody Map<String, String> req) {
 
-        if(req.containsKey("userId") && req.containsKey("userPassword")) {
+        if (req.containsKey("userId") && req.containsKey("userPassword")) {
 
             String userId = req.get("userId");
             String userPassword = req.get("userPassword");
@@ -102,9 +101,11 @@ public class UserController {
 
     /**
      * 각 회원의 정보를 조회하는 API
+     * access token 필요
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
-     * @return 당사자가 조회 가능한 사용자 정보 반환
+     * @return 당사자가 조회 가능한 사용자 정보 반환, 성패에 따른 result 반환
+     * @status 200, 400, 401, 404
      */
     @GetMapping("/info")
     public ResponseEntity<MyInfoDto> myInfoGet(@RequestHeader("Authorization") String jwt) {
@@ -114,6 +115,8 @@ public class UserController {
 
         if (result.equals(SUCCESS)) {
             return new ResponseEntity<>(myInfoDtoRes, HttpStatus.OK);
+        } else if (result.equals(NO_SUCH)){
+            return new ResponseEntity<>(myInfoDtoRes, HttpStatus.NOT_FOUND);
         } else {
             return new ResponseEntity<>(myInfoDtoRes, HttpStatus.BAD_REQUEST);
         }
@@ -122,35 +125,34 @@ public class UserController {
 
     /**
      * 사용자 닉네임을 수정하는 API
+     * access token 필요
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
      * @param req "userNickname"을 key로 가지는 String map
-     * @return 변경된 닉네임 반환
+     * @return 변경된 닉네임 반환, 성패에 따른 result 반환
+     * @status 200, 400, 401, 404
      */
     @PutMapping("/edit/nickname")
-    public ResponseEntity<Map<String, String>> editNicknamePut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
+    public ResponseEntity<Map<String, String>> editNicknamePut(@RequestHeader("Authorization") String jwt,
+                                                               @RequestBody Map<String, String> req) {
 
-        Map<String, String> res = new HashMap<>();
-
-        if(req.containsKey("userNickname")) {
+        if (req.containsKey("userNickname")) {
 
             String userNickname = req.get("userNickname");
 
-            Map<String, String> serviceRes = userService.editNicknameService(jwt, userNickname);
-            String result = serviceRes.get("result");
+            Map<String, String> res = userService.editNicknameService(jwt, userNickname);
+            String result = res.get("result");
 
             if (result.equals(SUCCESS)) {
-                res.put("result", SUCCESS);
-
                 return new ResponseEntity<>(res, HttpStatus.OK);
-
+            } else if (result.equals(NO_SUCH)){
+                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
             } else {
-                res.put("result", UNKNOWN);
                 return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
-
             }
 
         } else {
+            Map<String, String> res = new HashMap<>();
             res.put("result", BAD_REQ);
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
 
@@ -158,41 +160,60 @@ public class UserController {
 
     }
 
-    // 프로필사진 수정
+    /**
+     * 프로필 사진을 수정하는 API
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param multipartFile 프로필 사진으로 사용할 jpg 이미지 파일
+     * @return 성패에 따른 result 반환
+     * @deprecated 현재 사용되고 있지 않으나, 이용 가능함
+     * @status 200, 400, 401, 404
+     */
     @PutMapping("/edit/profile")
-    public ResponseEntity<String> editProfilePut(@RequestHeader("Authorization") String jwt, @RequestBody MultipartFile multipartFile) {
+    public ResponseEntity<Map<String, String>> editProfilePut(@RequestHeader("Authorization") String jwt,
+                                                              @RequestBody MultipartFile multipartFile) {
 
         if (multipartFile.isEmpty()) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
-        String result = userService.editProfileService(jwt, multipartFile);
+        Map<String, String> res = userService.editProfileService(jwt, multipartFile);
+        String result = res.get("result");
 
-        // 실패시!!! 이렇게 반환될 겁니다
-        if (result.equals("error")) {
-            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        if (result.equals(SUCCESS)) {
+            return new ResponseEntity<>(res, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    // 프로필사진 삭제
+    /**
+     * 프로필 사진을 삭제하는 API
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @return 성패에 따른 result 반환
+     * @deprecated 현재 사용되고 있지 않으나, 이용 가능함
+     * @status 200, 400, 401, 404
+     */
     @DeleteMapping("/edit/profile")
-    public ResponseEntity<String> deleteProfileDelete(@RequestHeader("Authorization") String jwt) {
+    public ResponseEntity<Map<String, String>> deleteProfileDelete(@RequestHeader("Authorization") String jwt) {
 
-        // 일단 성공하면 이렇게 반환될 겁니다
-        if (userService.deleteProfileService(jwt).equals("success")) {
-            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        Map<String, String> res = userService.deleteProfileService(jwt);
+        String result = res.get("result");
+
+        if (result.equals(SUCCESS)) {
+            return new ResponseEntity<>(res, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
 
     }
 
     // 비밀번호 수정
     @PutMapping("/edit/password")
-    public ResponseEntity<String> editPasswordPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
+    public ResponseEntity<String> editPasswordPut(@RequestHeader("Authorization") String jwt,
+                                                  @RequestBody Map<String, String> req) {
 
         if (req.get("userPassword") == null || req.get("userNewPassword") == null) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -212,7 +233,8 @@ public class UserController {
     }
 
     // 깃 정보 수정
-    public ResponseEntity<String> editGitPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, String> req) {
+    public ResponseEntity<String> editGitPut(@RequestHeader("Authorization") String jwt,
+                                             @RequestBody Map<String, String> req) {
 
         if (req.get("userGitId") == null || req.get("userGitPassword") == null) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -248,7 +270,8 @@ public class UserController {
 
     // 개인 환경 세팅 저장
     @PutMapping("/personal")
-    public ResponseEntity<String> personalPost(@RequestHeader("Authorization") String jwt, @RequestBody SettingsDto req) {
+    public ResponseEntity<String> personalPost(@RequestHeader("Authorization") String jwt,
+                                               @RequestBody SettingsDto req) {
 
         // 일단 성공하면 이렇게 반환될 겁니다
         if (userService.personalPost(jwt, req).equals("success")) {
@@ -304,7 +327,5 @@ public class UserController {
         }
 
     }
-
-    // 리프레시 토큰으로 액세스토큰 요청
 
 }
