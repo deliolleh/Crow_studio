@@ -58,16 +58,17 @@ public class FileController {
 
     /**
      * 파일 이름 변경 요청
+     * @param teamSeq
      * @param filePath
      * @return
      */
-    @PutMapping("/file-title")
-    public ResponseEntity<String> fileNameUpdate(@RequestBody HashMap<String, String> filePath) {
+    @PutMapping("/{teamSeq}/file-title")
+    public ResponseEntity<String> fileNameUpdate(@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
         String path = filePath.get(stringPath);
         String title = filePath.get("fileTitle");
         String oldFileName = filePath.get("oldFileName");
 
-        boolean result = fileService.updateFileName(path,title,oldFileName);
+        boolean result = fileService.updateFileName(path,title,oldFileName, teamSeq);
 
         if (result) {
             return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.CREATED);

@@ -92,14 +92,28 @@ public class FileService {
 
     /** 파일 삭제  */
     public boolean deleteFile(String filePath,Integer type, Long teamSeq) {
-        Path path = Paths.get(filePath);
+        Optional<FileEntity> file = fileRepository.findByTeamSeqAfterFilePath(teamSeq, filePath);
 
         // 만약 이게 DB에 없는 파일 경로나 그렇다면 실패!
-//        if (!fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq,filePath).isPresent()) {
-//            return false;
-//        }
-        
-//        FileEntity file = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq,filePath).get();
+        if (!file.isPresent()) {
+            return false;
+        }
+        String check = serverFileDelete(type,filePath);
+        if (!check.equals(Success)) {
+            return false;
+        }
+        fileRepository.delete(file.get());
+        return true;
+    }
+
+    /**
+     * 서버 파일 삭제
+     * @param type
+     * @param filePath
+     * @return
+     */
+    public String serverFileDelete(Integer type, String filePath) {
+        Path path = Paths.get(filePath);
         // 디렉토리라면
         if (type == 1) {
             ProcessBuilder pb = new ProcessBuilder();
@@ -108,24 +122,19 @@ public class FileService {
             try{
                 pb.start();
             } catch (IOException e) {
-                System.out.println(e.getMessage());
-                return false;
+                return e.getMessage();
             }
-        // 파일 이라면
+            // 파일 이라면
         } else {
             try {
                 Files.delete(path);
             } catch (NoSuchFileException e) {
-                return false;
+                return e.getMessage();
             } catch (IOException ioe) {
-                out.println(ioe.getMessage());
-                return false;
+                return ioe.getMessage();
             }
-
         }
-
-        //ileRepository.delete(file);
-        return true;
+        return Success;
     }
 
     /**
@@ -146,7 +155,7 @@ public class FileService {
             return e.getMessage();
         }
 
-        return "Success";
+        return Success;
     }
 //    @Transactional
 //    public boolean updateFileUpdatedAt(Long teamSeq, String filePath){
@@ -165,17 +174,14 @@ public class FileService {
      * @param filePath
      * @return
      */
-    public boolean updateFileName(String filePath, String newFileName,String oldFileName) {
+    public boolean updateFileName(String filePath, String newFileName,String oldFileName, Long teamSeq) {
         String newFilePath = filePath;
         String renameFilePath = filePath.replace(oldFileName, newFileName);
         File targetFile = new File(newFilePath);
         File reNameFile = new File(renameFilePath);
 
+
         return targetFile.renameTo(reNameFile);
-        //FileEntity nFile = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq, filePath).get();
-//        nFile.setFileUpdatedAt(new Date());
-//        nFile.setFileTitle(newFileName);
-//        fileRepository.saveAndFlush(nFile);
     }
 
     public List<String> readFile(String filePath) {
@@ -195,15 +201,7 @@ public class FileService {
             res.add("Failed");
             res.add(e.getMessage());
         }
-//        } finally {
-//            try {
-//                if(br != null)
-//                    br.close();
-//            } catch (IOException e) {
-//                res.add("Failed");
-//                res.add(e.getMessage());
-//            }
-//        }
+
         res.add("Success");
         res.add(content);
         return res;
