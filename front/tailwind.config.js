@@ -302,5 +302,5 @@ module.exports = {
       "component_light_+2": "#F8F8F8",
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };

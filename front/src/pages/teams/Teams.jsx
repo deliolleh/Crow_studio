@@ -28,7 +28,8 @@ const Teams = () => {
     <div className="flex flex-col">
       <Header />
       <div className="m-3 mb-6 flex w-screen h-screen items-center justify-center overflow-auto">
-        <div className="px-8 py-8 lg:w-4/5 w-fit h-fit flex flex-col justify-center border border-primary_-2_dark rounded-md">
+        <div className="px-8 py-8 lg:w-4/5 w-fit max-w-[1000px] h-fit flex flex-col justify-center border border-primary_-2_dark rounded-md">
+          {/* 타이틀 */}
           <div className="flex justify-between items-center md:mb-5 mb-2">
             <div className="flex items-center">
               {/* 현재 로그인한 유저 닉네임 */}
@@ -48,6 +49,7 @@ const Teams = () => {
               새로운 팀 생성
             </button>
           </div>
+
           {/* 팀 리스트 */}
           {myTeams.length > 0 ? (
             <TeamList clickTeam={clickTeamHandler} teams={myTeams} />
