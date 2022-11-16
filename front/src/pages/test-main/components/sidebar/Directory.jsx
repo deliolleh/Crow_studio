@@ -3,53 +3,52 @@ import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
-// import svg
+import TreeView from "@mui/lab/TreeView";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import TreeItem from "@mui/lab/TreeItem";
+
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
 // import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
 // import * as iconsi from "react-icons/io5";
 
-import { getDirectoryList } from "../../../../redux/projectSlice";
+import { getAllFiles } from "../../../../redux/projectSlice";
 import {
   createFile,
   deleteFile,
   renameFile,
-  getFileContent,
+  // getFileContent,
   saveFileContent,
 } from "../../../../redux/fileSlice";
 
-import DirectoryList from "./directory/DirectoryList";
+// const TEAM_SEQ = 3;
+const TYPE_DIRECTORY = 1;
+const TYPE_FILE = 2;
+const DIRECTORY_DATA = {
+  // rootPath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
+  // rootPath: `${TEAM_SEQ}`,
+  rootName: `root`,
+};
 
 const Directory = ({ showFileContent }) => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
-  const [curItems, setCurItems] = useState([]);
-  // const [newFileName, setNewFileName] = useState("");
-  // const [newDirectoryName, setNewDirectoryName] = useState("");
+  const [curPath, setCurPath] = useState("");
+  const [curName, setCurName] = useState("");
 
-  // const TEAM_SEQ = 3;
-  const TYPE_DIRECTORY = 1;
-  const TYPE_FILE = 2;
-  const DIRECTORY_DATA = {
-    // rootPath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
-    rootPath: `${teamSeq}`,
-    rootName: `root`,
-  };
-
-  const dispatchGetDirectoryList = () => {
-    dispatch(getDirectoryList(DIRECTORY_DATA))
-      .unwrap()
-      .then((res) => {
-        console.log("directoryList res:", res);
-        setCurItems(res.fileDirectory.map((el) => el));
-      })
-      .catch(console.error);
-  };
+  const [testData, setTestData] = useState({});
 
   useEffect(() => {
-    dispatchGetDirectoryList();
-  }, []);
+    dispatch(getAllFiles(teamSeq))
+      .unwrap()
+      .then((res) => {
+        console.log("res:", res);
+        setTestData(res);
+      })
+      .catch(console.error);
+  }, [dispatch, teamSeq]);
 
   // 디렉터리 생성 핸들러
   const createDirectoryHandler = () => {
@@ -59,13 +58,16 @@ const Directory = ({ showFileContent }) => {
     }
     const fileData = {
       fileTitle: newDirectoryName,
-      filePath: `/home/ubuntu/crow_data/${teamSeq}`,
+      filePath: curPath,
     };
     dispatch(createFile({ teamSeq, type: TYPE_DIRECTORY, fileData }))
       .unwrap()
       .then(() => {
         console.log(`/${newDirectoryName} 생성 완료`);
-        dispatchGetDirectoryList();
+        dispatch(getAllFiles(teamSeq))
+          .unwrap()
+          .then(setTestData)
+          .catch(console.error);
       })
       .catch(console.error);
   };
@@ -78,54 +80,91 @@ const Directory = ({ showFileContent }) => {
     }
     const fileData = {
       fileTitle: newFileName,
-      filePath: `/home/ubuntu/crow_data/${teamSeq}`,
+      filePath: curPath,
     };
     dispatch(createFile({ teamSeq, type: TYPE_FILE, fileData }))
       .unwrap()
       .then(() => {
         console.log(`${newFileName} 생성 완료`);
+        dispatch(getAllFiles(teamSeq))
+          .unwrap()
+          .then(setTestData)
+          .catch(console.error);
         dispatchGetDirectoryList();
       })
       .catch(console.error);
   };
 
-  const clickItemHandler = (path, type) => {
-    console.log("path,  type:", path, type);
-    showFileContent(type, path);
-  };
+  // 파일 클릭
+  const openFileHandler = (path, type) => showFileContent(type, path);
 
-  const renameItemHandler = (path, name) => {
-    const newName = prompt("변경할 이름 입력", name);
+  // 이름 변경
+  const renameHandler = () => {
+    const newName = prompt("변경할 이름 입력", curName);
+    if (newName === curName) {
+      return;
+    } else if (!newName) {
+      return;
+    }
     const renameData = {
-      filePath: path,
-      oldFileName: name,
+      filePath: curPath,
+      oldFileName: curName,
       fileTitle: newName,
     };
     dispatch(renameFile(renameData))
       .unwrap()
       .then(() => {
-        console.log(`${name} -> ${newName} 변경 성공`);
-        dispatchGetDirectoryList();
+        console.log(`${curName} -> ${newName} 변경 성공`);
+        dispatch(getAllFiles(teamSeq))
+          .unwrap()
+          .then(setTestData)
+          .catch(console.error);
       })
       .catch(console.error);
   };
 
-  const deleteItemHandler = (path, typeName, name) => {
-    if (!window.confirm(`${name} 삭제할거임?`)) {
+  // 삭제
+  const deleteHandler = () => {
+    if (!window.confirm(`${curName} 삭제할거임?`)) {
       return;
     }
-    const targetType = typeName === "directory" ? "1" : "2";
+    const targetType = curName.includes(".") ? "2" : "1";
     const targetData = {
-      filePath: path,
+      filePath: curPath,
     };
     dispatch(deleteFile({ teamSeq, type: targetType, fileData: targetData }))
       .unwrap()
       .then((res) => {
         console.log("삭제 성공 res:", res);
-        dispatchGetDirectoryList();
+        dispatch(getAllFiles(teamSeq))
+          .unwrap()
+          .then(setTestData)
+          .catch(console.error);
       })
       .catch(console.error);
   };
+
+  // 트리 생성
+  const renderTree = (nodes) => (
+    <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
+      {Array.isArray(nodes.children)
+        ? nodes.children.map((node) => renderTree(node))
+        : null}
+    </TreeItem>
+  );
+
+  // 노드 선택
+  const nodeSelectHandler = (e, nodeIds) => {
+    setCurName(e.target.innerText);
+    setCurPath(nodeIds);
+    if (e.target.innerText && e.target.innerText.includes(".")) {
+      openFileHandler(nodeIds, TYPE_FILE);
+    }
+  };
+
+  useEffect(() => {
+    console.log("curPath:", curPath);
+  }, [curPath]);
 
   return (
     <React.Fragment>
@@ -142,6 +181,12 @@ const Directory = ({ showFileContent }) => {
             <IcSpan>
               <IcNewDir alt="IcNewDir" onClick={createDirectoryHandler} />
             </IcSpan>
+            <IcSpan>
+              <div onClick={renameHandler}>✏</div>
+            </IcSpan>
+            <IcSpan>
+              <div onClick={deleteHandler}>🪓</div>
+            </IcSpan>
           </div>
         </div>
 
@@ -152,12 +197,16 @@ const Directory = ({ showFileContent }) => {
           />
 
           {/* 디렉터리 파일, 폴더 모음 */}
-          <DirectoryList
-            curItems={curItems}
-            onClickItem={clickItemHandler}
-            onRename={renameItemHandler}
-            onDelete={deleteItemHandler}
-          />
+          <TreeView
+            aria-label="rich object"
+            defaultCollapseIcon={<ExpandMoreIcon />}
+            defaultExpanded={["root"]}
+            defaultExpandIcon={<ChevronRightIcon />}
+            sx={{ flexGrow: 1, overflowY: "auto" }}
+            onNodeSelect={nodeSelectHandler}
+          >
+            {renderTree(testData)}
+          </TreeView>
         </div>
       </DirectoryContainer>
     </React.Fragment>
