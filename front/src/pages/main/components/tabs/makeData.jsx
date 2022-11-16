@@ -32,6 +32,7 @@ export const MakeEditorData = (
 
   // 포맷팅 영역
   const format = async () => {
+    console.log(editorRef.current.getPosition());
     // When formatting Button Click, useRef of that part's value get
     const sendCode = editorRef.current.getValue();
     const body = {
@@ -89,10 +90,10 @@ export const MakeEditorData = (
           <button onClick={format}>포맷팅</button>
           <button onClick={lint}>린트</button>
           <Editor
-            style={{ 
+            style={{
               resize: "vertical",
               overflow: "auto",
-             }}
+            }}
             height="200px"
             // height="calc(100vh - 31px)"
             theme="vs-dark"
@@ -104,9 +105,7 @@ export const MakeEditorData = (
             // defaultValue={
             //   i + 1 === 1 ? files["script.js"].value : files["style.css"].value
             // }
-            defaultValue={
-              ""
-            }
+            defaultValue={""}
             onMount={(editor) => (editorRef.current = editor)}
             options={{
               scrollBeyondLastLine: false,
@@ -170,7 +169,7 @@ export const MakeConsoleData = (
   return data;
 };
 
-export const CompileEditor = ({consoleHeight}) => {
+export const CompileEditor = ({ consoleHeight }) => {
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
   const [selectOption, setSelectOption] = useState([]);
@@ -236,9 +235,7 @@ export const CompileEditor = ({consoleHeight}) => {
         </div>
         <div className="flex items-center">
           {/* run 가능한 파일들 dropdown */}
-          <select
-            className="mt-1 mr-2 w-full text-white text-xs py-1 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
-          >
+          <select className="mt-1 mr-2 w-full text-white text-xs py-1 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition">
             {selectOption?.map((file) => {
               const name = file.split("/")[-1];
               const folder = file.split("/")[-2];
@@ -257,15 +254,8 @@ export const CompileEditor = ({consoleHeight}) => {
             start
           </div>
           <div onClick={compileStop}>stop</div> */}
-          <BsPlayFill
-            onClick={compileStart}
-            className="mr-[10px]"
-            size="30"
-          />
-          <BsStopFill
-            onClick={compileStop}
-            size="30"
-          />
+          <BsPlayFill onClick={compileStart} className="mr-[10px]" size="30" />
+          <BsStopFill onClick={compileStop} size="30" />
         </div>
       </div>
       {/* console 하단 */}
@@ -288,14 +278,13 @@ export const CompileEditor = ({consoleHeight}) => {
         </div>
         {/* output */}
         <div className="w-1/2 ml-1">
-        <div className="flex items-center sm:w-[138px] w-full h-[31px] px-3 text-sm text-white bg-component_item_bg_+2_dark rounded-t-[10px] border-b-2 border-point_purple">
-          <div className="flex items-center">
-            <TbTerminal className="mr-1" />
-            Output
+          <div className="flex items-center sm:w-[138px] w-full h-[31px] px-3 text-sm text-white bg-component_item_bg_+2_dark rounded-t-[10px] border-b-2 border-point_purple">
+            <div className="flex items-center">
+              <TbTerminal className="mr-1" />
+              Output
+            </div>
           </div>
-          </div>
-          <div className="w-full h-[8em] p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white"
-          >
+          <div className="w-full h-[8em] p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white">
             {outputData}
           </div>
         </div>
