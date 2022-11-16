@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,12 +50,13 @@ public class UserController {
             Map<String, String> res = userService.signupService(userId, userPassword, userNickname);
             String result = res.get("result");
 
-            if (result.equals(SUCCESS)) {
-                return new ResponseEntity<>(res, HttpStatus.OK);
-            } else if (result.equals(DUPLICATE)) {
-                return new ResponseEntity<>(res, HttpStatus.CONFLICT);
-            } else {
-                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case DUPLICATE:
+                    return new ResponseEntity<>(res, HttpStatus.CONFLICT);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }
 
         } else {
@@ -83,12 +85,14 @@ public class UserController {
             Map<String, String> res = userService.loginService(userId, userPassword);
             String result = res.get("result");
 
-            if (result.equals(SUCCESS)) {
-                return new ResponseEntity<>(res, HttpStatus.OK);
-            } else if (result.equals(WRONG) || result.equals(NO_SUCH)) {
-                return new ResponseEntity<>(res, HttpStatus.CONFLICT);
-            } else {
-                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case WRONG:
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.CONFLICT);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }
 
         } else {
@@ -104,7 +108,7 @@ public class UserController {
      * access token 필요
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
-     * @return 당사자가 조회 가능한 사용자 정보 반환, 성패에 따른 result 반환
+     * @return 조회 성공 시 당사자가 접근 가능한 사용자 정보 반환, 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
     @GetMapping("/info")
@@ -113,12 +117,13 @@ public class UserController {
         MyInfoDto myInfoDtoRes = userService.myInfoService(jwt);
         String result = myInfoDtoRes.getResult();
 
-        if (result.equals(SUCCESS)) {
-            return new ResponseEntity<>(myInfoDtoRes, HttpStatus.OK);
-        } else if (result.equals(NO_SUCH)) {
-            return new ResponseEntity<>(myInfoDtoRes, HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(myInfoDtoRes, HttpStatus.BAD_REQUEST);
+        switch (result) {
+            case SUCCESS:
+                return new ResponseEntity<>(myInfoDtoRes, HttpStatus.OK);
+            case NO_SUCH:
+                return new ResponseEntity<>(myInfoDtoRes, HttpStatus.NOT_FOUND);
+            default:
+                return new ResponseEntity<>(myInfoDtoRes, HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -129,7 +134,7 @@ public class UserController {
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
      * @param req "userNickname"을 key로 가지는 Map<String, String>
-     * @return userNickname 반환, 성패에 따른 result 반환
+     * @return 수정 성공 시 userNickname 반환, 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
     @PutMapping("/edit/nickname")
@@ -143,12 +148,13 @@ public class UserController {
             Map<String, String> res = userService.editNicknameService(jwt, userNickname);
             String result = res.get("result");
 
-            if (result.equals(SUCCESS)) {
-                return new ResponseEntity<>(res, HttpStatus.OK);
-            } else if (result.equals(NO_SUCH)) {
-                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }
 
         } else {
@@ -180,12 +186,13 @@ public class UserController {
         Map<String, String> res = userService.editProfileService(jwt, multipartFile);
         String result = res.get("result");
 
-        if (result.equals(SUCCESS)) {
-            return new ResponseEntity<>(res, HttpStatus.OK);
-        } else if (result.equals(NO_SUCH)) {
-            return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+        switch (result) {
+            case SUCCESS:
+                return new ResponseEntity<>(res, HttpStatus.OK);
+            case NO_SUCH:
+                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+            default:
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -204,12 +211,13 @@ public class UserController {
         Map<String, String> res = userService.deleteProfileService(jwt);
         String result = res.get("result");
 
-        if (result.equals(SUCCESS)) {
-            return new ResponseEntity<>(res, HttpStatus.OK);
-        } else if (result.equals(NO_SUCH)) {
-            return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+        switch (result) {
+            case SUCCESS:
+                return new ResponseEntity<>(res, HttpStatus.OK);
+            case NO_SUCH:
+                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+            default:
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -219,7 +227,7 @@ public class UserController {
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
      * @param req "userGitUsername", "userGitToken"를 key로 가지는 Map<String, String>
-     * @return 성공 시 userGitUsername 반환, 성패에 따른 result 반환
+     * @return 수정 성공 시 userGitUsername 반환, 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
     @PutMapping("/edit/git")
@@ -234,12 +242,13 @@ public class UserController {
             Map<String, String> res = userService.editGitService(jwt, userGitUsername, userGitToken);
             String result = res.get("result");
 
-            if (result.equals(SUCCESS)) {
-                return new ResponseEntity<>(res, HttpStatus.OK);
-            } else if (result.equals(NO_SUCH)) {
-                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }
 
         } else {
@@ -271,14 +280,15 @@ public class UserController {
             Map<String, String> res = userService.editPasswordService(jwt, userPassword, userNewPassword);
             String result = res.get("result");
 
-            if (result.equals(SUCCESS)) {
-                return new ResponseEntity<>(res, HttpStatus.OK);
-            } else if (result.equals(NO_SUCH)) {
-                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
-            } else if (result.equals(WRONG)) {
-                return new ResponseEntity<>(res, HttpStatus.CONFLICT);
-            } else {
-                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                case WRONG:
+                    return new ResponseEntity<>(res, HttpStatus.CONFLICT);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }
 
         } else {
@@ -303,74 +313,113 @@ public class UserController {
         Map<String, String> res = userService.quitService(jwt);
         String result = res.get("result");
 
-        if (result.equals(SUCCESS)) {
-            return new ResponseEntity<>(res, HttpStatus.OK);
-        } else if(result.equals(NO_PER)) {
-            return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
-        } else if (result.equals(NO_SUCH)) {
-            return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+        switch (result) {
+            case SUCCESS:
+                return new ResponseEntity<>(res, HttpStatus.OK);
+            case NO_PER:
+                return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
+            case NO_SUCH:
+                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+            default:
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    // 개인 환경 세팅 저장
+    /**
+     * 사용자별로 개인 환경 세팅을 저장하는 API
+     *
+     * @param jwt         회원가입 및 로그인 시 발급되는 access token
+     * @param settingsDto 개인 환경 세팅 정보
+     * @return 성패에 따른 result 반환
+     * @status 200, 400, 401, 404
+     */
     @PutMapping("/personal")
-    public ResponseEntity<String> personalPost(@RequestHeader("Authorization") String jwt,
-                                               @RequestBody SettingsDto req) {
+    public ResponseEntity<Map<String, String>> personalPost(@RequestHeader("Authorization") String jwt,
+                                                            @RequestBody SettingsDto settingsDto) {
 
-        // 일단 성공하면 이렇게 반환될 겁니다
-        if (userService.personalPost(jwt, req).equals("success")) {
-            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+        Map<String, String> res = userService.personalPostService(jwt, settingsDto);
+        String result = res.get("result");
+
+        switch (result) {
+            case SUCCESS:
+                return new ResponseEntity<>(res, HttpStatus.OK);
+            case NO_SUCH:
+                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+            default:
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    // 개인 환경 세팅 조회
+    /**
+     * 사용자별 개인 환경 세팅을 조회하는 API
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @return 조회 성공 시 개인 환경 세팅 정보 반환, 성패에 따른 result 반환
+     * @status 200, 400, 401, 404
+     */
     @GetMapping("/personal")
     public ResponseEntity<SettingsDto> personalGet(@RequestHeader("Authorization") String jwt) {
 
-        SettingsDto settingsDto = userService.personalGet(jwt);
+        SettingsDto settingsDtoRes = userService.personalGetService(jwt);
+        String result = settingsDtoRes.getResult();
 
-        if (settingsDto.getResult().equals("success")) {
-            return new ResponseEntity<>(settingsDto, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        switch (result) {
+            case SUCCESS:
+                return new ResponseEntity<>(settingsDtoRes, HttpStatus.OK);
+            case NO_SUCH:
+                return new ResponseEntity<>(settingsDtoRes, HttpStatus.NOT_FOUND);
+            default:
+                return new ResponseEntity<>(settingsDtoRes, HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    // (남의) 마이페이지 조회
+    /**
+     * 사용자의 프로필을 UserSeq로 조회하는 API
+     *
+     * @param userSeq 프로필을 조회하고자 하는 사용자의 UserSeq
+     * @return 조회 성공 시 외부인이 접근 가능한 사용자 정보 반환, 성패에 따른 result 반환
+     * @status 200, 400, 404
+     */
     @GetMapping("/mypage/{userSeq}")
     public ResponseEntity<UserInfoDto> mypageGet(@PathVariable Long userSeq) {
 
-        UserInfoDto userInfoDto = userService.mypage(userSeq);
+        UserInfoDto userInfoDtoRes = userService.mypageService(userSeq);
+        String result = userInfoDtoRes.getResult();
 
-        if (userInfoDto.getResult() == UserInfoDto.Result.SUCCESS) {
-            return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        switch (result) {
+            case SUCCESS:
+                return new ResponseEntity<>(userInfoDtoRes, HttpStatus.OK);
+            case NO_SUCH:
+                return new ResponseEntity<>(userInfoDtoRes, HttpStatus.NOT_FOUND);
+            default:
+                return new ResponseEntity<>(userInfoDtoRes, HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    // 사용자 검색하기
+    /**
+     * 사용자를 검색하는 API
+     *
+     * @param req "searchWord"를 key로 가지는 Map<String, String>
+     * @return 조회 성공 시 searchWord가 Id 혹은 Nickname에 포함되는 사용자의 리스트를 반환
+     * @status 200, 400
+     */
     @PostMapping("/search")
     public ResponseEntity<List<UserInfoDto>> searchUserGet(@RequestBody Map<String, String> req) {
 
-        String word = req.get("searchWord");
+        if (req.containsKey("searchWord")) {
 
-        // 내가 속한 것만 골라서 반환
-        List<UserInfoDto> userInfoDtoList = userService.searchUser(word);
+            String searchWord = req.get("searchWord");
 
-        if (userInfoDtoList == null) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        } else {
-            // 리스트가 비어있어도 잘못된 게 아니기 때문에 그건 거르지 않는다
+            List<UserInfoDto> userInfoDtoList = userService.searchUser(searchWord);
             return new ResponseEntity<>(userInfoDtoList, HttpStatus.OK);
+
+        } else {
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
+
         }
 
     }

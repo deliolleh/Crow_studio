@@ -3,6 +3,9 @@ package com.example.goldencrow.user.dto;
 import com.example.goldencrow.user.UserEntity;
 import lombok.Data;
 
+/**
+ * 외부인의 회원정보 조회에 출력으로 사용될 DTO
+ */
 @Data
 public class UserInfoDto {
 

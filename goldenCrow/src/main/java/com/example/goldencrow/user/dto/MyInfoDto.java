@@ -4,7 +4,7 @@ import com.example.goldencrow.user.UserEntity;
 import lombok.Data;
 
 /**
- * 회원정보 조회에 출력으로 사용될 dto
+ * 당사자의 회원정보 조회에 출력으로 사용될 DTO
  */
 @Data
 public class MyInfoDto {
@@ -40,7 +40,11 @@ public class MyInfoDto {
             this.userGitUsername = userEntity.getUserGitUsername();
         }
 
-        // userGitToken은 service 단에서 encoding을 거쳐 기록
+        if (userEntity.getUserGitToken() == null) {
+            this.userGitToken = "";
+        } else {
+            this.userGitToken = userEntity.getUserGitToken();
+        }
 
     }
 

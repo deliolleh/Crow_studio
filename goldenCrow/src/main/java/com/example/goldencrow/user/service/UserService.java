@@ -141,7 +141,7 @@ public class UserService {
      * 각 회원의 정보를 조회하는 내부 로직
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
-     * @return 당사자가 조회 가능한 사용자 정보 반환
+     * @return 조회 성공 시 당사자가 접근 가능한 사용자 정보 반환, 성패에 따른 result 반환
      */
     public MyInfoDto myInfoService(String jwt) {
 
@@ -162,11 +162,6 @@ public class UserService {
 
             // 내보내기 위한 MyInfoDto 생성
             MyInfoDto myInfoDto = new MyInfoDto(userEntity);
-            if (userEntity.getUserGitToken() == null) {
-                myInfoDto.setUserGitToken("");
-            } else {
-                myInfoDto.setUserGitToken(userEntity.getUserGitToken());
-            }
 
             // 위의 과정을 무사히 통과했으므로
             myInfoDto.setResult(SUCCESS);
@@ -376,6 +371,8 @@ public class UserService {
             // 사용자의 Git 정보를 변경한 후 DB에 기록
             UserEntity userEntity = userEntityOptional.get();
             userEntity.setUserGitUsername(userGitUsername);
+
+
             userEntity.setUserGitToken(userGitToken);
             userRepository.saveAndFlush(userEntity);
 
@@ -446,7 +443,12 @@ public class UserService {
 
     }
 
-    // 회원탈퇴
+    /**
+     * 회원 탈퇴 내부 로직
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @return 성패에 따른 result 반환
+     */
     public Map<String, String> quitService(String jwt) {
 
         Map<String, String> serviceRes = new HashMap<>();
@@ -526,90 +528,150 @@ public class UserService {
 
     }
 
-    // 개인 환경세팅 저장
-    public String personalPost(String jwt, SettingsDto data) {
+    /**
+     * 유저별로 개인 환경 세팅을 저장하는 내부 로직
+     *
+     * @param jwt         회원가입 및 로그인 시 발급되는 access token
+     * @param settingsDto 개인 환경 세팅 정보
+     * @return 성패에 따른 result 반환
+     */
+    public Map<String, String> personalPostService(String jwt, SettingsDto settingsDto) {
+
+        Map<String, String> serviceRes = new HashMap<>();
 
         try {
-            // 사용자 정보 불러와서 체크하고
-            // jwt에서 userSeq를 뽑아내고
-            Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
-            // userSeq로 userEntity를 뽑아낸 다음
-            UserEntity userEntity = userRepository.findById(userSeq).get();
+            // jwt가 인증하는 사용자의 UserEntity를 추출
+            Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
 
-            // 받아온 json을 String으로 바꾸기
-            JSONObject jsonObject = new JSONObject(data);
+            // 해당하는 사용자가 존재하는지 확인
+            if (!userEntityOptional.isPresent()) {
+                // 해당하는 사용자가 없음
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
+            }
+
+            UserEntity userEntity = userEntityOptional.get();
+
+            // DB에 varchar 형태로 저장하기 위해 JSON을 String꼴로 치환함
+            JSONObject jsonObject = new JSONObject(settingsDto);
             String settings = jsonObject.toString();
-            userEntity.setUserSettings(settings);
 
-            // 해당 부분 등록 (수정)
+            // userEntity의 환경 세팅을 갱신하여 기록
+            userEntity.setUserSettings(settings);
             userRepository.saveAndFlush(userEntity);
 
-            return "success";
+            // 위의 과정을 무사히 통과했으므로
+            serviceRes.put("result", SUCCESS);
+
         } catch (Exception e) {
-            e.printStackTrace();
-            return "error";
+            serviceRes.put("result", UNKNOWN);
+
         }
+
+        return serviceRes;
 
     }
 
-    // 개인 환경세팅 조회
-    public SettingsDto personalGet(String jwt) {
-
-        ObjectMapper mapper = new ObjectMapper();
-        SettingsDto settingsDto = new SettingsDto();
+    /**
+     * 사용자별 개인 환경 세팅을 조회하는 내부 로직
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @return 조회 성공 시 개인 환경 세팅 정보 반환, 성패에 따른 result 반환
+     */
+    public SettingsDto personalGetService(String jwt) {
 
         try {
-            // 사용자 정보 불러와서 체크하고
-            // jwt에서 userSeq를 뽑아내고
-            Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
-            // userSeq로 userEntity를 뽑아낸 다음
-            UserEntity userEntity = userRepository.findById(userSeq).get();
-            String data = userEntity.getUserSettings();
+            // jwt가 인증하는 사용자의 UserEntity를 추출
+            Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
 
-            settingsDto = mapper.readValue(data, SettingsDto.class);
-            settingsDto.setResult("success");
+            // 해당하는 사용자가 존재하는지 확인
+            if (!userEntityOptional.isPresent()) {
+                // 해당하는 사용자가 없음
+                SettingsDto settingsDto = new SettingsDto();
+                settingsDto.setResult(NO_SUCH);
+                return settingsDto;
+            }
+
+            UserEntity userEntity = userEntityOptional.get();
+            String settings = userEntity.getUserSettings();
+
+            // 내보내기 위한 SettingsDto 생성
+            ObjectMapper mapper = new ObjectMapper();
+            SettingsDto settingsDto = mapper.readValue(settings, SettingsDto.class);
+
+            // 위의 과정을 무사히 통과했으므로
+            settingsDto.setResult(SUCCESS);
+            return settingsDto;
 
         } catch (Exception e) {
-            e.printStackTrace();
-            settingsDto.setResult("error");
-        }
+            SettingsDto settingsDto = new SettingsDto();
+            settingsDto.setResult(UNKNOWN);
+            return settingsDto;
 
-        return settingsDto;
+        }
 
     }
 
-    // 마이페이지 조회
-    public UserInfoDto mypage(Long userSeq) {
-
-        UserInfoDto userInfoDto = new UserInfoDto();
+    /**
+     * 사용자의 프로필을 UserSeq로 조회하는 내부 로직
+     *
+     * @param userSeq 프로필을 조회하고자 하는 사용자의 UserSeq
+     * @return 조회 성공 시 외부인이 접근 가능한 사용자 정보 반환, 성패에 따른 result 반환
+     */
+    public UserInfoDto mypageService(Long userSeq) {
 
         try {
-            UserEntity userEntity = userRepository.findById(userSeq).get();
-            userInfoDto = new UserInfoDto(userEntity);
-            userInfoDto.setResult(UserInfoDto.Result.SUCCESS);
+
+            // 입력받은 UserSeq를 가지는 사용자를 추출
+            Optional<UserEntity> userEntityOptional = userRepository.findById(userSeq);
+
+            // 해당하는 사용자가 존재하는지 확인
+            if (!userEntityOptional.isPresent()) {
+                // 해당하는 사용자가 없음
+                UserInfoDto userInfoDto = new UserInfoDto();
+                userInfoDto.setResult(NO_SUCH);
+                return userInfoDto;
+            }
+
+            UserEntity userEntity = userEntityOptional.get();
+
+            // 내보내기 위한 UserInfoDto 생성
+            UserInfoDto userInfoDto = new UserInfoDto(userEntity);
+
+            // 위의 과정을 무사히 통과했으므로
+            userInfoDto.setResult(SUCCESS);
+            return userInfoDto;
 
         } catch (Exception e) {
-            userInfoDto.setResult(UserInfoDto.Result.FAILURE);
-            throw new RuntimeException(e);
-        }
+            UserInfoDto userInfoDto = new UserInfoDto();
+            userInfoDto.setResult(UNKNOWN);
+            return userInfoDto;
 
-        return userInfoDto;
+        }
 
     }
 
-    // 사용자 검색
-    public List<UserInfoDto> searchUser(String word) {
+    /**
+     * 사용자를 검색하는 내부 로직
+     *
+     * @param searchWord 검색하고자 하는 단어
+     * @return 조회 성공 시 searchWord가 Id 혹은 Nickname에 포함되는 사용자의 리스트를 반환
+     */
+    public List<UserInfoDto> searchUser(String searchWord) {
 
-        List<UserEntity> userEntityList = userRepository.findAllByUserIdContainingOrUserNicknameContaining(word, word);
+        List<UserEntity> userEntityList =
+                userRepository.findAllByUserIdContainingOrUserNicknameContaining(searchWord, searchWord);
+
+        // 내보내기 위한 List<UserInfoDto> 생성
         List<UserInfoDto> userInfoDtoList = new ArrayList<>();
-
         for (UserEntity u : userEntityList) {
-            userInfoDtoList.add(new UserInfoDto(u));
+            UserInfoDto userInfoDto = new UserInfoDto(u);
+            userInfoDto.setResult(SUCCESS);
+            userInfoDtoList.add(userInfoDto);
         }
 
         return userInfoDtoList;
-
     }
 }
