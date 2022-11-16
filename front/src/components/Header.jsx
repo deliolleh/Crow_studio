@@ -65,25 +65,17 @@ const Header = () => {
             <li className="nav-item">
               <Link
                 className="px-0.5 py-2 flex items-center justify-end text-lg leading-snug text-white hover:opacity-75"
-                to="/"
+                to="/teams"
               >
-                <span className="ml-7">포럼</span>
+                <span className="ml-7">팀 목록</span>
               </Link>
             </li>
             <li className="nav-item">
               <Link
                 className="px-0.5 py-2 flex items-center justify-end text-lg leading-snug text-white hover:opacity-75"
-                to="/main"
+                to="/teams/create"
               >
-                <span className="ml-7">프로젝트</span>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className="px-0.5 py-2 flex items-center justify-end text-lg leading-snug text-white hover:opacity-75"
-                to="/project/create"
-              >
-                <span className="ml-7">+</span>
+                <span className="ml-7">새로운 팀 생성 +</span>
               </Link>
             </li>
           </ul>
