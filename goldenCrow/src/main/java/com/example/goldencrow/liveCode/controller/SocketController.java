@@ -24,9 +24,9 @@ public class SocketController {
     @MessageMapping("/share/{teamSeq}/{fileName}")
     @SendTo("/topic/{teamSeq}/{fileName}")
     public FileContentSaveDto saveContent(@DestinationVariable Long teamSeq, @DestinationVariable String fileName, Map<String,String> body) throws Exception {
+        Thread.sleep(1000);
         FileContentSaveDto fileContentSaveDto = new FileContentSaveDto(body.get("content"), body.get("path"));
         liveFileService.insertLive(fileContentSaveDto);
-        System.out.println(fileContentSaveDto.getPath());
         return fileContentSaveDto;
     }
 }
