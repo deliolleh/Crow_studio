@@ -38,15 +38,12 @@ const Directory = ({ showFileContent, saveFileContent }) => {
   const [curPath, setCurPath] = useState("");
   const [curName, setCurName] = useState("");
 
-  const [testData, setTestData] = useState({});
+  const [filesDirectories, setFilesDirectories] = useState({});
 
   useEffect(() => {
     dispatch(getAllFiles(teamSeq))
       .unwrap()
-      .then((res) => {
-        console.log("res:", res);
-        setTestData(res);
-      })
+      .then(setFilesDirectories)
       .catch(console.error);
   }, [dispatch, teamSeq]);
 
@@ -66,7 +63,7 @@ const Directory = ({ showFileContent, saveFileContent }) => {
         console.log(`/${newDirectoryName} 생성 완료`);
         dispatch(getAllFiles(teamSeq))
           .unwrap()
-          .then(setTestData)
+          .then(setFilesDirectories)
           .catch(console.error);
       })
       .catch(console.error);
@@ -88,7 +85,7 @@ const Directory = ({ showFileContent, saveFileContent }) => {
         console.log(`${newFileName} 생성 완료`);
         dispatch(getAllFiles(teamSeq))
           .unwrap()
-          .then(setTestData)
+          .then(setFilesDirectories)
           .catch(console.error);
       })
       .catch(console.error);
@@ -116,7 +113,7 @@ const Directory = ({ showFileContent, saveFileContent }) => {
         console.log(`${curName} -> ${newName} 변경 성공`);
         dispatch(getAllFiles(teamSeq))
           .unwrap()
-          .then(setTestData)
+          .then(setFilesDirectories)
           .catch(console.error);
       })
       .catch(console.error);
@@ -137,7 +134,7 @@ const Directory = ({ showFileContent, saveFileContent }) => {
         console.log("삭제 성공 res:", res);
         dispatch(getAllFiles(teamSeq))
           .unwrap()
-          .then(setTestData)
+          .then(setFilesDirectories)
           .catch(console.error);
       })
       .catch(console.error);
@@ -165,7 +162,7 @@ const Directory = ({ showFileContent, saveFileContent }) => {
   };
 
   useEffect(() => {
-    console.log("curPath:", curPath);
+    console.log("curPath re-rendering");
   }, [curPath]);
 
   return (
@@ -210,7 +207,7 @@ const Directory = ({ showFileContent, saveFileContent }) => {
             sx={{ flexGrow: 1, overflowY: "auto" }}
             onNodeSelect={nodeSelectHandler}
           >
-            {renderTree(testData)}
+            {renderTree(filesDirectories)}
           </TreeView>
         </div>
       </DirectoryContainer>

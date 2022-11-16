@@ -61,14 +61,12 @@ const TestMain = () => {
         .then(console.log)
         .catch(console.error);
     } else {
-      console.log(targetPath);
       const requireData = {
         filePath: targetPath,
       };
       dispatch(getFileContent(requireData))
         .unwrap()
         .then((res) => {
-          console.log(res);
           setCurFilePath(targetPath);
           // setCurFileContent(res);
           editorRef.current.getModel().setValue(res);
