@@ -1,7 +1,6 @@
 package com.example.goldencrow.file.controller;
 
-import com.example.goldencrow.file.fileDto.FileCreateDto;
-import com.example.goldencrow.file.fileDto.FileCreateRequestDto;
+import com.example.goldencrow.file.dto.FileCreateRequestDto;
 import com.example.goldencrow.file.service.FileService;
 import com.example.goldencrow.user.service.JwtService;
 import org.springframework.http.HttpStatus;
