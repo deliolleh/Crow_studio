@@ -159,6 +159,21 @@ export const resignTeam = createAsyncThunk(
   }
 );
 
+export const modifyProjectType = createAsyncThunk(
+  "team/modifyProjectType",
+  async ({ teamSeq, modifiedData }, { rejectWithValue }) => {
+    try {
+      const response = await teamApi.modifyProjectType(teamSeq, modifiedData);
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+      return rejectWithValue(err.response.status);
+    }
+  }
+);
+
 //
 
 //

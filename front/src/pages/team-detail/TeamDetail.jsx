@@ -2,7 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { getTeam, addMember, deleteMember } from "../../redux/teamSlice";
+import {
+  getTeam,
+  addMember,
+  deleteMember,
+  modifyProjectType,
+} from "../../redux/teamSlice";
 import { searchUser } from "../../redux/userSlice";
 
 import Header from "../../components/Header";
@@ -14,6 +19,7 @@ import Modal from "react-modal";
 
 import { IoAdd } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
+import { BsPencilFill } from "react-icons/bs";
 
 const customStyles = {
   content: {
@@ -40,7 +46,7 @@ const TeamDetail = () => {
   const navigate = useNavigate();
 
   const { teamSeq } = useParams();
-  const { mySeq, myNickname } = useSelector((state) => state.user.value);
+  const mySeq = useSelector((state) => state.user.value.mySeq);
 
   const [team, setTeam] = useState({});
   const {
@@ -53,6 +59,8 @@ const TeamDetail = () => {
   } = team;
 
   const [isSearch, setIsSearch] = useState(false);
+  const [projectTypeInput, setProjectTypeInput] = useState(false);
+  const [modifiedProjectType, setModifiedProjectType] = useState(projectType);
 
   const [searchUserName, setSearchUserName] = useState("");
 
@@ -148,6 +156,28 @@ const TeamDetail = () => {
   }
 
   const goProjectHandler = () => navigate(`/project/${teamSeq}`);
+
+  const modifyProjectTypeHandler = (e) =>
+    setModifiedProjectType(e.target.value);
+
+  const submitProjectTypeHandler = (e) => {
+    e.preventDefault();
+    const modifiedData = { projectType: modifiedProjectType };
+    dispatch(modifyProjectType({ teamSeq, modifiedData }))
+      .unwrap()
+      .then((res) => {
+        console.log(res);
+        setProjectTypeInput(false);
+        dispatch(getTeam(teamSeq))
+          .unwrap()
+          .then((res) => {
+            setTeam(res);
+            console.log("res:", res);
+          })
+          .catch(console.error);
+      })
+      .catch(console.error);
+  };
 
   return (
     <React.Fragment>
@@ -304,10 +334,36 @@ const TeamDetail = () => {
                 프로젝트 타입
               </div>
               <div className="flex">
-                <div className="text-white text-sm p-2">{projectType}</div>
+                <div className="text-white text-sm p-2">
+                  {!projectTypeInput && (
+                    <div className="flex">
+                      <span>{projectType}</span>
+                      <BsPencilFill
+                        className="ml-3 text-sm text-point_yellow_+2 cursor-pointer"
+                        onClick={() => setProjectTypeInput(true)}
+                      />
+                    </div>
+                  )}
+                  {projectTypeInput && (
+                    <form onSubmit={submitProjectTypeHandler} className="flex">
+                      <select
+                        className="mt-1 w-full text-white py-2 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+                        id="projectType"
+                        name="projectType"
+                        value={modifiedProjectType}
+                        onChange={modifyProjectTypeHandler}
+                      >
+                        <option value="pure Python">pure Python</option>
+                        <option value="Django">Django</option>
+                        <option value="Flask">Flask</option>
+                        <option value="FastAPI">FastAPI</option>
+                      </select>
+                      <button onClick={submitProjectTypeHandler}>😎</button>
+                    </form>
+                  )}
+                </div>
               </div>
             </div>
-
             <button
               onClick={goProjectHandler}
               className="w-72 h-12 text-xl font-bold bg-point_light_yellow text-component_dark hover:bg-point_yellow rounded-md transition"
