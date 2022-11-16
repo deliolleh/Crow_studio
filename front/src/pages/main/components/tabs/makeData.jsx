@@ -7,6 +7,11 @@ import { EmulatorState, FileSystem } from "javascript-terminal";
 import editorApi from "../../../../api/editorApi";
 import compileApi from "../../../../api/compile";
 
+// icons
+import { BsPlayFill } from "react-icons/bs";
+import { BsStopFill } from "react-icons/bs";
+import { TbTerminal } from "react-icons/tb";
+
 export const MakeEditorData = (
   number,
   titlePrefix = "Tab",
@@ -99,7 +104,9 @@ export const MakeEditorData = (
             // defaultValue={
             //   i + 1 === 1 ? files["script.js"].value : files["style.css"].value
             // }
-            defaultValue={""}
+            defaultValue={
+              ""
+            }
             onMount={(editor) => (editorRef.current = editor)}
             options={{
               scrollBeyondLastLine: false,
@@ -163,7 +170,7 @@ export const MakeConsoleData = (
   return data;
 };
 
-export const CompileEditor = () => {
+export const CompileEditor = ({consoleHeight}) => {
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
   const [selectOption, setSelectOption] = useState([]);
@@ -220,23 +227,18 @@ export const CompileEditor = () => {
   };
 
   return (
-    <div style={{ margin: "0 10px" }}>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          margin: "0 5px",
-        }}
-      >
-        <div>Console</div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-          }}
-        >
-          <select style={{ marginRight: "10px" }}>
+    <div className="ml-[8px] px-3 rounded-[10px] bg-component_-2_dark">
+      {/* console 상단 */}
+      <div className="flex justify-between items-center mx-[5px] py-1.5">
+        <div className="flex items-center text-white font-bold text-[14px]">
+          <TbTerminal className="mr-1" />
+          Console
+        </div>
+        <div className="flex items-center">
+          {/* run 가능한 파일들 dropdown */}
+          <select
+            className="mt-1 mr-2 w-full text-white text-xs py-1 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+          >
             {selectOption?.map((file) => {
               const name = file.split("/")[-1];
               const folder = file.split("/")[-2];
@@ -247,68 +249,52 @@ export const CompileEditor = () => {
               );
             })}
           </select>
-          <div onClick={compileStart} style={{ marginRight: "10px" }}>
+          {/* btns */}
+          {/* <div
+            onClick={compileStart}
+            className="mr-[10px]"
+          >
             start
           </div>
-          <div onClick={compileStop}>stop</div>
+          <div onClick={compileStop}>stop</div> */}
+          <BsPlayFill
+            onClick={compileStart}
+            className="mr-[10px]"
+            size="30"
+          />
+          <BsStopFill
+            onClick={compileStop}
+            size="30"
+          />
         </div>
       </div>
-      <hr />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          paddingLeft: "2em",
-          paddingRight: "2em",
-          justifyContent: "space-evenly",
-        }}
-      >
-        <div
-          style={{
-            width: "25%",
-            height: "8em",
-          }}
-        >
-          <div
-            style={{
-              fontWeight: "bolder",
-            }}
-          >
-            Input
+      {/* console 하단 */}
+      <div className="flex justify-between">
+        {/* input */}
+        <div className="w-1/2 mr-1">
+          <div className="flex items-center sm:w-[138px] w-full h-[31px] px-3 text-sm text-white bg-component_item_bg_dark rounded-t-[10px] border-b-2 border-point_purple">
+            <div className="flex items-center">
+              <TbTerminal className="mr-1" />
+              Input
+            </div>
           </div>
           <textarea
             name="input"
             value={inputData}
             onChange={(e) => changeInputData(e)}
             placeholder="Input here"
-            style={{
-              resize: "none",
-              width: "100%",
-              height: "100%",
-              padding: "10px",
-            }}
+            className="resize-none w-full h-[8em] p-[10px] bg-component_item_bg_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
           ></textarea>
         </div>
-        <div
-          style={{
-            width: "25%",
-          }}
-        >
-          <div
-            style={{
-              fontWeight: "bolder",
-            }}
-          >
-            output
+        {/* output */}
+        <div className="w-1/2 ml-1">
+        <div className="flex items-center sm:w-[138px] w-full h-[31px] px-3 text-sm text-white bg-component_item_bg_+2_dark rounded-t-[10px] border-b-2 border-point_purple">
+          <div className="flex items-center">
+            <TbTerminal className="mr-1" />
+            Output
           </div>
-          <div
-            style={{
-              width: "100%",
-              height: "8em",
-              backgroundColor: "#BBBBBB",
-              color: "white",
-              padding: "10px",
-            }}
+          </div>
+          <div className="w-full h-[8em] p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white"
           >
             {outputData}
           </div>

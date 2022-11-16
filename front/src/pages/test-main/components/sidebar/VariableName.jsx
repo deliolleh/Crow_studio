@@ -19,14 +19,20 @@ const VariableName = () => {
 
   const rendering = () => {
     let show = [];
-    result.map((li, index) => show.push(
-      <div
-        key={`${index}`}
-        className="mt-1 ml-[15px] font-medium text-white"
-      >
-        {li}
-      </div>
-    ));
+    result.map((li, index) =>
+      show.push(
+        <div
+          key={`${index}`}
+          className="mt-1 ml-[15px] font-medium text-white"
+          onClick={() => navigator.clipboard.writeText(li)}
+          style={{
+            cursor: "pointer",
+          }}
+        >
+          {li}
+        </div>
+      )
+    );
     return show;
   };
 
@@ -45,7 +51,7 @@ const VariableName = () => {
   };
 
   return (
-    <>
+    <React.Fragment>
       <VariableNameContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
         <div
           className="flex justify-between items-center"
@@ -57,7 +63,10 @@ const VariableName = () => {
         <div style={{ padding: 15 }}>
           <div className="pl-1">
             <div className="text-primary_dark text-sm font-bold">
-              <div className="flex justify-items-center items-center mb-3">
+              <form
+                onSubmit={sendWord}
+                className="flex justify-items-center items-center mb-3"
+              >
                 <input
                   type="text"
                   name="variable"
@@ -73,13 +82,13 @@ const VariableName = () => {
                 >
                   추천
                 </button>
-              </div>
+              </form>
               {resultActive && rendering()}
             </div>
           </div>
         </div>
       </VariableNameContainer>
-    </>
+    </React.Fragment>
   );
 };
 
