@@ -310,7 +310,7 @@ const TeamDetail = () => {
 
             <button
               onClick={goProjectHandler}
-              className="w-72 h-12 mt-14 text-xl font-bold bg-point_light_yellow text-component_dark hover:bg-point_yellow rounded-md transition"
+              className="w-72 h-12 text-xl font-bold bg-point_light_yellow text-component_dark hover:bg-point_yellow rounded-md transition"
             >
               프로젝트로 이동
             </button>
