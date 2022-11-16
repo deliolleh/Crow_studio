@@ -1,4 +1,6 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Menu, Transition } from "@headlessui/react";
 
@@ -6,26 +8,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { ReactComponent as IcAddTeam } from "../../../../assets/icons/ic_addTeam.svg";
 import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
-// styled
-const TeamContainer = styled.div`
-  border-radius: 0 10px 10px 0;
-  height: 100vh;
-`;
-const IcSpan = styled.span`
-  padding: 0.5rem;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #d9d9d9;
-    border-radius: 5px;
-
-    & svg {
-      & path {
-        fill: #2b2c2b;
-      }
-    }
-  }
-`;
+import { getTeam } from "../../../../redux/teamSlice";
 
 // dropdown func
 function classNames(...classes) {
@@ -33,8 +16,24 @@ function classNames(...classes) {
 }
 
 const Team = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { teamSeq } = useParams();
+  const [team, setTeam] = useState({});
+  const { teamName, teamLeaderNickname, memberDtoList: members } = team;
+
+  useEffect(() => {
+    dispatch(getTeam(teamSeq))
+      .unwrap()
+      .then((res) => {
+        setTeam(res);
+        console.log("res:", res);
+      })
+      .catch(console.error);
+  }, [dispatch, teamSeq]);
+
   return (
-    <>
+    <React.Fragment>
       <TeamContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
         <div
           className="flex justify-between items-center"
@@ -45,8 +44,8 @@ const Team = () => {
             <IcSpan style={{ padding: 6.544 }}>
               <IcAddTeam alt="IcAddTeam" />
             </IcSpan>
-            {/* dropdown */}
-            <Menu as="div" className="relative">
+            {/* 드롭다운 */}
+            {/* <Menu as="div" className="relative">
               <Menu.Button>
                 <IcSpan className="flex">
                   <IcToggle alt="IcToggle" aria-hidden="true" />
@@ -127,73 +126,63 @@ const Team = () => {
                   </div>
                 </Menu.Items>
               </Transition>
-            </Menu>
+            </Menu> */}
           </div>
         </div>
         <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
         <div className="" style={{ padding: 15 }}>
           <div className="pl-1">
-            <div className="text-primary_dark text-sm font-bold ">팀장</div>
-            <div className="flex items-center text-sm mb-2">
-              <img
-                className="rounded-full flex my-2 mr-4"
-                style={{ width: 45, height: 45 }}
-                src={require("../../../../assets/images/avatar.png")}
-                alt="Profile"
-              />
-              <div>박자연</div>
+            <div className="mb-4">
+              <span
+                className="text-white text-lg cursor-pointer"
+                onClick={() => navigate(`/teams/${teamSeq}`)}
+              >
+                {teamName}
+              </span>
             </div>
-            <div className="text-primary_dark text-sm font-bold">팀원</div>
-            <div className="flex items-center text-sm">
-              <img
-                className="rounded-full flex mt-2 mb-0.5 mr-4"
-                style={{ width: 45, height: 45 }}
-                src={require("../../../../assets/images/avatar.png")}
-                alt="Profile"
-              />
-              <div>김수빈</div>
+            <div className="mb-4">
+              <div className="text-primary_dark text-sm font-bold">팀장</div>
+              <div className="flex items-center text-white text-lg">
+                <div>{teamLeaderNickname}</div>
+              </div>
             </div>
-            <div className="flex items-center text-sm">
-              <img
-                className="rounded-full flex mt-2 mb-0.5 mr-4"
-                style={{ width: 45, height: 45 }}
-                src={require("../../../../assets/images/avatar.png")}
-                alt="Profile"
-              />
-              <div>우영택</div>
-            </div>
-            <div className="flex items-center text-sm">
-              <img
-                className="rounded-full flex mt-2 mb-0.5 mr-4"
-                style={{ width: 45, height: 45 }}
-                src={require("../../../../assets/images/avatar.png")}
-                alt="Profile"
-              />
-              <div>이주영</div>
-            </div>
-            <div className="flex items-center text-sm">
-              <img
-                className="rounded-full flex mt-2 mb-0.5 mr-4"
-                style={{ width: 45, height: 45 }}
-                src={require("../../../../assets/images/avatar.png")}
-                alt="Profile"
-              />
-              <div>한재혁</div>
-            </div>
-            <div className="flex items-center text-sm">
-              <img
-                className="rounded-full flex mt-2 mb-0.5 mr-4"
-                style={{ width: 45, height: 45 }}
-                src={require("../../../../assets/images/avatar.png")}
-                alt="Profile"
-              />
-              <div>함희주</div>
+            <div>
+              <div className="text-primary_dark text-sm font-bold">팀원</div>
+              {members?.map((member) => (
+                <div
+                  key={`m${member.memberSeq}`}
+                  className="text-white text-lg"
+                >
+                  {member.memberNickname}
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </TeamContainer>
-    </>
+    </React.Fragment>
   );
 };
 
 export default Team;
+
+// styled
+const TeamContainer = styled.div`
+  border-radius: 0 10px 10px 0;
+  height: 100vh;
+`;
+const IcSpan = styled.span`
+  padding: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #d9d9d9;
+    border-radius: 5px;
+
+    & svg {
+      & path {
+        fill: #2b2c2b;
+      }
+    }
+  }
+`;
