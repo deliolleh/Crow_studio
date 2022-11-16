@@ -3,6 +3,7 @@ package com.example.goldencrow.liveCode.controller;
 import com.example.goldencrow.liveCode.dto.FileContentSaveDto;
 import com.example.goldencrow.liveCode.service.LiveFileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -20,10 +21,9 @@ public class SocketController {
      * @return
      * @throws Exception
      */
-    @MessageMapping("/share")
-    @SendTo("/topic/content")
-    public FileContentSaveDto saveContent(Map<String,String> body) throws Exception {
-        Thread.sleep(20);
+    @MessageMapping("/share/{teamSeq}/{fileName}")
+    @SendTo("/topic/{teamSeq}/{fileName}")
+    public FileContentSaveDto saveContent(@DestinationVariable Long teamSeq, @DestinationVariable String fileName, Map<String,String> body) throws Exception {
         FileContentSaveDto fileContentSaveDto = new FileContentSaveDto(body.get("content"), body.get("path"));
         liveFileService.insertLive(fileContentSaveDto);
         return fileContentSaveDto;
