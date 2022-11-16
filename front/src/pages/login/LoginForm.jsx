@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const initialInputState = { email: "", password: "" }; // 초기 이메일, 비밀번호 상태
-const initialErrorState = { emailErrorMsg: "", passwordErrorMsg: "" };
+const initialErrState = { emailErrMsg: "", passwordErrMsg: "" };
 
 const emailRegEx =
   /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
@@ -9,11 +9,10 @@ const emailRegEx =
 
 const LoginForm = ({ onLogin }) => {
   const [inputs, setInputs] = useState(initialInputState); // 초기 입력
-  const [errorMsgs, setErrorMsgs] = useState(initialErrorState); // 초기 에러메시지
+  const [errMsgs, setErrMsgs] = useState(initialErrState); // 초기 에러메시지
   const { email, password } = inputs; // 이메일, 비밀번호 상태 할당
-  const { emailErrorMsg, passwordErrorMsg } = errorMsgs; // 에러메시지 상태 할당
+  const { emailErrMsg, passwordErrMsg } = errMsgs; // 에러메시지 상태 할당
 
-  // inputChangeHandler
   const inputChangeHandler = (e) => {
     if (e.target.name === "email") {
       setInputs((prev) => {
@@ -26,37 +25,34 @@ const LoginForm = ({ onLogin }) => {
     }
   };
 
-  // submitHandler
   const submitHandler = (e) => {
     e.preventDefault();
-
     let isInvalid = false;
-    setErrorMsgs(initialErrorState);
+    setErrMsgs(initialErrState);
     // 이메일, 비밀번호 유효성 검사
     if (email.trim().length === 0) {
-      setErrorMsgs((prev) => {
-        return { ...prev, emailErrorMsg: "이메일을 입력하세요" };
+      setErrMsgs((prev) => {
+        return { ...prev, emailErrMsg: "이메일을 입력하세요" };
       });
       isInvalid = true;
     } else if (!emailRegEx.test(email)) {
-      setErrorMsgs((prev) => {
-        return { ...prev, emailErrorMsg: "이메일 형식이 올바르지 않습니다" };
+      setErrMsgs((prev) => {
+        return { ...prev, emailErrMsg: "이메일 형식이 올바르지 않습니다" };
       });
       isInvalid = true;
     }
     if (password.trim().length === 0) {
-      setErrorMsgs((prev) => {
-        return { ...prev, passwordErrorMsg: "비밀번호를 입력하세요" };
+      setErrMsgs((prev) => {
+        return { ...prev, passwordErrMsg: "비밀번호를 입력하세요" };
       });
       isInvalid = true;
     }
     if (isInvalid) {
       return;
     }
-
     const loginData = { userId: email, userPassword: password };
-    setErrorMsgs(initialErrorState);
-    onLogin(JSON.stringify(loginData));
+    setErrMsgs(initialErrState);
+    onLogin(loginData);
   };
 
   return (
@@ -65,11 +61,9 @@ const LoginForm = ({ onLogin }) => {
       onSubmit={submitHandler}
       className="flex flex-col items-center"
     >
-      {/* Email */}
+      {/* 이메일 */}
       <div className="w-80 mb-1">
-        <label htmlFor="email" className="">
-          이메일
-        </label>
+        <label htmlFor="email">이메일</label>
         <input
           type="email"
           id="email"
@@ -81,15 +75,13 @@ const LoginForm = ({ onLogin }) => {
           onChange={inputChangeHandler}
         />
         <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-          {emailErrorMsg}
+          {emailErrMsg}
         </div>
       </div>
 
-      {/* Password */}
+      {/* 비밀번호 */}
       <div className="w-80 mb-10">
-        <label htmlFor="password" className="">
-          비밀번호
-        </label>
+        <label htmlFor="password">비밀번호</label>
         <input
           type="password"
           id="password"
@@ -101,7 +93,7 @@ const LoginForm = ({ onLogin }) => {
           onChange={inputChangeHandler}
         />
         <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-          {passwordErrorMsg}
+          {passwordErrMsg}
         </div>
       </div>
 
