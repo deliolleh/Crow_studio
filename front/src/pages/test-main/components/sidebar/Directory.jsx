@@ -107,7 +107,7 @@ const Directory = ({ showFileContent, saveFileContent }) => {
       oldFileName: curName,
       fileTitle: newName,
     };
-    dispatch(renameFile(renameData))
+    dispatch(renameFile({ teamSeq, fileData: renameData }))
       .unwrap()
       .then(() => {
         console.log(`${curName} -> ${newName} 변경 성공`);
