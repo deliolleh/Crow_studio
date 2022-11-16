@@ -13,6 +13,8 @@ const teamApi = {
     api.delete("/teams/remove", { data: deleteData }),
   delegateLeader: (delegateData) => api.put("teams/beLeader", delegateData),
   resignTeam: (teamSeq) => api.delete(`teams/quit/${teamSeq}`),
+  modifyProjectType: (teamSeq, modifiedData) =>
+    api.put(`/teams/modify/type/${teamSeq}`, modifiedData),
 };
 
 export default teamApi;
