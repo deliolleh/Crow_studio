@@ -19,7 +19,7 @@ public interface FileRepository extends MongoRepository<FileEntity, ObjectId> {
     /**
      * 팀 시퀀스랑 파일 경로로 파일(디렉토리) 조회
      */
-    Optional<FileEntity> findByTeamSeqAfterFilePath(Long teamSeq, String filePath);
+    Optional<FileEntity> findFileEntityByTeamSeqAndFilePath(Long teamSeq, String filePath);
 //    /** 팀 시퀀스랑 파일 이름으로 파일 조회 */
 //    FileEntity findByTeamSeqAndFileTitle(Long teamSeq, String fileTitle);
 

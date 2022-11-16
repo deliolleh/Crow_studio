@@ -90,9 +90,13 @@ public class FileService {
     }
 
     /** 파일 삭제  */
+
+
+
     public Map<String, String> deleteFile(String filePath, Integer type, Long teamSeq) {
-        Optional<FileEntity> file = fileRepository.findByTeamSeqAfterFilePath(teamSeq, filePath);
+        Optional<FileEntity> file = fileRepository.findFileEntityByTeamSeqAndFilePath(teamSeq, filePath);
         Map<String, String> serviceRes = new HashMap<>();
+
         // 만약 이게 DB에 없는 파일 경로나 그렇다면 실패!
         if (!file.isPresent()) {
             serviceRes.put("result", NO_SUCH);
@@ -182,7 +186,7 @@ public class FileService {
         File targetFile = new File(newFilePath);
         File reNameFile = new File(renameFilePath);
 
-        Optional<FileEntity> file = fileRepository.findByTeamSeqAfterFilePath(teamSeq, filePath);
+        Optional<FileEntity> file = fileRepository.findFileEntityByTeamSeqAndFilePath(teamSeq, filePath);
 
         if (!file.isPresent()) {
             return false;
