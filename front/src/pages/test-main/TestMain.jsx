@@ -1,10 +1,10 @@
 import React, { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import Editor from "@monaco-editor/react";
+import Editor, { useMonaco } from "@monaco-editor/react";
 import styled from "styled-components";
 
-import { getFileContent } from "../../redux/fileSlice";
+import { getFileContent, saveFileContent } from "../../redux/fileSlice";
 import { getDirectoryList } from "../../redux/projectSlice";
 
 import Header from "../../components/Header";
@@ -18,10 +18,32 @@ import Settings from "./components/sidebar/Settings";
 
 const TestMain = () => {
   const dispatch = useDispatch();
-  const teamSeq = useParams();
+  const { teamSeq } = useParams();
   const editorRef = useRef(null);
   const [showItem, setShowItem] = useState("Dir");
   const [curFilePath, setCurFilePath] = useState("");
+
+  const monaco = useMonaco();
+  console.log("monaco:", monaco);
+
+  // editor.onKeyDown(function (e) {
+  //   if (e.ctrlKey && e.keyCode === monaco.KeyCode.KEY_S) {
+  //     e.preventDefault();
+  //     console.log("keydown");
+  //   }
+  // });
+  // editor.onKeyUp(function (e) {
+  //   if (e.ctrlKey && e.keyCode === monaco.KeyCode.KEY_S) {
+  //     e.preventDefault();
+  //     console.log("keyup");
+  //   }
+  // });
+  // var myBinding = editor.addCommand(
+  //   monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S,
+  //   function () {
+  //     console.log("SAVE pressed!");
+  //   }
+  // );
 
   const showItemHandler = (componentName) => setShowItem(componentName);
 
@@ -39,20 +61,30 @@ const TestMain = () => {
         .then(console.log)
         .catch(console.error);
     } else {
-      console.log(targetPath);
       const requireData = {
         filePath: targetPath,
       };
       dispatch(getFileContent(requireData))
         .unwrap()
         .then((res) => {
-          console.log(res);
           setCurFilePath(targetPath);
           // setCurFileContent(res);
           editorRef.current.getModel().setValue(res);
         })
         .catch(console.error);
     }
+  };
+
+  // 파일 저장
+  const saveFileContentHandler = (curName, curPath) => {
+    const saveFileData = {
+      filePath: curPath,
+      fileContent: editorRef.current.getValue(),
+    };
+    dispatch(saveFileContent({ teamSeq, contentData: saveFileData }))
+      .unwrap()
+      .then(console.log)
+      .catch(console.error);
   };
 
   return (
@@ -64,7 +96,10 @@ const TestMain = () => {
           {showItem && (
             <SidebarItems>
               {showItem === "Dir" && (
-                <Directory showFileContent={showFileContentHandler} />
+                <Directory
+                  showFileContent={showFileContentHandler}
+                  saveFileContent={saveFileContentHandler}
+                />
               )}
               {showItem === "Git" && <Git />}
               {showItem === "Team" && <Team />}
@@ -75,22 +110,24 @@ const TestMain = () => {
           )}
         </div>
         {/* 에디터 */}
-        <Editor
-          style={{ overflow: "auto" }}
-          height="calc(100vh - 31px)"
-          theme="vs-dark"
-          defaultLanguage="python"
-          onMount={(editor) => {
-            editorRef.current = editor;
-          }}
-          options={{
-            scrollBeyondLastLine: false,
-            fontSize: "14px",
-            fontFamily: "JetBrains Mono",
-            autoIndent: "advanced",
-            wrappingIndent: "same",
-          }}
-        />
+        {monaco && (
+          <Editor
+            style={{ overflow: "auto" }}
+            height="calc(100vh - 31px)"
+            theme="vs-dark"
+            defaultLanguage="python"
+            onMount={(editor) => {
+              editorRef.current = editor;
+            }}
+            options={{
+              scrollBeyondLastLine: false,
+              fontSize: "14px",
+              fontFamily: "JetBrains Mono",
+              autoIndent: "advanced",
+              wrappingIndent: "same",
+            }}
+          />
+        )}
       </div>
     </React.Fragment>
   );
