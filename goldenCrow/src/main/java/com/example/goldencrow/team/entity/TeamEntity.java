@@ -22,13 +22,13 @@ public class TeamEntity {
     private String teamName;
 
     @ManyToOne
-    @JoinColumn(name="teamLeaderSeq", referencedColumnName = "userSeq")
+    @JoinColumn(name = "teamLeaderSeq", referencedColumnName = "userSeq")
     private UserEntity teamLeader;
 
     @Column
     private String teamGit;
 
-    @Column (name = "teamType")
+    @Column(name = "teamType")
     private Integer type;
 
     public TeamEntity() {

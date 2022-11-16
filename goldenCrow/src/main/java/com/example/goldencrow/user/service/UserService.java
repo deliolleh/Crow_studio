@@ -10,10 +10,8 @@ import com.example.goldencrow.user.UserRepository;
 import com.example.goldencrow.user.dto.MyInfoDto;
 import com.example.goldencrow.user.dto.SettingsDto;
 import com.example.goldencrow.user.dto.UserInfoDto;
-import com.example.goldencrow.user.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,258 +21,338 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
+import static com.example.goldencrow.common.Constants.*;
+
+/**
+ * 사용자와 관련된 입출력을 처리하는 서비스
+ */
 @Service
 public class UserService {
 
-    final String BASE_PATH = "/home/ubuntu/crow_data/userprofile/";
+    final String BASE_PROFILE_PATH = "/home/ubuntu/crow_data/userprofile/";
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final TeamRepository teamRepository;
+    private final MemberRepository memberRepository;
 
-    @Autowired
-    private TeamRepository teamRepository;
+    private final JwtService jwtService;
+    private final ProjectService projectService;
 
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private ProjectService projectService;
-
-    // 회원가입
-    public Map<String, String> signupService(String userId, String userPassword, String userNickname){
-
-        Map<String, String> res = new HashMap<>();
-
-        // 존재하는 아이디인지 체크
-        if(userRepository.findUserEntityByUserId(userId).isPresent()) {
-            // 존재할 경우, result에서 결과를 전달함
-            res.put("result", "duplicate error");
-            System.out.println("duplicate error");
-
-        } else {
-            // 존재하지 않을 경우, 회원가입 진행
-
-            // 아이디와 닉네임만 받아서 엔티티 생성
-            // 비밀번호 인코딩해서 엔티티에 기록
-            // 리프레시토큰 발급해와서 엔티티에 기록
-            UserEntity userEntity = new UserEntity(userId, userNickname);
-            userEntity.setUserPassWord(CryptoUtil.Sha256.hash(userPassword));
-            userEntity.setUserRefresh("");
-
-            // 일단 이 상태로 등록한 다음
-            userRepository.saveAndFlush(userEntity);
-            System.out.println("일단 저장");
-
-            // userSeq를 다시 읽어와서
-            // 액세스 토큰과 리프레시 토큰을 만듦
-            Long userSeq = userRepository.findUserEntityByUserId(userId).get().getUserSeq();
-            userEntity.setUserSeq(userSeq);
-            userEntity.setUserRefresh(jwtService.createRefresh(userSeq));
-
-            // 리프레시 토큰 저장된 상태로 업데이트
-            userRepository.save(userEntity);
-            System.out.println("업데이트");
-
-            // 액세스 토큰 발급
-            String jwt = jwtService.createAccess(userSeq);
-            res.put("result", "success");
-            res.put("jwt", jwt);
-
-        }
-
-        return res;
+    public UserService(UserRepository userRepository, TeamRepository teamRepository, MemberRepository memberRepository,
+                       JwtService jwtService, ProjectService projectService) {
+        this.userRepository = userRepository;
+        this.teamRepository = teamRepository;
+        this.memberRepository = memberRepository;
+        this.jwtService = jwtService;
+        this.projectService = projectService;
     }
 
-    // 로그인
-    public Map<String, String> loginService(String userId, String userPassword) {
+    /**
+     * 회원가입 내부 로직
+     *
+     * @param userId       가입하려는 Id
+     * @param userPassword 가입하려는 Password
+     * @param userNickname 가입하려는 닉네임
+     * @return 회원가입 성공 시 jwt 반환, 성패에 따른 result 반환
+     */
+    public Map<String, String> signupService(String userId, String userPassword, String userNickname) {
 
-        Map<String, String> res = new HashMap<>();
-
-        // 존재하는 아이디인지 체크
-        if(userRepository.findUserEntityByUserId(userId).isPresent()) {
-
-            // 존재할 경우 일치하는지 검증
-            UserEntity userEntity = userRepository.findUserEntityByUserId(userId).get();
-            String checkPassword = CryptoUtil.Sha256.hash(userPassword);
-
-            if(userEntity.getUserPassWord().equals(checkPassword)){
-                // 만약 비번이 같으면
-                // 액세스 토큰 발급
-                String jwt = jwtService.createAccess(userEntity.getUserSeq());
-                res.put("result", "success");
-                res.put("jwt", jwt);
-            } else {
-                // 비번이 틀렸으면
-                res.put("result", "wrong password");
-            }
-
-        } else {
-            res.put("result", "have to sign up");
-        }
-
-        return res;
-    }
-
-    // 회원정보조회
-    public MyInfoDto infoService(String jwt){
-
-        MyInfoDto myInfoDto = new MyInfoDto();
+        Map<String, String> serviceRes = new HashMap<>();
 
         try {
-            UserEntity userEntity = userRepository.findById(jwtService.JWTtoUserSeq(jwt)).get();
-            myInfoDto = new MyInfoDto(userEntity);
 
-            if(userEntity.getUserGitToken()==null) {
+            // 존재하는 Id인지 체크
+            if (userRepository.findUserEntityByUserId(userId).isPresent()) {
+                // user Table에 해당 Id가 이미 존재하므로 가입 불가
+                serviceRes.put("result", DUPLICATE);
+
+            } else {
+                // user Table에 해당 Id가 등록되어 있지 않으므로 가입 진행
+
+                // user Entity 생성
+                // 비밀번호를 Sha256으로 인코딩해서 기록
+                // DB에 등록
+                UserEntity userEntity = new UserEntity(userId, userNickname);
+                userEntity.setUserPassWord(CryptoUtil.Sha256.hash(userPassword));
+                userRepository.saveAndFlush(userEntity);
+
+                // 액세스 토큰 발급
+                Long userSeq = userEntity.getUserSeq();
+                String jwt = jwtService.createAccess(userSeq);
+                serviceRes.put("result", SUCCESS);
+                serviceRes.put("jwt", jwt);
+
+            }
+
+        } catch (Exception e) {
+            serviceRes.put("result", UNKNOWN);
+
+        }
+
+        return serviceRes;
+
+    }
+
+    /**
+     * 로그인 내부 로직
+     *
+     * @param userId       로그인 하려는 Id
+     * @param userPassword 로그인 하려는 Password
+     * @return 로그인 성공 시 jwt 반환, 성패에 따른 result 반환
+     */
+    public Map<String, String> loginService(String userId, String userPassword) {
+
+        Map<String, String> serviceRes = new HashMap<>();
+
+        try {
+
+            // 존재하는 Id인지 체크
+            if (userRepository.findUserEntityByUserId(userId).isPresent()) {
+                // Id가 존재함을 확인함
+                UserEntity userEntity = userRepository.findUserEntityByUserId(userId).get();
+                String checkPassword = CryptoUtil.Sha256.hash(userPassword);
+
+                // 비밀번호가 올바른지 확인함
+                if (userEntity.getUserPassWord().equals(checkPassword)) {
+                    // 인코딩한 비밀번호가 저장된 DB 정보와 같으면 로그인 성공
+                    // 액세스 토큰 발급
+                    String jwt = jwtService.createAccess(userEntity.getUserSeq());
+                    serviceRes.put("result", SUCCESS);
+                    serviceRes.put("jwt", jwt);
+
+                } else {
+                    // 저장된 DB 정보와 일치하지 않을 경우 로그인 실패
+                    serviceRes.put("result", WRONG);
+                }
+
+            } else {
+                // 가입되지 않은 Id임
+                serviceRes.put("result", NO_SUCH);
+            }
+
+        } catch (Exception e) {
+            serviceRes.put("result", UNKNOWN);
+
+        }
+
+        return serviceRes;
+
+    }
+
+    /**
+     * 각 회원의 정보를 조회하는 내부 로직
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @return 당사자가 조회 가능한 사용자 정보 반환
+     */
+    public MyInfoDto myInfoService(String jwt) {
+
+        try {
+
+            // jwt가 인증하는 사용자의 UserEntity를 추출
+            Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
+
+            // 해당하는 사용자가 존재하는지 확인
+            if (!userEntityOptional.isPresent()) {
+                // 해당하는 사용자가 없음
+                MyInfoDto myInfoDto = new MyInfoDto();
+                myInfoDto.setResult(NO_SUCH);
+                return myInfoDto;
+            }
+
+            UserEntity userEntity = userEntityOptional.get();
+
+            // 내보내기 위한 MyInfoDto 생성
+            MyInfoDto myInfoDto = new MyInfoDto(userEntity);
+            if (userEntity.getUserGitToken() == null) {
                 myInfoDto.setUserGitToken("");
             } else {
                 myInfoDto.setUserGitToken(userEntity.getUserGitToken());
             }
 
-            myInfoDto.setResult(UserInfoDto.Result.SUCCESS);
+            // 위의 과정을 무사히 통과했으므로
+            myInfoDto.setResult(SUCCESS);
+            return myInfoDto;
 
         } catch (Exception e) {
-            myInfoDto.setResult(UserInfoDto.Result.FAILURE);
-            throw new RuntimeException(e);
-        }
+            MyInfoDto myInfoDto = new MyInfoDto();
+            myInfoDto.setResult(UNKNOWN);
+            return myInfoDto;
 
-        return myInfoDto;
+        }
 
     }
 
-    // 닉네임수정
-    public String editNicknameService(String jwt, String userNickname){
+    /**
+     * 사용자 닉네임을 수정하는 내부 로직
+     *
+     * @param jwt          회원가입 및 로그인 시 발급되는 access token
+     * @param userNickname 적용시킬 닉네임
+     * @return 수정 성공 시 적용된 닉네임 반환, 성패에 따른 result 반환
+     */
+    public Map<String, String> editNicknameService(String jwt, String userNickname) {
 
-        // jwt 체크는 인터셉터에서 해서 넘어왔을테니까
-
-        try {
-            // jwt에서 userSeq를 뽑아내고
-            Long userSeq = jwtService.JWTtoUserSeq(jwt);
-            System.out.println(userSeq);
-
-            // userSeq로 userEntity를 뽑아낸 다음
-            UserEntity userEntity = userRepository.findById(userSeq).get();
-
-            // userEntity의 닉네임 부분을 req에서 꺼내온 값으로 수정
-            userEntity.setUserNickname(userNickname);
-
-            // saveAndFlush
-            userRepository.saveAndFlush(userEntity);
-
-            // 성공 여부 반환
-            return "success";
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "error";
-        }
-
-
-    }
-
-    // 프로필사진 수정
-    public String editProfileService(String jwt, MultipartFile multipartFile){
-
-        // jwt 체크는 인터셉터에서 해서 넘어왔을테니까
+        Map<String, String> serviceRes = new HashMap<>();
 
         try {
-            // jwt에서 userSeq를 뽑아내고
-            Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
-            // 기존에 있던 프로필 사진 정보 조회
-            UserEntity userEntity = userRepository.findById(userSeq).get();
-            String pastProfile = userEntity.getUserProfile();
+            // jwt가 인증하는 사용자의 UserEntity를 추출
+            Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
 
-            if(pastProfile!=null){
-                // null 이 아니라는 것은 기존에 업로드한 이미지가 있다는 뜻
-                // 그 주소로 가서 파일 삭제
-                Files.delete(Paths.get(pastProfile));
-                System.out.println("기존 정보 삭제 완료");
+            // 해당하는 사용자가 존재하는지 확인
+            if (!userEntityOptional.isPresent()) {
+                // 해당하는 사용자가 없음
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
             }
 
-            // 이제 지난 흔적이 없음
+            // 사용자의 닉네임을 변경한 후 DB에 기록
+            UserEntity userEntity = userEntityOptional.get();
+            userEntity.setUserNickname(userNickname);
+            userRepository.saveAndFlush(userEntity);
 
-            // 유저시퀀스 + 지금 시간 + 입력받은 파일명으로 서버에 저장
+            // 위의 과정을 무사히 통과했으므로
+            serviceRes.put("result", SUCCESS);
+            serviceRes.put("userNickname", userNickname);
+
+        } catch (Exception e) {
+            serviceRes.put("result", UNKNOWN);
+
+        }
+
+        return serviceRes;
+
+    }
+
+    /**
+     * 프로필 사진을 수정하는 내부 로직
+     *
+     * @param jwt           회원가입 및 로그인 시 발급되는 access token
+     * @param multipartFile 프로필 사진으로 사용할 jpg 이미지 파일
+     * @return 성패에 따른 result 반환
+     * @deprecated 현재 사용되고 있지 않으나, 이용 가능함
+     */
+    public Map<String, String> editProfileService(String jwt, MultipartFile multipartFile) {
+
+        Map<String, String> serviceRes = new HashMap<>();
+
+        try {
+
+            // jwt가 인증하는 사용자의 UserEntity를 추출
+            Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
+
+            // 해당하는 사용자가 존재하는지 확인
+            if (!userEntityOptional.isPresent()) {
+                // 해당하는 사용자가 없음
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
+            }
+
+            // DB의 기존 프로필 사진 정보 조회
+            UserEntity userEntity = userEntityOptional.get();
+            String pastProfile = userEntity.getUserProfile();
+
+            if (pastProfile != null) {
+                // null 이 아니라는 것은 기존에 업로드한 이미지가 있다는 뜻
+                // 서버의 해당 경로로 가서 파일 삭제
+                Files.delete(Paths.get(pastProfile));
+            }
+
+            // 지난 버전의 프로필 사진이 서버에서 삭제됨
+
+            // UserSeq + 지금 시간 + 입력받은 파일명으로 서버에 저장
             long now = new Date().getTime();
-            System.out.println(now);
-            String fileName = userSeq + "_" + now + ".jpg";
-            String filePath = BASE_PATH + fileName;
+            String fileName = userEntity.getUserId() + "_" + now + ".jpg";
+            String filePath = BASE_PROFILE_PATH + fileName;
 
-            // 밖으로 내보낼 아웃풋스트림 만들고
-            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
-            // 입력받은 파일을 하나씩 읽을 인풋스트림
-            InputStream inputStream = multipartFile.getInputStream();
+            // 서버로 파일을 내보낼 output stream 열기
+            // 파일을 읽을 input stream 열기
 
-            try {
+            try (FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+                 InputStream inputStream = multipartFile.getInputStream()) {
 
-                // 읽어들인 글자의 수
-                int readCount = 0;
+                // 한번에 읽어들인 글자의 수
+                int readCount;
 
                 // 한번에 읽을 만큼의 바이트를 지정
                 // 1024, 2048 등의 크기가 일반적
                 byte[] buffer = new byte[1024];
 
-                // 끝까지 읽기
-                while((readCount = inputStream.read(buffer))!=-1) {
+                // 파일을 모두 읽을 때까지 반복
+                while ((readCount = inputStream.read(buffer)) != -1) {
                     fileOutputStream.write(buffer, 0, readCount);
                 }
 
-                System.out.println("서버에 저장 완료");
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                inputStream.close();
-                fileOutputStream.close();
             }
 
-            // 방금 넣은 파일의 주소를 db에 저장
+            // 저장된 프로필 사진의 경로를 DB에 기록
             userEntity.setUserProfile(filePath);
             userRepository.saveAndFlush(userEntity);
-            System.out.println("db에 저장 완료");
 
-            // 성공 여부 반환
-            return filePath;
+            // 위의 과정을 무사히 통과했으므로
+            serviceRes.put("result", SUCCESS);
 
         } catch (Exception e) {
-            e.printStackTrace();
-            return "error";
+            serviceRes.put("result", UNKNOWN);
         }
+
+        return serviceRes;
 
     }
 
-    // 프로필사진 삭제
-    public String deleteProfileService(String jwt) {
+    /**
+     * 프로필 사진을 삭제하는 내부 로직
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @return 성패에 따른 result 반환
+     * @deprecated 현재 사용되고 있지 않으나, 이용 가능함
+     */
+    public Map<String, String> deleteProfileService(String jwt) {
+
+        Map<String, String> serviceRes = new HashMap<>();
+
         try {
-            // jwt에서 userSeq를 뽑아내고
-            Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
-            // 기존에 있던 프로필 사진 정보 조회
-            UserEntity userEntity = userRepository.findById(userSeq).get();
-            String pastProfile = userEntity.getUserProfile();
+            // jwt가 인증하는 사용자의 UserEntity를 추출
+            Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
 
-            if(pastProfile!=null){
-                // null 이 아니라는 것은 기존에 업로드한 이미지가 있다는 뜻
-                // 그 주소로 가서 파일 삭제
-                Files.delete(Paths.get(pastProfile));
-                System.out.println("기존 정보 삭제 완료");
+            // 해당하는 사용자가 존재하는지 확인
+            if (!userEntityOptional.isPresent()) {
+                // 해당하는 사용자가 없음
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
             }
 
+            // DB의 기존 프로필 사진 정보 조회
+            UserEntity userEntity = userEntityOptional.get();
+            String pastProfile = userEntity.getUserProfile();
+
+            if (pastProfile != null) {
+                // null 이 아니라는 것은 기존에 업로드한 이미지가 있다는 뜻
+                // 서버의 해당 경로로 가서 파일 삭제
+                Files.delete(Paths.get(pastProfile));
+            }
+
+            // 지난 버전의 프로필 사진이 서버에서 삭제됨
+
+            // 프로필 사진이 삭제되었음을 DB에 기록
             userEntity.setUserProfile(null);
             userRepository.saveAndFlush(userEntity);
 
-            // 성공 여부 반환
-            return "success";
+            // 위의 과정을 무사히 통과했으므로
+            serviceRes.put("result", SUCCESS);
 
-        } catch (Exception e){
-            e.printStackTrace();
-            return "error";
+        } catch (Exception e) {
+            serviceRes.put("result", UNKNOWN);
+
         }
+
+        return serviceRes;
+
     }
 
     // 비밀번호 수정
-    public String editPasswordService(String jwt, Map<String, String> req){
+    public String editPasswordService(String jwt, Map<String, String> req) {
 
         // jwt 체크는 인터셉터에서 해서 넘어왔을테니까
 
@@ -289,7 +367,7 @@ public class UserService {
             String originPW = userEntity.getUserPassWord();
             String testPW = CryptoUtil.Sha256.hash(req.get("userPassword"));
 
-            if(originPW.equals(testPW)) {
+            if (originPW.equals(testPW)) {
                 // userEntity의 비밀번호 부분을 req에서 꺼내온 값으로 수정
                 userEntity.setUserPassWord(CryptoUtil.Sha256.hash(req.get("userNewPassword")));
                 userRepository.saveAndFlush(userEntity);
@@ -347,12 +425,12 @@ public class UserService {
             List<TeamEntity> teamEntityList = teamRepository.findAllByTeamLeader_UserSeq(userSeq);
             List<Long> teamSeqList = new ArrayList<>();
 
-            for(TeamEntity t : teamEntityList){
+            for (TeamEntity t : teamEntityList) {
                 // 그 팀들마다 팀원 수를 세아림
 
                 int count = memberRepository.countAllByTeam(t);
 
-                if(count>=2) {
+                if (count >= 2) {
                     // 1인팀이 아닌 팀이 하나라도 있을 경우
                     // 탐색을 중지하고 탈퇴 불가 처리
                     return "403";
@@ -367,7 +445,7 @@ public class UserService {
             // 그렇다면 내가 리더인 팀은 전부 단일팀이라는 의미
             // 탈퇴 시에 서버에서 삭제해주어야 함
 
-            if(projectService.deleteProject(teamSeqList).equals("fail!")){
+            if (projectService.deleteProject(teamSeqList).equals("fail!")) {
                 return "error";
             }
 
@@ -470,7 +548,7 @@ public class UserService {
         List<UserEntity> userEntityList = userRepository.findAllByUserIdContainingOrUserNicknameContaining(word, word);
         List<UserInfoDto> userInfoDtoList = new ArrayList<>();
 
-        for(UserEntity u : userEntityList) {
+        for (UserEntity u : userEntityList) {
             userInfoDtoList.add(new UserInfoDto(u));
         }
 

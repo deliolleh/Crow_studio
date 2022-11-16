@@ -1,7 +1,6 @@
 package com.example.goldencrow.file;
 
-
-import com.example.goldencrow.file.fileDto.FileCreateDto;
+import com.example.goldencrow.file.dto.FileCreateDto;
 import com.example.goldencrow.team.entity.TeamEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,13 +11,15 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @Table(name = "file")
 public class FileEntity {
     // 파일, 팀, 멤버 pk
     // 제목, 경로, 작성일자, 수정일자
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fileSeq")
     private Long fileSeq;
 
@@ -37,7 +38,10 @@ public class FileEntity {
     @LastModifiedDate
     private Date fileUpdatedAt;
 
-    public FileEntity() {};
+    public FileEntity() {
+    }
+
+    ;
 
     public FileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
         this.fileTitle = fileCreateDto.getFileTitle();
@@ -46,7 +50,6 @@ public class FileEntity {
         this.fileCreatedAt = new Date();
         this.fileUpdatedAt = new Date();
     }
-
 
 
 }

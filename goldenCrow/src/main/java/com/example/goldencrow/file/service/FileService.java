@@ -1,7 +1,7 @@
 package com.example.goldencrow.file.service;
 
 
-import com.example.goldencrow.file.fileDto.FileCreateDto;
+import com.example.goldencrow.file.dto.FileCreateDto;
 
 
 import com.example.goldencrow.team.entity.TeamEntity;

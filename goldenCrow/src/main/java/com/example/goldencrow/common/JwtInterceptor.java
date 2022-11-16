@@ -16,9 +16,9 @@ public class JwtInterceptor implements HandlerInterceptor {
     private JwtService jwtService;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
-        if(HttpMethod.OPTIONS.matches(request.getMethod())){
+        if (HttpMethod.OPTIONS.matches(request.getMethod())) {
             return true;
         }
 
@@ -27,7 +27,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 
         try {
 
-            if(jwt!=null && this.jwtService.verifyJWT(jwt).get("result").equals("success")) {
+            if (jwt != null && this.jwtService.verifyJWT(jwt).get("result").equals("success")) {
                 System.out.println("Interceptor Passed");
                 return true;
             } else {
