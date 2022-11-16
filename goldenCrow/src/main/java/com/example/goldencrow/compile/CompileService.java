@@ -66,7 +66,7 @@ public class CompileService {
         }
         // teamSeq랑 filePath에 있는 숫자랑 같은지 체크
         String[] pathList = absolutePath.split("/");
-        String projectName = pathList[4];
+        String projectName = pathList[5];
         String content = "";
         // 2 : Django, 3 : Flask, 4 : FastAPI
         if (type == 2) {
@@ -103,7 +103,6 @@ public class CompileService {
         return SUCCESS;
     }
 
-    // 해당 컨테이너 포트 찾기
     /**
      * 컨테이너 Id로 사용중인 포트 번호를 찾는 내부 로직
      *
@@ -162,6 +161,7 @@ public class CompileService {
         // Django, fastapi, flask 프로젝트일 때
         else {
             // 도커파일 추가
+
             String dockerfile = createDockerfile(absolutePath, teamSeq, type);
             if (!Objects.equals(dockerfile, "SUCCESS")) {
                 serviceRes.put("result", dockerfile);
@@ -206,6 +206,7 @@ public class CompileService {
         String[] containerStop = {"docker", "stop", conAndImgName};
         Map<String, String> serviceRes = new HashMap<>();
         String stopedCon = resultString(containerStop);
+
         // 컨테이너가 없는 경우
         if (stopedCon.equals("No such container")) {
             serviceRes.put("result", NO_SUCH);

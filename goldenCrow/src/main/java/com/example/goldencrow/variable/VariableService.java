@@ -14,11 +14,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+<<<<<<< HEAD
 import static com.example.goldencrow.common.Constants.*;
 
 /**
  * 변수명 추천과 관련된 로직을 처리하는 서비스
  */
+=======
+>>>>>>> 554358d6ef72e62a311b25937821dd557a60dd0d
 @Service
 public class VariableService {
 

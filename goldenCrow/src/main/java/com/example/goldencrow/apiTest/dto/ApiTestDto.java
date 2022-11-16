@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import org.json.simple.JSONObject;
 
 /**
- * API 테스트 기능에 입력으로 사용될 dto
+ * API 테스트 기능에 입력으로 사용될 DTO
  */
 @Data
 @NoArgsConstructor
