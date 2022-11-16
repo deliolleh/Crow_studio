@@ -220,10 +220,10 @@ public class CompileService {
         }
 
         // 도커파일 삭제
-        boolean deleted = fileService.deleteFile(BASE_URL + teamSeq + "/" + projectName + "/Dockerfile",
+        Map<String, String> deletedFile = fileService.deleteFile(BASE_URL + teamSeq + "/" + projectName + "/Dockerfile",
                 2, Long.parseLong(teamSeq));
-        if (!deleted) {
-            serviceRes.put("result", UNKNOWN);
+        if (!deletedFile.get("result").equals(SUCCESS)) {
+            serviceRes.put("result", deletedFile.get("result"));
             return serviceRes;
         }
         serviceRes.put("result", SUCCESS);
