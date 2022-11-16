@@ -17,7 +17,7 @@ import java.util.Map;
 import static com.example.goldencrow.common.Constants.*;
 
 /**
- * 사용자와 관련된 입출력을 처리하는 컨트롤러
+ * 사용자와 관련된 입출력을 처리하는 controller
  *
  * @url /api/users
  */

@@ -24,7 +24,7 @@ import java.util.*;
 import static com.example.goldencrow.common.Constants.*;
 
 /**
- * 사용자와 관련된 입출력을 처리하는 서비스
+ * user를 관리하는 service
  */
 @Service
 public class UserService {
@@ -39,9 +39,9 @@ public class UserService {
     /**
      * UserService 생성자
      *
-     * @param userRepository   User Table에 접속하는 Repository
-     * @param teamRepository   Team Table에 접속하는 Repository
-     * @param memberRepository Member Table에 접속하는 Repository
+     * @param userRepository   User Table에 접속하는 repository
+     * @param teamRepository   Team Table에 접속하는 repository
+     * @param memberRepository Member Table에 접속하는 repository
      * @param jwtService       jwt를 관리하는 service
      * @param projectService   project를 관리하는 service
      */

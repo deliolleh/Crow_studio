@@ -1,32 +1,55 @@
 package com.example.goldencrow.user.service;
 
 import com.example.goldencrow.user.UserRepository;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.goldencrow.common.Constants.*;
+
+/**
+ * jwt를 관리하는 service
+ */
 @Service
 public class JwtService {
 
-    @Autowired
-    private UserRepository userRepository;
-
+    /**
+     * Jwt를 생성하는데 쓰일 secret key
+     */
     @Value("${secret.jwt.key}")
     private String SECRET_KEY;
 
-    private long accessTokenValidTime = Duration.ofDays(30).toMillis(); // 만료시간 30일
+    /**
+     * 액세스 토큰에 적용될 만료 시간
+     * DEFAULT. 30days
+     */
+    private final long VALID_TIME = Duration.ofDays(30).toMillis();
 
-    // 액세스 토큰 만들기
+    private final UserRepository userRepository;
+
+    /**
+     * JwtService 생성자
+     *
+     * @param userRepository User Table에 접속하는 repository
+     */
+    public JwtService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    /**
+     * 액세스 토큰 생성 내부 로직
+     *
+     * @param userSeq 사용자의 아이디
+     * @return 생성 성공 시 jwt 반환
+     */
     public String createAccess(Long userSeq) {
 
         // 헤더 설정
@@ -38,70 +61,74 @@ public class JwtService {
         Map<String, Object> payloads = new HashMap<>();
         payloads.put("jti", userSeq);
 
+        // 만료일 설정
         Date ext = new Date();
-        ext.setTime(ext.getTime() + accessTokenValidTime);
+        ext.setTime(ext.getTime() + VALID_TIME);
 
         // 토큰 빌드
-        String jwt = Jwts.builder()
+        return Jwts.builder()
                 .setHeader(headers)
                 .setClaims(payloads)
                 .setExpiration(ext)
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
                 .compact();
 
-        return jwt;
-
     }
 
-    // 이거 우리 토큰 맞는지, 유효기간 남았는지, 파스하면 뭔지 확인하기
-    public Map<String, Object> verifyJWT(String jwt) throws Exception {
-        Map<String, Object> claimMap = new HashMap<>();
+    /**
+     * 토큰이 현재 사용 가능한지 확인하는 내부 로직
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @return 성패에 따른 result 반환
+     */
+    public String verifyJWT(String jwt) {
 
         try {
-            Claims claims = Jwts.parser()
-                    .setSigningKey(SECRET_KEY.getBytes("UTF-8"))
+
+            Map<String, Object> claimMap = Jwts.parser()
+                    .setSigningKey(SECRET_KEY.getBytes(StandardCharsets.UTF_8))
                     .parseClaimsJws(jwt)
                     .getBody();
 
-            claimMap = claims;
-            claimMap.put("result", "success");
+            Long userSeq = Long.valueOf(String.valueOf(claimMap.get("jti")));
 
-            // 이 값으로 유저찾아서 없으면 터트림
-            if (!userRepository.findById(Long.valueOf(String.valueOf(claimMap.get("jti")))).isPresent()) {
-                claimMap.put("result", "error");
+            // 해당하는 사용자가 존재하는지 확인
+            if (!userRepository.findById(userSeq).isPresent()) {
+                // 해당하는 사용자가 없음
+                return NO_SUCH;
             }
+
+            // 위의 과정을 무사히 통과했으므로
+            return SUCCESS;
 
         } catch (ExpiredJwtException e) {
             // 토큰이 만료된 경우
-            System.out.println(e);
-            claimMap.put("result", "expire");
+            return NO_PER;
 
         } catch (Exception e) {
-            System.out.println(e);
-            claimMap.put("result", "error");
-        }
+            return UNKNOWN;
 
-        return claimMap;
+        }
 
     }
 
-    // parse 하면 누군지 찾아내기
+    /**
+     * 토큰이 가지고 있는 UserSeq를 반환하는 내부 로직
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @return 검증 성공 시 UserSeq 반환
+     */
     public Long JWTtoUserSeq(String jwt) {
 
-        try {
-            Claims claims = Jwts.parser()
-                    .setSigningKey(SECRET_KEY.getBytes("UTF-8"))
-                    .parseClaimsJws(jwt)
-                    .getBody();
+        // Jwt parser를 이용하여 토큰이 가지고 있는 정보를 추출
+        Map<String, Object> claimMap = Jwts.parser()
+                .setSigningKey(SECRET_KEY.getBytes(StandardCharsets.UTF_8))
+                .parseClaimsJws(jwt)
+                .getBody();
 
-            Map<String, Object> claimMap = claims;
-            Long userSeq = Long.valueOf(String.valueOf(claimMap.get("jti")));
+        // UserSeq를 Long으로 parse하여 반환
+        return Long.valueOf(String.valueOf(claimMap.get("jti")));
 
-            return userSeq;
-
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }
