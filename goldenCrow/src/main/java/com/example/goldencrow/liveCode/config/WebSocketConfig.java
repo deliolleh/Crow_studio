@@ -19,7 +19,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/api/share").setAllowedOriginPatterns("*").withSockJS()
-        .setHeartbeatTime(1000);
+        .setHeartbeatTime(5000);
     }
 
 }
