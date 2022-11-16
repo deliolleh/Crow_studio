@@ -28,22 +28,16 @@ public class JwtInterceptor implements HandlerInterceptor {
         System.out.println("Interceptor Called");
 
         try {
-
             if (jwt != null && this.jwtService.verifyJWT(jwt).equals(SUCCESS)) {
                 System.out.println("Interceptor Passed");
                 return true;
-
             } else {
                 System.out.println("Invalid Request");
                 response.setStatus(401);
                 return false;
             }
-
         } catch (Exception e) {
             throw new RuntimeException(e);
-
         }
-
     }
-
 }

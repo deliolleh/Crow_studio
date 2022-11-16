@@ -2,8 +2,10 @@ package com.example.goldencrow.file;
 
 
 import com.example.goldencrow.file.dto.FileCreateDto;
+
 import com.mongodb.lang.Nullable;
 import com.sun.istack.NotNull;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.types.ObjectId;
@@ -13,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
 import java.util.Date;
+
 
 @Document(collection = "file")
 @Getter @Setter
@@ -25,6 +28,7 @@ public class FileEntity {
     @NotNull
     private Long teamSeq;
     @NotNull
+
     private String fileTitle;
     @NotNull
     private String filePath;

@@ -3,8 +3,18 @@ package com.example.goldencrow.file.service;
 
 import com.example.goldencrow.file.FileEntity;
 import com.example.goldencrow.file.FileRepository;
+<<<<<<< HEAD
+import com.example.goldencrow.file.fileDto.FileCreateDto;
+
+
+
+import com.example.goldencrow.file.fileDto.FileCreateRequestDto;
+import com.example.goldencrow.team.entity.TeamEntity;
+import com.example.goldencrow.team.repository.TeamRepository;
+=======
 import com.example.goldencrow.file.dto.FileCreateDto;
 import com.example.goldencrow.file.dto.FileCreateRequestDto;
+>>>>>>> 554358d6ef72e62a311b25937821dd557a60dd0d
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,11 +25,14 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.*;
 
-import java.util.List;
-import java.util.Optional;
+<<<<<<< HEAD
+import static com.example.goldencrow.common.Constants.*;
+import static java.lang.System.out;
 
+=======
+>>>>>>> 554358d6ef72e62a311b25937821dd557a60dd0d
 @Service
 public class FileService {
 
@@ -85,19 +98,26 @@ public class FileService {
     }
 
     /** 파일 삭제  */
-    public boolean deleteFile(String filePath,Integer type, Long teamSeq) {
+
+
+
+    public Map<String, String> deleteFile(String filePath, Integer type, Long teamSeq) {
         Optional<FileEntity> file = fileRepository.findFileEntityByTeamSeqAndFilePath(teamSeq, filePath);
+        Map<String, String> serviceRes = new HashMap<>();
 
         // 만약 이게 DB에 없는 파일 경로나 그렇다면 실패!
         if (!file.isPresent()) {
-            return false;
+            serviceRes.put("result", NO_SUCH);
+            return serviceRes;
         }
         String check = serverFileDelete(type,filePath);
-        if (!check.equals(Success)) {
-            return false;
+        if (!check.equals(SUCCESS)) {
+            serviceRes.put("result", check);
+            return serviceRes;
         }
         fileRepository.delete(file.get());
-        return true;
+        serviceRes.put("result", SUCCESS);
+        return serviceRes;
     }
 
     /**
@@ -123,12 +143,12 @@ public class FileService {
             try {
                 Files.delete(path);
             } catch (NoSuchFileException e) {
-                return e.getMessage();
+                return NO_SUCH;
             } catch (IOException ioe) {
-                return ioe.getMessage();
+                return UNKNOWN;
             }
         }
-        return Success;
+        return SUCCESS;
     }
 
     /**

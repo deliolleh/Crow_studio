@@ -40,9 +40,8 @@ public final class Constants {
     public static final String WRONG = "WRONG DATA...";
 
     /**
-     * 프로젝트의 데이터를 저장할 기본 URL
-     */
+    * 프로젝트의 데이터를 저장할 기본 URL
+    */
     public static final String BASE_URL = "/home/ubuntu/crow_data/";
-
 
 }
