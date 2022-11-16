@@ -3,12 +3,8 @@ package com.example.goldencrow.file.service;
 
 import com.example.goldencrow.file.FileEntity;
 import com.example.goldencrow.file.FileRepository;
-import com.example.goldencrow.file.fileDto.FileCreateDto;
-
-
-import com.example.goldencrow.file.fileDto.FileCreateRequestDto;
-import com.example.goldencrow.team.entity.TeamEntity;
-import com.example.goldencrow.team.repository.TeamRepository;
+import com.example.goldencrow.file.dto.FileCreateDto;
+import com.example.goldencrow.file.dto.FileCreateRequestDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,8 +19,6 @@ import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Optional;
-
-import static java.lang.System.out;
 
 @Service
 public class FileService {
