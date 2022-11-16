@@ -43,12 +43,13 @@ public class CompileController {
             String input = (String) req.get("input");
             Map<String, String> res = compileService.pyCompileService(type, projectName, teamSeq, input);
             String result = res.get("result");
-            if (result.equals(SUCCESS)) {
-                return new ResponseEntity<>(res, HttpStatus.OK);
-            } else if (result.equals(NO_SUCH)) {
-                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }
         } else {
             Map<String, String> res = new HashMap<>();
@@ -75,13 +76,13 @@ public class CompileController {
             String teamSeq = req.get("teamSeq");
             Map<String, String> res = compileService.pyCompileStopService(projectName, teamSeq);
             String result = res.get("result");
-            if (result.equals(SUCCESS)) {
-                return new ResponseEntity<>(res, HttpStatus.OK);
-            } else if (result.equals(NO_SUCH)) {
-                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
-            }
-            else {
-                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }
         } else {
             Map<String, String> res = new HashMap<>();
