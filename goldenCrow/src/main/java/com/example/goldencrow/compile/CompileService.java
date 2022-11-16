@@ -127,9 +127,9 @@ public class CompileService {
      * @param projectName   컴파일을 수행할 프로젝트의 이름
      * @param teamSeq       컴파일을 수행할 프로젝트 팀의 sequence
      * @param input         pure python 파일일 때 input값
-     * @return
+     * @return              컴파일 성공 시 컴파일 결과 반환, 성패에 따른 result 반환
      */
-    public Map<String, String> pyCompile(int type, String projectName, Long teamSeq, String input) {
+    public Map<String, String> pyCompileService(int type, String projectName, Long teamSeq, String input) {
         Map<String, String> serviceRes = new HashMap<>();
         // 타입 이상한 거 들어오면 리턴
         if (type > 4 || type < 0) {
@@ -194,12 +194,19 @@ public class CompileService {
         return serviceRes;
     }
 
-    public Map<String, String> pyCompileStop(String projectName, String teamSeq) {
+    /**
+     *
+     * @param projectName   컴파일 중단할 프로젝트의 이름
+     * @param teamSeq       컴파일 중단할 프로젝트의 팀 sequence
+     * @return              성패에 따른 result 반환
+     */
+    public Map<String, String> pyCompileStopService(String projectName, String teamSeq) {
         String conAndImgName = "crowstudio_" + projectName.toLowerCase() + "_" + teamSeq;
-        // 도커 컨테이너 stop && rm
+        // 도커 컨테이너 멈추고 삭제
         String[] containerStop = {"docker", "stop", conAndImgName};
         Map<String, String> serviceRes = new HashMap<>();
         String stopedCon = resultString(containerStop);
+        // 컨테이너가 없는 경우
         if (stopedCon.equals("No such container")) {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
@@ -208,9 +215,10 @@ public class CompileService {
             return serviceRes;
         }
 
-        // 도커 이미지 rmi
+        // 도커 이미지 삭제
         String[] imageRm = {"docker", "rmi", conAndImgName};
         String rmImg = resultString(imageRm);
+        // 이미지가 없는 경우
         if (rmImg.contains("No such image")) {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
@@ -220,8 +228,8 @@ public class CompileService {
         }
 
         // 도커파일 삭제
-        Map<String, String> deletedFile = fileService.deleteFile(BASE_URL + teamSeq + "/" + projectName + "/Dockerfile",
-                2, Long.parseLong(teamSeq));
+        Map<String, String> deletedFile = fileService.deleteFile(
+                BASE_URL + teamSeq + "/" + projectName + "/Dockerfile", 2, Long.parseLong(teamSeq));
         if (!deletedFile.get("result").equals(SUCCESS)) {
             serviceRes.put("result", deletedFile.get("result"));
             return serviceRes;

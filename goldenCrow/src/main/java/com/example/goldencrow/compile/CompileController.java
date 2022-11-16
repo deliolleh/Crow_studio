@@ -41,14 +41,15 @@ public class CompileController {
             String projectName = (String) req.get("projectName");
             Long teamSeq = (Long) req.get("teamSeq");
             String input = (String) req.get("input");
-            Map<String, String> res = compileService.pyCompile(type, projectName, teamSeq, input);
+            Map<String, String> res = compileService.pyCompileService(type, projectName, teamSeq, input);
             String result = res.get("result");
-            if (result.equals(SUCCESS)) {
-                return new ResponseEntity<>(res, HttpStatus.OK);
-            } else if (result.equals(NO_SUCH)) {
-                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }
         } else {
             Map<String, String> res = new HashMap<>();
@@ -62,7 +63,7 @@ public class CompileController {
      * access token 필요
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
-     * @param req "projectName", "teamSeq"
+     * @param req "projectName", "teamSeq"을 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
@@ -73,15 +74,15 @@ public class CompileController {
         if (req.containsKey("projectName") && req.containsKey("teamSeq")) {
             String projectName = req.get("projectName");
             String teamSeq = req.get("teamSeq");
-            Map<String, String> res = compileService.pyCompileStop(projectName, teamSeq);
+            Map<String, String> res = compileService.pyCompileStopService(projectName, teamSeq);
             String result = res.get("result");
-            if (result.equals(SUCCESS)) {
-                return new ResponseEntity<>(res, HttpStatus.OK);
-            } else if (result.equals(NO_SUCH)) {
-                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
-            }
-            else {
-                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }
         } else {
             Map<String, String> res = new HashMap<>();
