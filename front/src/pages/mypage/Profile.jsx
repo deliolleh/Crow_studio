@@ -18,7 +18,7 @@ const Profile = ({ openModify, userSeq }) => {
   }, [dispatch, userSeq, myNickname]);
 
   return (
-    <div className="md:w-80 sm:w-[600px] w-[400px] h-96 flex justify-center items-center border border-primary_-2_dark rounded-md md:mr-2 md:mb-0 sm:mr-0 sm:mb-2 mb-2">
+    <div className="md:w-80 sm:w-[600px] w-[400px] md:h-96 h-80 flex justify-center items-center border border-primary_-2_dark rounded-md md:mr-2 md:mb-0 sm:mr-0 sm:mb-2 mb-2">
       <div className="flex flex-col items-center">
         <div className="bg-point_purple w-36 h-36 rounded-full mb-6 mx-3"></div>
         <div className="text-white text-2xl font-bold">{userNickname}</div>
