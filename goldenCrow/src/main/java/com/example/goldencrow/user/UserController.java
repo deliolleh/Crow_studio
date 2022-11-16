@@ -33,7 +33,7 @@ public class UserController {
     /**
      * 회원가입 API
      *
-     * @param req "userId", "userPassword", "userNickname"을 key로 가지는 String map
+     * @param req "userId", "userPassword", "userNickname"을 key로 가지는 Map<String, String>
      * @return 회원가입 성공 시 jwt 반환, 성패에 따른 result 반환
      * @status 200, 400, 409
      */
@@ -68,7 +68,7 @@ public class UserController {
     /**
      * 로그인 API
      *
-     * @param req "userId", "userPassword"를 key로 가지는 String map
+     * @param req "userId", "userPassword"를 key로 가지는 Map<String, String>
      * @return 로그인 성공 시 jwt 반환, 성패에 따른 result 반환
      * @status 200, 400, 409
      */
@@ -115,7 +115,7 @@ public class UserController {
 
         if (result.equals(SUCCESS)) {
             return new ResponseEntity<>(myInfoDtoRes, HttpStatus.OK);
-        } else if (result.equals(NO_SUCH)){
+        } else if (result.equals(NO_SUCH)) {
             return new ResponseEntity<>(myInfoDtoRes, HttpStatus.NOT_FOUND);
         } else {
             return new ResponseEntity<>(myInfoDtoRes, HttpStatus.BAD_REQUEST);
@@ -128,8 +128,8 @@ public class UserController {
      * access token 필요
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
-     * @param req "userNickname"을 key로 가지는 String map
-     * @return 변경된 닉네임 반환, 성패에 따른 result 반환
+     * @param req "userNickname"을 key로 가지는 Map<String, String>
+     * @return userNickname 반환, 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
     @PutMapping("/edit/nickname")
@@ -145,7 +145,7 @@ public class UserController {
 
             if (result.equals(SUCCESS)) {
                 return new ResponseEntity<>(res, HttpStatus.OK);
-            } else if (result.equals(NO_SUCH)){
+            } else if (result.equals(NO_SUCH)) {
                 return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
             } else {
                 return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
@@ -163,11 +163,11 @@ public class UserController {
     /**
      * 프로필 사진을 수정하는 API
      *
-     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param jwt           회원가입 및 로그인 시 발급되는 access token
      * @param multipartFile 프로필 사진으로 사용할 jpg 이미지 파일
      * @return 성패에 따른 result 반환
-     * @deprecated 현재 사용되고 있지 않으나, 이용 가능함
      * @status 200, 400, 401, 404
+     * @deprecated 현재 사용되고 있지 않으나, 이용 가능함
      */
     @PutMapping("/edit/profile")
     public ResponseEntity<Map<String, String>> editProfilePut(@RequestHeader("Authorization") String jwt,
@@ -182,6 +182,8 @@ public class UserController {
 
         if (result.equals(SUCCESS)) {
             return new ResponseEntity<>(res, HttpStatus.OK);
+        } else if (result.equals(NO_SUCH)) {
+            return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
         } else {
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
@@ -193,8 +195,8 @@ public class UserController {
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
      * @return 성패에 따른 result 반환
-     * @deprecated 현재 사용되고 있지 않으나, 이용 가능함
      * @status 200, 400, 401, 404
+     * @deprecated 현재 사용되고 있지 않으나, 이용 가능함
      */
     @DeleteMapping("/edit/profile")
     public ResponseEntity<Map<String, String>> deleteProfileDelete(@RequestHeader("Authorization") String jwt) {
@@ -204,66 +206,111 @@ public class UserController {
 
         if (result.equals(SUCCESS)) {
             return new ResponseEntity<>(res, HttpStatus.OK);
+        } else if (result.equals(NO_SUCH)) {
+            return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
         } else {
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    // 비밀번호 수정
+    /**
+     * 사용자의 Git 사용자명, 토큰을 수정하는 API
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param req "userGitUsername", "userGitToken"를 key로 가지는 Map<String, String>
+     * @return 성공 시 userGitUsername 반환, 성패에 따른 result 반환
+     * @status 200, 400, 401, 404
+     */
+    @PutMapping("/edit/git")
+    public ResponseEntity<Map<String, String>> editGitPut(@RequestHeader("Authorization") String jwt,
+                                                          @RequestBody Map<String, String> req) {
+
+        if (req.containsKey("userGitUsername") && req.containsKey("userGitToken")) {
+
+            String userGitUsername = req.get("userGitUsername");
+            String userGitToken = req.get("userGitToken");
+
+            Map<String, String> res = userService.editGitService(jwt, userGitUsername, userGitToken);
+            String result = res.get("result");
+
+            if (result.equals(SUCCESS)) {
+                return new ResponseEntity<>(res, HttpStatus.OK);
+            } else if (result.equals(NO_SUCH)) {
+                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+            } else {
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
+
+        } else {
+            Map<String, String> res = new HashMap<>();
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+
+        }
+
+    }
+
+    /**
+     * 비밀번호를 수정하는 API
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param req "userPassword", "userNewPassword"를 key로 가지는 Map<String, String>
+     * @return 성패에 따른 result 반환
+     * @status 200, 400, 401, 404, 409
+     */
     @PutMapping("/edit/password")
-    public ResponseEntity<String> editPasswordPut(@RequestHeader("Authorization") String jwt,
-                                                  @RequestBody Map<String, String> req) {
+    public ResponseEntity<Map<String, String>> editPasswordPut(@RequestHeader("Authorization") String jwt,
+                                                               @RequestBody Map<String, String> req) {
 
-        if (req.get("userPassword") == null || req.get("userNewPassword") == null) {
-            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
-        }
+        if (req.containsKey("userPassword") && req.containsKey("userNewPassword")) {
 
-        String result = userService.editPasswordService(jwt, req);
+            String userPassword = req.get("userPassword");
+            String userNewPassword = req.get("userNewPassword");
 
-        // 일단 성공하면 이렇게 반환될 겁니다
-        if (result.equals("success")) {
-            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else if (result.equals("409")) {
-            return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
+            Map<String, String> res = userService.editPasswordService(jwt, userPassword, userNewPassword);
+            String result = res.get("result");
+
+            if (result.equals(SUCCESS)) {
+                return new ResponseEntity<>(res, HttpStatus.OK);
+            } else if (result.equals(NO_SUCH)) {
+                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+            } else if (result.equals(WRONG)) {
+                return new ResponseEntity<>(res, HttpStatus.CONFLICT);
+            } else {
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
+
         } else {
-            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+            Map<String, String> res = new HashMap<>();
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+
         }
 
     }
 
-    // 깃 정보 수정
-    public ResponseEntity<String> editGitPut(@RequestHeader("Authorization") String jwt,
-                                             @RequestBody Map<String, String> req) {
-
-        if (req.get("userGitId") == null || req.get("userGitPassword") == null) {
-            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
-        }
-
-        String result = userService.editGitService(jwt, req);
-
-        // 일단 성공하면 이렇게 반환될 겁니다
-        if (result.equals("success")) {
-            return new ResponseEntity<>(req.get("userGitId"), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
-        }
-
-    }
-
-    // 회원탈퇴
+    /**
+     * 회원 탈퇴 API
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @return 성패에 따른 result 반환
+     * @status 200, 400, 401, 403, 404
+     */
     @DeleteMapping("/quit")
-    public ResponseEntity<String> quitDelete(@RequestHeader("Authorization") String jwt) {
+    public ResponseEntity<Map<String, String>> quitDelete(@RequestHeader("Authorization") String jwt) {
 
-        String result = userService.quitUser(jwt);
+        Map<String, String> res = userService.quitService(jwt);
+        String result = res.get("result");
 
-        // 일단 성공하면 이렇게 반환될 겁니다
-        if (result.equals("success")) {
-            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else if (result.equals("403")) {
-            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
+        if (result.equals(SUCCESS)) {
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        } else if(result.equals(NO_PER)) {
+            return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
+        } else if (result.equals(NO_SUCH)) {
+            return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
 
     }

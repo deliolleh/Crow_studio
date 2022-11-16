@@ -9,15 +9,13 @@ import lombok.Data;
 @Data
 public class MyInfoDto {
 
+    private String result;
     private Long userSeq;
     private String userId;
     private String userNickname;
     private String userProfile;
-
     private String userGitUsername;
     private String userGitToken;
-
-    private String result;
 
     /**
      * 빈 MyInfoDto 생성자

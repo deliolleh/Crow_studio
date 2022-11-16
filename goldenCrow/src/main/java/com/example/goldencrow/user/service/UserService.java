@@ -29,8 +29,6 @@ import static com.example.goldencrow.common.Constants.*;
 @Service
 public class UserService {
 
-    final String BASE_PROFILE_PATH = "/home/ubuntu/crow_data/userprofile/";
-
     private final UserRepository userRepository;
     private final TeamRepository teamRepository;
     private final MemberRepository memberRepository;
@@ -258,12 +256,12 @@ public class UserService {
                 Files.delete(Paths.get(pastProfile));
             }
 
-            // 지난 버전의 프로필 사진이 서버에서 삭제됨
+            // 지난 버전의 프로필 사진이 서버에 남아있지 않음
 
             // UserSeq + 지금 시간 + 입력받은 파일명으로 서버에 저장
             long now = new Date().getTime();
             String fileName = userEntity.getUserId() + "_" + now + ".jpg";
-            String filePath = BASE_PROFILE_PATH + fileName;
+            String filePath = BASE_URL + "userprofile/" + fileName;
 
             // 서버로 파일을 내보낼 output stream 열기
             // 파일을 읽을 input stream 열기
@@ -294,6 +292,7 @@ public class UserService {
 
         } catch (Exception e) {
             serviceRes.put("result", UNKNOWN);
+
         }
 
         return serviceRes;
@@ -305,7 +304,6 @@ public class UserService {
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
      * @return 성패에 따른 result 반환
-     * @deprecated 현재 사용되고 있지 않으나, 이용 가능함
      */
     public Map<String, String> deleteProfileService(String jwt) {
 
@@ -333,7 +331,7 @@ public class UserService {
                 Files.delete(Paths.get(pastProfile));
             }
 
-            // 지난 버전의 프로필 사진이 서버에서 삭제됨
+            // 지난 버전의 프로필 사진이 서버에 남아있지 않음
 
             // 프로필 사진이 삭제되었음을 DB에 기록
             userEntity.setUserProfile(null);
@@ -351,121 +349,180 @@ public class UserService {
 
     }
 
-    // 비밀번호 수정
-    public String editPasswordService(String jwt, Map<String, String> req) {
+    /**
+     * 사용자의 Git 사용자명, 토큰을 수정하는 API
+     *
+     * @param jwt             회원가입 및 로그인 시 발급되는 access token
+     * @param userGitUsername 사용자의 Git 사용자명
+     * @param userGitToken    사용자의 Git 토큰
+     * @return 수정 성공 시 적용된 Git 사용자명 반환, 성패에 따른 result 반환
+     */
+    public Map<String, String> editGitService(String jwt, String userGitUsername, String userGitToken) {
 
-        // jwt 체크는 인터셉터에서 해서 넘어왔을테니까
+        Map<String, String> serviceRes = new HashMap<>();
 
         try {
-            // jwt에서 userSeq를 뽑아내고
-            Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
-            // userSeq로 userEntity를 뽑아낸 다음
-            UserEntity userEntity = userRepository.findById(userSeq).get();
+            // jwt가 인증하는 사용자의 UserEntity를 추출
+            Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
 
-            // 유저패스워드가 같은지 확인
+            // 해당하는 사용자가 존재하는지 확인
+            if (!userEntityOptional.isPresent()) {
+                // 해당하는 사용자가 없음
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
+            }
+
+            // 사용자의 Git 정보를 변경한 후 DB에 기록
+            UserEntity userEntity = userEntityOptional.get();
+            userEntity.setUserGitUsername(userGitUsername);
+            userEntity.setUserGitToken(userGitToken);
+            userRepository.saveAndFlush(userEntity);
+
+            // 위의 과정을 무사히 통과했으므로
+            serviceRes.put("result", SUCCESS);
+            serviceRes.put("userGitUsername", userGitUsername);
+
+        } catch (Exception e) {
+            serviceRes.put("result", UNKNOWN);
+
+        }
+
+        return serviceRes;
+    }
+
+    /**
+     * 비밀번호를 수정하는 내부 로직
+     *
+     * @param jwt             회원가입 및 로그인 시 발급되는 access token
+     * @param userPassword    사용자의 기존 비밀번호
+     * @param userNewPassword 적용시킬 비밀번호
+     * @return 성패에 따른 result 반환
+     */
+    public Map<String, String> editPasswordService(String jwt, String userPassword, String userNewPassword) {
+
+        Map<String, String> serviceRes = new HashMap<>();
+
+        try {
+
+            // jwt가 인증하는 사용자의 UserEntity를 추출
+            Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
+
+            // 해당하는 사용자가 존재하는지 확인
+            if (!userEntityOptional.isPresent()) {
+                // 해당하는 사용자가 없음
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
+            }
+
+            // DB에 기록된 패스워드 조회
+            // 입력받은 패스워드와 일치하는지 확인
+            UserEntity userEntity = userEntityOptional.get();
             String originPW = userEntity.getUserPassWord();
-            String testPW = CryptoUtil.Sha256.hash(req.get("userPassword"));
+            String encodedPW = CryptoUtil.Sha256.hash(userPassword);
 
-            if (originPW.equals(testPW)) {
-                // userEntity의 비밀번호 부분을 req에서 꺼내온 값으로 수정
-                userEntity.setUserPassWord(CryptoUtil.Sha256.hash(req.get("userNewPassword")));
+            if (originPW.equals(encodedPW)) {
+                // 비밀번호 일치를 확인
+
+                // userEntity의 비밀번호를 갱신하여 기록
+                userEntity.setUserPassWord(CryptoUtil.Sha256.hash(userNewPassword));
                 userRepository.saveAndFlush(userEntity);
-                return "success";
+
+                // 위의 과정을 무사히 통과했으므로
+                serviceRes.put("result", SUCCESS);
 
             } else {
-                return "409";
+                // 비밀번호가 잘못됨
+                serviceRes.put("result", WRONG);
+
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-            return "error";
+            serviceRes.put("result", UNKNOWN);
+
         }
 
-    }
-
-    // 깃 아이디, 패스워드 등록
-    public String editGitService(String jwt, Map<String, String> req) {
-
-        // jwt 체크는 인터셉터에서 해서 넘어왔을테니까
-
-        try {
-            // jwt에서 userSeq를 뽑아내고
-            Long userSeq = jwtService.JWTtoUserSeq(jwt);
-
-            // userSeq로 userEntity를 뽑아낸 다음
-            UserEntity userEntity = userRepository.findById(userSeq).get();
-
-            String userGitUsername = req.get("userGitUsername");
-            String userGitToken = req.get("userGitToken");
-
-            userEntity.setUserGitUsername(userGitUsername);
-            userEntity.setUserGitToken(userGitToken);
-
-            userRepository.saveAndFlush(userEntity);
-
-            return "success";
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "error";
-        }
+        return serviceRes;
 
     }
 
     // 회원탈퇴
-    public String quitUser(String jwt) {
+    public Map<String, String> quitService(String jwt) {
+
+        Map<String, String> serviceRes = new HashMap<>();
 
         try {
-            // 사용자 정보 불러와서 체크하고
-            // jwt에서 userSeq를 뽑아내고
-            Long userSeq = jwtService.JWTtoUserSeq(jwt);
 
-            // 걔가 팀장인 팀이 있나 확인
+            // jwt가 인증하는 사용자의 UserEntity를 추출
+            Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
+
+            // 해당하는 사용자가 존재하는지 확인
+            if (!userEntityOptional.isPresent()) {
+                // 해당하는 사용자가 없음
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
+            }
+
+            UserEntity userEntity = userEntityOptional.get();
+            Long userSeq = userEntity.getUserSeq();
+
+            // 사용자가 팀장인 모든 팀의 리스트
             List<TeamEntity> teamEntityList = teamRepository.findAllByTeamLeader_UserSeq(userSeq);
+            // 사용자가 팀장인 단일팀의 리스트
             List<Long> teamSeqList = new ArrayList<>();
 
-            for (TeamEntity t : teamEntityList) {
-                // 그 팀들마다 팀원 수를 세아림
+            // 사용자가 팀장인 팀이 있는지 확인함
+            if (!teamEntityList.isEmpty()) {
 
-                int count = memberRepository.countAllByTeam(t);
+                // 사용자가 팀장으로 있는 팀이 있다면,
+                // 각 팀의 인원수를 파악함
+                for (TeamEntity t : teamEntityList) {
+                    // 다인팀의 팀장은 서비스를 탈퇴할 수 없음
+                    // 따라서, 사용자가 팀장인 모든 팀이 단일팀이어야 탈퇴가 가능함
 
-                if (count >= 2) {
-                    // 1인팀이 아닌 팀이 하나라도 있을 경우
-                    // 탐색을 중지하고 탈퇴 불가 처리
-                    return "403";
-                } else {
-                    teamSeqList.add(t.getTeamSeq());
+                    if (memberRepository.countAllByTeam(t) >= 2) {
+                        // 단일팀이 아닌 팀이 하나라도 발견될 경우,
+                        // 탐색을 중지하고 탈퇴 불가로 처리함
+                        serviceRes.put("result", NO_PER);
+                        return serviceRes;
+
+                    } else {
+                        // 단일팀일 경우, 추후 서버에서 삭제해야 하므로 해당 팀의 시퀀스를 기록함
+                        teamSeqList.add(t.getTeamSeq());
+
+                    }
                 }
-
             }
 
-            // 여기까지 왔다면 다인팀이면서 리더인 일은 없을 것
+            // 사용자가 팀장인 다인팀이 존재하지 않음, 탈퇴 가능
+            // 사용자가 팀장인 단일팀을 서버에서 삭제해야 함
 
-            // 그렇다면 내가 리더인 팀은 전부 단일팀이라는 의미
-            // 탈퇴 시에 서버에서 삭제해주어야 함
+            Map<String, String> deleteProjectRes = projectService.deleteProject(teamSeqList);
+            String result = deleteProjectRes.get("result");
 
-            if (projectService.deleteProject(teamSeqList).equals("fail!")) {
-                return "error";
+            if (!result.equals(SUCCESS)) {
+
+                // 유저 테이블에서 사용자 삭제
+                userRepository.delete(userEntity);
+
+                // DB의 유저 테이블에서 사용자가 삭제됨에 따라,
+                // 멤버 테이블에서 사용자의 모든 멤버 컬럼이 삭제됨
+                // 팀 테이블에서 사용자가 팀장인 모든 팀 컬럼이 삭제됨
+
+                // 위의 과정을 무사히 통과했으므로
+                serviceRes.put("result", SUCCESS);
+
+            } else {
+                serviceRes.put("result", UNKNOWN);
+
             }
-
-            // userSeq로 userEntity를 뽑아낸 다음
-            UserEntity userEntity = userRepository.findById(userSeq).get();
-
-            // 유저 테이블에서 해당 유저 삭제
-            userRepository.delete(userEntity);
-
-            // 유저가 날아가기 때문에 멤버도 db에서 알아서 날아갈 것
-            // 나혼자 팀장이자 팀원일 경우에는 팀도 db에서 날아감 (서버에선 아까 지움)
-            // 다인팀의 경우 팀장이지 않을 것이므로 팀과 파일이 보존됨
-
-            return "success";
 
         } catch (Exception e) {
-            e.printStackTrace();
-            return "error";
+            serviceRes.put("result", UNKNOWN);
 
         }
+
+        return serviceRes;
 
     }
 
