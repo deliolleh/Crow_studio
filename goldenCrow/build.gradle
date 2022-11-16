@@ -31,11 +31,16 @@ dependencies {
     implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
     // firebase
     implementation group: 'com.google.firebase', name: 'firebase-admin', version: '8.1.0'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation ('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'com.vaadin.external.google', module: 'android-json'
+    }
     // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
     compileOnly "org.projectlombok:lombok:1.18.20"
     annotationProcessor "org.projectlombok:lombok:1.18.20"
@@ -46,6 +51,14 @@ dependencies {
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.14.0-rc3'
 
+    // stomp
+    implementation 'org.webjars:webjars-locator-core'
+    implementation 'org.webjars:sockjs-client:1.5.1'
+    implementation 'org.webjars:stomp-websocket:2.3.4'
+
+
+    //mongodb
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 }
 
 tasks.named('test') {

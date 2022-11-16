@@ -1,34 +1,25 @@
-package com.example.goldencrow.file.Controller;
+package com.example.goldencrow.file.controller;
 
-import com.example.goldencrow.file.Service.FileService;
-import com.example.goldencrow.file.Service.ProjectService;
-import com.example.goldencrow.user.JwtService;
+
+import com.example.goldencrow.file.service.ProjectService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import static java.lang.System.out;
+import java.io.File;
+import java.util.*;
+
+
 
 @RestController
 @RequestMapping(value = "/api/projects")
 public class ProjectController {
-    private final JwtService jwtService;
-
-    private final FileService fileService;
 
     private final ProjectService projectService;
 
-    private String baseUrl = "/home/ubuntu/crow_data/";
-
-    public ProjectController(FileService fileService, JwtService jwtService, ProjectService projectService) {
-        this.fileService = fileService;
-        this.jwtService = jwtService;
+    public ProjectController(ProjectService projectService) {
         this.projectService = projectService;
     }
 
@@ -38,13 +29,8 @@ public class ProjectController {
     public ResponseEntity<String> teamProjectCreate(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> projectName) {
         String pjt = projectName.get("projectName");
         String baseUrl = "/home/ubuntu/crow_data";
-        String newBaseUrl = baseUrl + "/" + String.valueOf(teamSeq)+"/";
-        File newDir = new File(newBaseUrl);
 
-        if (!newDir.mkdirs()) {
-            return new ResponseEntity<>("이미 프로젝트가 존재합니다.", HttpStatus.NOT_ACCEPTABLE);
-        }
-        String check = projectService.createProject(newBaseUrl, type, pjt, teamSeq);
+        String check = projectService.createProject(baseUrl, type, pjt, teamSeq);
         if (check.equals("1")) {
             return new ResponseEntity<>("프로젝트 생성 성공했습니다.", HttpStatus.OK);
         } else if (check.equals("2")) {
@@ -54,24 +40,18 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/{teamSeq}")
-    public ResponseEntity<Map<List<String>,List<List<String>>>> pjtRead(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
+    @GetMapping("/directories/{teamSeq}")
+    public ResponseEntity<Map<Object, Object>> pjtRead(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
         String baseUrl = "/home/ubuntu/crow_data/"+String.valueOf(teamSeq);
         File teamPjt = new File(baseUrl);
-        String[] names = teamPjt.list();
-        String rootName = names[0];
-        String newUrl = baseUrl+ "/" + rootName;
+        String rootName = teamPjt.getName();
 
-        Map<List<String>,List<List<String>>> visit = new HashMap<>();
-        List<List<String>> newValue = new ArrayList<>();
-        List<String> root = new ArrayList<>();
-        root.add(rootName);
-        root.add(newUrl);
-        visit.put(root,newValue);
-        projectService.readDirectory(newUrl,rootName,visit);
+        Map<Object, Object> visit = new HashMap<>();
+        projectService.readDirectory(baseUrl,rootName,visit);
 
         return new ResponseEntity<>(visit, HttpStatus.ACCEPTED);
     }
+
 
 
     @PostMapping("/projectDeleter")

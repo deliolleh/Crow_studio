@@ -90,6 +90,7 @@ const Directory = ({ showFileContent }) => {
           .unwrap()
           .then(setTestData)
           .catch(console.error);
+        dispatchGetDirectoryList();
       })
       .catch(console.error);
   };

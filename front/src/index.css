@@ -81,7 +81,7 @@ hr {
 .Resizer.horizontal:hover {
   /* border-top: 2px solid greenyellow;
   border-bottom: 2px solid greenyellow; */
-  background-color:greenyellow;
+  background-color: greenyellow;
   background-size: 2px;
 }
 
@@ -96,7 +96,7 @@ hr {
 .Resizer.vertical:hover {
   /* border-left: 2px solid greenyellow;
   border-right: 2px solid greenyellow; */
-  background-color:greenyellow;
+  background-color: greenyellow;
   background-size: 2px;
 }
 .Resizer.disabled {

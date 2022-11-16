@@ -77,7 +77,9 @@ const GitForm = ({ updateGitAuth }) => {
           value={gitUsername}
           onChange={inputChangeHandler}
         />
-        <div className="h-6 font-normal mt-1 ml-3 mb-0.5 text-sm text-point_purple">{gitUsernameErrMsg}</div>
+        <div className="h-6 font-normal mt-1 ml-3 mb-0.5 text-sm text-point_purple">
+          {gitUsernameErrMsg}
+        </div>
       </div>
 
       {/* Git Token */}
@@ -93,7 +95,9 @@ const GitForm = ({ updateGitAuth }) => {
           value={gitToken}
           onChange={inputChangeHandler}
         />
-        <div className="h-6 font-normal mt-1 ml-3 mb-0.5 text-sm text-point_purple">{gitTokenErrMsg}</div>
+        <div className="h-6 font-normal mt-1 ml-3 mb-0.5 text-sm text-point_purple">
+          {gitTokenErrMsg}
+        </div>
       </div>
 
       <button

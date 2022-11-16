@@ -1,4 +1,4 @@
-package com.example.goldencrow.file.Repository;
+package com.example.goldencrow.file;
 
 import com.example.goldencrow.file.FileEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

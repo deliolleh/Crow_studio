@@ -1,6 +1,6 @@
-package com.example.goldencrow.user.repository;
+package com.example.goldencrow.user;
 
-import com.example.goldencrow.user.entity.UserEntity;
+import com.example.goldencrow.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

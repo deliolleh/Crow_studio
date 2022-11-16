@@ -1,4 +1,4 @@
-package com.example.goldencrow.editors;
+package com.example.goldencrow.editor;
 
 import org.springframework.stereotype.Service;
 

@@ -2,8 +2,8 @@ package com.example.goldencrow.forum;
 
 import com.example.goldencrow.forum.dto.ForumDto;
 import com.example.goldencrow.forum.dto.ForumPageDto;
-import com.example.goldencrow.user.entity.UserEntity;
-import com.example.goldencrow.user.repository.UserRepository;
+import com.example.goldencrow.user.UserEntity;
+import com.example.goldencrow.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

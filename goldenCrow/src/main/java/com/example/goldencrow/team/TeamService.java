@@ -1,6 +1,7 @@
 package com.example.goldencrow.team;
 
-import com.example.goldencrow.file.Service.ProjectService;
+import com.example.goldencrow.file.service.ProjectService;
+import com.example.goldencrow.git.GitService;
 import com.example.goldencrow.team.dto.MemberDto;
 import com.example.goldencrow.team.dto.TeamDto;
 import com.example.goldencrow.team.dto.UserInfoListDto;
@@ -8,10 +9,10 @@ import com.example.goldencrow.team.entity.MemberEntity;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.MemberRepository;
 import com.example.goldencrow.team.repository.TeamRepository;
-import com.example.goldencrow.user.JwtService;
+import com.example.goldencrow.user.service.JwtService;
 import com.example.goldencrow.user.dto.UserInfoDto;
-import com.example.goldencrow.user.entity.UserEntity;
-import com.example.goldencrow.user.repository.UserRepository;
+import com.example.goldencrow.user.UserEntity;
+import com.example.goldencrow.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,9 @@ public class TeamService {
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private GitService gitService;
 
     // 팀 목록 조회
     public List<TeamDto> teamList(String jwt) {
@@ -150,7 +154,24 @@ public class TeamService {
     }
 
     // 팀 생성
-    public Map<String, Long> teamCreate(String jwt, String teamName, String teamGit) {
+    public Map<String, Long> teamCreate(String jwt, Map<String, String> req) {
+
+        String teamGit = req.get("teamGit");
+        String teamName = req.get("teamName");
+        String projectType = req.get("projectType");
+
+        Integer type;
+        if(projectType.equals("pure Python")) {
+            type = 1;
+        } else if(projectType.equals("Django")){
+            type = 2;
+        } else if(projectType.equals("Flask")) {
+            type = 3;
+        } else if(projectType.equals("FastAPI")) {
+            type = 4;
+        } else {
+            return null;
+        }
 
         Map<String, Long> res = new HashMap<>();
 
@@ -168,7 +189,7 @@ public class TeamService {
             }
 
             // 이 사람을 팀장으로 하는 팀 생성하고 저장
-            TeamEntity teamEntity = new TeamEntity(userEntity, teamName);
+            TeamEntity teamEntity = new TeamEntity(userEntity, teamName, type);
             teamRepository.saveAndFlush(teamEntity);
 
             // 멤버 테이블에도 그 사람을 등록
@@ -176,15 +197,79 @@ public class TeamService {
             MemberEntity memberEntity = new MemberEntity(userEntity, savedTeamEntity);
             memberRepository.saveAndFlush(memberEntity);
 
-            // 성공 여부 반환
-            res.put("result", new Long(200));
-            res.put("teamSeq", savedTeamEntity.getTeamSeq());
-            return res;
+            // 등록한 것에서 시퀀스를 받아옴
+            // 아니... 알아서 오토인크리먼트를 해버려서 시퀀스를 바로 갖다 써도 되는구나...
+            Long teamSeq = savedTeamEntity.getTeamSeq();
+
+            if(teamGit==null) {
+                // git이 비어있는 상태이므로 클론 받아오지 않는다. createProject 한다
+
+                String projectCreateResult = projectService.createProject("/home/ubuntu/crow_data", type, teamName, teamSeq);
+
+                if(projectCreateResult.equals("1")) {
+                    // 성공
+                    res.put("result", new Long(200));
+                    res.put("teamSeq", teamSeq);
+                } else {
+                    // 모든 경우의 프로젝트 생성 실패
+
+                    System.out.println(projectCreateResult);
+
+                    // 등록되었던 팀과 멤버를 삭제한다
+                    teamRepository.delete(teamRepository.findByTeamSeq(teamSeq).get());
+
+                    if(projectCreateResult.equals("프로젝트 생성에 실패했습니다")){
+                        // 아무것도 못함
+                        return null;
+                    } else if(projectCreateResult.equals("이미 폴더가 존재합니다")||
+                            projectCreateResult.equals("이미 파일이 존재합니다")) {
+                        // 충돌나서 못만들었음
+                        res.put("result", new Long(409));
+                    } else {
+                        // 왜때매 터졌을까...
+                        return null;
+                    }
+
+                }
+
+            } else {
+                // 쓰여진 이 주소에서 git clone 하겠다는 말이므로 받아온다.
+                String gitCloneResult = gitService.gitClone(teamGit, teamSeq, teamName);
+
+                if(gitCloneResult.equals("Success")){
+                    // 성공
+                    res.put("result", new Long(200));
+                    res.put("teamSeq", teamSeq);
+                } else {
+                    // 모든 경우의 깃 클론 실패
+
+                    System.out.println(gitCloneResult);
+
+                    // 등록되었던 팀과 멤버를 삭제한다
+                    teamRepository.delete(teamRepository.findByTeamSeq(teamSeq).get());
+
+                    if(gitCloneResult.equals("폴더 생성에 실패했습니다")){
+                        // 아무것도 못함
+                        return null;
+                    } else if(gitCloneResult.equals("해당 폴더가 존재하지 않습니다.")||
+                            gitCloneResult.equals("해당 팀이 존재하지 않습니다")){
+                        // 못 찾아서 못 만들었음
+                        res.put("result", new Long(404));
+                    } else {
+                        // 뭔가 문제가 있긴 한데...
+                        return null;
+                    }
+
+                }
+
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+
+        return res;
 
     }
 
@@ -260,6 +345,52 @@ public class TeamService {
         }
 
     }
+
+    // 팀 프로젝트 타입 수정
+    public String teamModifyType(String jwt, Long teamSeq, String projectType) {
+
+        try {
+            // jwt에서 userSeq를 뽑아내고
+            Long userSeq = jwtService.JWTtoUserSeq(jwt);
+
+            Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
+
+            if(!teamEntityFoundCheck.isPresent()) {
+                // 그런 팀 없다
+                return "404";
+            }
+
+            Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
+
+            if (teamEntityOptional.isPresent()) {
+                // 내가 리더면
+                TeamEntity teamEntity = teamEntityOptional.get();
+
+                if(projectType.equals("pure Python")) {
+                    teamEntity.setType(1);
+                } else if(projectType.equals("Django")){
+                    teamEntity.setType(2);
+                } else if(projectType.equals("Flask")) {
+                    teamEntity.setType(3);
+                } else if(projectType.equals("FastAPI")) {
+                    teamEntity.setType(4);
+                } else {
+                    return null;
+                }
+
+                teamRepository.saveAndFlush(teamEntity);
+                return "success";
+            } else {
+                return "403";
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+
+    }
+
 
     // 팀 삭제
     public String teamDelete(String jwt, Long teamSeq) {
