@@ -84,9 +84,12 @@ export const MakeEditorData = (
           <button onClick={format}>포맷팅</button>
           <button onClick={lint}>린트</button>
           <Editor
-            style={{ overflow: "auto" }}
-            height="calc(100vh - 31px)"
-            // height="100%"
+            style={{ 
+              resize: "vertical",
+              overflow: "auto",
+             }}
+            height="200px"
+            // height="calc(100vh - 31px)"
             theme="vs-dark"
             // path={file.name}
             path={i + 1 === 1 ? "script.js" : "style.css"}
@@ -102,6 +105,7 @@ export const MakeEditorData = (
               scrollBeyondLastLine: false,
               fontSize: "14px",
               fontFamily: "JetBrains Mono",
+              automaticLayout: true,
             }}
           />
         </div>

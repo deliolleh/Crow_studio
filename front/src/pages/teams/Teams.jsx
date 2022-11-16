@@ -27,12 +27,14 @@ const Teams = () => {
   return (
     <div className="flex flex-col">
       <Header />
-      <div className="m-3 mb-6 flex w-screen md:h-screen h-fit items-center justify-center overflow-auto">
+      <div className="m-3 mb-6 flex w-screen h-screen items-center justify-center overflow-auto">
         <div className="px-8 py-8 lg:w-4/5 w-fit h-fit flex flex-col justify-center border border-primary_-2_dark rounded-md">
           <div className="flex justify-between items-center md:mb-5 mb-2">
             <div className="flex items-center">
               {/* 현재 로그인한 유저 닉네임 */}
-              <span className="md:text-xl text-sm font-bold text-point_light_yellow md:mr-2 mr-1">{myNickname}</span>
+              <span className="md:text-xl text-sm font-bold text-point_light_yellow md:mr-2 mr-1">
+                {myNickname}
+              </span>
               {/* 제목 */}
               <span className="text-white text-sm md:font-bold">
                 님의 팀 목록 ({myTeams.length})
