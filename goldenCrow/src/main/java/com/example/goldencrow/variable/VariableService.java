@@ -16,6 +16,9 @@ import java.util.Map;
 
 import static com.example.goldencrow.common.Constants.*;
 
+/**
+ * 변수명 추천과 관련된 로직을 처리하는 서비스
+ */
 @Service
 public class VariableService {
 
