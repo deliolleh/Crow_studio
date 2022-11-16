@@ -19,10 +19,12 @@ public class FileController {
     private final JwtService jwtService;
 
     private String stringPath = "filePath";
+
     public FileController(FileService fileService, JwtService jwtService) {
         this.fileService = fileService;
         this.jwtService = jwtService;
     }
+
     /**
      *
      * @param fileCreateRequestDto
@@ -43,12 +45,11 @@ public class FileController {
     }
 
     /**
-     * @param teamSeq
-     * 파일 삭제 요청
+     * @param teamSeq 파일 삭제 요청
      */
     @DeleteMapping("/{teamSeq}")
-    public ResponseEntity<String> userFileDelete(@RequestHeader("Authorization") String jwt,@PathVariable Long teamSeq, @RequestParam Integer type,@RequestBody HashMap<String, String> filePath) {
-        boolean check = fileService.deleteFile(filePath.get(stringPath), type,teamSeq);
+    public ResponseEntity<String> userFileDelete(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> filePath) {
+        boolean check = fileService.deleteFile(filePath.get(stringPath), type, teamSeq);
         if (check) {
             return new ResponseEntity<>("파일 삭제를 성공했습니다.", HttpStatus.OK);
         } else {
@@ -85,10 +86,10 @@ public class FileController {
     }
 
     @PutMapping("/{teamSeq}/files")
-    public ResponseEntity<String> saveFile(@RequestHeader("Authorization") String jwt,@PathVariable Long teamSeq,@RequestBody HashMap<String, String> fileContent){
+    public ResponseEntity<String> saveFile(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody HashMap<String, String> fileContent) {
         String content = fileContent.get("fileContent");
         String filePath = fileContent.get(stringPath);
-        String result = fileService.saveFile(filePath,content);
+        String result = fileService.saveFile(filePath, content);
 
         if (result.equals("Success")) {
             return new ResponseEntity<>("Success", HttpStatus.OK);
@@ -100,12 +101,12 @@ public class FileController {
     }
 
     @PostMapping("/files")
-    public ResponseEntity<String> readFile(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,String> path) {
+    public ResponseEntity<String> readFile(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String, String> path) {
         List<String> content = fileService.readFile(path.get(stringPath));
         if (content.get(0).equals("Success")) {
-            return new ResponseEntity<>(content.get(1),HttpStatus.OK);
+            return new ResponseEntity<>(content.get(1), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(content.get(1),HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(content.get(1), HttpStatus.BAD_REQUEST);
         }
 
     }

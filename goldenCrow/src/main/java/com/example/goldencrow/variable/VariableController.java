@@ -20,10 +20,11 @@ public class VariableController {
     /**
      * Recommending Variable Name from KR to EN with Naming Convention
      * <br> camelCase, PascalCase, snake_case
+     *
      * @param alphabet In data key, get korean word
      * @return If success, data key has list of three types naming convention with EN translate
      */
-    @PostMapping ("")
+    @PostMapping("")
     public ResponseEntity<Map<String, Object>> variableRecommend(@RequestBody HashMap<String, String> alphabet) {
         String text = alphabet.get("data");
         HashMap<String, Object> response = variableService.variableRecommend(text);
