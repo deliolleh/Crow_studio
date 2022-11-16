@@ -1,6 +1,7 @@
 package com.example.goldencrow.file.controller;
 
 import com.example.goldencrow.file.fileDto.FileCreateDto;
+import com.example.goldencrow.file.fileDto.FileCreateRequestDto;
 import com.example.goldencrow.file.service.FileService;
 import com.example.goldencrow.user.service.JwtService;
 import org.springframework.http.HttpStatus;
@@ -24,17 +25,17 @@ public class FileController {
     }
     /**
      *
-     * @param fileCreateDto
+     * @param fileCreateRequestDto
      * @return Message
      * 파일 생성 포스트 요청
      * 기본 경로를 잡아줄 지? 아니면 그냥 보내줄지?
      */
 
     @PostMapping("/{teamSeq}")
-    public ResponseEntity<String> userFileCreate(@RequestHeader("Authorization") String jwt,@RequestParam Integer type,@PathVariable Long teamSeq, @RequestBody FileCreateDto fileCreateDto) {
-        Boolean check = fileService.createFile(fileCreateDto, type, teamSeq);
+    public ResponseEntity<String> userFileCreate(@RequestHeader("Authorization") String jwt,@RequestParam Integer type,@PathVariable Long teamSeq, @RequestBody FileCreateRequestDto fileCreateRequestDto) {
+        boolean check = fileService.createFile(fileCreateRequestDto, type, teamSeq);
         if (check) {
-            String newFilePath = fileCreateDto.getFilePath()  + "/" + fileCreateDto.getFileTitle();
+            String newFilePath = fileCreateRequestDto.getFilePath()  + "/" + fileCreateRequestDto.getFileTitle();
             return new ResponseEntity<>(newFilePath, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("파일 생성에 실패했습니다.", HttpStatus.BAD_REQUEST);

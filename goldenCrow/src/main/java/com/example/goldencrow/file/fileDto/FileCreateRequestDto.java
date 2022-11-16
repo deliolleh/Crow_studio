@@ -2,20 +2,17 @@ package com.example.goldencrow.file.fileDto;
 
 import lombok.Data;
 
-/** 파일 생성 DTO
- * 파일 이름과 경로만! */
 @Data
-public class FileCreateDto {
+public class FileCreateRequestDto {
     private String fileTitle;
     private String filePath;
     private Long teamSeq;
 
 
-    public FileCreateDto() {};
+    public FileCreateRequestDto() {};
 
-    public FileCreateDto(String fileTitle, String filePath, Long teamSeq) {
+    public FileCreateRequestDto(String fileTitle, String filePath) {
         this.fileTitle = fileTitle;
         this.filePath = filePath;
-        this.teamSeq = teamSeq;
     }
 }

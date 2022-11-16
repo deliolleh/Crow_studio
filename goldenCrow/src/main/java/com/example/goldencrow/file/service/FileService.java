@@ -1,9 +1,12 @@
 package com.example.goldencrow.file.service;
 
 
+import com.example.goldencrow.file.FileEntity;
+import com.example.goldencrow.file.FileRepository;
 import com.example.goldencrow.file.fileDto.FileCreateDto;
 
 
+import com.example.goldencrow.file.fileDto.FileCreateRequestDto;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
 
@@ -27,42 +30,66 @@ import static java.lang.System.out;
 public class FileService {
 
     @Autowired
-    private TeamRepository teamRepository;
+    private FileRepository fileRepository;
+
+    private final String Success = "Success";
 
 
     /** 파일 생성 로직
      * 파일이 성공적으로 생성되면 true
      * 아니면 false 반환*/
-    public boolean createFile(FileCreateDto fileCreateDto, Integer type, Long teamSeq) {
-        String newFilePath = fileCreateDto.getFilePath() + "/"+ fileCreateDto.getFileTitle();
+    public boolean createFile(FileCreateRequestDto fileCreateRequestDto, Integer type, Long teamSeq) {
+        String newFilePath = fileCreateRequestDto.getFilePath() + "/"+ fileCreateRequestDto.getFileTitle();
+        String check = makeNewFile(newFilePath,type);
 
-        Optional<TeamEntity> team = teamRepository.findByTeamSeq(teamSeq);
-        File newFile = new File(newFilePath);
-//        FileCreateDto newFileCreateDto = new FileCreateDto(fileCreateDto.getFileTitle(),newFilePath);
-//        FileEntity fileEntity = new FileEntity(newFileCreateDto,team.get());
+        if (check.equals(Success)) {
+            FileCreateDto newFileCreateDto = new FileCreateDto(fileCreateRequestDto.getFileTitle(),newFilePath,teamSeq);
+            insertFile(newFileCreateDto);
+            return true;
+        }
+        
+        return false;
+    }
 
+    /**
+     * 우분투 서버에 파일을 생성하는 로직
+     * 성공한다면 디비 저장 함수를 부를 예정
+     * @param filePath
+     * @param type
+     * @return
+     */
+    public String makeNewFile(String filePath, Integer type) {
+        File newFile = new File(filePath);
         try{
             if (type == 2){
                 if(newFile.createNewFile()) {
                     //fileRepository.saveAndFlush(fileEntity);
-                    return true;
+                    return Success;
                 } else {
-                    System.out.println("here");
-                    return false;
+                    return "파일 생성에 실패했습니다.";
                 }
             } else {
                 if (newFile.mkdir()) {
                     //fileRepository.saveAndFlush(fileEntity);
-                    return true;
+                    return Success;
                 } else {
-                    return false;
+                    return "폴더 생성에 실패했습니다.";
                 }
             }
         } catch (IOException e) {
-            System.out.println(e);
-            return false;
+            return e.getMessage();
         }
     }
+
+    /**
+     * DB에 파일을 insert해주는 로직
+     * @param fileCreateDto
+     */
+    public void insertFile(FileCreateDto fileCreateDto) {
+        FileEntity fileEntity = new FileEntity(fileCreateDto);
+        fileRepository.insert(fileEntity);
+    }
+
     /** 파일 삭제  */
     public boolean deleteFile(String filePath,Integer type, Long teamSeq) {
         Path path = Paths.get(filePath);
