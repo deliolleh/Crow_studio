@@ -32,7 +32,7 @@ const DIRECTORY_DATA = {
   rootName: `root`,
 };
 
-const Directory = ({ showFileContent }) => {
+const Directory = ({ showFileContent, saveFileContent }) => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
   const [curPath, setCurPath] = useState("");
@@ -143,6 +143,9 @@ const Directory = ({ showFileContent }) => {
       .catch(console.error);
   };
 
+  // 저장
+  const saveHandler = () => saveFileContent(curName, curPath);
+
   // 트리 생성
   const renderTree = (nodes) => (
     <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
@@ -185,6 +188,9 @@ const Directory = ({ showFileContent }) => {
             </IcSpan>
             <IcSpan>
               <div onClick={deleteHandler}>🪓</div>
+            </IcSpan>
+            <IcSpan>
+              <div onClick={saveHandler}>💾</div>
             </IcSpan>
           </div>
         </div>
