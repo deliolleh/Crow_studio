@@ -19,8 +19,9 @@ public class EditorsController {
 
     /**
      * Formatting code
+     *
      * @param language Python, javascript, JAVA...
-     * @param rawText Code from editor
+     * @param rawText  Code from editor
      * @return If success,
      * <br>Hashmap - "data": formatting code file name
      * <br>Nothing if failed
@@ -44,8 +45,9 @@ public class EditorsController {
 
     /**
      * Get reformatted Code
+     *
      * @param language Python, javascript, JAVA...
-     * @param rawData name: fileName get by fileFormat
+     * @param rawData  name: fileName get by fileFormat
      * @return If success,
      * <br>Hashmap - "data": formatted code
      * <br>Nothing if failed
@@ -63,8 +65,9 @@ public class EditorsController {
 
     /**
      * Check Your Code, Not Change
+     *
      * @param language Python, javascript, JAVA...
-     * @param rawText Code from editor
+     * @param rawText  Code from editor
      * @return data: show what is problem / LinkedList
      * <br> index: problems index / ArrayList
      */

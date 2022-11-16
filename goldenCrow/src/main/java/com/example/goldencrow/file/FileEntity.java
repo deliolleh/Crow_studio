@@ -37,14 +37,16 @@ public class FileEntity {
     @LastModifiedDate
     private Date fileUpdatedAt;
 
-    public FileEntity() {};
+    public FileEntity() {
+    }
+
+    ;
 
     public FileEntity(FileCreateDto fileCreateDto) {
         this.fileTitle = fileCreateDto.getFileTitle();
         this.filePath = fileCreateDto.getFilePath();
         this.teamSeq = fileCreateDto.getTeamSeq();
     }
-
 
 
 }

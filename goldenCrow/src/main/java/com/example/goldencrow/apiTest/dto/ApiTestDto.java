@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import org.json.simple.JSONObject;
 
 /**
- * API 테스트 기능에 입력으로 사용될 dto
+ * API 테스트 기능에 입력으로 사용될 DTO
  */
 @Data
 @NoArgsConstructor
@@ -18,7 +18,7 @@ public class ApiTestDto {
 
     /**
      * api 요청의 method
-     * OPTION. GET, POST, PUT, DELETE
+     * OPTION. "GET", "POST", "PUT", "DELETE"
      */
     private String type;
 

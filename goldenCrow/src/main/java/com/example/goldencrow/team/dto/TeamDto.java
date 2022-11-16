@@ -33,21 +33,31 @@ public class TeamDto {
         this.teamLeaderNickname = userEntity.getUserNickname();
         this.teamLeaderProfile = userEntity.getUserProfile();
 
-        if(team.getTeamGit()==null) {
+        if (team.getTeamGit() == null) {
             this.teamGit = "";
         } else {
             this.teamGit = team.getTeamGit();
         }
 
-        if(team.getType()==null){
+        if (team.getType() == null) {
             this.projectType = "none";
         } else {
-            switch (team.getType().intValue()){
-                case(1) : this.projectType = "pure Python"; break;
-                case(2) : this.projectType = "Django"; break;
-                case(3) : this.projectType = "Flask"; break;
-                case(4) : this.projectType = "FastAPI"; break;
-                default : this.projectType = "none"; break;
+            switch (team.getType().intValue()) {
+                case (1):
+                    this.projectType = "pure Python";
+                    break;
+                case (2):
+                    this.projectType = "Django";
+                    break;
+                case (3):
+                    this.projectType = "Flask";
+                    break;
+                case (4):
+                    this.projectType = "FastAPI";
+                    break;
+                default:
+                    this.projectType = "none";
+                    break;
             }
         }
 
