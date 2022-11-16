@@ -7,10 +7,11 @@ const initialInputState = {
   password2: "",
 }; // 초기 이메일, 닉네임, 비밀번호1, 비밀번호2 상태
 
-const initialErrorState = {
-  emailErrorMsg: "",
-  nicknameErrorMsg: "",
-  passwordErrorMsg: "",
+const initialErrState = {
+  emailErrMsg: "",
+  nicknameErrMsg: "",
+  password1ErrMsg: "",
+  password2ErrMsg: "",
 };
 
 const emailRegEx =
@@ -18,101 +19,93 @@ const emailRegEx =
 
 const SignupForm = ({ signupHandler }) => {
   const [inputs, setInputs] = useState(initialInputState); // 초기 입력
-  const [errorMsgs, setErrorMsgs] = useState(initialErrorState); // 초기 에러메시지
+  const [errMsgs, setErrMsgs] = useState(initialErrState); // 초기 에러메시지
   const { email, nickname, password1, password2 } = inputs; // 이메일, 비밀번호 상태 할당
-  const {
-    emailErrorMsg,
-    nicknameErrorMsg,
-    password1ErrorMsg,
-    password2ErrorMsg,
-  } = errorMsgs; // 에러메시지 상태 할당
+  const { emailErrMsg, nicknameErrMsg, password1ErrMsg, password2ErrMsg } =
+    errMsgs; // 에러메시지 상태 할당
 
   const inputChangeHandler = (e) => {
-    if (e.target.name === "email") {
+    const eName = e.target.name;
+    const eValue = e.target.value;
+    if (eName === "email") {
       setInputs((prev) => {
-        return { ...prev, email: e.target.value };
+        return { ...prev, email: eValue };
       });
-    } else if (e.target.name === "nickname") {
+    } else if (eName === "nickname") {
       setInputs((prev) => {
-        return { ...prev, nickname: e.target.value };
+        return { ...prev, nickname: eValue };
       });
-    } else if (e.target.name === "password1") {
+    } else if (eName === "password1") {
       setInputs((prev) => {
-        return { ...prev, password1: e.target.value };
+        return { ...prev, password1: eValue };
       });
-    } else if (e.target.name === "password2") {
+    } else if (eName === "password2") {
       setInputs((prev) => {
-        return { ...prev, password2: e.target.value };
+        return { ...prev, password2: eValue };
       });
     }
   };
 
-  // 폼 제출시 작동
-  const submitHandler = (e) => {
+  const submitSignupHandler = (e) => {
     e.preventDefault();
-
     let isInvalid = false;
-    setErrorMsgs(initialErrorState);
+    setErrMsgs(initialErrState);
     if (email.trim().length === 0) {
-      setErrorMsgs((prev) => {
-        return { ...prev, emailErrorMsg: "이메일을 입력하세요" };
+      setErrMsgs((prev) => {
+        return { ...prev, emailErrMsg: "이메일을 입력하세요" };
       });
       isInvalid = true;
     } else if (!emailRegEx.test(email)) {
-      setErrorMsgs((prev) => {
-        return { ...prev, emailErrorMsg: "이메일 형식이 올바르지 않습니다" };
+      setErrMsgs((prev) => {
+        return { ...prev, emailErrMsg: "이메일 형식이 올바르지 않습니다" };
       });
       isInvalid = true;
     }
     if (nickname.trim().length === 0) {
-      setErrorMsgs((prev) => {
-        return { ...prev, nicknameErrorMsg: "닉네임을 입력하세요" };
+      setErrMsgs((prev) => {
+        return { ...prev, nicknameErrMsg: "닉네임을 입력하세요" };
       });
       isInvalid = true;
     }
     if (password1.trim().length === 0) {
-      setErrorMsgs((prev) => {
-        return { ...prev, password1ErrorMsg: "비밀번호를 입력하세요" };
+      setErrMsgs((prev) => {
+        return { ...prev, password1ErrMsg: "비밀번호를 입력하세요" };
       });
       isInvalid = true;
     }
     if (password2.trim().length === 0) {
-      setErrorMsgs((prev) => {
-        return { ...prev, password2ErrorMsg: "비밀번호를 한번 더 입력하세요" };
+      setErrMsgs((prev) => {
+        return { ...prev, password2ErrMsg: "비밀번호를 한번 더 입력하세요" };
       });
       isInvalid = true;
     }
     if (password2 !== password1) {
-      setErrorMsgs((prev) => {
-        return { ...prev, password2ErrorMsg: "비밀번호가 일치하지 않습니다" };
+      setErrMsgs((prev) => {
+        return { ...prev, password2ErrMsg: "비밀번호가 일치하지 않습니다" };
       });
       isInvalid = true;
     }
-
     if (isInvalid) {
       return;
     }
-
+    setErrMsgs(initialErrState);
     const signupData = {
       userId: email,
       userPassword: password2,
       userNickname: nickname,
     };
-    setErrorMsgs(initialErrorState);
-    signupHandler(JSON.stringify(signupData));
+    signupHandler(signupData);
   };
 
   return (
     <form
       method="post"
-      onSubmit={submitHandler}
+      onSubmit={submitSignupHandler}
       className="flex flex-col items-center"
     >
-      {/* Email */}
+      {/* 이메일 */}
       <div className="w-80 mb-1">
-        <label htmlFor="email" className="">
-          이메일
-        </label>
+        <label htmlFor="email">이메일</label>
         <input
           type="email"
           id="email"
@@ -124,15 +117,13 @@ const SignupForm = ({ signupHandler }) => {
           onChange={inputChangeHandler}
         />
         <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-          {emailErrorMsg}
+          {emailErrMsg}
         </div>
       </div>
 
-      {/* Nickname */}
+      {/* 닉네임 */}
       <div className="w-80 mb-1">
-        <label htmlFor="nickname" className="">
-          닉네임
-        </label>
+        <label htmlFor="nickname">닉네임</label>
         <input
           type="text"
           id="nickname"
@@ -144,15 +135,13 @@ const SignupForm = ({ signupHandler }) => {
           onChange={inputChangeHandler}
         />
         <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-          {nicknameErrorMsg}
+          {nicknameErrMsg}
         </div>
       </div>
 
-      {/* Password 1 */}
+      {/* 비밀번호 1 */}
       <div className="w-80 mb-1">
-        <label htmlFor="password1" className="">
-          비밀번호
-        </label>
+        <label htmlFor="password1">비밀번호</label>
         <input
           type="password"
           id="password1"
@@ -164,15 +153,13 @@ const SignupForm = ({ signupHandler }) => {
           onChange={inputChangeHandler}
         />
         <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-          {password1ErrorMsg}
+          {password1ErrMsg}
         </div>
       </div>
 
-      {/* Password 2 */}
+      {/* 비밀번호 2 */}
       <div className="w-80 mb-10">
-        <label htmlFor="password2" className="">
-          비밀번호 확인
-        </label>
+        <label htmlFor="password2">비밀번호 확인</label>
         <input
           type="password"
           id="password2"
@@ -184,15 +171,15 @@ const SignupForm = ({ signupHandler }) => {
           onChange={inputChangeHandler}
         />
         <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-          {password2ErrorMsg}
+          {password2ErrMsg}
         </div>
       </div>
 
-      {/* Submit Button */}
+      {/* 회원가입 버튼 */}
       <button
         type="submit"
         className="w-80 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition mb-4"
-        onClick={submitHandler}
+        onClick={submitSignupHandler}
       >
         회원가입
       </button>
