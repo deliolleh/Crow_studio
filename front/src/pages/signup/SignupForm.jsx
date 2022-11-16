@@ -1,5 +1,11 @@
 import React, { useState } from "react";
 
+import EmailForm from "./components/EmailForm";
+import NicknameForm from "./components/NicknameForm";
+import Password1Form from "./components/Password1Form";
+import Password2Form from "./components/Password2Form";
+import SignupButton from "./components/SignupButton";
+
 const initialInputState = {
   email: "",
   nickname: "",
@@ -104,85 +110,35 @@ const SignupForm = ({ signupHandler }) => {
       className="flex flex-col items-center"
     >
       {/* 이메일 */}
-      <div className="w-80 mb-1">
-        <label htmlFor="email">이메일</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
-          placeholder="이메일을 입력하세요"
-          required
-          value={email}
-          onChange={inputChangeHandler}
-        />
-        <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-          {emailErrMsg}
-        </div>
-      </div>
+      <EmailForm
+        email={email}
+        inputChangeHandler={inputChangeHandler}
+        emailErrMsg={emailErrMsg}
+      />
 
       {/* 닉네임 */}
-      <div className="w-80 mb-1">
-        <label htmlFor="nickname">닉네임</label>
-        <input
-          type="text"
-          id="nickname"
-          name="nickname"
-          className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
-          placeholder="닉네임을 입력하세요"
-          required
-          value={nickname}
-          onChange={inputChangeHandler}
-        />
-        <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-          {nicknameErrMsg}
-        </div>
-      </div>
+      <NicknameForm
+        nickname={nickname}
+        inputChangeHandler={inputChangeHandler}
+        nicknameErrMsg={nicknameErrMsg}
+      />
 
       {/* 비밀번호 1 */}
-      <div className="w-80 mb-1">
-        <label htmlFor="password1">비밀번호</label>
-        <input
-          type="password"
-          id="password1"
-          name="password1"
-          className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
-          placeholder="비밀번호를 입력하세요"
-          required
-          value={password1}
-          onChange={inputChangeHandler}
-        />
-        <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-          {password1ErrMsg}
-        </div>
-      </div>
+      <Password1Form
+        password1={password1}
+        inputChangeHandler={inputChangeHandler}
+        password1ErrMsg={password1ErrMsg}
+      />
 
       {/* 비밀번호 2 */}
-      <div className="w-80 mb-10">
-        <label htmlFor="password2">비밀번호 확인</label>
-        <input
-          type="password"
-          id="password2"
-          name="password2"
-          className="mt-1 w-full text-component_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm rounded-md transition"
-          placeholder="비밀번호를 한번 더 입력하세요"
-          required
-          value={password2}
-          onChange={inputChangeHandler}
-        />
-        <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-          {password2ErrMsg}
-        </div>
-      </div>
+      <Password2Form
+        password2={password2}
+        inputChangeHandler={inputChangeHandler}
+        password2ErrMsg={password2ErrMsg}
+      />
 
       {/* 회원가입 버튼 */}
-      <button
-        type="submit"
-        className="w-80 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition mb-4"
-        onClick={submitSignupHandler}
-      >
-        회원가입
-      </button>
+      <SignupButton onClick={submitSignupHandler}>회원가입</SignupButton>
     </form>
   );
 };
