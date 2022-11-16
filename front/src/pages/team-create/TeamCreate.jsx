@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
 
 import { createTeam } from "../../redux/teamSlice";
 
@@ -10,11 +9,11 @@ import Header from "../../components/Header";
 const initialInputState = {
   teamName: "",
   projectType: "pure Python",
-  projectName: "",
+  projectGit: "",
 };
 const initialErrorState = {
   teamNameErrMsg: "",
-  projectNameErrMsg: "",
+  projectGitErrMsg: "",
 };
 
 const TeamCreate = () => {
@@ -22,8 +21,9 @@ const TeamCreate = () => {
   const navigate = useNavigate();
   const [inputs, setInputs] = useState(initialInputState);
   const [errorMsgs, setErrorMsgs] = useState(initialErrorState);
-  const { teamName, projectType, projectName } = inputs;
-  const { teamNameErrMsg, projectNameErrMsg } = errorMsgs;
+  const { teamName, projectType, projectGit } = inputs;
+  const { teamNameErrMsg, projectGitErrMsg } = errorMsgs;
+  const [checkGit, setCheckGit] = useState(false);
 
   const inputChangeHandler = (e) => {
     if (e.target.name === "teamName") {
@@ -31,14 +31,15 @@ const TeamCreate = () => {
         return { ...prev, teamName: e.target.value };
       });
     } else if (e.target.name === "projectType") {
-      console.log("projectType-e.target.value:", e.target.value);
       setInputs((prev) => {
         return { ...prev, projectType: e.target.value };
       });
-    } else if (e.target.name === "projectName") {
+    } else if (e.target.name === "projectGit") {
       setInputs((prev) => {
-        return { ...prev, projectName: e.target.value };
+        return { ...prev, projectGit: e.target.value };
       });
+    } else if (e.target.name === "checkGit") {
+      setCheckGit((prev) => !prev);
     }
   };
 
@@ -58,19 +59,21 @@ const TeamCreate = () => {
       });
       isInvalid = true;
     }
-    if (projectName.trim().length === 0) {
-      setErrorMsgs((prev) => {
-        return { ...prev, projectNameErrMsg: "프로젝트 이름을 입력하세요" };
-      });
-      isInvalid = true;
+    if (checkGit) {
+      if (projectGit.trim().length === 0) {
+        setErrorMsgs((prev) => {
+          return { ...prev, projectGitErrMsg: "프로젝트 깃 주소를 입력하세요" };
+        });
+        isInvalid = true;
+      }
     }
     if (isInvalid) {
       return;
     }
 
-    console.log(teamName, projectType, projectName);
+    console.log(teamName, projectType, projectGit);
 
-    const teamData = JSON.stringify({ teamName, projectType, projectName });
+    const teamData = { teamName, projectType, projectGit: projectGit ?? "" };
     setErrorMsgs(initialErrorState);
     dispatch(createTeam(teamData))
       .unwrap()
@@ -81,6 +84,8 @@ const TeamCreate = () => {
       .catch((errorStatusCode) => {
         if (errorStatusCode === 409) {
           alert("이미 해당 이름으로 생성된 팀이 있습니다");
+        } else if (errorStatusCode === 404) {
+          alert("해당 깃 주소가 유효하지 않습니다");
         } else {
           alert("비상!!");
         }
@@ -94,7 +99,9 @@ const TeamCreate = () => {
       <Header />
       <div className="h-screen flex justify-center items-center mb-2">
         <div className="px-16 py-12 flex flex-col w-fit h-fit justify-center items-center border border-primary_-2_dark rounded-md">
-          <div className="text-4xl font-bold text-white pb-2 mb-5">팀 생성하기</div>
+          <div className="text-4xl font-bold text-white pb-2 mb-5">
+            팀 생성하기
+          </div>
           <form
             method="post"
             onSubmit={submitHandler}
@@ -140,23 +147,32 @@ const TeamCreate = () => {
               <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink"></div>
             </div>
 
-            {/* 프로젝트 이름 */}
+            {/* 프로젝트 깃 주소 */}
             <div className="w-80 mb-4">
-              <label htmlFor="projectName" className="">
-                프로젝트 이름
+              {/* 체크박스 */}
+              <input
+                type="checkbox"
+                id="checkGit"
+                name="checkGit"
+                className="transition"
+                defaultValue={checkGit}
+                onChange={inputChangeHandler}
+              />
+              <label htmlFor="projectGit" className="">
+                프로젝트 깃 주소
               </label>
               <input
                 type="text"
-                id="projectName"
-                name="projectName"
+                id="projectGit"
+                name="projectGit"
                 className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple  rounded-md transition"
-                placeholder="프로젝트 이름을 입력하세요"
-                required
-                value={projectName}
+                placeholder="프로젝트 깃 주소를 입력하세요"
+                disabled={!checkGit}
+                value={projectGit}
                 onChange={inputChangeHandler}
               />
               <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-                {projectNameErrMsg}
+                {projectGitErrMsg}
               </div>
             </div>
 

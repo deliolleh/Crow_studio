@@ -12,6 +12,8 @@ const userApi = {
   resign: () => api.delete("/users/quit"),
   updateGitAuth: (credentialsData) =>
     api.put("/users/edit/git", credentialsData),
+  getPersonalSetting: () => api.get("/users/personal"),
+  setPersonalSetting: (settingData) => api.put("/users/personal", settingData),
 };
 
 export default userApi;
