@@ -277,9 +277,15 @@ public class GitService {
         String email = gitInfo.get(0);
         String pass = gitInfo.get(1);
 
+<<<<<<< HEAD
+        String newGitUrl = newRemoteUrl(gitUrl, email, pass);
+        System.out.println(newGitUrl);
+        boolean setNew = setNewUrl(newGitUrl, gitPath);
+=======
         String newGitUrl = newRemoteUrl(gitUrl,email,pass);
 
         boolean setNew = setNewUrl(newGitUrl,gitPath);
+>>>>>>> 554358d6ef72e62a311b25937821dd557a60dd0d
 
         if (!setNew) {
             return "새로운 url 설정에 실패했습니다.";
