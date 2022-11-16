@@ -27,6 +27,11 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * UserController 생성자
+     *
+     * @param userService user를 관리하는 service
+     */
     public UserController(UserService userService) {
         this.userService = userService;
     }

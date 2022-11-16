@@ -36,6 +36,15 @@ public class UserService {
     private final JwtService jwtService;
     private final ProjectService projectService;
 
+    /**
+     * UserService 생성자
+     *
+     * @param userRepository   User Table에 접속하는 Repository
+     * @param teamRepository   Team Table에 접속하는 Repository
+     * @param memberRepository Member Table에 접속하는 Repository
+     * @param jwtService       jwt를 관리하는 service
+     * @param projectService   project를 관리하는 service
+     */
     public UserService(UserRepository userRepository, TeamRepository teamRepository, MemberRepository memberRepository,
                        JwtService jwtService, ProjectService projectService) {
         this.userRepository = userRepository;

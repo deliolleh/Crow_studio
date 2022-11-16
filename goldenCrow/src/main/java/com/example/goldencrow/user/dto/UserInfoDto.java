@@ -15,9 +15,17 @@ public class UserInfoDto {
     private String userNickname;
     private String userProfile;
 
+    /**
+     * 빈 UserInfoDto 생성자
+     */
     public UserInfoDto() {
     }
 
+    /**
+     * UserInfoDto 생성자
+     *
+     * @param userEntity 사용자의 UserEntity
+     */
     public UserInfoDto(UserEntity userEntity) {
         this.userSeq = userEntity.getUserSeq();
         this.userId = userEntity.getUserId();
