@@ -180,7 +180,7 @@ public class FileService {
         File targetFile = new File(newFilePath);
         File reNameFile = new File(renameFilePath);
 
-        Optional<FileEntity> file = fileRepository.findByTeamSeqAfterFilePath(Long teamSeq, filePath);
+        Optional<FileEntity> file = fileRepository.findByTeamSeqAfterFilePath(teamSeq, filePath);
 
         if (!file.isPresent()) {
             return false;
