@@ -20,6 +20,7 @@ import Modal from "react-modal";
 import { IoAdd } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
 import { BsPencilFill } from "react-icons/bs";
+import { BsCheckLg } from "react-icons/bs";
 
 const customStyles = {
   content: {
@@ -213,7 +214,7 @@ const TeamDetail = () => {
                   id="searchUser"
                   onChange={searchUserChangeHandler}
                   value={searchUserName}
-                  className="rounded-md bg-component_item_bg_+2_dark px-4 py-1 text-sm font-medium text-white text-left appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
+                  className="rounded-md bg-component_item_bg_+2_dark px-4 py-1 text-sm font-medium text-white text-left appearance-none shadow-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
                 />
               </form>
             </div>
@@ -237,7 +238,7 @@ const TeamDetail = () => {
         </Modal>
         {/* team detail */}
         <div className="flex items-center justify-center m-3 mb-6 w-screen h-screen overflow-auto">
-          <div className="p-8 lg:w-4/5 w-fit h-fit flex flex-col justify-center border border-primary_-2_dark rounded-md">
+          <div className="p-8 lg:w-4/5 w-fit max-w-[1000px] h-fit flex flex-col justify-center items-center border border-primary_-2_dark rounded-md">
             <TeamDetailHeader
               teamName={teamName}
               isLeader={teamLeaderSeq === mySeq}
@@ -329,14 +330,14 @@ const TeamDetail = () => {
             </div>
 
             {/* 프로젝트 타입 */}
-            <div className="flex items-center mb-2 md:w-full w-[285px] h-fit bg-component_item_bg_dark rounded-md">
-              <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
+            <div className="flex mb-4 md:w-full w-[285px] bg-component_item_bg_dark rounded-md">
+              <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
                 프로젝트 타입
               </div>
               <div className="flex">
                 <div className="text-white text-sm p-2">
                   {!projectTypeInput && (
-                    <div className="flex">
+                    <div className="flex items-center">
                       <span>{projectType}</span>
                       <BsPencilFill
                         className="ml-3 text-sm text-point_yellow_+2 cursor-pointer"
@@ -347,7 +348,7 @@ const TeamDetail = () => {
                   {projectTypeInput && (
                     <form onSubmit={submitProjectTypeHandler} className="flex">
                       <select
-                        className="mt-1 w-full text-white py-2 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+                        className="w-full text-white mr-1.5 py-1.5 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
                         id="projectType"
                         name="projectType"
                         value={modifiedProjectType}
@@ -358,15 +359,19 @@ const TeamDetail = () => {
                         <option value="Flask">Flask</option>
                         <option value="FastAPI">FastAPI</option>
                       </select>
-                      <button onClick={submitProjectTypeHandler}>😎</button>
+                      <button onClick={submitProjectTypeHandler}>
+                        <BsCheckLg className="text-point_light_yellow hover:text-point_yellow" />
+                      </button>
                     </form>
                   )}
                 </div>
               </div>
             </div>
+
+            {/* 프로젝트 이동 버튼 */}
             <button
               onClick={goProjectHandler}
-              className="w-72 h-12 text-xl font-bold bg-point_light_yellow text-component_dark hover:bg-point_yellow rounded-md transition"
+              className="w-72 h-12 text-lg font-bold bg-point_light_yellow text-component_dark hover:bg-point_yellow rounded-md transition"
             >
               프로젝트로 이동
             </button>
