@@ -30,6 +30,7 @@ public class CompileService {
      * @return 명령어 수행 성공 시 결과 문자열 반환, 성패에 따른 result 반환
      */
     public String resultString(String[] cmd) {
+        System.out.println("명령어 실행 !");
         try {
             StringBuffer sb = new StringBuffer();
             Process p = Runtime.getRuntime().exec(cmd);
@@ -162,7 +163,7 @@ public class CompileService {
             if (input.isEmpty()) {
                 command = new String[]{"python3", absolutePath};
             } else {
-                command = new String[]{"/bin/sh", "-c", "echo -e " + "\"" + input + "\" | python3 " + absolutePath};
+                command = new String[]{"/bin/sh", "-c", "echo " + "\"" + input + "\" | python3 " + absolutePath};
             }
             // 결과 문자열
             System.out.println(Arrays.toString(command));
