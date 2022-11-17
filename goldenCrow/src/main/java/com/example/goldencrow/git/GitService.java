@@ -10,10 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import static com.example.goldencrow.common.Constants.*;
+
+/**
+ * git과 관련된 로직을 처리하는 service
+ */
 @Service
 public class GitService {
 
@@ -26,6 +29,12 @@ public class GitService {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Git Service 생성자
+     *
+     * @param projectService    project를 관리하는 service
+     * @param userRepository    user Table에 접속하는 Repository
+     */
     public GitService(ProjectService projectService, UserRepository userRepository) {
         this.projectService = projectService;
         this.userRepository = userRepository;
@@ -46,17 +55,18 @@ public class GitService {
     }
 
     /**
-     * git clone 함수
+     * git clone 내부 로직
      * 팀, 프로젝트 디렉토리를 순차적으로 생성(프로젝트 서비스 함수 이용)
      * 그 후 프로젝트 디렉토리에서 클론
      * 클론한 디렉토리로 이동 후 유저 정보 입력(리더 이메일, 리더 닉네임)
      *
-     * @param url
-     * @param teamSeq
-     * @param projectName
+     * @param url           clone받을 git 주소
+     * @param teamSeq       해당 프로젝트의 팀 sequence
+     * @param projectName   해당 프로젝트명
      * @return
      */
-    public String gitClone(String url, Long teamSeq, String projectName) {
+    public Map<String, String> gitClone(String url, Long teamSeq, String projectName) {
+        Map<String, String> serviceRes = new HashMap<>();
         // 명령어 실행 시키기 위한 빌더
         ProcessBuilder command = new ProcessBuilder("git", "clone", url);
 
@@ -65,16 +75,17 @@ public class GitService {
         String newFilePath = projectService.createDir("/home/ubuntu/crow_data", teamFolder);
 
         if (newFilePath.equals("2")) {
-            return "폴더 생성에 실패했습니다";
+            serviceRes.put("result", WRONG);
+            return serviceRes;
         }
 
         // 프로젝트 이름 디렉토리 만들기
         String pjt = projectService.createDir(newFilePath, projectName);
         if (pjt.equals("2")) {
-            return "폴더 생성에 실패했습니다";
+            serviceRes.put("result", WRONG);
+            return serviceRes;
         }
         File newProjectFolder = new File(pjt);
-
 
         // 프로젝트 디렉토리에서 명령어 실행
         command.directory(new File(pjt));
@@ -82,30 +93,33 @@ public class GitService {
         try {
             command.start().waitFor();
         } catch (IOException e) {
-            // 에러난다면 에러를 리턴
-            return e.getMessage();
+            serviceRes.put("result", WRONG);
+            return serviceRes;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            return e.getMessage();
+            serviceRes.put("result", WRONG);
+            return serviceRes;
         }
-        if (newProjectFolder.listFiles() == null || newProjectFolder.listFiles().length == 0) {
-            return "해당 폴더가 존재하지 않습니다.";
+        if (newProjectFolder.listFiles() == null || Objects.requireNonNull(newProjectFolder.listFiles()).length == 0) {
+            serviceRes.put("result", NO_SUCH);
+            return serviceRes;
         }
-        File newFolder = newProjectFolder.listFiles()[0];
-        System.out.println(newFolder.getPath());
+        File newFolder = Objects.requireNonNull(newProjectFolder.listFiles())[0];
 
         Optional<TeamEntity> thisTeam = teamRepository.findByTeamSeq(teamSeq);
 
         if (!thisTeam.isPresent()) {
-            return "해당 팀이 존재하지 않습니다";
+            serviceRes.put("result", NO_SUCH);
+            return serviceRes;
         }
 
         String configResult = setConfig(newFolder, thisTeam.get());
         if (!configResult.equals("Success")) {
-            return configResult;
+            serviceRes.put("result", NO_SUCH); // 수정해야함
+            return serviceRes;
         }
-
-        return "Success";
+        serviceRes.put("result", SUCCESS); // 수정해야함
+        return serviceRes;
     }
 
     /**

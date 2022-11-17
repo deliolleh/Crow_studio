@@ -9,6 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.goldencrow.common.Constants.BAD_REQ;
+import static com.example.goldencrow.common.Constants.SUCCESS;
+
+/**
+ * Git과 관련된 기능을 처리하는 Controller
+ *
+ * @url /api/git
+ */
 @RestController
 @RequestMapping(value = "/api/git")
 public class GitController {
@@ -17,30 +25,43 @@ public class GitController {
 
     private final GitService gitService;
 
+    /**
+     * Git controller 생성자
+     *
+     * @param gitService
+     * @param jwtService
+     */
     public GitController(GitService gitService, JwtService jwtService) {
         this.gitService = gitService;
         this.jwtService = jwtService;
     }
 
     /**
-     * 깃 클론 컨트롤러
-     * 결과과 Success가 아니라면 에러 메시지 반환
+     * 깃 클론 API
      *
-     * @param jwt
-     * @param teamSeq
-     * @param gitProject
+     * @param jwt           회원가입 및 로그인 시 발급되는 access token
+     * @param teamSeq       해당 프로젝트의 팀 sequence
+     * @param req
      */
     @PostMapping("/{teamSeq}")
-    public ResponseEntity<String> gitClone(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody HashMap<String, String> gitProject) {
-        String projectName = gitProject.get("projectName");
-        String gitUrl = gitProject.get("gitUrl");
+    public ResponseEntity<Map<String, String>> gitClone(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
+        if (req.containsKey("projectName") && req.containsKey("gitUrl")) {
+            String projectName = req.get("projectName");
+            String gitUrl = req.get("gitUrl");
 
-        String cloneResult = gitService.gitClone(gitUrl, teamSeq, projectName);
+            Map<String, String> res = gitService.gitClone(gitUrl, teamSeq, projectName);
 
-        if (!cloneResult.equals("Success")) {
-            return new ResponseEntity<>(cloneResult, HttpStatus.BAD_REQUEST);
+            if (!res.get("result").equals(SUCCESS)) {
+                return new ResponseEntity<>(res, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+        } else {
+            Map<String, String> res = new HashMap<>();
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("클론에 성공했습니다!", HttpStatus.OK);
+
+
     }
 
     @PostMapping("/git-switch")
