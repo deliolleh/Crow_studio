@@ -530,7 +530,7 @@ public class GitService {
     }
 
     /**
-     * 바뀌었던 깃 Url을 기존 상태로 원위치
+     * 바뀌었던 깃 Url을 기존 상태로 원위치 처리하는 내부 로직
      * @param oldUrl
      * @param gitPath
      * @return
