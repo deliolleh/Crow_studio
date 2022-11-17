@@ -32,11 +32,21 @@ const DIRECTORY_DATA = {
   rootName: `root`,
 };
 
-const Directory = ({ showFileContent, saveFileContent }) => {
+const Directory = (props) => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
-  const [curPath, setCurPath] = useState("");
-  const [curName, setCurName] = useState("");
+
+  const {
+    curPath,
+    setCurPath,
+    curName,
+    setCurName,
+    showFileContent,
+    saveFileContent,
+  } = props;
+
+  // const [curPath, setCurPath] = useState("");
+  // const [curName, setCurName] = useState("");
 
   const [filesDirectories, setFilesDirectories] = useState({});
 
@@ -107,7 +117,7 @@ const Directory = ({ showFileContent, saveFileContent }) => {
       oldFileName: curName,
       fileTitle: newName,
     };
-    dispatch(renameFile(renameData))
+    dispatch(renameFile({ teamSeq, fileData: renameData }))
       .unwrap()
       .then(() => {
         console.log(`${curName} -> ${newName} 변경 성공`);
@@ -162,7 +172,7 @@ const Directory = ({ showFileContent, saveFileContent }) => {
   };
 
   useEffect(() => {
-    console.log("curPath re-rendering");
+    // console.log("curPath re-rendering");
   }, [curPath]);
 
   return (

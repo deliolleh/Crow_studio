@@ -23,9 +23,10 @@ const Mypage = () => {
         {/* 프로필 */}
         <Profile userSeq={userSeq} openModify={modifyHandler} />
         {/* 프로젝트 */}
-        {!isModify && <Project />}
+        {/* {!isModify && <Project />} */}
         {/* 회원정보수정 */}
-        {isModify && +userSeq === mySeq && <Modify closeModify={modifyHandler} />}
+        {/* {isModify && +userSeq === mySeq && <Modify closeModify={modifyHandler} />} */}
+        {+userSeq === mySeq && <Modify closeModify={modifyHandler} />}
       </section>
     </div>
   );
