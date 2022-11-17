@@ -47,7 +47,7 @@ public class ProjectController {
         String rootName = teamPjt.getName();
         File[] files = teamPjt.listFiles();
         Map<Object, Object> visit = new HashMap<>();
-        if (files.length > 0) {
+        if (files!= null && files.length == 0) {
             return new ResponseEntity<>(visit,HttpStatus.BAD_REQUEST);
         }
         String rootPath = files[0].getPath();
