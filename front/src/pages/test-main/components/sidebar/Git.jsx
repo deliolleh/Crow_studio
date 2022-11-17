@@ -6,7 +6,7 @@ import { BsCircleFill } from "react-icons/bs";
 // styled
 const GitContainer = styled.div`
   border-radius: 0 10px 10px 0;
-  height: 100vh;
+  height: calc(100vh - 80px);
 `;
 
 const Git = (

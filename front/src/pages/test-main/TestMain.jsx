@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import styled from "styled-components";
+import SplitPane from "react-split-pane";
 
 import { getFileContent, saveFileContent } from "../../redux/fileSlice";
 import { formatPut, formatGet } from "../../redux/editorSlice";
@@ -32,6 +33,21 @@ const TestMain = () => {
   const { teamSeq } = useParams();
   const editorRef = useRef(null);
   const [showComponent, setShowComponent] = useState("Dir");
+  const [showItem, setShowItem] = useState("Dir");
+  const [curFilePath, setCurFilePath] = useState("");
+  const classwatcher = document.querySelector("activeIcon")
+
+  // 사이드바 아이템 유무로 넓이 파악
+  const [ sidebarItemShow, setSidebarItemShow ] = useState(true);
+  useEffect(() => {
+    if (classwatcher) {
+      setSidebarItemShow(true);
+      console.log("sidebarItemShow: " + sidebarItemShow)
+    } else {
+      setSidebarItemShow(false);
+      console.log("sidebarItemShow: " + sidebarItemShow)
+    }
+  }, [classwatcher]);
 
   const [curPath, setCurPath] = useState("");
   const [curName, setCurName] = useState("");
@@ -49,6 +65,8 @@ const TestMain = () => {
 
   const showComponentHandler = (componentName) =>
     setShowComponent(componentName);
+
+    const showItemHandler = (item) => setShowItem(item);
 
   // 파일 클릭하면 내용 보여주기
   const showFileContentHandler = (type, path) => {
@@ -119,48 +137,57 @@ const TestMain = () => {
 
   return (
     <React.Fragment>
-      <Header />
-      <div className="flex">
+      <div className="h-screen w-screen">
+        <Header />
         <div className="flex">
-          <Sidebar
-            clickIcon={showComponentHandler}
-            showComponent={showComponent}
-          />
-          {showComponent && (
-            <SidebarItems>
-              {showComponent === "Dir" && (
-                <Directory
-                  showFileContent={showFileContentHandler}
-                  saveFileContent={saveFileContentHandler}
-                  curPath={curPath}
-                  setCurPath={setCurPath}
-                  curName={curName}
-                  setCurName={setCurName}
-                />
-              )}
-              {showComponent === "Git" && <Git />}
-              {showComponent === "Team" && <Team />}
-              {showComponent === "Api" && <Api />}
-              {showComponent === "Var" && <VariableName />}
-              {showComponent === "Set" && <Settings />}
-            </SidebarItems>
-          )}
+          <div className="flex">
+            <Sidebar clickIcon={showItemHandler} showItem={showItem} />
+            {showItem && (
+              <SidebarItems>
+                {showItem === "Dir" && (
+                  <Directory
+                    showFileContent={showFileContentHandler}
+                    saveFileContent={saveFileContentHandler}
+                  />
+                )}
+                {showItem === "Git" && <Git />}
+                {showItem === "Team" && <Team />}
+                {showItem === "Api" && <Api />}
+                {showItem === "Var" && <VariableName />}
+                {showItem === "Set" && <Settings />}
+              </SidebarItems>
+            )}
+          </div>
+          <div
+            className="flex flex-col mx-[8px]"
+            style={ 
+              sidebarItemShow === false ? { width: "calc(100vw - 400px)" } : { width: "calc(100vw - 108px)" }
+            }
+          >
+            <SplitPane
+              style={{ position: "static" }}
+              split="horizontal"
+              minSize={31}
+              defaultSize="64%"
+              className="vertical Pane1"
+            >
+              <Editor
+                style={{ 
+                  overflow: "auto",
+                }}
+                height="calc(70vh - 80px)"
+                theme="vs-dark"
+                defaultLanguage="python"
+                onMount={(editor) => {
+                  editorRef.current = editor;
+                }}
+                options={editorOptions}
+              />
+
+              <ConsoleTerminal curPath={curPath} curType={curType} />
+            </SplitPane>
+          </div>
         </div>
-
-        {/* 에디터 */}
-        <Editor
-          style={{ overflow: "auto" }}
-          height="calc(100vh - 31px)"
-          theme="vs-dark"
-          defaultLanguage="python"
-          onMount={(editor) => {
-            editorRef.current = editor;
-          }}
-          options={editorOptions}
-        />
-
-        {/* 콘솔 */}
-        <ConsoleTerminal curPath={curPath} curType={curType} />
       </div>
     </React.Fragment>
   );
@@ -171,6 +198,6 @@ export default TestMain;
 const SidebarItems = styled.div`
   width: 292px;
   min-width: 0px;
-  height: 100vh;
+  height: calc(100vh -80px);
   margin-left: 3px;
 `;

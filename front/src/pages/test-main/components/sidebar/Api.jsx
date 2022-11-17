@@ -7,7 +7,7 @@ import editorApi from "../../../../api/editorApi";
 // styled
 const ApiContainer = styled.div`
   border-radius: 0 10px 10px 0;
-  height: 100vh;
+  height: calc(100vh - 80px);
 `;
 
 const Api = () => {
