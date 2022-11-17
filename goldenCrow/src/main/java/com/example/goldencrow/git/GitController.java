@@ -27,8 +27,8 @@ public class GitController {
     /**
      * Git controller 생성자
      *
-     * @param gitService    git 관련 로직을 처리하는 Service
-     * @param jwtService    jwt 관련 로직을 처리하는 Service
+     * @param gitService git 관련 로직을 처리하는 Service
+     * @param jwtService jwt 관련 로직을 처리하는 Service
      */
     public GitController(GitService gitService, JwtService jwtService) {
         this.gitService = gitService;
@@ -38,9 +38,9 @@ public class GitController {
     /**
      * Git Clone API
      *
-     * @param jwt       회원가입 및 로그인 시 발급되는 access token
-     * @param teamSeq   해당 프로젝트의 팀 sequence
-     * @param req       "projectName", "gitUrl"를 key로 가지는 Map<String, String>
+     * @param jwt     회원가입 및 로그인 시 발급되는 access token
+     * @param teamSeq 해당 프로젝트의 팀 sequence
+     * @param req     "projectName", "gitUrl"를 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
@@ -71,11 +71,11 @@ public class GitController {
     /**
      * Git Switch API
      *
-     * @param jwt   회원가입 및 로그인 시 발급되는 access token
-     * @param type  switch할 branch의 종류 (1 : 존재하는 브랜치로 이동, 2 : 브랜치를 새로 생성 후 이동)
-     * @param req   "gitPath", "branchName"를 key로 가지는 Map<String, String>
-     * @return  성패에 따른 result 반환
-     * @status  200, 401, 404
+     * @param jwt  회원가입 및 로그인 시 발급되는 access token
+     * @param type switch할 branch의 종류 (1 : 존재하는 브랜치로 이동, 2 : 브랜치를 새로 생성 후 이동)
+     * @param req  "gitPath", "branchName"를 key로 가지는 Map<String, String>
+     * @return 성패에 따른 result 반환
+     * @status 200, 401, 404
      */
     @PostMapping("/git-switch")
     public ResponseEntity<Map<String, String>> gitSwitchPost(@RequestHeader("Authorization") String jwt, @RequestParam Integer type, @RequestBody Map<String, String> req) {
@@ -102,14 +102,14 @@ public class GitController {
     /**
      * Git Commit API
      *
-     * @param jwt   회원가입 및 로그인 시 발급되는 access token
-     * @param req   "message", "gitPath", "filePath"를 key로 가지는 Map<String, String>
-     * @return  성패에 따른 result 반환
-     * @status  200, 401, 404
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param req "message", "gitPath", "filePath"를 key로 가지는 Map<String, String>
+     * @return 성패에 따른 result 반환
+     * @status 200, 401, 404
      */
     @PostMapping("/git-commit")
     public ResponseEntity<Map<String, String>> gitCommitPost(@RequestHeader("Authorization") String jwt,
-                                            @RequestBody Map<String, String> req) {
+                                                             @RequestBody Map<String, String> req) {
         if (req.containsKey("message") && req.containsKey("gitPath") && req.containsKey("filePath")) {
             String message = req.get("message");
             String gitPath = req.get("gitPath");
@@ -134,16 +134,16 @@ public class GitController {
     /**
      * Git Push API
      *
-     * @param jwt       회원가입 및 로그인 시 발급되는 access token
-     * @param userSeq   push하는 유저의 sequence
-     * @param req       "message", "gitPath", "filePath", "branchName"을 key로 가지는 Map<String, String>
+     * @param jwt     회원가입 및 로그인 시 발급되는 access token
+     * @param userSeq push하는 사용자의 Sequence
+     * @param req     "message", "gitPath", "filePath", "branchName"을 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
     @PostMapping("/{userSeq}/git-push")
     public ResponseEntity<Map<String, String>> gitPushPost(@RequestHeader("Authorization") String jwt,
-                                              @PathVariable Long userSeq,
-                                              @RequestBody HashMap<String, String> req) {
+                                                           @PathVariable Long userSeq,
+                                                           @RequestBody HashMap<String, String> req) {
         if (req.containsKey("message") && req.containsKey("gitPath")
                 && req.containsKey("filePath") && req.containsKey("branchName")) {
             String message = req.get("message");
@@ -167,13 +167,26 @@ public class GitController {
         }
     }
 
+    /**
+     * Git branch 목록을 조회하는 API
+     *
+     * @param jwt  회원가입 및 로그인 시 발급되는 access token
+     * @param type 조회하려는 브랜치의 종류 (1 : local branch, 2 : remote branch)
+     * @param req  "gitPath"를 key로 가지는 Map<String, String>
+     * @return branch 목록을 List<String>으로 반환, 없으면 null
+     * @status 200, 400, 401
+     */
     @PostMapping("/branches")
-    public ResponseEntity<List<String>> getBranch(@RequestHeader("Authorization") String jwt, @RequestParam Integer type, @RequestBody HashMap<String, String> gitPath) {
-        List<String> branches = gitService.getBranch(gitPath.get("gitPath"), type);
-        if (branches.get(0).equals("failed!")) {
-            return new ResponseEntity<>(branches, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<List<String>> getBranchPost(@RequestHeader("Authorization") String jwt, @RequestParam Integer type, @RequestBody HashMap<String, String> req) {
+        if (req.containsKey("gitPath")) {
+            String gitPath = req.get("gitPath");
+            List<String> res = gitService.getBranchService(gitPath, type);
+            if (res != null) {
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity<>(res, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(branches, HttpStatus.OK);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 

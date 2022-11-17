@@ -43,8 +43,8 @@ public class GitService {
     /**
      * Git 정보 불러오는 Service
      *
-     * @param userSeq   불러오려는 Git의 사용자 Sequence
-     * @return  gitInfo 반환, 없을 시 NO_SUCH 반환
+     * @param userSeq 불러오려는 Git의 사용자 Sequence
+     * @return gitInfo 반환, 없을 시 NO_SUCH 반환
      */
     public List<String> getGitInfo(Long userSeq) {
         List<String> gitInfo = new ArrayList<>();
@@ -208,7 +208,7 @@ public class GitService {
     }
 
     /**
-     * git add 함수
+     * Git add를 처리하는 내부 로직
      *
      * @param gitPath  프로젝트 경로
      * @param filePath add할 파일 경로 (특정하지 않으면 all)
@@ -253,8 +253,8 @@ public class GitService {
     }
 
     /**
-     * 깃 커밋 함수
-     * 깃 애드 후 성공한다면 깃 커밋
+     * Git commit을 처리하는 내부 로직
+     * Git add 후 성공한다면 Git commit
      *
      * @param message  commit message
      * @param gitPath  프로젝트 경로
@@ -310,14 +310,15 @@ public class GitService {
     }
 
     /**
-     * 깃 푸쉬 함수
-     * 깃 커밋 후 성공한다면 푸쉬함.
+     * Git push를 처리하는 내부 로직
+     * Git commit 후 성공한다면 push를 수행
      *
-     * @param branchName
-     * @param message
-     * @param gitPath
-     * @param filePath
-     * @return
+     * @param branchName push할 branch의 이름
+     * @param message    commit message
+     * @param gitPath    push할 프로젝트의 경로
+     * @param filePath   push할 파일의 경로 (특정하지 않을 경우 all)
+     * @param userSeq    push하는 사용자의 Sequence
+     * @return 성패에 따른 result 반환
      */
     public Map<String, String> gitPushService(String branchName, String message, String gitPath, String filePath, Long userSeq) {
         Map<String, String> serviceRes = new HashMap<>();
@@ -387,53 +388,43 @@ public class GitService {
     }
 
     /**
-     * 브랜치를 보여주는 함수
-     * 타입 1은 로컬만
-     * 타입 2는 전체 브랜치 조회
+     * Branch 목록을 조회하는 내부 로직
      *
-     * @param gitPath
-     * @param type
-     * @return
+     * @param gitPath branch 목록을 조회할 프로젝트의 경로
+     * @param type    조회하려는 branch의 종류 (1 : local branch, 2 : remote branch)
+     * @return branch 목록을 List<String>으로 반환, 없거나 오류가 날 경우 null
      */
-    public List<String> getBranch(String gitPath, Integer type) {
+    public List<String> getBranchService(String gitPath, Integer type) {
         List<String> branches = new ArrayList<>();
         ProcessBuilder command = new ProcessBuilder();
 
+        // 조회하려는 브랜치에 따라 명령어 저장
         if (type == 1) {
             command.command("git", "branch");
         } else if (type == 2) {
             command.command("git", "branch", "-r");
         } else {
-            branches.add("failed!");
-            return branches;
+            return null;
         }
 
+        // 명령어를 수행할 프로젝트의 경로 저장
         command.directory(new File(gitPath));
         String read;
-
+        // 명령어 수행 로직
         try {
             Process getBranch = command.start();
             BufferedReader branch = new BufferedReader(new InputStreamReader(getBranch.getInputStream()));
-
             while ((read = branch.readLine()) != null) {
                 branches.add(read.trim());
                 System.out.println(read);
             }
             getBranch.waitFor();
-
         } catch (IOException e) {
-
-            branches.add("failed!");
-            branches.add(e.getMessage());
-            return branches;
-
+            return null;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             System.out.println(e.getMessage());
-            branches.add("failed!");
-            branches.add(e.getMessage());
-            return branches;
-
+            return null;
         }
         return branches;
     }
@@ -500,9 +491,9 @@ public class GitService {
     /**
      * push / pull할 새로운 URL 세팅
      *
-     * @param newUrl    새로운 URL
-     * @param gitPath   git 로직을 사용할 프로젝트 경로
-     * @return  성패에 따른 boolean값 반환
+     * @param newUrl  새로운 URL
+     * @param gitPath git 로직을 사용할 프로젝트 경로
+     * @return 성패에 따른 boolean값 반환
      */
     public Boolean setNewUrl(String newUrl, String gitPath) {
         command.command("git", "remote", "set-url", "origin", newUrl);
