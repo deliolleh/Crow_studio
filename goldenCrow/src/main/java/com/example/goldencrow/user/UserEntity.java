@@ -5,13 +5,18 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
+/**
+ * User Table Entity
+ */
 @Entity
 @DynamicUpdate
 @Table(name = "user")
 @Data
 public class UserEntity {
 
-    //pk
+    /**
+     * Primary Key
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -38,17 +43,24 @@ public class UserEntity {
     @Column
     private String userGitToken;
 
-    @Column
-    private String userRefresh;
-
+    /**
+     * 빈 UserEntity 생성자
+     */
     public UserEntity() {
     }
 
+    /**
+     * UserEntity 생성자
+     *
+     * @param userId 사용자의 아이디
+     * @param userNickname 사용자의 닉네임
+     */
     public UserEntity(String userId, String userNickname) {
         this.userId = userId;
         this.userNickname = userNickname;
         this.userSettings = "";
-        // 패스워드는 인코딩해서 따로 처리
-        // 리프레시 토큰은 jwt서비스를 거쳐서 처리
+
+        // userPassword는 service 단에서 encoding을 거쳐 기록
+
     }
 }

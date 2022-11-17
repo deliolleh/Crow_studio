@@ -7,29 +7,50 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-
+/**
+ * WebMvcConfigurer를 상속받은 WebMvcConfig
+ * interceptor와 CORS 관련 내부 로직
+ */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Autowired
     JwtInterceptor jwtInterceptor;
 
+    /**
+     * interceptor를 적용 or 미적용을 처리하는 내부 로직
+     * addInterceptor : 적용할 인터셉터
+     * addPathPatterns : 인터셉터를 적용할 URI pattern
+     * excludePathPatterns : 인터셉터를 적용하지 않을 URI pattern
+     *
+     * @param registry
+     */
     @Override
-    public void addInterceptors(InterceptorRegistry registry){
+    public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/api/users/signup")
-                .excludePathPatterns("/api/users/login")
-                .excludePathPatterns("/api/users/mypage/**")
-                .excludePathPatterns("/api/users/search/**")
-                .excludePathPatterns("/api/forum/read")
-                .excludePathPatterns("/api/forum/read/**");
-
-        // 토큰 필요없는 거 여기에 차차 다 추가하기
+                .excludePathPatterns("/api/users/signup")       // 회원가입
+                .excludePathPatterns("/api/users/login")        // 로그인
+                .excludePathPatterns("/api/users/mypage/**")    // 프로필 조회
+                .excludePathPatterns("/api/users/search/**")    // 유저 검색
+                .excludePathPatterns("/api/forum/read")         // 포럼
+                .excludePathPatterns("/api/forum/read/**");     // 포럼
     }
 
+    /**
+     * CORS(교차 출처 리소스 공유)를 위한 내부 로직
+     * addMapping : CORS를 적용할 URL패턴
+     * allowedOriginPatterns : 허용할 출처(Origin) pattern
+     * allowedHeaders : 허용할 Header
+     * exposedHeaders : 반환할 Header
+     * allowCredentials : 쿠키를 허용
+     * allowedMethods : 허용할 HTTP method
+     * maxAge : pre-flight 리퀘스트 캐싱할 시간
+     *
+     * @param registry
+     */
     @Override
-    public void addCorsMappings(CorsRegistry registry){
+    public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOriginPatterns("*")
                 .allowedHeaders("*")
@@ -38,11 +59,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .maxAge(6000);
     }
-
-//    @Bean
-//    protected JwtInterceptor jwtInterceptor() {
-//        return new JwtInterceptor();
-//    }
-
-
 }

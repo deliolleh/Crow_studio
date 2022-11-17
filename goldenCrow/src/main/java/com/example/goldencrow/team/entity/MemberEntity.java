@@ -19,11 +19,11 @@ public class MemberEntity {
     private Long memberSeq;
 
     @ManyToOne
-    @JoinColumn(name="userSeq", referencedColumnName = "userSeq")
+    @JoinColumn(name = "userSeq", referencedColumnName = "userSeq")
     private UserEntity user;
 
     @ManyToOne
-    @JoinColumn(name="teamSeq", referencedColumnName = "teamSeq")
+    @JoinColumn(name = "teamSeq", referencedColumnName = "teamSeq")
     private TeamEntity team;
 
     public MemberEntity() {
