@@ -31,7 +31,7 @@ const Header = () => {
           <div className="flex items-center">
             <div className="text-point_purple pr-3">
               <img
-                className="w-8 p-1 rounded-full bg-white cursor-pointer"
+                className="w-8 rounded-full"
                 src={require("../assets/images/logo.png")}
                 alt="logo-img"
               />
@@ -117,23 +117,35 @@ const Header = () => {
 
               // 로그인, 회원가입 버튼
               <div>
-                <Link to="/login" className="mr-4 hover:text-white">로그인</Link>
-                <Link to="/signup" className="hover:text-white">회원가입</Link>
+                <Link to="/login" className="mr-4 hover:text-white">
+                  로그인
+                </Link>
+                <Link to="/signup" className="hover:text-white">
+                  회원가입
+                </Link>
               </div>
             )}
           </div>
 
           {/* 드롭다운 */}
           {dropdownOpen && (
-            <div className="absolute flex flex-col gap-2 w-40 lg:top-12 lg:right-4 top-9 right-0 px-3 py-2 bg-component_item_bg_+2_dark rounded-md text-right text-white z-10">
+            <div className="absolute flex flex-col w-40 lg:top-12 lg:right-4 top-9 right-0 bg-component_item_bg_+2_dark rounded-md text-right text-white z-10">
               {isLoggedIn ? (
                 <React.Fragment>
                   {/* <div>{myNickname}</div>
                   <Link to={`/mypage/${mySeq}`}>마이페이지</Link>
                   <Link to={`/teams`}>팀 목록</Link>
                   <Link to="/">회원정보수정</Link> */}
-                  <Link to={`/mypage/${mySeq}`}>내 정보</Link>
-                  <div className="cursor-pointer" onClick={logoutHandler}>
+                  <Link
+                    to={`/mypage/${mySeq}`}
+                    className="rounded-md hover:bg-point_purple_op20 h-full w-full  px-3 pt-1.5 pb-1"
+                  >
+                    내 정보
+                  </Link>
+                  <div
+                    className="cursor-pointer rounded-md hover:bg-point_purple_op20 h-full w-full  px-3 pt-1 pb-1.5"
+                    onClick={logoutHandler}
+                  >
                     로그아웃
                   </div>
                 </React.Fragment>

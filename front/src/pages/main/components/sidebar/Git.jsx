@@ -126,7 +126,7 @@ const Git = (
                     onChange={changeCommit}
                     cols="25"
                     rows="6"
-                    className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
+                    className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
                   ></textarea>
                   <div className="flex justify-end">
                     <button
@@ -151,7 +151,7 @@ const Git = (
                       type="text"
                       onChange={onChangeName}
                       value={newBranchName}
-                      className="h-[28px] w-[180px] rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
+                      className="h-[28px] w-[180px] rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
                     />
                     <button
                       onClick={newBranch}

@@ -121,7 +121,7 @@ const Api = () => {
                 onChange={onUriChange}
                 value={uri}
                 placeholder="address"
-                className="h-[28px] w-[217px] rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5"
+                className="h-[28px] w-[217px] rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5"
               /> */}
               <textarea
                 name="url"
@@ -129,7 +129,7 @@ const Api = () => {
                 value={uri}
                 placeholder="address"
                 ref={textareaRef}
-                className="h-[28px] w-[217px] rounded-md bg-component_item_bg_+2_dark px-4 py-1 text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5 overflow-y-hidden resize-none"
+                className="h-[28px] w-[217px] rounded-md bg-component_item_bg_+2_dark px-4 py-1 text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5 overflow-y-hidden resize-none"
               />
               <div className="mb-2">Method</div>
               <SelectMethod onMethodChange={onMethodChange} />
@@ -141,7 +141,7 @@ const Api = () => {
                 cols="25"
                 rows="6"
                 placeholder="{ key: value }"
-                className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5"
+                className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5"
               ></textarea>
               <div className="mb-2">Header</div>
               {/* <KeyValue you="header" getList={getList}/> */}
@@ -152,7 +152,7 @@ const Api = () => {
                   cols="25"
                   rows="6"
                   placeholder="{ key: value } // Content-Type, Authorization, etc..."
-                  className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
+                  className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
                 ></textarea>
                 <button
                   onClick={sendApi}
