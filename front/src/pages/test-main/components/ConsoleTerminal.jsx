@@ -43,26 +43,24 @@ const ConsoleTerminal = (props) => {
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
 
-  const { teamSeq, curPath } = props;
-
-  // const filePath = "/home/ubuntu/crow_data/11/puretest/puretest.py";
+  const { curPath, curType } = props;
 
   const changeInputData = (e) => setInputData(e.target.value);
 
   const compileStart = () => {
     console.log("compileStart curPath:", "67/wooyoungtak/wooyoungtak.py");
     const body = {
-      type: "pure Python",
-      filePath: "67/wooyoungtak/wooyoungtak.py",
+      type: curType,
+      filePath: curPath,
       input: "",
     };
     compileApi
       .compilePython(body)
       .then((res) => {
         console.log(res.data);
-        setOutputData(res.data.result);
+        setOutputData(res.data.response);
       })
-      .catch((err) => console.error(err));
+      .catch(console.error);
   };
 
   // const compileStop = () => {
@@ -81,6 +79,8 @@ const ConsoleTerminal = (props) => {
   // };
 
   console.log("curPath:", curPath);
+
+  const inputChangeHandler = (e) => changeInputData(e);
 
   return (
     <div className="ml-[8px] px-3 rounded-[10px] bg-component_-2_dark">
@@ -113,7 +113,7 @@ const ConsoleTerminal = (props) => {
           <textarea
             name="input"
             value={inputData}
-            onChange={(e) => changeInputData(e)}
+            onChange={inputChangeHandler}
             placeholder="Input here"
             className="resize-none w-full h-[8em] p-[10px] bg-component_item_bg_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
           ></textarea>

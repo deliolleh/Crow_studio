@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { getFileContent, saveFileContent } from "../../redux/fileSlice";
 import { formatPut, formatGet } from "../../redux/editorSlice";
 import { compilePython } from "../../redux/compileSlice";
+import { getTeam } from "../../redux/teamSlice";
 
 import Header from "../../components/Header";
 import Sidebar from "./components/sidebar/Sidebar";
@@ -34,6 +35,17 @@ const TestMain = () => {
 
   const [curPath, setCurPath] = useState("");
   const [curName, setCurName] = useState("");
+  const [curType, setCurType] = useState("");
+
+  useEffect(() => {
+    dispatch(getTeam(teamSeq))
+      .unwrap()
+      .then((res) => {
+        setCurType(res.projectType);
+        console.log(res);
+      })
+      .catch(console.error);
+  }, []);
 
   const showComponentHandler = (componentName) =>
     setShowComponent(componentName);
@@ -148,7 +160,7 @@ const TestMain = () => {
         />
 
         {/* 콘솔 */}
-        <ConsoleTerminal teamSeq={teamSeq} curPath={curPath} />
+        <ConsoleTerminal curPath={curPath} curType={curType} />
       </div>
     </React.Fragment>
   );
