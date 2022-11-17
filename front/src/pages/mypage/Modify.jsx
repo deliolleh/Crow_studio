@@ -42,8 +42,7 @@ const Modify = ({ closeModify }) => {
     }
     dispatch(resign())
       .unwrap()
-      .then((res) => {
-        console.log("resign res:", res);
+      .then(() => {
         alert("회원 탈퇴 완료");
         navigate("/");
       })
@@ -86,7 +85,7 @@ const Modify = ({ closeModify }) => {
 
       <GitForm updateGitAuth={updateGitAuthHandler} />
 
-      <ResignForm onResign={resignHandler} />
+      <ResignForm resign={resignHandler} />
     </div>
   );
 };
