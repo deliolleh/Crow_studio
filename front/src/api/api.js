@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const baseURL = "http://k7d207.p.ssafy.io:8080/api";
+// const baseURL = "http://k7d207.p.ssafy.io:8080/api";
+const baseURL = "https://까마귀공방.com/api";
 
 const headers = {
   "Content-Type": "application/json;charset=UTF-8",
