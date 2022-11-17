@@ -63,7 +63,8 @@ public class ProjectService {
      * @return
      */
     public Map<Object, Object> readDirectory(String rootPath, String rootName, Map<Object, Object> visit) {
-        File file = new File(rootPath);
+        String path = "/home/ubuntu/crow_data/" +rootPath;
+        File file = new File(path);
         visit.put("id", rootPath);
         visit.put("name", rootName);
         if (file.isDirectory()) {

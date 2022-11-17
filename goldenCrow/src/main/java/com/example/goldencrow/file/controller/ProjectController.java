@@ -44,13 +44,13 @@ public class ProjectController {
     public ResponseEntity<Map<Object, Object>> pjtRead(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
         String baseUrl = "/home/ubuntu/crow_data/"+String.valueOf(teamSeq);
         File teamPjt = new File(baseUrl);
-        String rootName = teamPjt.getName();
         File[] files = teamPjt.listFiles();
         Map<Object, Object> visit = new HashMap<>();
         if (files!= null && files.length == 0) {
             return new ResponseEntity<>(visit,HttpStatus.BAD_REQUEST);
         }
         String rootPath = files[0].getPath();
+        String rootName = files[0].getName();
         rootPath = rootPath.replace("/home/ubuntu/crow_data/","");
         projectService.readDirectory(rootPath,rootName,visit);
 
