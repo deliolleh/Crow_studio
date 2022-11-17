@@ -23,7 +23,7 @@ public class FileController {
 
     private String stringPath = "filePath";
 
-    private final String basePath = "/home/ubuntu/crow_data";
+    private final String basePath = "/home/ubuntu/crow_data/";
 
     public FileController(FileService fileService, JwtService jwtService) {
         this.fileService = fileService;
