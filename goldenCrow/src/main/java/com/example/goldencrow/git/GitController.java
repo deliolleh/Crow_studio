@@ -45,7 +45,9 @@ public class GitController {
      * @status 200, 400, 401, 404
      */
     @PostMapping("/{teamSeq}")
-    public ResponseEntity<Map<String, String>> gitClonePost(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
+    public ResponseEntity<Map<String, String>> gitClonePost(@RequestHeader("Authorization") String jwt,
+                                                            @PathVariable Long teamSeq,
+                                                            @RequestBody Map<String, String> req) {
         if (req.containsKey("projectName") && req.containsKey("gitUrl")) {
             String projectName = req.get("projectName");
             String gitUrl = req.get("gitUrl");
@@ -78,7 +80,9 @@ public class GitController {
      * @status 200, 401, 404
      */
     @PostMapping("/git-switch")
-    public ResponseEntity<Map<String, String>> gitSwitchPost(@RequestHeader("Authorization") String jwt, @RequestParam Integer type, @RequestBody Map<String, String> req) {
+    public ResponseEntity<Map<String, String>> gitSwitchPost(@RequestHeader("Authorization") String jwt,
+                                                             @RequestParam Integer type,
+                                                             @RequestBody Map<String, String> req) {
         if (req.containsKey("gitPath") && req.containsKey("branchName")) {
             String gitPath = req.get("gitPath");
             String branchName = req.get("branchName");
@@ -177,7 +181,9 @@ public class GitController {
      * @status 200, 400, 401
      */
     @PostMapping("/branches")
-    public ResponseEntity<List<String>> getBranchPost(@RequestHeader("Authorization") String jwt, @RequestParam Integer type, @RequestBody HashMap<String, String> req) {
+    public ResponseEntity<List<String>> getBranchPost(@RequestHeader("Authorization") String jwt,
+                                                      @RequestParam Integer type,
+                                                      @RequestBody HashMap<String, String> req) {
         if (req.containsKey("gitPath")) {
             String gitPath = req.get("gitPath");
             List<String> res = gitService.getBranchService(gitPath, type);
@@ -190,18 +196,34 @@ public class GitController {
         }
     }
 
+    /**
+     * @param jwt     회원가입 및 로그인 시 발급되는 access token
+     * @param userSeq pull하는 사용자의 Sequence
+     * @param req     "gitPath", "branchName"를 key로 가지는 Map<String, String>
+     * @return 성패에 따른 result 반환
+     * @status 200, 400, 401, 404
+     */
     @PostMapping("/{userSeq}/git-pull")
-    public ResponseEntity<String> gitPull(@RequestHeader("Authorization") String jwt, @PathVariable Long userSeq, @RequestBody Map<String, String> gitInfo) {
-        String gitPath = gitInfo.get("gitPath");
-        String email = gitInfo.get("email");
-        String pass = gitInfo.get("pass");
-        String branchName = gitInfo.get("branchName");
-        String result = gitService.gitPull(gitPath, userSeq, branchName);
-
-        if (result.equals("성공")) {
-            return new ResponseEntity<>("깃 풀 성공!", HttpStatus.OK);
+    public ResponseEntity<Map<String, String>> gitPullPost(@RequestHeader("Authorization") String jwt,
+                                                           @PathVariable Long userSeq,
+                                                           @RequestBody Map<String, String> req) {
+        if (req.containsKey("gitPath") && req.containsKey("branchName")) {
+            String gitPath = req.get("gitPath");
+            String branchName = req.get("branchName");
+            Map<String, String> res = gitService.gitPullService(gitPath, userSeq, branchName);
+            String result = res.get("result");
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
         } else {
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            Map<String, String> res = new HashMap<>();
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
     }
 }

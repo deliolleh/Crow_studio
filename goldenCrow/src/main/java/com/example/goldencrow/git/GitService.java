@@ -430,10 +430,10 @@ public class GitService {
     }
 
     /**
-     * 현재 연결된 깃의 URL을 받아오는 함수
+     * 현재 연결된 깃의 URL을 받아오는 내부 로직
      *
-     * @param gitPath
-     * @return remoteURL
+     * @param gitPath 로직을 수행할 프로젝트의 경로
+     * @return 성공 시 remoteURL를 반환, 실패 시 result 반환
      */
     public String getRemoteUrl(String gitPath) {
         command = new ProcessBuilder("git", "remote", "-vv");
@@ -509,55 +509,76 @@ public class GitService {
     }
 
     /**
-     * 새로운 푸쉬/풀 할 수 있는 gitUrl을 설정해주는 통합 관리 함수
+     * 새로운 push/pull 할 수 있는 git Url을 설정해주는 통합 관리 내부 로직
      *
-     * @param gitPath
-     * @param email
-     * @param pass
+     * @param gitPath push/pull을 수행할 프로젝트 경로
+     * @param email   사용자의 email 정보
+     * @param pass    사용자의 password 정보
      * @return msg
      */
     public String setUrl(String gitPath, String email, String pass) {
         String gitUrl = getRemoteUrl(gitPath);
-        if (gitUrl.equals("failed")) {
-            return "gitUrl을 받아오지 못했습니다.";
+        if (!gitUrl.contains("https")) {
+            return gitUrl;
         }
         String newRemoteUrl = newRemoteUrl(gitUrl, email, pass);
         Boolean check = setNewUrl(newRemoteUrl, gitPath);
         if (!check) {
-            return "gitUrl 설정에 실패했습니다";
+            return UNKNOWN;
         }
-        return "성공";
+        return SUCCESS;
     }
 
+    /**
+     * @param oldUrl
+     * @param gitPath
+     * @return
+     */
     public String reUrl(String oldUrl, String gitPath) {
         Boolean check = setNewUrl(oldUrl, gitPath);
         if (!check) {
-            return "fail!";
+            return UNKNOWN;
         }
-        return "Success";
+        return SUCCESS;
     }
 
-    public String gitPull(String gitPath, Long userSeq, String brachName) {
+    /**
+     * Git pull을 처리하는 내부 로직
+     *
+     * @param gitPath   pull받을 프로젝트의 경로
+     * @param userSeq   pull받을 사용자의 sequence
+     * @param brachName pull받을 branch의 이름
+     * @return 성패에 따른 result 반환
+     */
+    public Map<String, String> gitPullService(String gitPath, Long userSeq, String brachName) {
+        Map<String, String> serviceRes = new HashMap<>();
+        // pull받을 remote URL 조회 로직 수행
         String gitUrl = getRemoteUrl(gitPath);
-
+        // git 정보 조회 로직 수행
         List<String> gitInfo = getGitInfo(userSeq);
-
+        // git 정보를 조회할 수 없는 경우
         if (gitInfo.size() < 2) {
-            return "깃 정보가 없습니다.";
+            serviceRes.put("result", NO_SUCH);
+            return serviceRes;
         }
 
         String email = gitInfo.get(0);
         String pass = gitInfo.get(1);
 
+        // ??
         String check = setUrl(gitPath, email, pass);
-
-        if (!check.equals("성공")) {
-            return check;
+        if (!check.equals(SUCCESS)) {
+            serviceRes.put("result", check);
+            return serviceRes;
         }
 
+        // pull을 수행하는 명령어
         ProcessBuilder pb = new ProcessBuilder("git", "pull", "origin", brachName);
+        // 명령어를 수행할 path 등록
         pb.directory(new File(gitPath));
+        // 명령어 수행 후 결과값을 저장하기 위한 StringBuilder
         StringBuilder msg = new StringBuilder();
+        // 명령어 수행 로직
         try {
             String result;
             Process p = pb.start();
@@ -567,16 +588,19 @@ public class GitService {
                 msg.append("\n");
             }
         } catch (IOException e) {
-            return e.getMessage();
+            serviceRes.put("result", NO_SUCH);
+            return serviceRes;
         }
-
+        // ??
         String result = reUrl(gitUrl, gitPath);
 
         if (msg.length() == 0) {
-            return "Success";
+            serviceRes.put("result", SUCCESS);
+        } else {
+            serviceRes.put("result", UNKNOWN);
         }
 
-        return msg.toString();
+        return serviceRes;
     }
 
 }
