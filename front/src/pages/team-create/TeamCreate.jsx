@@ -116,7 +116,7 @@ const TeamCreate = () => {
                 type="teamName"
                 id="teamName"
                 name="teamName"
-                className="mt-1 w-full text-white bg-component_item_bg_+2_dark transition:bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+                className="mt-1 w-full text-white bg-component_item_bg_+2_dark transition:bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
                 placeholder="팀 이름을 입력하세요"
                 required
                 value={teamName}
@@ -133,7 +133,7 @@ const TeamCreate = () => {
                 프로젝트 종류
               </label>
               <select
-                className="mt-1 w-full text-white py-2 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+                className="mt-1 w-full text-white py-2 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purplec focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
                 id="projectType"
                 name="projectType"
                 value={projectType}
@@ -154,7 +154,8 @@ const TeamCreate = () => {
                 type="checkbox"
                 id="checkGit"
                 name="checkGit"
-                className="transition"
+                // className="transition cursor-pointer mr-2 rounded border-transparent bg-red text-blue accent-point_purple"
+                className="bg-component_item_bg_+2_dark hover:bg-point_purple_op20 cursor-pointer border-3 border-primary-dark rounded checked:bg-point_purple text-point_purple focus:ring-0 mr-2"
                 defaultValue={checkGit}
                 onChange={inputChangeHandler}
               />
@@ -165,7 +166,8 @@ const TeamCreate = () => {
                 type="text"
                 id="projectGit"
                 name="projectGit"
-                className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple  rounded-md transition"
+                // className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+                className="mt-1 w-full text-white py-2 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:outline-none focus:ring-2 focus:ring-point_purple focus:border-none rounded-md transition"
                 placeholder="프로젝트 깃 주소를 입력하세요"
                 disabled={!checkGit}
                 value={projectGit}
