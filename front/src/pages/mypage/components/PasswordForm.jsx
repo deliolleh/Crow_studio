@@ -94,7 +94,7 @@ const PasswordForm = ({ onSubmitPassword }) => {
           type="password"
           id="currentPassword"
           name="currentPassword"
-          className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+          className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
           value={currentPassword}
           onChange={inputChangeHandler}
         />
@@ -112,7 +112,7 @@ const PasswordForm = ({ onSubmitPassword }) => {
           type="password"
           id="password1"
           name="password1"
-          className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+          className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
           value={password1}
           onChange={inputChangeHandler}
         />
@@ -128,7 +128,7 @@ const PasswordForm = ({ onSubmitPassword }) => {
           type="password"
           id="password2"
           name="password2"
-          className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+          className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
           value={password2}
           onChange={inputChangeHandler}
         />

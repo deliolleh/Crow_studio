@@ -27,7 +27,7 @@ public class CompileController {
      * access token 필요
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
-     * @param req "type", "projectName", "teamSeq" ,"input"을 key로 가지는 Map<String, String>
+     * @param req "type", "filePath" ,"input"을 key로 가지는 Map<String, String>
      * @return 컴파일 성공 시 컴파일 결과 반환, 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
@@ -35,13 +35,11 @@ public class CompileController {
     public ResponseEntity<Map<String, String>> pyCompile(@RequestHeader("Authorization") String jwt,
                                                          @RequestBody Map<String, String> req) {
 
-        if(req.containsKey("type") && req.containsKey("projectName")
-                && req.containsKey("teamSeq") && req.containsKey("input")) {
+        if(req.containsKey("type") && req.containsKey("filePath") && req.containsKey("input")) {
             String type =  req.get("type");
-            String projectName = req.get("projectName");
-            String teamSeq = req.get("teamSeq");
+            String filePath = req.get("filePath");
             String input = req.get("input");
-            Map<String, String> res = compileService.pyCompileService(type, projectName, teamSeq, input);
+            Map<String, String> res = compileService.pyCompileService(type, filePath, input);
             String result = res.get("result");
             switch (result) {
                 case SUCCESS:

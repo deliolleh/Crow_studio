@@ -9,7 +9,8 @@ const fileApi = {
     api.put(`/files/${teamSeq}/files`, contentData),
   // fileNameChange: (fileTitle, fileData) =>
   //   api.put(`/files/${fileTitle}`, fileData),
-  fileNameChange: (fileData) => api.put(`/files/file-title`, fileData),
+  fileNameChange: (teamSeq, fileData) =>
+    api.put(`/files/${teamSeq}/file-title`, fileData),
   fileCall: (fileData) => api.post("/files/files", fileData),
 };
 

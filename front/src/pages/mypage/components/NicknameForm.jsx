@@ -36,7 +36,7 @@ const NicknameForm = ({ onSubmitNickname, initialNickname }) => {
           type="text"
           id="nickname"
           name="nickname"
-          className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+          className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
           placeholder="변경할 닉네임을 입력하세요"
           value={inputNickname}
           onChange={inputChangeHandler}

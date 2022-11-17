@@ -9,7 +9,7 @@ import {
   getFileContent,
   saveFileContent,
 } from "../../redux/fileSlice";
-import { getDirectoryList } from "../../redux/projectSlice";
+// import { getDirectoryList } from "../../redux/projectSlice";
 
 import Header from "../../components/Header";
 
@@ -32,18 +32,18 @@ const Test = () => {
 
   const editorRef = useRef(null);
 
-  const dispatchGetDirectoryList = () => {
-    dispatch(getDirectoryList(directoryData))
-      .unwrap()
-      .then((res) => {
-        console.log("directoryList res:", res);
-        setCurItems(res.fileDirectory);
-      })
-      .catch(console.error);
-  };
+  // const dispatchGetDirectoryList = () => {
+  //   dispatch(getDirectoryList(directoryData))
+  //     .unwrap()
+  //     .then((res) => {
+  //       console.log("directoryList res:", res);
+  //       setCurItems(res.fileDirectory);
+  //     })
+  //     .catch(console.error);
+  // };
 
   useEffect(() => {
-    dispatchGetDirectoryList();
+    // dispatchGetDirectoryList();
   }, []);
 
   // 디렉터리 생성 핸들러
@@ -61,7 +61,7 @@ const Test = () => {
       .then(() => {
         console.log(`/${newDirectoryName} 생성 완료`);
         setNewDirectoryName("");
-        dispatchGetDirectoryList();
+        // dispatchGetDirectoryList();
       })
       .catch(console.error);
   };
@@ -81,7 +81,7 @@ const Test = () => {
       .then(() => {
         console.log(`${newFileName} 생성 완료`);
         setNewFileName("");
-        dispatchGetDirectoryList();
+        // dispatchGetDirectoryList();
       })
       .catch(console.error);
   };
@@ -101,7 +101,7 @@ const Test = () => {
       .unwrap()
       .then((res) => {
         console.log("삭제 성공 res:", res);
-        dispatchGetDirectoryList();
+        // dispatchGetDirectoryList();
       })
       .catch(console.error);
   };
@@ -118,7 +118,7 @@ const Test = () => {
       .unwrap()
       .then(() => {
         console.log(`${targetName} -> ${newName} 변경 성공`);
-        dispatchGetDirectoryList();
+        // dispatchGetDirectoryList();
       })
       .catch(console.error);
   };
