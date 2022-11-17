@@ -73,7 +73,7 @@ const GitForm = ({ updateGitAuth }) => {
           type="text"
           id="gitUsername"
           name="gitUsername"
-          className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+          className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
           value={gitUsername}
           onChange={inputChangeHandler}
         />
@@ -91,7 +91,7 @@ const GitForm = ({ updateGitAuth }) => {
           type="text"
           id="gitToken"
           name="gitToken"
-          className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+          className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
           value={gitToken}
           onChange={inputChangeHandler}
         />
