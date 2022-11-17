@@ -9,10 +9,7 @@ import com.example.goldencrow.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -163,12 +160,20 @@ public class GitService {
         StringBuilder msg = new StringBuilder();
 
         try {
-            command.start();
+
+            String result = "";
+            Process p = command.start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((result = br.readLine()) != null) {
+                msg.append(result+"\n");
+            }
         } catch (IOException e) {
             return e.getMessage();
         }
-
-        return "Success";
+        if (msg.length() == 0) {
+            return "Success";
+        }
+        return msg.toString();
     }
 
     /**
@@ -188,13 +193,14 @@ public class GitService {
             command.command("git", "add", filePath);
         }
         command.directory(new File(gitPath));
-
+        StringBuilder msg = new StringBuilder();
         try {
             Process p = command.start();
             String forPrint;
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((forPrint = br.readLine()) != null) {
-                System.out.println(forPrint);
+               msg.append(forPrint);
+               msg.append("\n");
             }
             p.waitFor();
         } catch (IOException e) {
@@ -203,8 +209,11 @@ public class GitService {
             Thread.currentThread().interrupt();
             return e.getMessage();
         }
-        System.out.println("add 성공!");
-        return "Success";
+
+        if (msg.length() == 0) {
+            return "Success";
+        }
+        return msg.toString();
     }
 
     /**
@@ -225,7 +234,7 @@ public class GitService {
 
         ProcessBuilder command = new ProcessBuilder("git", "commit", "-m", message);
         command.directory(new File(gitPath));
-
+        StringBuilder msg = new StringBuilder();
 
         try {
             Process p = command.start();
@@ -233,9 +242,9 @@ public class GitService {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
-            System.out.println(br.readLine());
             while ((forPrint = br.readLine()) != null) {
-                System.out.println(forPrint);
+                msg.append(forPrint);
+                msg.append("\n");
             }
             p.waitFor();
         } catch (IOException e) {
@@ -244,8 +253,10 @@ public class GitService {
             Thread.currentThread().interrupt();
             return e.getMessage();
         }
-        System.out.println("커밋 성공!");
-        return "Success";
+        if (msg.length() == 0) {
+            return "Success";
+        }
+        return msg.toString();
     }
 
     /**
@@ -278,9 +289,11 @@ public class GitService {
         String email = gitInfo.get(0);
         String pass = gitInfo.get(1);
 
+
         String newGitUrl = newRemoteUrl(gitUrl,email,pass);
 
         boolean setNew = setNewUrl(newGitUrl,gitPath);
+
 
         if (!setNew) {
             return "새로운 url 설정에 실패했습니다.";
@@ -288,9 +301,14 @@ public class GitService {
 
         ProcessBuilder command = new ProcessBuilder("git", "push", "origin", branchName);
         command.directory(new File(gitPath));
-
+        StringBuilder msg = new StringBuilder();
         try {
-            command.start();
+            String read = null;
+            Process p = command.start();
+            BufferedReader result = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((read = result.readLine()) != null) {
+                msg.append(read + "\n");
+            }
         } catch (IOException e) {
             return e.getMessage();
         }
@@ -301,7 +319,7 @@ public class GitService {
             return "url 재설정에 실패했습니다.";
         }
 
-        return "Success";
+        return msg.toString();
     }
 
     /**

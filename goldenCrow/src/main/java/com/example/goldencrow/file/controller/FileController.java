@@ -1,5 +1,6 @@
 package com.example.goldencrow.file.controller;
 
+
 import com.example.goldencrow.file.dto.FileCreateRequestDto;
 import com.example.goldencrow.file.service.FileService;
 import com.example.goldencrow.user.service.JwtService;
@@ -51,6 +52,7 @@ public class FileController {
      * @param teamSeq 파일 삭제 요청
      */
     @DeleteMapping("/{teamSeq}")
+
     public ResponseEntity<Map<String, String>> userFileDelete(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> filePath) {
         Map<String, String> res = fileService.deleteFile(filePath.get(stringPath), type, teamSeq);
         if (res.get("result").equals(SUCCESS)) {

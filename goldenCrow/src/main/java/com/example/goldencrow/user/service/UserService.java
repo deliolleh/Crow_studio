@@ -28,7 +28,6 @@ import static com.example.goldencrow.common.Constants.*;
  */
 @Service
 public class UserService {
-
     private final UserRepository userRepository;
     private final TeamRepository teamRepository;
     private final MemberRepository memberRepository;
@@ -108,11 +107,9 @@ public class UserService {
      * @return 로그인 성공 시 jwt 반환, 성패에 따른 result 반환
      */
     public Map<String, String> loginService(String userId, String userPassword) {
-
         Map<String, String> serviceRes = new HashMap<>();
 
         try {
-
             // 존재하는 Id인지 체크
             if (userRepository.findUserEntityByUserId(userId).isPresent()) {
                 // Id가 존재함을 확인함
@@ -131,7 +128,6 @@ public class UserService {
                     // 저장된 DB 정보와 일치하지 않을 경우 로그인 실패
                     serviceRes.put("result", WRONG);
                 }
-
             } else {
                 // 가입되지 않은 Id임
                 serviceRes.put("result", NO_SUCH);
@@ -150,7 +146,7 @@ public class UserService {
      * 각 회원의 정보를 조회하는 내부 로직
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
-     * @return 조회 성공 시 당사자가 접근 가능한 사용자 정보 반환, 성패에 따른 result 반환
+     * @return 당사자가 조회 가능한 사용자 정보 반환
      */
     public MyInfoDto myInfoService(String jwt) {
 
@@ -171,6 +167,7 @@ public class UserService {
 
             // 내보내기 위한 MyInfoDto 생성
             MyInfoDto myInfoDto = new MyInfoDto(userEntity);
+
 
             // 위의 과정을 무사히 통과했으므로
             myInfoDto.setResult(SUCCESS);
@@ -195,7 +192,6 @@ public class UserService {
     public Map<String, String> editNicknameService(String jwt, String userNickname) {
 
         Map<String, String> serviceRes = new HashMap<>();
-
         try {
 
             // jwt가 인증하는 사용자의 UserEntity를 추출
@@ -296,7 +292,6 @@ public class UserService {
 
         } catch (Exception e) {
             serviceRes.put("result", UNKNOWN);
-
         }
 
         return serviceRes;
@@ -308,6 +303,7 @@ public class UserService {
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
      * @return 성패에 따른 result 반환
+     * @deprecated 현재 사용되고 있지 않으나, 이용 가능함
      */
     public Map<String, String> deleteProfileService(String jwt) {
 
@@ -484,7 +480,6 @@ public class UserService {
 
             // 사용자가 팀장인 팀이 있는지 확인함
             if (!teamEntityList.isEmpty()) {
-
                 // 사용자가 팀장으로 있는 팀이 있다면,
                 // 각 팀의 인원수를 파악함
                 for (TeamEntity t : teamEntityList) {
@@ -525,7 +520,6 @@ public class UserService {
 
             } else {
                 serviceRes.put("result", UNKNOWN);
-
             }
 
         } catch (Exception e) {

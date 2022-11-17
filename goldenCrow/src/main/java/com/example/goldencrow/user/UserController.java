@@ -295,7 +295,6 @@ public class UserController {
                 default:
                     return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }
-
         } else {
             Map<String, String> res = new HashMap<>();
             res.put("result", BAD_REQ);
@@ -304,6 +303,7 @@ public class UserController {
         }
 
     }
+
 
     /**
      * 회원 탈퇴 API
@@ -418,7 +418,6 @@ public class UserController {
         if (req.containsKey("searchWord")) {
 
             String searchWord = req.get("searchWord");
-
             List<UserInfoDto> userInfoDtoList = userService.searchUser(searchWord);
 
             if(userInfoDtoList==null) {
@@ -433,5 +432,4 @@ public class UserController {
         }
 
     }
-
 }
