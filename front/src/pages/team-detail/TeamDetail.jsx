@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -17,11 +17,15 @@ import Member from "./components/Member";
 
 import Modal from "react-modal";
 
+import { Listbox, Transition } from '@headlessui/react'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+
 import { IoAdd } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
 import { BsPencilFill } from "react-icons/bs";
 import { BsCheckLg } from "react-icons/bs";
 
+// modal
 const customStyles = {
   content: {
     top: "50%",
@@ -41,6 +45,14 @@ const customStyles = {
 };
 // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
 Modal.setAppElement("#root");
+
+// headlist listbox items
+const pjtType = [
+  { name: 'pure Python' },
+  { name: 'Django' },
+  { name: 'Flask' },
+  { name: 'FastAPI' },
+]
 
 const TeamDetail = () => {
   const dispatch = useDispatch();
@@ -158,11 +170,23 @@ const TeamDetail = () => {
 
   const goProjectHandler = () => navigate(`/project/${teamSeq}`);
 
-  const modifyProjectTypeHandler = (e) =>
-    setModifiedProjectType(e.target.value);
+  // modify project listbox
+  const [selected, setSelected] = useState(pjtType[0])
+
+  const listboxChangeHandler = (e) => {
+    setSelected(e);
+    console.log(e)
+    modifyProjectTypeHandler(e);
+  };
+
+  const modifyProjectTypeHandler = (e) => {
+    // setModifiedProjectType(e.target.value);
+    setModifiedProjectType(e.name);
+    submitProjectTypeHandler(e);
+  };
 
   const submitProjectTypeHandler = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     const modifiedData = { projectType: modifiedProjectType };
     dispatch(modifyProjectType({ teamSeq, modifiedData }))
       .unwrap()
@@ -346,23 +370,85 @@ const TeamDetail = () => {
                     </div>
                   )}
                   {projectTypeInput && (
-                    <form onSubmit={submitProjectTypeHandler} className="flex">
-                      <select
-                        className="w-full text-white mr-1.5 py-1.5 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
-                        id="projectType"
-                        name="projectType"
-                        value={modifiedProjectType}
-                        onChange={modifyProjectTypeHandler}
-                      >
-                        <option value="pure Python">pure Python</option>
-                        <option value="Django">Django</option>
-                        <option value="Flask">Flask</option>
-                        <option value="FastAPI">FastAPI</option>
-                      </select>
-                      <button onClick={submitProjectTypeHandler}>
+                    <div className="w-full flex justify-start">
+                      <div className="md:w-72 w-[115px]">
+                        <Listbox
+                          name="projectType"
+                          value={selected}
+                          // onChange={setSelected}
+                          onChange={listboxChangeHandler}
+                        >
+                          <div className="relative">
+                            <Listbox.Button className="relative w-full cursor-default rounded-lg bg-component_item_bg_+2_dark text-white py-2 pl-3 pr-10 text-left shadow-md active:outline-none active:ring-2 active:ring-point_purple focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple">
+                              <span className="block truncate">{selected.name}</span>
+                              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                <ChevronUpDownIcon
+                                  className="h-5 w-5 text-point_purple"
+                                  aria-hidden="true"
+                                />
+                              </span>
+                            </Listbox.Button>
+                            <Transition
+                              as={Fragment}
+                              leave="transition ease-in duration-100"
+                              leaveFrom="opacity-100"
+                              leaveTo="opacity-0"
+                            >
+                              <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-component_item_bg_+2_dark text-white py-1 text-base shadow-lg focus:outline-none">
+                                {pjtType.map((type, typeIdx) => (
+                                  <Listbox.Option
+                                    key={typeIdx}
+                                    className={({ active }) =>
+                                      `relative cursor-default select-none py-1.5 pl-10 pr-4 ${
+                                        active ? 'bg-point_purple_op20' : ''
+                                      }`
+                                    }
+                                    value={type}
+                                  >
+                                    {({ selected }) => (
+                                      <>
+                                        <span
+                                          className={`block truncate ${
+                                            selected ? 'font-medium' : 'font-normal'
+                                          }`}
+                                        >
+                                          {type.name}
+                                        </span>
+                                        {selected ? (
+                                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-point_purple">
+                                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                          </span>
+                                        ) : null}
+                                      </>
+                                    )}
+                                  </Listbox.Option>
+                                ))}
+                              </Listbox.Options>
+                            </Transition>
+                          </div>
+                        </Listbox>
+                      </div>
+                      <button className="ml-2" onClick={submitProjectTypeHandler}>
                         <BsCheckLg className="text-point_light_yellow hover:text-point_yellow" />
                       </button>
-                    </form>
+                    </div>
+                    // <form onSubmit={submitProjectTypeHandler} className="flex">
+                    //   <select
+                    //     className="w-full text-white mr-1.5 py-1.5 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+                    //     id="projectType"
+                    //     name="projectType"
+                    //     value={modifiedProjectType}
+                    //     onChange={modifyProjectTypeHandler}
+                    //   >
+                    //     <option value="pure Python">pure Python</option>
+                    //     <option value="Django">Django</option>
+                    //     <option value="Flask">Flask</option>
+                    //     <option value="FastAPI">FastAPI</option>
+                    //   </select>
+                    //   <button onClick={submitProjectTypeHandler}>
+                    //     <BsCheckLg className="text-point_light_yellow hover:text-point_yellow" />
+                    //   </button>
+                    // </form>
                   )}
                 </div>
               </div>
