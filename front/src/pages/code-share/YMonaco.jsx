@@ -1,25 +1,60 @@
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import { MonacoBinding } from "y-monaco";
-import Editor from "@monaco-editor/react";
-import React, { useRef } from "react";
+import * as monaco from "monaco-editor";
+import React, { useEffect, useState } from "react";
+import fileApi from "../../api/fileApi";
 
-const ydocument = new Y.Doc();
-const provider = new WebsocketProvider("https://까마귀공방.com/api/share");
-const type = ydocument.getText("monaco");
-const editorRef = useRef(null)
-const monacoBinding = new MonacoBinding(type, editorRef.current.getModel(), new Set(YMonaco), provider.awareness)
+const YMonaco = ({ filePath }) => {
+  const [code, setCode] = useState("");
+  useEffect(() => {
+    const data = {
+      filePath: filePath
+        ? filePath.replace("/home/ubuntu/crow_data/", "")
+        : "68/금오/금오.py",
+    };
+    fileApi.fileCall(data).then((res) => {
+      console.log(res.data);
+      setCode(() => res.data.fileContent);
+    });
+    // fileApi.fileCall(data).then(res => codes = res.data.fileContent)
+  }, [filePath]);
 
-const YMonaco = () => {
+  window.addEventListener("load", () => {
+    const ydoc = new Y.Doc();
+    const provider = new WebsocketProvider(
+      "wss://demos.yjs.dev",
+      "codes",
+      ydoc
+    );
+    const ytext = ydoc.getText("monaco");
+
+    const editor = monaco.editor.create(
+      document.getElementById("monaco-editor"),
+      {
+        value: code,
+        language: "python",
+        theme: "vs-dark",
+      }
+    );
+
+    const monacoBinding = new MonacoBinding(
+      ytext,
+      /** @type {monaco.editor.ITextModel} */ (editor.getModel()),
+      new Set([editor]),
+      provider.awareness
+    );
+
+    // @ts-ignore
+    window.example = { provider, ydoc, ytext, monacoBinding };
+  });
+
   return (
     <React.Fragment>
-      <Editor
-        defaultLanguage="python"
-        defaultValue="#Here is Code Share"
-        onMount={(code) => (editorRef.current = code)}
-      />
+      <div id="monaco-editor" style={{ height: "200px" }} />
+      <script type="text/javascript" src="./dist/monaco.bundle.js"></script>
     </React.Fragment>
-  )
-}
+  );
+};
 
-export default YMonaco
+export default YMonaco;

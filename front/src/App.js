@@ -18,6 +18,8 @@ import TeamDetail from "./pages/team-detail/TeamDetail";
 import Test from "./pages/test/Test";
 import TestMain from "./pages/test-main/TestMain";
 import NotFound from "./pages/not-found/NotFound";
+// import CodeShare from "./pages/code-share/CodeShare";
+import YMonaco from "./pages/code-share/YMonaco";
 import CodeShare from "./pages/code-share/CodeShare";
 
 const router = createBrowserRouter([
@@ -95,7 +97,7 @@ const router = createBrowserRouter([
   },
   {
     path: "test/code-share",
-    element: <CodeShare />
+    element: <YMonaco />,
   },
   {
     path: "*",

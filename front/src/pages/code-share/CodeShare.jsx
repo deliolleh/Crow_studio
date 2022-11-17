@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 //stomp와 sockjs 패키지로 깔고 임포트!!
 
 const CodeShare = () => {
+  const codeRef = useRef(null);
   const sock = new SockJs("https://까마귀공방.com/api/share");
   //client 객체 생성 및 서버주소 입력
 
@@ -52,7 +53,6 @@ const CodeShare = () => {
       stomp.send("/code/share/4/abc", {}, JSON.stringify(msg));
     }
   };
-  const codeRef = useRef(null);
 
   useEffect(() => {
     codeRef.current?.foucs();
@@ -61,14 +61,14 @@ const CodeShare = () => {
     return () => {
       stompDisconnect();
     };
-  }, []);
+  });
 
   useEffect(() => {
     // codeRef.current.trigger(codeRef.current.keyCode.Enter)
-    window.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        sendMessage();
-      }
+    window.addEventListener("keyup", (e) => {
+      // if (e.key === "Enter") {
+      sendMessage();
+      // }
     });
   });
 
@@ -80,6 +80,7 @@ const CodeShare = () => {
         defaultValue="hi"
         height="200px"
         onMount={(code) => (codeRef.current = code)}
+        // onChange={sendMessage}
       />
     </React.Fragment>
   );
