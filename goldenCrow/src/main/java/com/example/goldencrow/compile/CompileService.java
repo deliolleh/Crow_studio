@@ -123,12 +123,11 @@ public class CompileService {
      * 프로젝트 혹은 파일을 컴파일하는 내부 로직
      *
      * @param type          프로젝트의 타입 번호 (1: pure python, 2: django, 3: flask, 4: fastapi)
-     * @param projectName   컴파일을 수행할 프로젝트의 이름
-     * @param teamSeq       컴파일을 수행할 프로젝트 팀의 sequence
+     * @param filePath      컴파일을 수행할 프로젝트 혹은 파일의 경로
      * @param input         pure python 파일일 때 input값
      * @return              컴파일 성공 시 컴파일 결과 반환, 성패에 따른 result 반환
      */
-    public Map<String, String> pyCompileService(String type, String projectName, String teamSeq, String input) {
+    public Map<String, String> pyCompileService(String type, String filePath, String input) {
         Map<String, String> serviceRes = new HashMap<>();
         int typeNum;
         // 타입 이상한 거 들어오면 리턴
@@ -149,10 +148,13 @@ public class CompileService {
                 serviceRes.put("result", WRONG);
                 return serviceRes;
         }
-        // 프로젝트명과 teamSeq로 docker container와 image 이름 생성
-        String conAndImgName = "crowstudio_" + projectName.toLowerCase() + "_" + teamSeq;
         // 절대경로 생성
-        String absolutePath = BASE_URL + teamSeq + "/" + projectName;
+        String absolutePath = BASE_URL + filePath;
+        String[] pathList = absolutePath.split("/");
+        String teamName = pathList[5];
+        String teamSeq = pathList[4];
+        // 프로젝트명과 teamSeq로 docker container와 image 이름 생성
+        String conAndImgName = "crowstudio_" + teamName.toLowerCase() + "_" + teamSeq;
         // 1 : pure python, 2 : django, 3 : flask, 4 : fastapi
         if (typeNum == 1) {
             String[] command;
