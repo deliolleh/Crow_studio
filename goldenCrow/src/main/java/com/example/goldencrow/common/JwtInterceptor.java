@@ -9,6 +9,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.example.goldencrow.common.Constants.*;
+
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
 
@@ -16,9 +18,9 @@ public class JwtInterceptor implements HandlerInterceptor {
     private JwtService jwtService;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
-        if(HttpMethod.OPTIONS.matches(request.getMethod())){
+        if (HttpMethod.OPTIONS.matches(request.getMethod())) {
             return true;
         }
 
@@ -26,8 +28,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         System.out.println("Interceptor Called");
 
         try {
-
-            if(jwt!=null && this.jwtService.verifyJWT(jwt).get("result").equals("success")) {
+            if (jwt != null && this.jwtService.verifyJWT(jwt).equals(SUCCESS)) {
                 System.out.println("Interceptor Passed");
                 return true;
             } else {
@@ -38,8 +39,5 @@ public class JwtInterceptor implements HandlerInterceptor {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
-
-
 }
