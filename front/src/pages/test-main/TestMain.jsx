@@ -5,7 +5,6 @@ import Editor from "@monaco-editor/react";
 import styled from "styled-components";
 
 import { getFileContent, saveFileContent } from "../../redux/fileSlice";
-import { getDirectoryList } from "../../redux/projectSlice";
 import { formatPut, formatGet } from "../../redux/editorSlice";
 import { compilePython } from "../../redux/compileSlice";
 
@@ -17,7 +16,6 @@ import Team from "./components/sidebar/Team";
 import Api from "./components/sidebar/Api";
 import VariableName from "./components/sidebar/VariableName";
 import Settings from "./components/sidebar/Settings";
-
 import ConsoleTerminal from "./components/ConsoleTerminal";
 
 const editorOptions = {
@@ -33,30 +31,18 @@ const TestMain = () => {
   const { teamSeq } = useParams();
   const editorRef = useRef(null);
   const [showItem, setShowItem] = useState("Dir");
-  const [curFilePath, setCurFilePath] = useState("");
 
   const showItemHandler = (componentName) => setShowItem(componentName);
 
   // 파일 클릭하면 내용 보여주기
   const showFileContentHandler = (targetType, targetPath) => {
-    if (targetType === "directory") {
-      const DIRECTORY_DATA = {
-        rootPath: `${teamSeq}/${"thisIsProjectName"}`,
-        rootName: `root`,
-      };
-      dispatch(getDirectoryList(DIRECTORY_DATA))
-        .unwrap()
-        .then(console.log)
-        .catch(console.error);
-    } else {
+    if (targetType !== "directory") {
       const requireData = {
         filePath: targetPath,
       };
       dispatch(getFileContent(requireData))
         .unwrap()
         .then((res) => {
-          setCurFilePath(targetPath);
-          // setCurFileContent(res);
           editorRef.current.getModel().setValue(res);
         })
         .catch(console.error);
@@ -103,8 +89,6 @@ const TestMain = () => {
                 dispatch(getFileContent(requireData))
                   .unwrap()
                   .then((res) => {
-                    setCurFilePath(curPath);
-                    // setCurFileContent(res);
                     editorRef.current.getModel().setValue(res);
                   })
                   .catch(console.error);
@@ -139,6 +123,7 @@ const TestMain = () => {
           )}
         </div>
 
+        {/* 에디터 */}
         <Editor
           style={{ overflow: "auto" }}
           height="calc(100vh - 31px)"
@@ -150,6 +135,7 @@ const TestMain = () => {
           options={editorOptions}
         />
 
+        {/* 콘솔 */}
         <ConsoleTerminal />
       </div>
     </React.Fragment>
