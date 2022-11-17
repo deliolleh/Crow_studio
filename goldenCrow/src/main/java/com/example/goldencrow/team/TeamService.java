@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static com.example.goldencrow.common.Constants.SUCCESS;
+
 @Service
 public class TeamService {
 
@@ -234,9 +236,9 @@ public class TeamService {
 
             } else {
                 // 쓰여진 이 주소에서 git clone 하겠다는 말이므로 받아온다.
-                String gitCloneResult = gitService.gitClone(teamGit, teamSeq, teamName);
-
-                if (gitCloneResult.equals("Success")) {
+                Map<String, String> gitClone = gitService.gitCloneService(teamGit, teamSeq, teamName);
+                String gitCloneResult = gitClone.get("result");
+                if (gitCloneResult.equals(SUCCESS)) {
                     // 성공
                     res.put("result", new Long(200));
                     res.put("teamSeq", teamSeq);
