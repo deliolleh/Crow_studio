@@ -23,6 +23,8 @@ public class FileController {
 
     private String stringPath = "filePath";
 
+    private final String basePath = "/home/ubuntu/crow_data";
+
     public FileController(FileService fileService, JwtService jwtService) {
         this.fileService = fileService;
         this.jwtService = jwtService;
@@ -54,7 +56,7 @@ public class FileController {
     @DeleteMapping("/{teamSeq}")
 
     public ResponseEntity<Map<String, String>> userFileDelete(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> filePath) {
-        Map<String, String> res = fileService.deleteFile(filePath.get(stringPath), type, teamSeq);
+        Map<String, String> res = fileService.deleteFile(basePath+filePath.get(stringPath), type, teamSeq);
         if (res.get("result").equals(SUCCESS)) {
             return new ResponseEntity<>(res, HttpStatus.OK);
         } else {
@@ -74,7 +76,7 @@ public class FileController {
         String title = filePath.get("fileTitle");
         String oldFileName = filePath.get("oldFileName");
 
-        boolean result = fileService.updateFileName(path,title,oldFileName, teamSeq);
+        boolean result = fileService.updateFileName(basePath+path,title,oldFileName, teamSeq);
 
         if (result) {
             return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.CREATED);
@@ -94,7 +96,7 @@ public class FileController {
     public ResponseEntity<String> saveFile(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody HashMap<String, String> fileContent) {
         String content = fileContent.get("fileContent");
         String filePath = fileContent.get(stringPath);
-        String result = fileService.saveFile(filePath, content);
+        String result = fileService.saveFile(basePath+filePath, content);
 
         if (result.equals("Success")) {
             return new ResponseEntity<>("Success", HttpStatus.OK);
@@ -107,7 +109,7 @@ public class FileController {
 
     @PostMapping("/files")
     public ResponseEntity<String> readFile(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String, String> path) {
-        List<String> content = fileService.readFile(path.get(stringPath));
+        List<String> content = fileService.readFile(basePath+path.get(stringPath));
         if (content.get(0).equals("Success")) {
             return new ResponseEntity<>(content.get(1), HttpStatus.OK);
         } else {
