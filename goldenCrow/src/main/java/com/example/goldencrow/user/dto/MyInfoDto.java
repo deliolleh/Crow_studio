@@ -4,7 +4,11 @@ import com.example.goldencrow.user.UserEntity;
 import lombok.Data;
 
 /**
+<<<<<<< HEAD
+ * 회원정보 조회에 출력으로 사용될 dto
+=======
  * 당사자의 회원정보 조회에 출력으로 사용될 DTO
+>>>>>>> 9ea69df187d382645af209bafc835f951dc7cc3a
  */
 @Data
 public class MyInfoDto {
