@@ -82,7 +82,7 @@ const Modify = ({ closeModify }) => {
         initialNickname={myNickname}
       />
 
-      <PasswordForm onSubmitPassword={submitPasswordHandler} />
+      <PasswordForm updatePassword={submitPasswordHandler} />
 
       <GitForm updateGitAuth={updateGitAuthHandler} />
 

@@ -12,7 +12,7 @@ const initialErrorState = {
   password2ErrMsg: "",
 };
 
-const PasswordForm = ({ onSubmitPassword }) => {
+const PasswordForm = ({ updatePassword }) => {
   const [inputs, setInputs] = useState(initialInputState);
   const [errMsg, setErrMsg] = useState(initialErrorState);
   const { currentPassword, password1, password2 } = inputs;
@@ -76,7 +76,8 @@ const PasswordForm = ({ onSubmitPassword }) => {
       userNewPassword: password1,
     };
     setErrMsg(initialErrorState);
-    onSubmitPassword(passwordData);
+    updatePassword(passwordData);
+    setInputs(initialInputState);
   };
 
   return (
