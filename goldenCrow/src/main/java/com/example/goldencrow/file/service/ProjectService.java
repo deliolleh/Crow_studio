@@ -22,6 +22,7 @@ import static java.lang.System.out;
 public class ProjectService {
 
     private final FileService fileService;
+    @Autowired
     private final FileRepository fileRepository;
 
     public ProjectService(FileService fileService, FileRepository fileRepository) {
