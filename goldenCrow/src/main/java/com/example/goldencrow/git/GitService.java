@@ -63,11 +63,12 @@ public class GitService {
      * @param url           clone받을 git 주소
      * @param teamSeq       해당 프로젝트의 팀 sequence
      * @param projectName   해당 프로젝트명
-     * @return
+     * @return 성패에 따른 result 반환
      */
-    public Map<String, String> gitClone(String url, Long teamSeq, String projectName) {
+    public Map<String, String> gitCloneService(String url, Long teamSeq, String projectName) {
         Map<String, String> serviceRes = new HashMap<>();
-        // 명령어 실행 시키기 위한 빌더
+
+        // 명령어 실행 시키기 위한 ProcessBuilder
         ProcessBuilder command = new ProcessBuilder("git", "clone", url);
 
         // 팀 시퀀스 디렉토리 만들기
@@ -89,7 +90,6 @@ public class GitService {
 
         // 프로젝트 디렉토리에서 명령어 실행
         command.directory(new File(pjt));
-
         try {
             command.start().waitFor();
         } catch (IOException e) {
@@ -100,42 +100,46 @@ public class GitService {
             serviceRes.put("result", WRONG);
             return serviceRes;
         }
-        if (newProjectFolder.listFiles() == null || Objects.requireNonNull(newProjectFolder.listFiles()).length == 0) {
+
+        // 이부분이 무슨 부분 일 까
+        if (newProjectFolder.listFiles() == null
+                || Objects.requireNonNull(newProjectFolder.listFiles()).length == 0) {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
         File newFolder = Objects.requireNonNull(newProjectFolder.listFiles())[0];
 
+        // 팀시퀀스로 팀이 존재하는지 확인
         Optional<TeamEntity> thisTeam = teamRepository.findByTeamSeq(teamSeq);
-
         if (!thisTeam.isPresent()) {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
-
-        String configResult = setConfig(newFolder, thisTeam.get());
-        if (!configResult.equals("Success")) {
-            serviceRes.put("result", NO_SUCH); // 수정해야함
+        // config 파일 세팅
+        String configResult = setConfigService(newFolder, thisTeam.get());
+        if (!configResult.equals(SUCCESS)) {
+            serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
-        serviceRes.put("result", SUCCESS); // 수정해야함
+        serviceRes.put("result", SUCCESS);
         return serviceRes;
     }
 
     /**
-     * 팀에서 리더의 닉네임, 이메일을 받아 git config에 등록
-     * 팀과 파일을 입력받음
+     * 팀에서 리더의 닉네임, 이메일을 받아 git config에 등록하는 내부 로직
+     * 팀 Entity와 파일을 입력받음
      *
      * @param file
      * @param team
      * @return
      */
-    public String setConfig(File file, TeamEntity team) {
+    public String setConfigService(File file, TeamEntity team) {
         UserEntity leader = team.getTeamLeader();
 
         String leaderEmail = leader.getUserId();
         String leaderName = leader.getUserNickname();
 
+        // git config에 등록하기 위해 ProcessBuilder 사용
         ProcessBuilder configEmail = new ProcessBuilder("git", "config", "user.email", leaderEmail);
         ProcessBuilder configName = new ProcessBuilder("git", "config", "user.name", leaderName);
 
@@ -148,7 +152,7 @@ public class GitService {
         } catch (IOException e) {
             return e.getMessage();
         }
-        return "Success";
+        return SUCCESS;
     }
 
     /**

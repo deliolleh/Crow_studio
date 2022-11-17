@@ -9,8 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.goldencrow.common.Constants.BAD_REQ;
-import static com.example.goldencrow.common.Constants.SUCCESS;
+import static com.example.goldencrow.common.Constants.*;
 
 /**
  * Git과 관련된 기능을 처리하는 Controller
@@ -28,8 +27,8 @@ public class GitController {
     /**
      * Git controller 생성자
      *
-     * @param gitService
-     * @param jwtService
+     * @param gitService    git 관련 로직을 처리하는 Service
+     * @param jwtService    jwt 관련 로직을 처리하는 Service
      */
     public GitController(GitService gitService, JwtService jwtService) {
         this.gitService = gitService;
@@ -39,28 +38,33 @@ public class GitController {
     /**
      * 깃 클론 API
      *
-     * @param jwt           회원가입 및 로그인 시 발급되는 access token
-     * @param teamSeq       해당 프로젝트의 팀 sequence
-     * @param req
+     * @param jwt       회원가입 및 로그인 시 발급되는 access token
+     * @param teamSeq   해당 프로젝트의 팀 sequence
+     * @param req       "projectName", "gitUrl"를 키로 가지는 Map<String, String>
+     * @return 성패에 따른 result 반환
+     * @status 200, 400, 401, 404
      */
     @PostMapping("/{teamSeq}")
-    public ResponseEntity<Map<String, String>> gitClone(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
+    public ResponseEntity<Map<String, String>> gitClonePost(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
         if (req.containsKey("projectName") && req.containsKey("gitUrl")) {
             String projectName = req.get("projectName");
             String gitUrl = req.get("gitUrl");
 
-            Map<String, String> res = gitService.gitClone(gitUrl, teamSeq, projectName);
-
-            if (!res.get("result").equals(SUCCESS)) {
-                return new ResponseEntity<>(res, HttpStatus.OK);
+            Map<String, String> res = gitService.gitCloneService(gitUrl, teamSeq, projectName);
+            String result = res.get("result");
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }
-            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         } else {
             Map<String, String> res = new HashMap<>();
             res.put("result", BAD_REQ);
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
-
 
     }
 
