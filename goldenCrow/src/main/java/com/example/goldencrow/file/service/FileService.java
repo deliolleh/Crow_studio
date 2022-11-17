@@ -34,12 +34,13 @@ public class FileService {
 
     private final String Success = "Success";
 
+    private final String baseUrl = "/home/ubuntu/crow_data/";
 
     /** 파일 생성 로직
      * 파일이 성공적으로 생성되면 true
      * 아니면 false 반환*/
     public boolean createFile(FileCreateRequestDto fileCreateRequestDto, Integer type, Long teamSeq) {
-        String newFilePath = fileCreateRequestDto.getFilePath() + "/"+ fileCreateRequestDto.getFileTitle();
+        String newFilePath = baseUrl + fileCreateRequestDto.getFilePath() + "/"+ fileCreateRequestDto.getFileTitle();
         String check = makeNewFile(newFilePath,type);
 
         if (check.equals(Success)) {
