@@ -19,14 +19,20 @@ const VariableName = () => {
 
   const rendering = () => {
     let show = [];
-    result.map((li, index) => show.push(
-      <div
-        key={`${index}`}
-        className="mt-1 ml-[15px] font-medium text-white"
-      >
-        {li}
-      </div>
-    ));
+    result.map((li, index) =>
+      show.push(
+        <div
+          key={`${index}`}
+          className="mt-1 ml-[15px] font-medium text-white"
+          onClick={() => navigator.clipboard.writeText(li)}
+          style={{
+            cursor: "pointer",
+          }}
+        >
+          {li}
+        </div>
+      )
+    );
     return show;
   };
 

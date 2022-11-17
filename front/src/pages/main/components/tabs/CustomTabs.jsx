@@ -38,6 +38,21 @@ const CustomTabs = memo(({ item, provided, snapshot, closableTabItems, panelItem
           {panelItems}
         </PanelList>
       </Tabs>
+      {/* <Tabs customStyle={customStyle} {...rest}>
+        <DragTabList className="flex items-center">
+          <span
+            {...provided.dragHandleProps}
+          >
+            <MdDragHandle
+              className="w-5 h-4 m-2 hover:bg-point_purple hover:text-black rounded-md"
+            />
+          </span>
+          {closableTabItems}
+        </DragTabList>
+        <PanelList className="h-auto">
+          {panelItems}
+        </PanelList>
+      </Tabs> */}
     </TabsContainer>
   );
 });

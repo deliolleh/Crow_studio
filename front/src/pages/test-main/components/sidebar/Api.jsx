@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 
 import SelectMethod from "./ApiMethod";
@@ -22,6 +21,7 @@ const Api = () => {
 
   const onUriChange = (e) => {
     setUri(e.target.value);
+    setTextareaHeightValue(e.target.value);
   };
 
   // const onMethodChange = (e) => {
@@ -68,7 +68,8 @@ const Api = () => {
       .then((res) => {
         console.log("type", res.data.data, typeof res.data.data);
         setResultActive(() => true);
-        setResult(() => JSON.stringify(res.data.data));
+        setResult(() => JSON.stringify(res.data.data, null, 4));
+        console.log(result);
         setTime(() => res.data.time);
       })
       .catch((err) => console.error(err));
@@ -82,6 +83,23 @@ const Api = () => {
   //     setHeader(() => word);
   //   }
   // };
+
+  // 자동 높이 조절
+  const textareaRef = useRef(null);
+  const [textareaHeightValue, setTextareaHeightValue] = useState("");
+
+  useEffect(() => {
+    if (textareaRef && textareaRef.current) {
+      textareaRef.current.style.height = "28px";
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + "px";
+    }
+  }, [textareaHeightValue]);
+
+  // json pretty print
+  const obj1 = {
+    a: { b: { c: 10 } },
+  };
 
   return (
     <>
@@ -98,12 +116,20 @@ const Api = () => {
           <div className="pl-1">
             <div className="text-primary_dark text-sm font-bold">
               <div className="mb-2">URI</div>
-              <input
+              {/* <input
                 type="text"
                 onChange={onUriChange}
                 value={uri}
                 placeholder="address"
-                className="h-[28px] w-[217px] rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5"
+                className="h-[28px] w-[217px] rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5"
+              /> */}
+              <textarea
+                name="url"
+                onChange={onUriChange}
+                value={uri}
+                placeholder="address"
+                ref={textareaRef}
+                className="h-[28px] w-[217px] rounded-md bg-component_item_bg_+2_dark px-4 py-1 text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5 overflow-y-hidden resize-none"
               />
               <div className="mb-2">Method</div>
               <SelectMethod onMethodChange={onMethodChange} />
@@ -131,7 +157,9 @@ const Api = () => {
                 <button
                   onClick={sendApi}
                   className="h-[26px] w-[45px] rounded-md bg-point_purple text-white"
-                >전송</button>
+                >
+                  전송
+                </button>
               </div>
               {resultActive && (
                 <div className="mt-5">
@@ -142,7 +170,9 @@ const Api = () => {
                   </div>
                   <div className="flex mb-5">
                     <div className="mr-4">결과 :</div>
-                    <div className="w-[186px] h-auto break-all text-point_yellow">{result}</div>
+                    <div className="w-[186px] h-auto break-all text-point_yellow">
+                      <pre>{result}</pre>
+                    </div>
                   </div>
                 </div>
               )}
