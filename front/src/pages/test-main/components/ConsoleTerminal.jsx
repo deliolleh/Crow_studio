@@ -14,7 +14,6 @@ export const MakeEditorData = (
   const [fileName, setFileName] = useState("script.js");
   const [language, setLanguage] = useState("python");
 
-  // 린트 영역
   const lint = () => {
     // const sendCode = editorRef.current.getValue();
     const body = {
@@ -40,38 +39,31 @@ export const MakeEditorData = (
   };
 };
 
-const ConsoleTerminal = () => {
+const ConsoleTerminal = (props) => {
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
-  const [selectOption, setSelectOption] = useState([]);
 
-  // 테스트를 위한 하드코딩
-  const teamSeq = 11;
-  const filePath = "/home/ubuntu/crow_data/11/puretest/puretest.py";
-  const inputValue = "";
+  const { teamSeq, curPath } = props;
 
-  const changeInputData = (e) => {
-    const change = e.target.value;
-    console.log(change);
-    setInputData(() => change);
-  };
+  // const filePath = "/home/ubuntu/crow_data/11/puretest/puretest.py";
+
+  const changeInputData = (e) => setInputData(e.target.value);
 
   const compileStart = () => {
-    // test용 하드코딩 data
-    const body = {
-      type: 1,
-      filePath: filePath,
-      input: inputValue,
-    };
+    const curPathSplit = curPath.split("/");
 
-    // 파일 연결 완료시 사용할 body
-    // const body = {
-    //   type: type,
-    //   filePath: filePath,
-    //   input: inputValue
-    // }
+    console.log(
+      "compileStart curPath:",
+      curPathSplit[curPathSplit.length - 2] +
+        curPathSplit[curPathSplit.length - 1]
+    );
+    const body = {
+      type: "pure Python",
+      filePath: curPath,
+      input: "",
+    };
     compileApi
-      .compilePython(teamSeq, body)
+      .compilePython(body)
       .then((res) => {
         console.log(res.data);
         setOutputData(res.data);
@@ -79,22 +71,20 @@ const ConsoleTerminal = () => {
       .catch((err) => console.error(err));
   };
 
-  const compileStop = () => {
-    // stop할 때 모든 데이터 날리기
-    setInputData("");
-    setOutputData("");
-    // 하드코딩 데이터
-    const body = {
-      projectName: "puretest",
-      teamSeq: 11,
-    };
-    compileApi
-      .compilePythonStop(body)
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => console.error(err));
-  };
+  // const compileStop = () => {
+  //   setInputData("");
+  //   setOutputData("");
+  //   const body = {
+  //     projectName: "puretest",
+  //     teamSeq: 11,
+  //   };
+  //   compileApi
+  //     .compilePythonStop(body)
+  //     .then((res) => {
+  //       console.log(res.data);
+  //     })
+  //     .catch((err) => console.error(err));
+  // };
 
   return (
     <div className="ml-[8px] px-3 rounded-[10px] bg-component_-2_dark">
@@ -105,28 +95,9 @@ const ConsoleTerminal = () => {
           Console
         </div>
         <div className="flex items-center">
-          {/* run 가능한 파일들 dropdown */}
-          <select className="mt-1 mr-2 w-full text-white text-xs py-1 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition">
-            {selectOption?.map((file) => {
-              const name = file.split("/")[-1];
-              const folder = file.split("/")[-2];
-              return (
-                <option value={file}>
-                  {name}, {folder}
-                </option>
-              );
-            })}
-          </select>
           {/* btns */}
-          {/* <div
-            onClick={compileStart}
-            className="mr-[10px]"
-          >
-            start
-          </div>
-          <div onClick={compileStop}>stop</div> */}
           <BsPlayFill onClick={compileStart} className="mr-[10px]" size="30" />
-          <BsStopFill onClick={compileStop} size="30" />
+          {/* <BsStopFill onClick={compileStop} size="30" /> */}
         </div>
       </div>
       {/* console 하단 */}

@@ -8,9 +8,9 @@ const initialState = {
 
 export const compilePython = createAsyncThunk(
   "compile/compilePython",
-  async ({ teamSeq, compileData }, { rejectWithValue }) => {
+  async (compileData, { rejectWithValue }) => {
     try {
-      const response = await compileApi.compilePython(teamSeq, compileData);
+      const response = await compileApi.compilePython(compileData);
       return response.data;
     } catch (err) {
       if (!err.response) {

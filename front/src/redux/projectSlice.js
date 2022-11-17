@@ -6,21 +6,6 @@ const initialState = {
   value: {},
 };
 
-export const getDirectoryList = createAsyncThunk(
-  "project/getDirectoryList",
-  async (directoryData, { rejectWithValue }) => {
-    try {
-      const response = await projectApi.directoryList(directoryData);
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
 export const getAllFiles = createAsyncThunk(
   "project/getAllFiles",
   async (teamSeq, { rejectWithValue }) => {
@@ -35,12 +20,6 @@ export const getAllFiles = createAsyncThunk(
     }
   }
 );
-
-//
-
-//
-
-//
 
 export const projectSlice = createSlice({
   name: "project",
