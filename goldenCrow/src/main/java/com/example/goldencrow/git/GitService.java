@@ -489,7 +489,7 @@ public class GitService {
     }
 
     /**
-     * push / pull할 새로운 URL 세팅
+     * push / pull할 새로운 URL 세팅 처리하는 내부 로직
      *
      * @param newUrl  새로운 URL
      * @param gitPath git 로직을 사용할 프로젝트 경로
@@ -514,7 +514,7 @@ public class GitService {
      * @param gitPath push/pull을 수행할 프로젝트 경로
      * @param email   사용자의 email 정보
      * @param pass    사용자의 password 정보
-     * @return msg
+     * @return 성패에 따른 result String 반환
      */
     public String setUrl(String gitPath, String email, String pass) {
         String gitUrl = getRemoteUrl(gitPath);
@@ -599,7 +599,6 @@ public class GitService {
         } else {
             serviceRes.put("result", UNKNOWN);
         }
-
         return serviceRes;
     }
 
