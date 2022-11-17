@@ -16,11 +16,11 @@ import { IoClose } from "react-icons/io5";
 const Modify = ({ closeModify }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { myNickname } = useSelector((state) => state.user.value);
+  const myNickname = useSelector((state) => state.user.value.myNickname);
 
   const closeModifyHandler = () => closeModify(false);
 
-  const submitNicknameHandler = (nicknameData) =>
+  const updateNicknameHandler = (nicknameData) =>
     dispatch(updateNickname(nicknameData)).unwrap().catch(console.error);
 
   const submitPasswordHandler = (passwordData) => {
@@ -37,7 +37,7 @@ const Modify = ({ closeModify }) => {
   };
 
   const resignHandler = () => {
-    if (!window.confirm("진짜 갈거임??")) {
+    if (!window.confirm("정말로 탈퇴하시겠습니까?")) {
       return;
     }
     dispatch(resign())
@@ -78,7 +78,7 @@ const Modify = ({ closeModify }) => {
       </div>
 
       <NicknameForm
-        onSubmitNickname={submitNicknameHandler}
+        updateNickname={updateNicknameHandler}
         initialNickname={myNickname}
       />
 

@@ -3,11 +3,10 @@ import { useSelector } from "react-redux";
 
 import userApi from "../../api/userApi";
 
-const Profile = ({ openModify, userSeq }) => {
+const Profile = ({ userSeq }) => {
   const { mySeq, myNickname } = useSelector((state) => state.user.value);
   const [userInfo, setUserInfo] = useState({});
   const { userNickname, userEmail } = userInfo;
-  const openModifyHandler = () => openModify(true);
 
   useEffect(() => {
     userApi
@@ -35,10 +34,7 @@ const Profile = ({ openModify, userSeq }) => {
 
         {/* 정보 수정 버튼 */}
         {+userSeq === mySeq && (
-          <button
-            onClick={openModifyHandler}
-            className="sm:w-[169px] w-auto h-[36px] p-2 text-sm font-bold text-primary_dark hover:text-black bg-component_item_bg_dark border hover:bg-point_light_yellow border-primary_-2_dark hover:border-white rounded-md"
-          >
+          <button className="sm:w-[169px] w-auto h-[36px] p-2 text-sm font-bold text-primary_dark hover:text-black bg-component_item_bg_dark border hover:bg-point_light_yellow border-primary_-2_dark hover:border-white rounded-md">
             내 정보 수정하기
           </button>
         )}
