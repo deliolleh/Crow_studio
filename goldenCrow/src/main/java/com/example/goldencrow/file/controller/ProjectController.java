@@ -45,9 +45,14 @@ public class ProjectController {
         String baseUrl = "/home/ubuntu/crow_data/"+String.valueOf(teamSeq);
         File teamPjt = new File(baseUrl);
         String rootName = teamPjt.getName();
-
+        File[] files = teamPjt.listFiles();
         Map<Object, Object> visit = new HashMap<>();
-        projectService.readDirectory(baseUrl,rootName,visit);
+        if (files.length > 0) {
+            return new ResponseEntity<>(visit,HttpStatus.BAD_REQUEST);
+        }
+        String rootPath = files[0].getPath();
+        rootPath = rootPath.replace("/home/ubuntu/crow_data/","");
+        projectService.readDirectory(rootPath,rootName,visit);
 
         return new ResponseEntity<>(visit, HttpStatus.ACCEPTED);
     }

@@ -74,6 +74,7 @@ public class ProjectService {
                 File dir = files[i];
                 String name = names[i];
                 String thisPath = dir.getPath();
+                thisPath = thisPath.replace("/home/ubuntu/crow_data/","");
                 Map<Object, Object> children = new HashMap<>();
                 child.add(readDirectory(thisPath, name, children));
             }
