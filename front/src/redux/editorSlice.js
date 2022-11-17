@@ -21,6 +21,21 @@ export const formatPut = createAsyncThunk(
   }
 );
 
+export const formatGet = createAsyncThunk(
+  "editor/formatGet",
+  async ({ language, fileNum }, { rejectWithValue }) => {
+    try {
+      const response = await editorApi.formatGet(language, fileNum);
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+      return rejectWithValue(err.response.status);
+    }
+  }
+);
+
 export const editorSlice = createSlice({
   name: "editor",
   initialState,

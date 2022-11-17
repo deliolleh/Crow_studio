@@ -6,7 +6,7 @@ import styled from "styled-components";
 
 import { getFileContent, saveFileContent } from "../../redux/fileSlice";
 import { getDirectoryList } from "../../redux/projectSlice";
-import { formatPut } from "../../redux/editorSlice";
+import { formatPut, formatGet } from "../../redux/editorSlice";
 
 import Header from "../../components/Header";
 import Sidebar from "./components/sidebar/Sidebar";
@@ -76,20 +76,42 @@ const TestMain = () => {
     }
   };
 
-  // 파일 저장
+  // 파일 포매팅 후 저장
   const saveFileContentHandler = (curName, curPath) => {
-    const saveFileData = {
-      filePath: curPath,
-      fileContent: editorRef.current.getValue(),
-    };
     const codeData = { text: editorRef.current.getValue() };
     dispatch(formatPut({ language: "python", codeData }))
       .unwrap()
-      .then(console.log)
-      .catch(console.error);
-    dispatch(saveFileContent({ teamSeq, contentData: saveFileData }))
-      .unwrap()
-      .then(console.log)
+      .then((res) => {
+        console.log("formatPut res:", res);
+        const fileNum = { name: res.data };
+        dispatch(formatGet({ language: "python", fileNum }))
+          .unwrap()
+          .then((res) => {
+            console.log("formatGet res:", res);
+            const saveFileData = {
+              filePath: curPath,
+              fileContent: res.data,
+            };
+            dispatch(saveFileContent({ teamSeq, contentData: saveFileData }))
+              .unwrap()
+              .then((res) => {
+                console.log("saveFileContent res:", res);
+                const requireData = {
+                  filePath: curPath,
+                };
+                dispatch(getFileContent(requireData))
+                  .unwrap()
+                  .then((res) => {
+                    setCurFilePath(curPath);
+                    // setCurFileContent(res);
+                    editorRef.current.getModel().setValue(res);
+                  })
+                  .catch(console.error);
+              })
+              .catch(console.error);
+          })
+          .catch(console.error);
+      })
       .catch(console.error);
   };
 
