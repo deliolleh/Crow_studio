@@ -50,6 +50,7 @@ public class JwtService {
      * @param userSeq 사용자의 아이디
      * @return 생성 성공 시 jwt 반환
      */
+
     public String createAccess(Long userSeq) {
 
         // 헤더 설정
@@ -72,7 +73,6 @@ public class JwtService {
                 .setExpiration(ext)
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
                 .compact();
-
     }
 
     /**
@@ -107,7 +107,6 @@ public class JwtService {
 
         } catch (Exception e) {
             return UNKNOWN;
-
         }
 
     }
@@ -128,7 +127,6 @@ public class JwtService {
 
         // UserSeq를 Long으로 parse하여 반환
         return Long.valueOf(String.valueOf(claimMap.get("jti")));
-
     }
 
 }
