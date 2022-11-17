@@ -174,15 +174,4 @@ public class EditorsService {
         }
         return serviceRes;
     }
-
-    public HashMap<String, Object> autoComplete(String text) {
-        LinkedList<String> response = new LinkedList<>();
-        response.add(text);
-        response.add("통신");
-        response.add("일단");
-        response.add("성공");
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("data", response);
-        return result;
-    }
 }

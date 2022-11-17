@@ -93,9 +93,4 @@ public class EditorsController {
         }
     }
 
-    @GetMapping("")
-    public ResponseEntity<Map<String, Object>> autoComplete(@RequestParam("find") String letter) {
-        HashMap<String, Object> response = editorsService.autoComplete(letter);
-        return ResponseEntity.ok(response);
-    }
 }
