@@ -172,30 +172,31 @@ public class CompileService {
             String[] command;
             // 에러가 발생할 경우 에러메세지를 저장할 파일 생성
             File file = new File(BASE_URL + "outfile/" + teamSeq + ".txt");
-            // input이 없는 경우
+            String outfilePath = BASE_URL + "outfile/" + teamSeq + ".txt";
+            // input이 없는 경우와 있는 경우를 나누어 명령어 생성, '2>' : 해당 명령어 실행 후 나오는 메세지를 파일에 저장
             if (input.isEmpty()) {
-                command = new String[]{"python3", absolutePath, " 2> " + "/home/ubuntu/crow_data/outfile/" + teamSeq + ".txt"};
+                command = new String[]{"python3", absolutePath, " 2> " + outfilePath};
             } else {
                 command = new String[]{"/bin/sh", "-c", "echo " + "\"" + input + "\" | python3 " + absolutePath
-                        + " 2> " + "/home/ubuntu/crow_data/outfile/" + teamSeq + ".txt"};
+                        + " 2> " + outfilePath};
             }
             // 결과 문자열
             System.out.println(Arrays.toString(command));
             String response = resultString(command);
             // 에러 메세지 파일에서 읽어오기
-            List<String> messageList = fileService.readFile(BASE_URL + "outfile/" + teamSeq + ".txt");
+            List<String> messageList = fileService.readFile(outfilePath);
             String message = messageList.get(1);
             String pathChangemessage = message;
             if (message.contains(BASE_URL)) {
                 pathChangemessage = message.replaceAll(BASE_URL + teamSeq + "/", "");
             }
-            Path path = Paths.get(BASE_URL + "outfile/" + teamSeq + ".txt");
-//            try {
-//                Files.deleteIfExists(path);
-//            } catch (IOException ioe) {
-//                serviceRes.put("result", UNKNOWN);
-//                return serviceRes;
-//            }
+            Path path = Paths.get(outfilePath);
+            try {
+                Files.deleteIfExists(path);
+            } catch (IOException ioe) {
+                serviceRes.put("result", UNKNOWN);
+                return serviceRes;
+            }
             // 파일 경로가 틀린 경우
             if (pathChangemessage.contains("Errno 2")) {
                 serviceRes.put("result", NO_SUCH);
