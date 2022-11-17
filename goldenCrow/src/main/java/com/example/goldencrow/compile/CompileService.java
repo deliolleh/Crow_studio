@@ -46,6 +46,8 @@ public class CompileService {
             p.destroy();
             return result.trim();
         } catch (IOException | InterruptedException e) {
+            System.out.println("message : " + e.getMessage());
+            System.out.println("toString : " + e.toString());
             return e.toString();
         }
     }
