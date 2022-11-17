@@ -38,9 +38,9 @@ export const deleteFile = createAsyncThunk(
 
 export const renameFile = createAsyncThunk(
   "file/renameFile",
-  async (fileData, { rejectWithValue }) => {
+  async ({ teamSeq, fileData }, { rejectWithValue }) => {
     try {
-      const response = await fileApi.fileNameChange(fileData);
+      const response = await fileApi.fileNameChange(teamSeq, fileData);
       return response.data;
     } catch (err) {
       if (!err.response) {

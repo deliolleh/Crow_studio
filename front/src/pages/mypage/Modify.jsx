@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import {
-  modifyNickname,
-  modifyPassword,
+  updateNickname,
+  updatePassword,
   resign,
   updateGitAuth,
 } from "../../redux/userSlice";
@@ -24,10 +24,10 @@ const Modify = ({ closeModify }) => {
   const closeModifyHandler = () => closeModify(false);
 
   const submitNicknameHandler = (nicknameData) =>
-    dispatch(modifyNickname(nicknameData)).unwrap().catch(console.error);
+    dispatch(updateNickname(nicknameData)).unwrap().catch(console.error);
 
   const submitPasswordHandler = (passwordData) => {
-    dispatch(modifyPassword(passwordData))
+    dispatch(updatePassword(passwordData))
       .unwrap()
       .catch((errorStatusCode) => {
         if (errorStatusCode === 409) {

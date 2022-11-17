@@ -16,11 +16,11 @@ const Login = () => {
     dispatch(login(loginData))
       .unwrap()
       .then(() => {
-        alert("로그인 성공");
+        alert("로그인에 성공했습니다");
         navigate("/");
       })
-      .catch((errorStatusCode) => {
-        if (errorStatusCode === 409) {
+      .catch((errStatusCode) => {
+        if (errStatusCode === 409) {
           alert("존재하지 않는 이메일이나 비밀번호입니다");
         } else {
           alert("비상!!");
