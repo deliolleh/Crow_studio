@@ -32,21 +32,28 @@ public class GitService {
     /**
      * Git Service 생성자
      *
-     * @param projectService    project를 관리하는 service
-     * @param userRepository    user Table에 접속하는 Repository
+     * @param projectService project를 관리하는 service
+     * @param userRepository user Table에 접속하는 Repository
      */
     public GitService(ProjectService projectService, UserRepository userRepository) {
         this.projectService = projectService;
         this.userRepository = userRepository;
     }
 
+    /**
+     * Git 정보 불러오는 Service
+     *
+     * @param userSeq   불러오려는 Git의 사용자 Sequence
+     * @return  gitInfo 반환, 없을 시 NO_SUCH 반환
+     */
     public List<String> getGitInfo(Long userSeq) {
         List<String> gitInfo = new ArrayList<>();
         String email = userRepository.getReferenceById(userSeq).getUserGitUsername();
         String token = userRepository.getReferenceById(userSeq).getUserGitToken();
 
-        gitInfo.add("깃 정보가 없습니다.");
+        // 사용자의 git 정보가 없는 경우
         if (email == null || token == null) {
+            gitInfo.add(NO_SUCH);
             return gitInfo;
         }
         gitInfo.add(email);
@@ -60,9 +67,9 @@ public class GitService {
      * 그 후 프로젝트 디렉토리에서 클론
      * 클론한 디렉토리로 이동 후 유저 정보 입력(리더 이메일, 리더 닉네임)
      *
-     * @param url           clone받을 git 주소
-     * @param teamSeq       해당 프로젝트의 팀 sequence
-     * @param projectName   해당 프로젝트명
+     * @param url         clone받을 git 주소
+     * @param teamSeq     해당 프로젝트의 팀 sequence
+     * @param projectName 해당 프로젝트명
      * @return 성패에 따른 result 반환
      */
     public Map<String, String> gitCloneService(String url, Long teamSeq, String projectName) {
@@ -129,9 +136,9 @@ public class GitService {
      * 팀에서 리더의 닉네임, 이메일을 받아 git config에 등록하는 내부 로직
      * 팀 Entity와 파일을 입력받음
      *
-     * @param file  config를 등록할 파일 정보
-     * @param team  config에 등록할 팀 정보
-     * @return  성패에 따른 String
+     * @param file config를 등록할 파일 정보
+     * @param team config에 등록할 팀 정보
+     * @return 성패에 따른 String
      */
     public String setConfigService(File file, TeamEntity team) {
         UserEntity leader = team.getTeamLeader();
@@ -158,9 +165,9 @@ public class GitService {
     /**
      * Git Switch를 처리하는 내부 로직
      *
-     * @param gitPath       switch할 git의 경로
-     * @param branchName    switch할 brnach의 이름
-     * @param type          switch할 branch의 종류 (1 : 존재하는 브랜치로 이동, 2 : 브랜치를 새로 생성 후 이동)
+     * @param gitPath    switch할 git의 경로
+     * @param branchName switch할 brnach의 이름
+     * @param type       switch할 branch의 종류 (1 : 존재하는 브랜치로 이동, 2 : 브랜치를 새로 생성 후 이동)
      * @return 성패에 따른 result 반환
      */
     public Map<String, String> gitSwitchService(String gitPath, String branchName, Integer type) {
@@ -176,7 +183,7 @@ public class GitService {
         }
         // 명령어를 실행할 파일 설정
         command.directory(targetFile);
-        // 결과 문자열 저장하기 위한 StringBuilder
+        // 명령어 수행 후 결과값을 저장하기 위한 StringBuilder
         StringBuilder msg = new StringBuilder();
 
         // 명령어 수행 로직
@@ -188,7 +195,7 @@ public class GitService {
                 msg.append(result).append("\n");
             }
         } catch (IOException e) {
-            serviceRes.put("result", UNKNOWN);
+            serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
         // 성공 여부 판단
@@ -203,8 +210,8 @@ public class GitService {
     /**
      * git add 함수
      *
-     * @param gitPath   프로젝트 경로
-     * @param filePath  add할 파일 경로 (특정하지 않으면 all)
+     * @param gitPath  프로젝트 경로
+     * @param filePath add할 파일 경로 (특정하지 않으면 all)
      * @return 성패에 따른 String 반환
      */
     public String gitAdd(String gitPath, String filePath) {
@@ -219,7 +226,7 @@ public class GitService {
         // 명령어를 수행할 path 등록
         command.directory(new File(gitPath));
 
-        // 결과 메세지를 저장하기 위한 StringBuilder
+        // 명령어 수행 후 결과값을 저장하기 위한 StringBuilder
         StringBuilder msg = new StringBuilder();
 
         // 명령어 수행 로직
@@ -228,12 +235,12 @@ public class GitService {
             String forPrint;
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((forPrint = br.readLine()) != null) {
-               msg.append(forPrint);
-               msg.append("\n");
+                msg.append(forPrint);
+                msg.append("\n");
             }
             p.waitFor();
         } catch (IOException e) {
-            return UNKNOWN;
+            return NO_SUCH;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return UNKNOWN;
@@ -249,9 +256,9 @@ public class GitService {
      * 깃 커밋 함수
      * 깃 애드 후 성공한다면 깃 커밋
      *
-     * @param message   commit message
-     * @param gitPath   프로젝트 경로
-     * @param filePath  add할 파일 경로 (특정하지 않으면 all)
+     * @param message  commit message
+     * @param gitPath  프로젝트 경로
+     * @param filePath add할 파일 경로 (특정하지 않으면 all)
      * @return 성패에 따른 result 반환
      */
     public Map<String, String> gitCommitService(String message, String gitPath, String filePath) {
@@ -269,7 +276,7 @@ public class GitService {
         // 명령어를 수행할 path 등록
         command.directory(new File(gitPath));
 
-        // 결과 메세지를 저장하기 위한 StringBuilder
+        // 명령어 수행 후 결과값을 저장하기 위한 StringBuilder
         StringBuilder msg = new StringBuilder();
         msg.append("Success");
         msg.append("\n");
@@ -285,7 +292,7 @@ public class GitService {
             }
             p.waitFor();
         } catch (IOException e) {
-            serviceRes.put("result", UNKNOWN);
+            serviceRes.put("result", NO_SUCH);
             return serviceRes;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -312,57 +319,71 @@ public class GitService {
      * @param filePath
      * @return
      */
-    public String gitPush(String branchName, String message, String gitPath, String filePath, Long userSeq) {
-        String check = gitCommit(message, gitPath, filePath);
-        if (!check.contains("Success")) {
-            return check;
+    public Map<String, String> gitPushService(String branchName, String message, String gitPath, String filePath, Long userSeq) {
+        Map<String, String> serviceRes = new HashMap<>();
+        // commit 로직 수행
+        Map<String, String> gitCommitCheck = gitCommitService(message, gitPath, filePath);
+        if (!gitCommitCheck.get("result").equals(SUCCESS)) {
+            serviceRes.put("result", gitCommitCheck.get("result"));
+            return serviceRes;
         }
 
+        // push하기 위해 remote URL 가져오는 로직 수행
         String gitUrl = getRemoteUrl(gitPath);
         if (!gitUrl.contains("https")) {
-            return "url 설정에 실패했습니다.";
+            serviceRes.put("result", gitUrl);
+            return serviceRes;
         }
 
+        // git 정보 불러오기 (email, password)
         List<String> gitInfo = getGitInfo(userSeq);
-
+        // git 정보를 불러오지 못한 경우
         if (gitInfo.size() < 2) {
-            return "깃 정보가 없습니다.";
+            serviceRes.put("result", NO_SUCH);
+            return serviceRes;
         }
 
         String email = gitInfo.get(0);
         String pass = gitInfo.get(1);
 
+        String newGitUrl = newRemoteUrl(gitUrl, email, pass);
 
-        String newGitUrl = newRemoteUrl(gitUrl,email,pass);
-
-        boolean setNew = setNewUrl(newGitUrl,gitPath);
-
+        boolean setNew = setNewUrl(newGitUrl, gitPath);
 
         if (!setNew) {
-            return "새로운 url 설정에 실패했습니다.";
+            serviceRes.put("result", WRONG);
+            return serviceRes;
         }
 
+        // Git Push 명령어
         ProcessBuilder command = new ProcessBuilder("git", "push", "origin", branchName);
+        // 명령어를 수행할 프로젝트 경로 설정
         command.directory(new File(gitPath));
+        // 명령어 수행 후 결과값을 저장하기 위한 StringBuilder
         StringBuilder msg = new StringBuilder();
+        // 명령어 수행 로직
         try {
             String read = null;
             Process p = command.start();
             BufferedReader result = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((read = result.readLine()) != null) {
-                msg.append(read + "\n");
+                msg.append(read).append("\n");
             }
         } catch (IOException e) {
-            return e.getMessage();
+            serviceRes.put("result", NO_SUCH);
+            return serviceRes;
         }
 
+        // 경로 재설정 로직 수행
         boolean returnOld = setNewUrl(gitUrl, gitPath);
-
+        // 경로 재설정에 실패한 경우
         if (!returnOld) {
-            return "url 재설정에 실패했습니다.";
+            serviceRes.put("result", UNKNOWN);
+            return serviceRes;
         }
 
-        return msg.toString();
+        serviceRes.put("result", SUCCESS);
+        return serviceRes;
     }
 
     /**
@@ -438,11 +459,11 @@ public class GitService {
                 System.out.println(returnUrl);
             }
         } catch (IOException e) {
-            return e.getMessage();
+            return NO_SUCH;
         }
 
         if (returnUrl == null) {
-            return "failed";
+            return UNKNOWN;
         } else {
             returnUrl = returnUrl.replace("origin", "");
             returnUrl = returnUrl.replace("(push)", "");
@@ -479,9 +500,9 @@ public class GitService {
     /**
      * push / pull할 새로운 URL 세팅
      *
-     * @param newUrl
-     * @param gitPath
-     * @return
+     * @param newUrl    새로운 URL
+     * @param gitPath   git 로직을 사용할 프로젝트 경로
+     * @return  성패에 따른 boolean값 반환
      */
     public Boolean setNewUrl(String newUrl, String gitPath) {
         command.command("git", "remote", "set-url", "origin", newUrl);
