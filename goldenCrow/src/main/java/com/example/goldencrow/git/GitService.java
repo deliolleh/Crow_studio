@@ -199,8 +199,8 @@ public class GitService {
             String forPrint;
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((forPrint = br.readLine()) != null) {
-                msg.append(forPrint);
-                msg.append("\n");
+               msg.append(forPrint);
+               msg.append("\n");
             }
             p.waitFor();
         } catch (IOException e) {
