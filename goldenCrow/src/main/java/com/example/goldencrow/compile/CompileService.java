@@ -133,16 +133,16 @@ public class CompileService {
         int typeNum;
         // 타입 이상한 거 들어오면 리턴
         switch (type) {
-            case "pure python":
+            case "pure Python":
                 typeNum = 1;
                 break;
-            case "django":
+            case "Django":
                 typeNum = 2;
                 break;
-            case "flask":
+            case "Flask":
                 typeNum = 3;
                 break;
-            case "fastapi":
+            case "FastAPI":
                 typeNum = 4;
                 break;
             default:
