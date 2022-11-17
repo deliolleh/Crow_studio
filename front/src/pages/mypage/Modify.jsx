@@ -2,12 +2,9 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import {
-  updateNickname,
-  updatePassword,
-  resign,
-  updateGitAuth,
-} from "../../redux/userSlice";
+import { updateNickname, resign, updateGitAuth } from "../../redux/userSlice";
+
+import userApi from "../../api/userApi";
 
 import NicknameForm from "./components/NicknameForm";
 import PasswordForm from "./components/PasswordForm";
@@ -27,8 +24,9 @@ const Modify = ({ closeModify }) => {
     dispatch(updateNickname(nicknameData)).unwrap().catch(console.error);
 
   const submitPasswordHandler = (passwordData) => {
-    dispatch(updatePassword(passwordData))
-      .unwrap()
+    userApi
+      .updatePassword(passwordData)
+      .then(alert("비밀번호를 성공적으로 변경했습니다"))
       .catch((errorStatusCode) => {
         if (errorStatusCode === 409) {
           alert("현재 비밀번호가 틀립니다");

@@ -71,10 +71,10 @@ const PasswordForm = ({ onSubmitPassword }) => {
     if (isInvalid) {
       return;
     }
-    const passwordData = JSON.stringify({
+    const passwordData = {
       userPassword: currentPassword,
       userNewPassword: password1,
-    });
+    };
     setErrMsg(initialErrorState);
     onSubmitPassword(passwordData);
   };
@@ -116,7 +116,9 @@ const PasswordForm = ({ onSubmitPassword }) => {
           value={password1}
           onChange={inputChangeHandler}
         />
-        <div className="h-6 font-normal mt-1 ml-3 mb-0.5 text-sm text-point_purple">{password1ErrMsg}</div>
+        <div className="h-6 font-normal mt-1 ml-3 mb-0.5 text-sm text-point_purple">
+          {password1ErrMsg}
+        </div>
       </div>
 
       {/* Password 2 */}
@@ -132,7 +134,9 @@ const PasswordForm = ({ onSubmitPassword }) => {
           value={password2}
           onChange={inputChangeHandler}
         />
-        <div className="h-6 font-normal mt-1 ml-3 mb-0.5 text-sm text-point_purple">{password2ErrMsg}</div>
+        <div className="h-6 font-normal mt-1 ml-3 mb-0.5 text-sm text-point_purple">
+          {password2ErrMsg}
+        </div>
       </div>
 
       <button

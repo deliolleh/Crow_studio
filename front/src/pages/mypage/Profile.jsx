@@ -1,27 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
-import { getMypage } from "../../redux/userSlice";
+import userApi from "../../api/userApi";
 
 const Profile = ({ openModify, userSeq }) => {
-  const dispatch = useDispatch();
   const { mySeq, myNickname } = useSelector((state) => state.user.value);
   const [userInfo, setUserInfo] = useState({});
   const { userNickname, userEmail } = userInfo;
   const openModifyHandler = () => openModify(true);
 
   useEffect(() => {
-    dispatch(getMypage(userSeq))
-      .unwrap()
-      .then((res) => setUserInfo(res))
+    userApi
+      .getMypage(userSeq)
+      .then((res) => setUserInfo(res.data))
       .catch(console.error);
-  }, [dispatch, userSeq, myNickname]);
+  }, [userSeq, myNickname]);
 
   return (
     <div className="md:w-80 sm:w-[600px] w-[400px] md:h-96 h-80 flex justify-center items-center border border-primary_-2_dark rounded-md md:mr-2 md:mb-0 sm:mr-0 sm:mb-2 mb-2 py-4">
       <div className="flex flex-col items-center">
-        {/* 프로필 사진 */}
-        {/* <div className="bg-point_purple w-36 h-36 rounded-full mb-6 mx-3"></div> */}
         {/* 프사 기본 */}
         <img
           className="w-36 h-36 mb-6 mx-3 rounded-full cursor-pointer"
