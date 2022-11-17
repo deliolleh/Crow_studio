@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -24,7 +25,7 @@ public class EditorsService {
      * @param code      해당 파일의 내용
      * @return 포맷팅 처리를 한 temp 파일의 제목, 성패에 따른 result 반환
      */
-    public Map<String, String> Formatting(String language, String code) {
+    public Map<String, String> formatService(String language, String code) {
         long now = new Date().getTime();
         Map<String, String> serviceRes = new HashMap<>();
         String type;
@@ -73,7 +74,7 @@ public class EditorsService {
      * @param fileName  포맷팅한 결과가 저장되어있는 파일의 이름
      * @return          포맷팅한 결과 코드를 반환, 성패에 따른 result 반환
      */
-    public Map<String, String> FormatRead(String language, String fileName) {
+    public Map<String, String> formatRead(String language, String fileName) {
         Map<String, String> serviceRes = new HashMap<>();
         String type;
         // 파일의 언어 종류
@@ -113,67 +114,65 @@ public class EditorsService {
         return serviceRes;
     }
 
-    public HashMap<String, Object> Linting(String language, String code) {
-        HashMap<String, Object> result = new HashMap<>();
+    /**
+     * 린트를 처리하는 내부 로직
+     *
+     * @param language  해당 파일의 언어 종류 ex. python
+     * @param code      해당 파일의 내용
+     * @return
+     */
+    public Map<String, Object> lintService(String language, String code) {
+        Map<String, Object> serviceRes = new HashMap<>();
+        String filePath;
         if (language.equals("python")) {
             try {
                 File file = new File(PATH + "lint.py");
-                System.out.println("lint.py 생성");
                 FileOutputStream lfw = new FileOutputStream(file);
                 PrintWriter writer = new PrintWriter(lfw);
                 // temp.py에 code를 입력
                 writer.print(code);
 
-                // FileWriter 닫기(안 하면 오류)
+                // FileWriter 닫기
                 writer.flush();
                 writer.close();
 
-                // windows cmd를 가리키는 변수
-                // 나중에 Ubuntu할 때 맞는 변수로 바꿀 것
-                String filePath = PATH + "lint.py";
+                filePath = PATH + "lint.py";
                 String command = "pylint " + filePath;
-                System.out.println(command);
-
+                // pylint를 활용해 lint 명령어 실행
                 Process process = Runtime.getRuntime().exec(command);
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String line;
-
-                LinkedList<String> response = new LinkedList<>();
-                ArrayList<Integer> index = new ArrayList<>();
+                // 결과에서 index값을 저장할 indexList, 결과값을 저장할 responseList 저장
+                LinkedList<String> responseList = new LinkedList<>();
+                ArrayList<Integer> indexList = new ArrayList<>();
                 while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
                     if (line.contains("lint.py")) {
                         String[] letters = line.split(":");
                         int number = Integer.parseInt(letters[1]);
-                        index.add(number);
-                        response.add(letters[4].trim());
+                        indexList.add(number);
+                        responseList.add(letters[4].trim());
                     }
                 }
-
                 reader.close();
-                result.put("data", response);
-                result.put("index", index);
-
-                try {
-                    File deleteFile = new File(filePath);
-                    if (deleteFile.delete()) {
-                        System.out.println("파일이 정상적으로 삭제되었습니다");
-                    } else {
-                        System.out.println("파일이 삭제되지 않았습니다");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
+                serviceRes.put("data", responseList);
+                serviceRes.put("index", indexList);
             } catch (Exception e) {
-                e.printStackTrace();
-                result.put("data", "null");
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
             }
-
         } else {
-            return null;
+            serviceRes.put("result", WRONG);
+            return serviceRes;
         }
-        return result;
+
+        Path path = Paths.get(filePath);
+        try {
+            Files.deleteIfExists(path);
+            serviceRes.put("result", SUCCESS);
+        } catch (IOException ioe) {
+            serviceRes.put("result", UNKNOWN);
+        }
+        return serviceRes;
     }
 
     public HashMap<String, Object> autoComplete(String text) {

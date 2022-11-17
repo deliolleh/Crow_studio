@@ -30,13 +30,14 @@ public class EditorsController {
      *
      * @param language  해당 파일의 언어 종류 ex. python, text
      * @param req       "name" 을 key로 가지는 Map<String, String>
-     * @return          포맷팅 처리를 한 temp 파일의 제목, 성패에 따른 result 반환
+     * @return 포맷팅 처리를 한 temp 파일의 제목, 성패에 따른 result 반환
+     * @status 200, 400, 401
      */
     @PostMapping("/format/{language}")
     public ResponseEntity<Map<String, String>> fileFormat(@PathVariable String language,
                                                           @RequestBody Map<String, String> req) {
         String code = req.get("text");
-        Map<String, String> res = editorsService.Formatting(language, code);
+        Map<String, String> res = editorsService.formatService(language, code);
         if (res.get("result").equals(SUCCESS)) {
             return new ResponseEntity<>(res, HttpStatus.OK);
         } else {
@@ -50,12 +51,13 @@ public class EditorsController {
      *
      * @param language  해당 파일의 언어 종류 ex. python, text
      * @param req       "name"(fileName get by fileFormat) 를 key로 가진 Map<String, String>
-     * @return          포맷팅한 결과 코드를 반환, 성패에 따른 result 반환
+     * @return 포맷팅한 결과 코드를 반환, 성패에 따른 result 반환
+     * @status 200, 400, 401, 404
      */
     @PostMapping("/format/read/{language}")
     public ResponseEntity<Map<String, String>> formatResult(@PathVariable String language, @RequestBody Map<String, String> req) {
         String name = req.get("name");
-        Map<String, String> res = editorsService.FormatRead(language, name);
+        Map<String, String> res = editorsService.formatRead(language, name);
         String result = res.get("result");
         switch (result) {
             case SUCCESS:
@@ -68,24 +70,26 @@ public class EditorsController {
     }
 
     /**
+     * 사용자의 코드에 린트를 적용해 해당 에러와 해당 인덱스를 반환하는 API
      * Check Your Code, Not Change
      *
-     * @param language Python, javascript, JAVA...
-     * @param rawText  Code from editor
-     * @return data: show what is problem / LinkedList
-     * <br> index: problems index / ArrayList
+     * @param language  해당 파일의 언어 종류 ex. python, text
+     * @param req       "name"(fileName get by fileFormat) 를 key로 가진 Map<String, String>
+     * @return 린트한 결과를 해당 index와 관련 내용을 반환, 성패에 따른 result 반환
+     * @status 200, 400, 401, 404
      */
     @PostMapping("/lint/{language}")
-    public ResponseEntity<Map<String, Object>> fileLint(@PathVariable String language, @RequestBody Map<String, String> rawText) {
-        String code = rawText.get("text");
-
-        HashMap<String, Object> response = editorsService.Linting(language, code);
-        if (response.get("data").equals("null")) {
-            System.out.println("lint Fail");
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else {
-            System.out.println("lint Success");
-            return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> fileLint(@PathVariable String language, @RequestBody Map<String, String> req) {
+        String code = req.get("text");
+        Map<String, Object> res = editorsService.lintService(language, code);
+        String result = (String) res.get("result");
+        switch (result) {
+            case SUCCESS:
+                return new ResponseEntity<>(res, HttpStatus.OK);
+            case NO_SUCH:
+                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+            default:
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
     }
 
