@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value="/api/teams")
+@RequestMapping(value = "/api/teams")
 public class TeamController {
 
     private final String SUCCESS = "SUCCESS";
@@ -37,12 +37,12 @@ public class TeamController {
     // 팀 목록 조회 GET
     // -
     @GetMapping("")
-    public ResponseEntity<List<TeamDto>> teamListGet(@RequestHeader("Authorization") String jwt){
+    public ResponseEntity<List<TeamDto>> teamListGet(@RequestHeader("Authorization") String jwt) {
 
         // 내가 속한 것만 골라서 반환
         List<TeamDto> listTeamDto = teamService.teamList(jwt);
 
-        if(listTeamDto ==null) {
+        if (listTeamDto == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         } else {
             // 리스트가 비어있어도 잘못된 게 아니기 때문에 그건 거르지 않는다
@@ -60,11 +60,11 @@ public class TeamController {
         String result = res.getTeamName();
 
         // null일 경우 문제가 있다는 것
-        if(res==null){
+        if (res == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        } else if (result.equals("403")){
+        } else if (result.equals("403")) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-        } else if (result.equals("400")){
+        } else if (result.equals("400")) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else {
             return new ResponseEntity<>(res, HttpStatus.OK);
@@ -85,17 +85,17 @@ public class TeamController {
         // 내용이 안찍히는 400 or 409 : 팀 생성에서 문제가 있었음
         // 404 : 그 깃이 제대로 된 주소가 아니라서 클론을 못함
 
-        if(req.get("teamName")==null||req.get("projectType")==null) {
+        if (req.get("teamName") == null || req.get("projectType") == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
         Map<String, Long> res = teamService.teamCreate(jwt, req);
 
-        if(res==null) {
+        if (res == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        } else if(res.get("result")==409){
+        } else if (res.get("result") == 409) {
             return new ResponseEntity<>(null, HttpStatus.CONFLICT);
-        } else if(res.get("result")==404) {
+        } else if (res.get("result") == 404) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else {
             return new ResponseEntity<>(res, HttpStatus.OK);
@@ -106,12 +106,12 @@ public class TeamController {
     // 팀 이름 수정 PUT
     // modifyName
     @PutMapping("/modify/name/{teamSeq}")
-    public ResponseEntity<String> teamModifyNamePut(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody Map<String, String> req){
+    public ResponseEntity<String> teamModifyNamePut(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
 
         // 리더 권한 없으면 터질 예정임
         // 이전 이름과 같아도 수정함
 
-        if(req.get("teamName")==null){
+        if (req.get("teamName") == null) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
@@ -119,13 +119,13 @@ public class TeamController {
 
         String result = teamService.teamModifyName(jwt, teamSeq, teamName);
 
-        if(result.equals("success")){
+        if (result.equals("success")) {
             return new ResponseEntity<>(teamName, HttpStatus.OK);
-        } else if(result.equals("403")) {
+        } else if (result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
-        } else if(result.equals("409")){
+        } else if (result.equals("409")) {
             return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
-        } else if(result.equals("404")){
+        } else if (result.equals("404")) {
             return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -141,7 +141,7 @@ public class TeamController {
         // 리더 권한 없으면 터질 예정임
         // 이전 주소과 같아도 수정함
 
-        if(req.get("teamGit")==null){
+        if (req.get("teamGit") == null) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
@@ -149,11 +149,11 @@ public class TeamController {
 
         String result = teamService.teamModifyGit(jwt, teamSeq, teamGit);
 
-        if(result.equals("success")){
+        if (result.equals("success")) {
             return new ResponseEntity<>(teamGit, HttpStatus.OK);
-        } else if(result.equals("403")) {
+        } else if (result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
-        } else if(result.equals("404")){
+        } else if (result.equals("404")) {
             return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -168,7 +168,7 @@ public class TeamController {
         // 리더 권한 없으면 터질 예정임
         // 이전 타입과 같아도 수정함
 
-        if(req.get("projectType")==null){
+        if (req.get("projectType") == null) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
@@ -176,11 +176,11 @@ public class TeamController {
 
         String result = teamService.teamModifyType(jwt, teamSeq, projectType);
 
-        if(result.equals("success")){
+        if (result.equals("success")) {
             return new ResponseEntity<>(projectType, HttpStatus.OK);
-        } else if(result.equals("403")) {
+        } else if (result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
-        } else if(result.equals("404")){
+        } else if (result.equals("404")) {
             return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -192,20 +192,20 @@ public class TeamController {
     // 팀 삭제 DELETE
     // delete/{teamSeq}
     @DeleteMapping("/delete/{teamSeq}")
-    public ResponseEntity<String> teamDelete(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq){
+    public ResponseEntity<String> teamDelete(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
 
         // 리더 권한 없으면 터질 예정임
         // 이후 팀 파일과 이것저것 싹 날아감
 
         String result = teamService.teamDelete(jwt, teamSeq);
 
-        if(result.equals("success")){
+        if (result.equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else if(result.equals("403")) {
+        } else if (result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
-        } else if(result.equals("400")){
+        } else if (result.equals("400")) {
             return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
-        } else if(result.equals("501")){
+        } else if (result.equals("501")) {
             return new ResponseEntity<>("file delete Error", HttpStatus.OK);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -216,7 +216,7 @@ public class TeamController {
     // 팀원 목록 조회 GET
     // member/{teamSeq}
     @GetMapping("/member/{teamSeq}")
-    public ResponseEntity<List<UserInfoDto>> memberListGet(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq){
+    public ResponseEntity<List<UserInfoDto>> memberListGet(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
 
         // 우리 팀이 아니면 403
         // 그런 팀이 없으면 404
@@ -225,12 +225,12 @@ public class TeamController {
         UserInfoListDto res = teamService.memberList(jwt, teamSeq);
         String result = res.getResult();
 
-        if(result.equals("success")) {
+        if (result.equals("success")) {
             // 리스트가 비어있어도 잘못된 게 아니기 때문에 그건 거르지 않는다
             return new ResponseEntity<>(res.getUserInfoDtoList(), HttpStatus.OK);
-        } else if(result.equals("403")) {
+        } else if (result.equals("403")) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-        } else if(result.equals("404")) {
+        } else if (result.equals("404")) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -241,24 +241,24 @@ public class TeamController {
     // 팀원 추가 PUT
     // add
     @PutMapping("/add")
-    public ResponseEntity<String> memberAddPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req){
+    public ResponseEntity<String> memberAddPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req) {
 
         // 리더 권한 없으면 터질 예정임
         // 이미 팀 내 유저면 터질 예정임
 
-        if(req.get("teamSeq")==null || req.get("memberSeq")==null){
+        if (req.get("teamSeq") == null || req.get("memberSeq") == null) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
         String result = teamService.memberAdd(jwt, req.get("teamSeq"), req.get("memberSeq"));
 
-        if(result.equals("success")) {
+        if (result.equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else if(result.equals("403")) {
+        } else if (result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
-        } else if(result.equals("404")){
+        } else if (result.equals("404")) {
             return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
-        } else if(result.equals("409")) {
+        } else if (result.equals("409")) {
             return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -268,26 +268,26 @@ public class TeamController {
     // 팀원 삭제 DELETE
     // remove
     @DeleteMapping("/remove")
-    public ResponseEntity<String> memberRemoveDelete(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req){
+    public ResponseEntity<String> memberRemoveDelete(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req) {
 
         // 리더 권한 없으면 터질 예정임 403
         // 팀 내 유저가 아니면 터질 예정임 409
         // 스스로는 내보낼 수 없음 409
         // 그런 팀 없음 404
 
-        if(req.get("teamSeq")==null || req.get("memberSeq")==null){
+        if (req.get("teamSeq") == null || req.get("memberSeq") == null) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
         String result = teamService.memberRemove(jwt, req.get("teamSeq"), req.get("memberSeq"));
 
-        if(result.equals("success")) {
+        if (result.equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else if(result.equals("403")) {
+        } else if (result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
-        } else if(result.equals("404")){
+        } else if (result.equals("404")) {
             return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
-        } else if(result.equals("409")) {
+        } else if (result.equals("409")) {
             return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -298,26 +298,26 @@ public class TeamController {
     // 팀장 위임 PUT
     // beLeader
     @PutMapping("/beLeader")
-    public ResponseEntity<String> memberBeLeaderPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req){
+    public ResponseEntity<String> memberBeLeaderPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req) {
 
         // 리더 권한 없으면 터질 예정임 403
         // 팀 내 유저가 아니면 터질 예정임 409
         // 스스로는 팀장으로 바꿀 수 없다 409
         // 그런 팀 없음 404
 
-        if(req.get("teamSeq")==null || req.get("memberSeq")==null){
+        if (req.get("teamSeq") == null || req.get("memberSeq") == null) {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
         }
 
         String result = teamService.memberBeLeader(jwt, req.get("teamSeq"), req.get("memberSeq"));
 
-        if(result.equals("success")) {
+        if (result.equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else if(result.equals("403")) {
+        } else if (result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
-        } else if(result.equals("404")){
+        } else if (result.equals("404")) {
             return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
-        } else if(result.equals("409")) {
+        } else if (result.equals("409")) {
             return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
@@ -328,7 +328,7 @@ public class TeamController {
     // 팀 탈퇴 DELETE
     // quit/{teamSeq}
     @DeleteMapping("/quit/{teamSeq}")
-    public ResponseEntity<String> memberQuitDelete(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq){
+    public ResponseEntity<String> memberQuitDelete(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
 
         // 리더면 못 나갈 예정임 403 감히
         // 원래 내 팀이 아님 409
@@ -336,13 +336,13 @@ public class TeamController {
 
         String result = teamService.memberQuit(jwt, teamSeq);
 
-        if(result.equals("success")) {
+        if (result.equals("success")) {
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else if(result.equals("403")) {
+        } else if (result.equals("403")) {
             return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
-        } else if(result.equals("404")){
+        } else if (result.equals("404")) {
             return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
-        } else if(result.equals("409")) {
+        } else if (result.equals("409")) {
             return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
         } else {
             return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);

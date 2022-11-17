@@ -34,7 +34,7 @@ public class ForumService {
 
     public String forumUpload(ForumDto forumDto, Long userSeq) {
         ForumEntity forumEntity = new ForumEntity(forumDto);
-        UserEntity userEntity = userRepository.findByUserSeq(userSeq);
+        UserEntity userEntity = userRepository.findByUserSeq(userSeq).get();
         forumEntity.setUser(userEntity);
 
         try {
