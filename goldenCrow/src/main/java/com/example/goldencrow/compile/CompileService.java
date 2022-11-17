@@ -151,10 +151,8 @@ public class CompileService {
         // 절대경로 생성
         String absolutePath = BASE_URL + filePath;
         String[] pathList = absolutePath.split("/");
-        String teamName = pathList[5];
-        String teamSeq = pathList[4];
-        // 프로젝트명과 teamSeq로 docker container와 image 이름 생성
-        String conAndImgName = "crowstudio_" + teamName.toLowerCase() + "_" + teamSeq;
+        String teamName;
+        String teamSeq;
         // 1 : pure python, 2 : django, 3 : flask, 4 : fastapi
         if (typeNum == 1) {
             String[] command;
@@ -165,6 +163,7 @@ public class CompileService {
                 command = new String[]{"/bin/sh", "-c", "echo " + "\"" + input + "\" | python3 " + absolutePath};
             }
             // 결과 문자열
+            System.out.println(Arrays.toString(command));
             String result = resultString(command);
             // 파일 경로가 틀린 경우
             if (result.contains("Errno 2")) {
@@ -178,6 +177,8 @@ public class CompileService {
         }
         // Django, fastapi, flask 프로젝트일 때
         else {
+            teamName = pathList[5];
+            teamSeq = pathList[4];
             // 도커파일 추가
             String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), typeNum);
             if (!Objects.equals(dockerfile, "SUCCESS")) {
@@ -185,6 +186,8 @@ public class CompileService {
                 return serviceRes;
             }
         }
+        // 프로젝트명과 teamSeq로 docker container와 image 이름 생성
+        String conAndImgName = "crowstudio_" + teamName.toLowerCase() + "_" + teamSeq;
         // 도커 이미지 빌드
         String[] image = {"docker", "build", "-t", conAndImgName, absolutePath + "/"};
         String imageBuild = resultString(image);
