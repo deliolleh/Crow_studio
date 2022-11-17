@@ -170,7 +170,9 @@ public class GitService {
         } catch (IOException e) {
             return e.getMessage();
         }
-
+        if (msg.length() == 0) {
+            return "Success";
+        }
         return msg.toString();
     }
 
@@ -191,13 +193,14 @@ public class GitService {
             command.command("git", "add", filePath);
         }
         command.directory(new File(gitPath));
-
+        StringBuilder msg = new StringBuilder();
         try {
             Process p = command.start();
             String forPrint;
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((forPrint = br.readLine()) != null) {
-                System.out.println(forPrint);
+               msg.append(forPrint);
+               msg.append("\n");
             }
             p.waitFor();
         } catch (IOException e) {
@@ -206,8 +209,11 @@ public class GitService {
             Thread.currentThread().interrupt();
             return e.getMessage();
         }
-        System.out.println("add 성공!");
-        return "Success";
+
+        if (msg.length() == 0) {
+            return "Success";
+        }
+        return msg.toString();
     }
 
     /**
@@ -237,7 +243,8 @@ public class GitService {
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
             while ((forPrint = br.readLine()) != null) {
-                msg.append(forPrint+"\n");
+                msg.append(forPrint);
+                msg.append("\n");
             }
             p.waitFor();
         } catch (IOException e) {
