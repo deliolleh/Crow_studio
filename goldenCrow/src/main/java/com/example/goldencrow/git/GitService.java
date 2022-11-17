@@ -129,9 +129,9 @@ public class GitService {
      * 팀에서 리더의 닉네임, 이메일을 받아 git config에 등록하는 내부 로직
      * 팀 Entity와 파일을 입력받음
      *
-     * @param file
-     * @param team
-     * @return
+     * @param file  config를 등록할 파일 정보
+     * @param team  config에 등록할 팀 정보
+     * @return  성패에 따른 String
      */
     public String setConfigService(File file, TeamEntity team) {
         UserEntity leader = team.getTeamLeader();
@@ -156,42 +156,48 @@ public class GitService {
     }
 
     /**
-     * 깃 스위치 해주는 함수
+     * Git Switch를 처리하는 내부 로직
      *
-     * @param gitPath
-     * @param branchName
-     * @return
+     * @param gitPath       switch할 git의 경로
+     * @param branchName    switch할 brnach의 이름
+     * @param type          switch할 branch의 종류 (1 : 존재하는 브랜치로 이동, 2 : 브랜치를 새로 생성 후 이동)
+     * @return 성패에 따른 result 반환
      */
-    public String gitSwitch(String gitPath, String branchName, Integer type) {
-
+    public Map<String, String> gitSwitchService(String gitPath, String branchName, Integer type) {
+        Map<String, String> serviceRes = new HashMap<>();
         File targetFile = new File(gitPath);
 
         ProcessBuilder command = new ProcessBuilder();
-
+        // switch할 branch의 종류로 명령어 저장
         if (type == 1) {
             command.command("git", "switch", branchName);
         } else {
             command.command("git", "switch", "-c", branchName);
         }
-
+        // 명령어를 실행할 파일 설정
         command.directory(targetFile);
+        // 결과 문자열 저장하기 위한 StringBuilder
         StringBuilder msg = new StringBuilder();
 
+        // 명령어 수행
         try {
-
             String result = "";
             Process p = command.start();
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((result = br.readLine()) != null) {
-                msg.append(result+"\n");
+                msg.append(result).append("\n");
             }
         } catch (IOException e) {
-            return e.getMessage();
+            serviceRes.put("result", UNKNOWN);
+            return serviceRes;
         }
+        // 성공 여부 판단
         if (msg.length() == 0) {
-            return "Success";
+            serviceRes.put("result", SUCCESS);
+        } else {
+            serviceRes.put("result", UNKNOWN);
         }
-        return msg.toString();
+        return serviceRes;
     }
 
     /**

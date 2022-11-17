@@ -36,11 +36,11 @@ public class GitController {
     }
 
     /**
-     * 깃 클론 API
+     * Git Clone API
      *
      * @param jwt       회원가입 및 로그인 시 발급되는 access token
      * @param teamSeq   해당 프로젝트의 팀 sequence
-     * @param req       "projectName", "gitUrl"를 키로 가지는 Map<String, String>
+     * @param req       "projectName", "gitUrl"를 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
@@ -68,13 +68,34 @@ public class GitController {
 
     }
 
+    /**
+     * Git Switch API
+     *
+     * @param jwt   회원가입 및 로그인 시 발급되는 access token
+     * @param type  switch할 branch의 종류 (1 : 존재하는 브랜치로 이동, 2 : 브랜치를 새로 생성 후 이동)
+     * @param req   "gitPath", "branchName"를 key로 가지는 Map<String, String>
+     * @return  성패에 따른 result 반환
+     * @status  200, 401, 404
+     */
     @PostMapping("/git-switch")
-    public ResponseEntity<String> gitSwitch(@RequestHeader("Authorization") String jwt, @RequestParam Integer type, @RequestBody HashMap<String, String> gitProject) {
-        String switchResult = gitService.gitSwitch(gitProject.get("gitPath"), gitProject.get("branchName"), type);
-        if (!switchResult.equals("Success")) {
-            return new ResponseEntity<>(switchResult, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Map<String, String>> gitSwitchPost(@RequestHeader("Authorization") String jwt, @RequestParam Integer type, @RequestBody Map<String, String> req) {
+        if (req.containsKey("gitPath") && req.containsKey("branchName")) {
+            String gitPath = req.get("gitPath");
+            String branchName = req.get("branchName");
+            Map<String, String> res = gitService.gitSwitchService(gitPath, branchName, type);
+            String result = res.get("result");
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            Map<String, String> res = new HashMap<>();
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("깃 스위치에 성공했습니다", HttpStatus.OK);
+
     }
 
     @PostMapping("/git-commit")
