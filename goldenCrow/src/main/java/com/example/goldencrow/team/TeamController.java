@@ -2,8 +2,6 @@ package com.example.goldencrow.team;
 
 import com.example.goldencrow.team.dto.TeamDto;
 import com.example.goldencrow.team.dto.UserInfoListDto;
-import com.example.goldencrow.user.service.JwtService;
-import com.example.goldencrow.user.service.UserService;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,25 +21,19 @@ import static com.example.goldencrow.common.Constants.*;
 @RequestMapping(value = "/api/teams")
 public class TeamController {
 
-    private final UserService userService;
     private final TeamService teamService;
-    private final JwtService jwtService;
 
     /**
      * TeamController 생성자
      *
-     * @param userService user를 관리하는 service
      * @param teamService team을 관리하는 service
-     * @param jwtService jwt를 관리하는 service
      */
-    public TeamController(UserService userService, TeamService teamService, JwtService jwtService) {
-        this.userService = userService;
+    public TeamController(TeamService teamService) {
         this.teamService = teamService;
-        this.jwtService = jwtService;
     }
 
     /**
-     * 사용가 속한 팀 목록을 조회하는 API
+     * 사용자가 속한 팀 목록을 조회하는 API
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
      * @return 조회 성공 시 사용자가 속한 팀의 리스트를 반환
@@ -50,7 +42,7 @@ public class TeamController {
     @GetMapping("")
     public ResponseEntity<List<TeamDto>> teamListGet(@RequestHeader("Authorization") String jwt) {
 
-        List<TeamDto> listTeamDto = teamService.teamList(jwt);
+        List<TeamDto> listTeamDto = teamService.teamListService(jwt);
 
         if (listTeamDto == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -60,23 +52,29 @@ public class TeamController {
 
     }
 
-    // 팀 하나 조회 (GET)
-    // /{seq}
+    /**
+     * 팀의 세부 정보를 조회하는 API
+     *
+     * @param jwt     회원가입 및 로그인 시 발급되는 access token
+     * @param teamSeq 조회하고자 하는 팀의 Seq
+     * @return 조회 성공 시 해당 팀의 정보를 반환
+     * @status 200, 400, 401, 403, 404
+     */
     @GetMapping("/{teamSeq}")
     public ResponseEntity<TeamDto> teamGet(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
 
-        TeamDto res = teamService.teamGet(jwt, teamSeq);
-        String result = res.getTeamName();
+        TeamDto teamDto = teamService.teamGetService(jwt, teamSeq);
+        String result = teamDto.getResult();
 
-        // null일 경우 문제가 있다는 것
-        if (res == null) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        } else if (result.equals("403")) {
-            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-        } else if (result.equals("400")) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(res, HttpStatus.OK);
+        switch (result) {
+            case SUCCESS:
+                return new ResponseEntity<>(teamDto, HttpStatus.OK);
+            case NO_PER:
+                return new ResponseEntity<>(teamDto, HttpStatus.FORBIDDEN);
+            case NO_SUCH:
+                return new ResponseEntity<>(teamDto, HttpStatus.NOT_FOUND);
+            default:
+                return new ResponseEntity<>(teamDto, HttpStatus.BAD_REQUEST);
         }
 
     }

@@ -160,6 +160,7 @@ public class GitService {
         }
 
         command.directory(targetFile);
+        StringBuilder msg = new StringBuilder();
 
         try {
             command.start();
@@ -277,15 +278,9 @@ public class GitService {
         String email = gitInfo.get(0);
         String pass = gitInfo.get(1);
 
-<<<<<<< HEAD
-        String newGitUrl = newRemoteUrl(gitUrl, email, pass);
-        System.out.println(newGitUrl);
-        boolean setNew = setNewUrl(newGitUrl, gitPath);
-=======
         String newGitUrl = newRemoteUrl(gitUrl,email,pass);
 
         boolean setNew = setNewUrl(newGitUrl,gitPath);
->>>>>>> 554358d6ef72e62a311b25937821dd557a60dd0d
 
         if (!setNew) {
             return "새로운 url 설정에 실패했습니다.";
@@ -489,16 +484,26 @@ public class GitService {
 
         ProcessBuilder pb = new ProcessBuilder("git", "pull", "origin", brachName);
         pb.directory(new File(gitPath));
-
+        StringBuilder msg = new StringBuilder();
         try {
-            pb.start();
+            String result;
+            Process p = pb.start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((result = br.readLine()) != null) {
+                msg.append(result);
+                msg.append("\n");
+            }
         } catch (IOException e) {
             return e.getMessage();
         }
 
         String result = reUrl(gitUrl, gitPath);
 
-        return "성공";
+        if (msg.length() == 0) {
+            return "Success";
+        }
+
+        return msg.toString();
     }
 
 }
