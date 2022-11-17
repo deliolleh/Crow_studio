@@ -6,6 +6,7 @@ import styled from "styled-components";
 
 import { getFileContent, saveFileContent } from "../../redux/fileSlice";
 import { getDirectoryList } from "../../redux/projectSlice";
+import { formatPut } from "../../redux/editorSlice";
 
 import Header from "../../components/Header";
 import Sidebar from "./components/sidebar/Sidebar";
@@ -81,6 +82,11 @@ const TestMain = () => {
       filePath: curPath,
       fileContent: editorRef.current.getValue(),
     };
+    const codeData = { text: editorRef.current.getValue() };
+    dispatch(formatPut({ language: "python", codeData }))
+      .unwrap()
+      .then(console.log)
+      .catch(console.error);
     dispatch(saveFileContent({ teamSeq, contentData: saveFileData }))
       .unwrap()
       .then(console.log)
