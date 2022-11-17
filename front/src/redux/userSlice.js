@@ -84,22 +84,6 @@ export const updateNickname = createAsyncThunk(
   }
 );
 
-// // 비밀번호 변경
-// export const updatePassword = createAsyncThunk(
-//   "user/updatePassword",
-//   async (updatedPasswordData, { rejectWithValue }) => {
-//     try {
-//       const response = await userApi.updatePassword(updatedPasswordData);
-//       return response.data;
-//     } catch (err) {
-//       if (!err.response) {
-//         throw err;
-//       }
-//       return rejectWithValue(err.response.status);
-//     }
-//   }
-// );
-
 // 회원 탈퇴
 export const resign = createAsyncThunk(
   "user/resign",
@@ -123,22 +107,6 @@ export const searchUser = createAsyncThunk(
   async (searchUserData, { rejectWithValue }) => {
     try {
       const response = await userApi.searchUser(searchUserData);
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
-// 깃 토큰 변경
-export const updateGitAuth = createAsyncThunk(
-  "user/updateGitAuth",
-  async (credentialsData, { rejectWithValue }) => {
-    try {
-      const response = await userApi.updateGitAuth(credentialsData);
       return response.data;
     } catch (err) {
       if (!err.response) {

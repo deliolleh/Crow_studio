@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { updateNickname, resign, updateGitAuth } from "../../redux/userSlice";
+import { updateNickname, resign } from "../../redux/userSlice";
 
 import userApi from "../../api/userApi";
 
@@ -58,8 +58,8 @@ const Modify = ({ closeModify }) => {
   };
 
   const updateGitAuthHandler = (credentialsData) => {
-    dispatch(updateGitAuth(credentialsData))
-      .unwrap()
+    userApi
+      .updateGitAuth(credentialsData)
       .then((res) => {
         console.log("res:", res);
         alert("깃 연결 성공");
