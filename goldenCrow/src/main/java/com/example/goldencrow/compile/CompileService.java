@@ -181,7 +181,7 @@ public class CompileService {
             }
             // 결과 문자열
             System.out.println(Arrays.toString(command));
-            String result = resultString(command);
+            String response = resultString(command);
             // 에러 메세지 파일에서 읽어오기
             List<String> message = fileService.readFile(BASE_URL + "outfile/" + teamSeq + ".txt");
             Path path = Paths.get(BASE_URL + "outfile/" + teamSeq + ".txt");
@@ -192,13 +192,12 @@ public class CompileService {
 //                return serviceRes;
 //            }
             // 파일 경로가 틀린 경우
-            if (result.contains("Errno 2")) {
+            if (message.get(1).contains("Errno 2")) {
                 serviceRes.put("result", NO_SUCH);
-                serviceRes.put("response", result);
             } else {
                 serviceRes.put("result", SUCCESS);
-                serviceRes.put("message", message);
-                serviceRes.put("response", result);
+                serviceRes.put("message", message.get(1));
+                serviceRes.put("response", response);
             }
             return serviceRes;
         }
