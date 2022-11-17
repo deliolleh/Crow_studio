@@ -160,7 +160,7 @@ public class CompileService {
             if (input.isEmpty()) {
                 command = new String[]{"python3", absolutePath};
             } else {
-                command = new String[]{"/bin/sh", "-c", "echo " + "\"" + input + "\" | python3 " + absolutePath};
+                command = new String[]{"/bin/sh", "-c", "echo -e " + "\"" + input + "\" | python3 " + absolutePath};
             }
             // 결과 문자열
             System.out.println(Arrays.toString(command));
@@ -200,7 +200,7 @@ public class CompileService {
         String container = resultString(command);
         // 포트번호 가져오기
         String portString = portNum(container);
-        if (portString.isEmpty()) {
+        if (portString.equals(NO_SUCH)) {
             serviceRes.put("result", WRONG);
             return serviceRes;
         }
