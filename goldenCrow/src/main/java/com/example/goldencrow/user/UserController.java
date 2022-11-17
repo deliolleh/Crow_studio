@@ -420,7 +420,12 @@ public class UserController {
             String searchWord = req.get("searchWord");
 
             List<UserInfoDto> userInfoDtoList = userService.searchUser(searchWord);
-            return new ResponseEntity<>(userInfoDtoList, HttpStatus.OK);
+
+            if(userInfoDtoList==null) {
+                return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity<>(userInfoDtoList, HttpStatus.OK);
+            }
 
         } else {
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);

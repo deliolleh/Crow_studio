@@ -670,17 +670,23 @@ public class UserService {
      */
     public List<UserInfoDto> searchUser(String searchWord) {
 
-        List<UserEntity> userEntityList =
-                userRepository.findAllByUserIdContainingOrUserNicknameContaining(searchWord, searchWord);
+        try {
+            List<UserEntity> userEntityList =
+                    userRepository.findAllByUserIdContainingOrUserNicknameContaining(searchWord, searchWord);
 
-        // 내보내기 위한 List<UserInfoDto> 생성
-        List<UserInfoDto> userInfoDtoList = new ArrayList<>();
-        for (UserEntity u : userEntityList) {
-            UserInfoDto userInfoDto = new UserInfoDto(u);
-            userInfoDto.setResult(SUCCESS);
-            userInfoDtoList.add(userInfoDto);
+            // 내보내기 위한 List<UserInfoDto> 생성
+            List<UserInfoDto> userInfoDtoList = new ArrayList<>();
+            for (UserEntity u : userEntityList) {
+                UserInfoDto userInfoDto = new UserInfoDto(u);
+                userInfoDto.setResult(SUCCESS);
+                userInfoDtoList.add(userInfoDto);
+            }
+
+            return userInfoDtoList;
+
+        } catch (Exception e) {
+            return null;
+
         }
-
-        return userInfoDtoList;
     }
 }

@@ -13,33 +13,50 @@ import com.example.goldencrow.user.service.JwtService;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import com.example.goldencrow.user.UserEntity;
 import com.example.goldencrow.user.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * team을 관리하는 service
+ */
 @Service
 public class TeamService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final TeamRepository teamRepository;
+    private final MemberRepository memberRepository;
 
-    @Autowired
-    private JwtService jwtService;
+    private final JwtService jwtService;
+    private final ProjectService projectService;
+    private final GitService gitService;
 
-    @Autowired
-    private TeamRepository teamRepository;
+    /**
+     * TeamService 생성자
+     *
+     * @param userRepository User Table에 접속하는 repository
+     * @param teamRepository Team Table에 접속하는 repository
+     * @param memberRepository Member table에 접속하는 repository
+     * @param jwtService jwt를 관리하는 service
+     * @param projectService project를 관리하는 service
+     * @param gitService git을 관리하는 service
+     */
+    public TeamService(UserRepository userRepository, TeamRepository teamRepository, MemberRepository memberRepository,
+                       JwtService jwtService, ProjectService projectService, GitService gitService) {
+        this.userRepository = userRepository;
+        this.teamRepository = teamRepository;
+        this.memberRepository = memberRepository;
+        this.jwtService = jwtService;
+        this.projectService = projectService;
+        this.gitService = gitService;
+    }
 
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
-    private ProjectService projectService;
-
-    @Autowired
-    private GitService gitService;
-
-    // 팀 목록 조회
+    /**
+     * 사용자가 속한 팀 목록을 조회하는 내부 로직
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @return 조회 성공 시 사용자가 속한 팀의 리스트를 반환
+     */
     public List<TeamDto> teamList(String jwt) {
 
         try {
