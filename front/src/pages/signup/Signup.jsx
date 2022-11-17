@@ -31,7 +31,7 @@ const Signup = () => {
   return (
     <div className="flex flex-col">
       <Header />
-      <section className="w-screen h-screen flex flex-col justify-center overflow-auto">
+      <section className="w-screen h-screen my-7 flex flex-col justify-center overflow-auto">
         <SignupTitle />
         <SignupForm signupHandler={signupHandler} />
         <Link to="/login" className="block w-full text-center">

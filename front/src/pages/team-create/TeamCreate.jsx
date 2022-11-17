@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Listbox, Transition } from '@headlessui/react'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
 import { createTeam } from "../../redux/teamSlice";
 
@@ -16,6 +18,14 @@ const initialErrorState = {
   projectGitErrMsg: "",
 };
 
+// headlist listbox items
+const pjtType = [
+  { name: 'pure Python' },
+  { name: 'Django' },
+  { name: 'Flask' },
+  { name: 'FastAPI' },
+]
+
 const TeamCreate = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -26,21 +36,28 @@ const TeamCreate = () => {
   const [checkGit, setCheckGit] = useState(false);
 
   const inputChangeHandler = (e) => {
-    if (e.target.name === "teamName") {
+    if (e.name) {
       setInputs((prev) => {
-        return { ...prev, teamName: e.target.value };
+        return { ...prev, projectType: e.name };
       });
-    } else if (e.target.name === "projectType") {
-      setInputs((prev) => {
-        return { ...prev, projectType: e.target.value };
-      });
-    } else if (e.target.name === "projectGit") {
-      setInputs((prev) => {
-        return { ...prev, projectGit: e.target.value };
-      });
-    } else if (e.target.name === "checkGit") {
-      setCheckGit((prev) => !prev);
-    }
+    } else {
+      if (e.target.name === "teamName") {
+        setInputs((prev) => {
+          return { ...prev, teamName: e.target.value };
+        });
+      // } else if (e.target.name === "projectType") {
+      //   setInputs((prev) => {
+      //     return { ...prev, projectType: e.target.value };
+      //   });
+      } else if (e.target.name === "projectGit") {
+        setInputs((prev) => {
+          return { ...prev, projectGit: e.target.value };
+        });
+      } else if (e.target.name === "checkGit") {
+        setCheckGit((prev) => !prev);
+      }
+    };
+
   };
 
   const submitHandler = (e) => {
@@ -94,6 +111,15 @@ const TeamCreate = () => {
 
   const goTeamListHandler = () => navigate("/teams");
 
+  // listbox
+  const [selected, setSelected] = useState(pjtType[0])
+
+  const listboxChangeHandler =(e) => {
+    setSelected(e);
+    console.log(e)
+    inputChangeHandler(e);
+  }
+
   return (
     <div className="flex flex-col">
       <Header />
@@ -128,23 +154,68 @@ const TeamCreate = () => {
             </div>
 
             {/* 프로젝트 종류 */}
-            <div className="w-80 mb-1">
-              <label htmlFor="projectType" className="">
-                프로젝트 종류
-              </label>
-              <select
-                className="mt-1 w-full text-white py-2 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purplec focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
-                id="projectType"
-                name="projectType"
-                value={projectType}
-                onChange={inputChangeHandler}
-              >
-                <option value="pure Python">pure Python</option>
-                <option value="Django">Django</option>
-                <option value="Flask">Flask</option>
-                <option value="FastAPI">FastAPI</option>
-              </select>
-              <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink"></div>
+            <div className="w-80 mb-7">
+              {/* headlessui Listbox */}
+              <div className="w-80">
+                <Listbox
+                  name="projectType"
+                  value={selected}
+                  // onChange={setSelected}
+                  onChange={listboxChangeHandler}
+                >
+                  <div className="relative mt-1">
+                    <Listbox.Label>
+                      프로젝트 종류
+                    </Listbox.Label>
+                    <Listbox.Button className="relative w-full cursor-default rounded-lg bg-component_item_bg_+2_dark text-white py-2 pl-3 pr-10 text-left shadow-md active:outline-none active:ring-2 active:ring-point_purple focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple">
+                      <span className="block truncate">{selected.name}</span>
+                      <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                        <ChevronUpDownIcon
+                          className="h-5 w-5 text-point_purple"
+                          aria-hidden="true"
+                        />
+                      </span>
+                    </Listbox.Button>
+                    <Transition
+                      as={Fragment}
+                      leave="transition ease-in duration-100"
+                      leaveFrom="opacity-100"
+                      leaveTo="opacity-0"
+                    >
+                      <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-component_item_bg_+2_dark text-white py-1 text-base shadow-lg focus:outline-none">
+                        {pjtType.map((type, typeIdx) => (
+                          <Listbox.Option
+                            key={typeIdx}
+                            className={({ active }) =>
+                              `relative cursor-default select-none py-1.5 pl-10 pr-4 ${
+                                active ? 'bg-point_purple_op20' : ''
+                              }`
+                            }
+                            value={type}
+                          >
+                            {({ selected }) => (
+                              <>
+                                <span
+                                  className={`block truncate ${
+                                    selected ? 'font-medium' : 'font-normal'
+                                  }`}
+                                >
+                                  {type.name}
+                                </span>
+                                {selected ? (
+                                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-point_purple">
+                                    <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                  </span>
+                                ) : null}
+                              </>
+                            )}
+                          </Listbox.Option>
+                        ))}
+                      </Listbox.Options>
+                    </Transition>
+                  </div>
+                </Listbox>
+              </div>
             </div>
 
             {/* 프로젝트 깃 주소 */}
@@ -154,7 +225,6 @@ const TeamCreate = () => {
                 type="checkbox"
                 id="checkGit"
                 name="checkGit"
-                // className="transition cursor-pointer mr-2 rounded border-transparent bg-red text-blue accent-point_purple"
                 className="bg-component_item_bg_+2_dark hover:bg-point_purple_op20 cursor-pointer border-3 border-primary-dark rounded checked:bg-point_purple text-point_purple focus:ring-0 mr-2"
                 defaultValue={checkGit}
                 onChange={inputChangeHandler}
@@ -166,7 +236,6 @@ const TeamCreate = () => {
                 type="text"
                 id="projectGit"
                 name="projectGit"
-                // className="mt-1 w-full text-white bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
                 className="mt-1 w-full text-white py-2 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:outline-none focus:ring-2 focus:ring-point_purple focus:border-none rounded-md transition"
                 placeholder="프로젝트 깃 주소를 입력하세요"
                 disabled={!checkGit}
