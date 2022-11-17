@@ -83,7 +83,7 @@ const ConsoleTerminal = (props) => {
   const inputChangeHandler = (e) => changeInputData(e);
 
   return (
-    <div className="ml-[8px] px-3 rounded-[10px] bg-component_-2_dark">
+    <div className="mt-[8px] px-3 rounded-[10px] bg-component_-2_dark">
       {/* console 상단 */}
       <div className="flex justify-between items-center mx-[5px] py-1.5">
         <div className="flex items-center text-white font-bold text-[14px]">
@@ -115,7 +115,7 @@ const ConsoleTerminal = (props) => {
             value={inputData}
             onChange={inputChangeHandler}
             placeholder="Input here"
-            className="resize-none w-full h-[8em] p-[10px] bg-component_item_bg_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
+            className="resize-none w-full h-[133px] p-[10px] bg-component_item_bg_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
           ></textarea>
         </div>
         {/* output */}
@@ -126,7 +126,7 @@ const ConsoleTerminal = (props) => {
               Output
             </div>
           </div>
-          <div className="w-full h-[8em] p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white">
+          <div className="w-full h-[133px] p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white">
             {outputData}
           </div>
         </div>

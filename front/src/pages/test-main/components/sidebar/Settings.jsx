@@ -6,7 +6,7 @@ import userApi from "../../../../api/userApi";
 // styled
 const SettingsContainer = styled.div`
   border-radius: 0 10px 10px 0;
-  height: 100vh;
+  height: calc(100vh - 80px);
 `;
 
 // Combobox items
