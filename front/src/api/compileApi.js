@@ -1,8 +1,7 @@
 import api from "./api";
 
 const compileApi = {
-  compilePython: (teamSeq, compileData) =>
-    api.post(`/compile/py/${teamSeq}`, compileData),
+  compilePython: (compileData) => api.post("/compile/py", compileData),
   compilePythonStop: (projectData) => api.post("/compile/py/stop", projectData),
 };
 

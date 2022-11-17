@@ -50,13 +50,20 @@ const ConsoleTerminal = (props) => {
   const changeInputData = (e) => setInputData(e.target.value);
 
   const compileStart = () => {
+    const curPathSplit = curPath.split("/");
+
+    console.log(
+      "compileStart curPath:",
+      curPathSplit[curPathSplit.length - 2] +
+        curPathSplit[curPathSplit.length - 1]
+    );
     const body = {
       type: "pure Python",
       filePath: curPath,
       input: "",
     };
     compileApi
-      .compilePython(teamSeq, body)
+      .compilePython(body)
       .then((res) => {
         console.log(res.data);
         setOutputData(res.data);
