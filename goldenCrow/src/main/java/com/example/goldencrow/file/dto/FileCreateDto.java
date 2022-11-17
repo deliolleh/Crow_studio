@@ -1,4 +1,4 @@
-package com.example.goldencrow.file.fileDto;
+package com.example.goldencrow.file.dto;
 
 import lombok.Data;
 
@@ -8,11 +8,14 @@ import lombok.Data;
 public class FileCreateDto {
     private String fileTitle;
     private String filePath;
+    private Long teamSeq;
+
 
     public FileCreateDto() {};
 
-    public FileCreateDto(String fileTitle, String filePath) {
+    public FileCreateDto(String fileTitle, String filePath, Long teamSeq) {
         this.fileTitle = fileTitle;
         this.filePath = filePath;
+        this.teamSeq = teamSeq;
     }
 }
