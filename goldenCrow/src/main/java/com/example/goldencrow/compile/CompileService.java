@@ -155,8 +155,8 @@ public class CompileService {
         // 절대경로 생성
         String absolutePath = BASE_URL + filePath;
         String[] pathList = absolutePath.split("/");
-        String teamName;
-        String teamSeq;
+        String teamName = pathList[5];
+        String teamSeq = pathList[4];
         // 1 : pure python, 2 : django, 3 : flask, 4 : fastapi
         if (typeNum == 1) {
             String[] command;
@@ -164,7 +164,8 @@ public class CompileService {
             if (input.isEmpty()) {
                 command = new String[]{"python3", absolutePath};
             } else {
-                command = new String[]{"/bin/sh", "-c", "echo " + "\"" + input + "\" | python3 " + absolutePath};
+                command = new String[]{"/bin/sh", "-c", "echo " + "\"" + input + "\" | python3 " + absolutePath
+                        + " 2> " + "/home/ubuntu/crow_data/outfile/" + teamSeq + "/" + teamName + ".txt"};
             }
             // 결과 문자열
             System.out.println(Arrays.toString(command));
@@ -181,8 +182,6 @@ public class CompileService {
         }
         // Django, fastapi, flask 프로젝트일 때
         else {
-            teamName = pathList[5];
-            teamSeq = pathList[4];
             // 도커파일 추가
             String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), typeNum);
             if (!Objects.equals(dockerfile, "SUCCESS")) {
