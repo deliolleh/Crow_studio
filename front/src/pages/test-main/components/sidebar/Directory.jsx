@@ -172,7 +172,7 @@ const Directory = (props) => {
   };
 
   useEffect(() => {
-    console.log("curPath re-rendering");
+    // console.log("curPath re-rendering");
   }, [curPath]);
 
   return (
