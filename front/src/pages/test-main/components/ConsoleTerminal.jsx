@@ -39,21 +39,21 @@ export const MakeEditorData = (
   };
 };
 
-const ConsoleTerminal = () => {
+const ConsoleTerminal = (props) => {
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
 
-  const teamSeq = 11;
-  const filePath = "/home/ubuntu/crow_data/11/puretest/puretest.py";
-  const inputValue = "";
+  const { teamSeq, curPath } = props;
+
+  // const filePath = "/home/ubuntu/crow_data/11/puretest/puretest.py";
 
   const changeInputData = (e) => setInputData(e.target.value);
 
   const compileStart = () => {
     const body = {
-      type: 1,
-      filePath: filePath,
-      input: inputValue,
+      type: "pure Python",
+      filePath: curPath,
+      input: "",
     };
     compileApi
       .compilePython(teamSeq, body)

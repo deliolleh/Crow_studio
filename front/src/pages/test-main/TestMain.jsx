@@ -30,16 +30,21 @@ const TestMain = () => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
   const editorRef = useRef(null);
-  const [showItem, setShowItem] = useState("Dir");
+  const [showComponent, setShowComponent] = useState("Dir");
 
-  const showItemHandler = (componentName) => setShowItem(componentName);
+  const [curPath, setCurPath] = useState("");
+  const [curName, setCurName] = useState("");
+
+  const showComponentHandler = (componentName) =>
+    setShowComponent(componentName);
 
   // 파일 클릭하면 내용 보여주기
-  const showFileContentHandler = (targetType, targetPath) => {
-    if (targetType !== "directory") {
+  const showFileContentHandler = (type, path) => {
+    if (type !== "directory") {
       const requireData = {
-        filePath: targetPath,
+        filePath: path,
       };
+      // 클릭한 파일 내용 가져옴
       dispatch(getFileContent(requireData))
         .unwrap()
         .then((res) => {
@@ -105,20 +110,27 @@ const TestMain = () => {
       <Header />
       <div className="flex">
         <div className="flex">
-          <Sidebar clickIcon={showItemHandler} showItem={showItem} />
-          {showItem && (
+          <Sidebar
+            clickIcon={showComponentHandler}
+            showComponent={showComponent}
+          />
+          {showComponent && (
             <SidebarItems>
-              {showItem === "Dir" && (
+              {showComponent === "Dir" && (
                 <Directory
                   showFileContent={showFileContentHandler}
                   saveFileContent={saveFileContentHandler}
+                  curPath={curPath}
+                  setCurPath={setCurPath}
+                  curName={curName}
+                  setCurName={setCurName}
                 />
               )}
-              {showItem === "Git" && <Git />}
-              {showItem === "Team" && <Team />}
-              {showItem === "Api" && <Api />}
-              {showItem === "Var" && <VariableName />}
-              {showItem === "Set" && <Settings />}
+              {showComponent === "Git" && <Git />}
+              {showComponent === "Team" && <Team />}
+              {showComponent === "Api" && <Api />}
+              {showComponent === "Var" && <VariableName />}
+              {showComponent === "Set" && <Settings />}
             </SidebarItems>
           )}
         </div>
@@ -136,7 +148,7 @@ const TestMain = () => {
         />
 
         {/* 콘솔 */}
-        <ConsoleTerminal />
+        <ConsoleTerminal teamSeq={teamSeq} curPath={curPath} />
       </div>
     </React.Fragment>
   );
