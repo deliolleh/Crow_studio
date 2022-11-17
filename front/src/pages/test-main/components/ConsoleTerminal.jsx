@@ -92,7 +92,11 @@ const ConsoleTerminal = (props) => {
         </div>
         <div className="flex items-center">
           {/* btns */}
-          <BsPlayFill onClick={compileStart} className="mr-[10px]" size="30" />
+          <BsPlayFill
+            onClick={compileStart}
+            className="mr-[10px] cursor-pointer"
+            size="30"
+          />
           {/* <BsStopFill onClick={compileStop} size="30" /> */}
         </div>
       </div>
