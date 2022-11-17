@@ -179,7 +179,7 @@ public class GitService {
         // 결과 문자열 저장하기 위한 StringBuilder
         StringBuilder msg = new StringBuilder();
 
-        // 명령어 수행
+        // 명령어 수행 로직
         try {
             String result = "";
             Process p = command.start();
@@ -203,21 +203,26 @@ public class GitService {
     /**
      * git add 함수
      *
-     * @param gitPath
-     * @param filePath
-     * @return
+     * @param gitPath   프로젝트 경로
+     * @param filePath  add할 파일 경로 (특정하지 않으면 all)
+     * @return 성패에 따른 String 반환
      */
     public String gitAdd(String gitPath, String filePath) {
         ProcessBuilder command = new ProcessBuilder();
 
-        // filePath를 입력했다면, 해당 파일만 add 아니라면 "."
+        // filePath를 입력했으면 filePath 사용 / add할 파일을 특정하지 않았으면 "."
         if (filePath.equals("all")) {
             command.command("git", "add", ".");
         } else {
             command.command("git", "add", filePath);
         }
+        // 명령어를 수행할 path 등록
         command.directory(new File(gitPath));
+
+        // 결과 메세지를 저장하기 위한 StringBuilder
         StringBuilder msg = new StringBuilder();
+
+        // 명령어 수행 로직
         try {
             Process p = command.start();
             String forPrint;
@@ -228,60 +233,73 @@ public class GitService {
             }
             p.waitFor();
         } catch (IOException e) {
-            return e.getMessage();
+            return UNKNOWN;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            return e.getMessage();
+            return UNKNOWN;
         }
-
+        // 성공 여부 판단
         if (msg.length() == 0) {
-            return "Success";
+            return SUCCESS;
         }
-        return msg.toString();
+        return UNKNOWN;
     }
 
     /**
      * 깃 커밋 함수
      * 깃 애드 후 성공한다면 깃 커밋
      *
-     * @param message
-     * @param gitPath
-     * @param filePath
-     * @return
+     * @param message   commit message
+     * @param gitPath   프로젝트 경로
+     * @param filePath  add할 파일 경로 (특정하지 않으면 all)
+     * @return 성패에 따른 result 반환
      */
-    public String gitCommit(String message, String gitPath, String filePath) {
-        String check = gitAdd(gitPath, filePath);
+    public Map<String, String> gitCommitService(String message, String gitPath, String filePath) {
+        Map<String, String> serviceRes = new HashMap<>();
 
-        if (!check.equals("Success")) {
-            return check;
+        // git add 로직 수행
+        String gitAddCheck = gitAdd(gitPath, filePath);
+        if (!gitAddCheck.equals(SUCCESS)) {
+            serviceRes.put("result", gitAddCheck);
+            return serviceRes;
         }
 
+        // git commit을 수행할 명령어
         ProcessBuilder command = new ProcessBuilder("git", "commit", "-m", message);
+        // 명령어를 수행할 path 등록
         command.directory(new File(gitPath));
+
+        // 결과 메세지를 저장하기 위한 StringBuilder
         StringBuilder msg = new StringBuilder();
         msg.append("Success");
         msg.append("\n");
+
+        // 명령어 수행 로직
         try {
             Process p = command.start();
             String forPrint;
-
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
             while ((forPrint = br.readLine()) != null) {
                 msg.append(forPrint);
                 msg.append("\n");
             }
             p.waitFor();
         } catch (IOException e) {
-            return e.getMessage();
+            serviceRes.put("result", UNKNOWN);
+            return serviceRes;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            return e.getMessage();
+            serviceRes.put("result", UNKNOWN);
+            return serviceRes;
         }
+
+        // 성공 여부 판단
         if (msg.length() == 0) {
-            return "Success";
+            serviceRes.put("result", SUCCESS);
+        } else {
+            serviceRes.put("result", UNKNOWN);
         }
-        return msg.toString();
+        return serviceRes;
     }
 
     /**

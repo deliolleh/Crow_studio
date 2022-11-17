@@ -95,17 +95,36 @@ public class GitController {
             res.put("result", BAD_REQ);
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
-
     }
 
+    /**
+     * Git Commit API
+     *
+     * @param jwt   회원가입 및 로그인 시 발급되는 access token
+     * @param req   "message", "gitPath", "filePath"를 key로 가지는 Map<String, String>
+     * @return  성패에 따른 result 반환
+     * @status  200, 401, 404
+     */
     @PostMapping("/git-commit")
-    public ResponseEntity<String> gitCommit(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String, String> gitFile) {
-        String message = gitFile.get("message");
-        String gitPath = gitFile.get("gitPath");
-        String filePath = gitFile.get("filePath");
-        String commitResult = gitService.gitCommit(message, gitPath, filePath);
-
-        return new ResponseEntity<>(commitResult, HttpStatus.OK);
+    public ResponseEntity<Map<String, String>> gitCommitPost(@RequestHeader("Authorization") String jwt,
+                                            @RequestBody Map<String, String> req) {
+        if (req.containsKey("message") && req.containsKey("gitPath") && req.containsKey("filePath")) {
+            String message = req.get("message");
+            String gitPath = req.get("gitPath");
+            String filePath = req.get("filePath");
+            Map<String, String> res = gitService.gitCommitService(message, gitPath, filePath);
+            String result = res.get("result");
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            Map<String, String> res = new HashMap<>();
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/{userSeq}/git-push")
