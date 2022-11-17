@@ -29,7 +29,13 @@ const Header = () => {
         {/* 로고, 아이콘 */}
         <div className="relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
           <div className="flex items-center">
-            <div className="text-point_purple pr-3">Logo</div>
+            <div className="text-point_purple pr-3">
+              <img
+                className="w-8 p-1 rounded-full bg-white cursor-pointer"
+                src={require("../assets/images/logo.png")}
+                alt="logo-img"
+              />
+            </div>
             <Link
               className="text-xl font-bold leading-relaxed inline-block mr-16 py-2 whitespace-nowrap uppercase text-white"
               to="/"
@@ -65,45 +71,55 @@ const Header = () => {
             <li className="nav-item">
               <Link
                 className="px-0.5 py-2 flex items-center justify-end text-lg leading-snug text-white hover:opacity-75"
-                to="/"
+                to="/teams"
               >
-                <span className="ml-7">포럼</span>
+                <span className="ml-7">팀 목록</span>
               </Link>
             </li>
             <li className="nav-item">
               <Link
                 className="px-0.5 py-2 flex items-center justify-end text-lg leading-snug text-white hover:opacity-75"
-                to="/main"
+                to="/teams/create"
               >
-                <span className="ml-7">프로젝트</span>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className="px-0.5 py-2 flex items-center justify-end text-lg leading-snug text-white hover:opacity-75"
-                to="/project/create"
-              >
-                <span className="ml-7">+</span>
+                <span className="ml-7">새로운 팀 생성 +</span>
               </Link>
             </li>
           </ul>
         </div>
 
         {/* 프로필 */}
+        {/* 로그인/닉네임 */}
         <div className="lg:flex flex lg:static absolute right-14 lg:item-center mt-2.5">
           {/* 프로필 이미지 */}
-          <div
+          {/* <div
             className="w-7 h-7 rounded-full cursor-pointer"
+            onClick={clickProfileHandler}
+          > */}
+
+          {/* 닉네임 */}
+          <div
+            className="cursor-pointer mt-[3px]"
             onClick={clickProfileHandler}
           >
             {isLoggedIn ? (
-              <img
-                className="w-7 h-7 rounded-full cursor-pointer"
-                src={require("../assets/images/avatar.png")}
-                alt="profile-img"
-              />
+              // 프사
+              // <img
+              // className="w-7 h-7 rounded-full cursor-pointer"
+              // src={require("../assets/images/avatar.png")}
+              // alt="profile-img"
+              // />
+
+              // 닉네임
+              <div className="hover:text-white">{myNickname}</div>
             ) : (
-              <div className="w-7 h-7 rounded-full cursor-pointer bg-white"></div>
+              // 빈 프사
+              // <div className="w-7 h-7 rounded-full cursor-pointer bg-white"></div>
+
+              // 로그인, 회원가입 버튼
+              <div>
+                <Link to="/login" className="mr-4 hover:text-white">로그인</Link>
+                <Link to="/signup" className="hover:text-white">회원가입</Link>
+              </div>
             )}
           </div>
 
@@ -112,18 +128,20 @@ const Header = () => {
             <div className="absolute flex flex-col gap-2 w-40 lg:top-12 lg:right-4 top-9 right-0 px-3 py-2 bg-component_item_bg_+2_dark rounded-md text-right text-white z-10">
               {isLoggedIn ? (
                 <React.Fragment>
-                  <div>{myNickname}</div>
+                  {/* <div>{myNickname}</div>
                   <Link to={`/mypage/${mySeq}`}>마이페이지</Link>
                   <Link to={`/teams`}>팀 목록</Link>
-                  <Link to="/">회원정보수정</Link>
+                  <Link to="/">회원정보수정</Link> */}
+                  <Link to={`/mypage/${mySeq}`}>내 정보</Link>
                   <div className="cursor-pointer" onClick={logoutHandler}>
                     로그아웃
                   </div>
                 </React.Fragment>
               ) : (
+                // 없음
                 <React.Fragment>
-                  <Link to="/login">로그인</Link>
-                  <Link to="/signup">회원가입</Link>
+                  {/* <Link to="/login">로그인</Link>
+                  <Link to="/signup">회원가입</Link> */}
                 </React.Fragment>
               )}
             </div>

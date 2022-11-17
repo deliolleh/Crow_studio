@@ -32,21 +32,18 @@ const DIRECTORY_DATA = {
   rootName: `root`,
 };
 
-const Directory = ({ showFileContent }) => {
+const Directory = ({ showFileContent, saveFileContent }) => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
   const [curPath, setCurPath] = useState("");
   const [curName, setCurName] = useState("");
 
-  const [testData, setTestData] = useState({});
+  const [filesDirectories, setFilesDirectories] = useState({});
 
   useEffect(() => {
     dispatch(getAllFiles(teamSeq))
       .unwrap()
-      .then((res) => {
-        console.log("res:", res);
-        setTestData(res);
-      })
+      .then(setFilesDirectories)
       .catch(console.error);
   }, [dispatch, teamSeq]);
 
@@ -66,7 +63,7 @@ const Directory = ({ showFileContent }) => {
         console.log(`/${newDirectoryName} 생성 완료`);
         dispatch(getAllFiles(teamSeq))
           .unwrap()
-          .then(setTestData)
+          .then(setFilesDirectories)
           .catch(console.error);
       })
       .catch(console.error);
@@ -88,9 +85,8 @@ const Directory = ({ showFileContent }) => {
         console.log(`${newFileName} 생성 완료`);
         dispatch(getAllFiles(teamSeq))
           .unwrap()
-          .then(setTestData)
+          .then(setFilesDirectories)
           .catch(console.error);
-        dispatchGetDirectoryList();
       })
       .catch(console.error);
   };
@@ -117,7 +113,7 @@ const Directory = ({ showFileContent }) => {
         console.log(`${curName} -> ${newName} 변경 성공`);
         dispatch(getAllFiles(teamSeq))
           .unwrap()
-          .then(setTestData)
+          .then(setFilesDirectories)
           .catch(console.error);
       })
       .catch(console.error);
@@ -138,11 +134,14 @@ const Directory = ({ showFileContent }) => {
         console.log("삭제 성공 res:", res);
         dispatch(getAllFiles(teamSeq))
           .unwrap()
-          .then(setTestData)
+          .then(setFilesDirectories)
           .catch(console.error);
       })
       .catch(console.error);
   };
+
+  // 저장
+  const saveHandler = () => saveFileContent(curName, curPath);
 
   // 트리 생성
   const renderTree = (nodes) => (
@@ -163,7 +162,7 @@ const Directory = ({ showFileContent }) => {
   };
 
   useEffect(() => {
-    console.log("curPath:", curPath);
+    console.log("curPath re-rendering");
   }, [curPath]);
 
   return (
@@ -187,6 +186,9 @@ const Directory = ({ showFileContent }) => {
             <IcSpan>
               <div onClick={deleteHandler}>🪓</div>
             </IcSpan>
+            <IcSpan>
+              <div onClick={saveHandler}>💾</div>
+            </IcSpan>
           </div>
         </div>
 
@@ -205,7 +207,7 @@ const Directory = ({ showFileContent }) => {
             sx={{ flexGrow: 1, overflowY: "auto" }}
             onNodeSelect={nodeSelectHandler}
           >
-            {renderTree(testData)}
+            {renderTree(filesDirectories)}
           </TreeView>
         </div>
       </DirectoryContainer>

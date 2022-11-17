@@ -79,6 +79,7 @@ const Main = () => {
   // vertical split 좌측 넓이 비율
   const verRef = useRef();
   const [verticalSplit, setVerticalSplit] = useState("75%");
+  const [consoleHeight, setConsoleHeight] = useState("");
 
   const checkSize = (type) => {
     if (type === "vertical") {
@@ -90,6 +91,7 @@ const Main = () => {
         ) + "%";
       console.log(percentage);
       setVerticalSplit(percentage);
+      setConsoleHeight(verRef.current.state.pane1Size);
     } else {
       const percenteage =
         parseInt(
@@ -135,10 +137,10 @@ const Main = () => {
   const [activeEditor1Tab, setActiveEditor1Tab] = useState(0);
   const [activeEditor2Tab, setActiveEditor2Tab] = useState(0);
   const [editor1Tabs, setEditor1Tabs] = useState(
-    MakeEditorData(2, "Editor Tab")
+    MakeEditorData(2, "Editor Tab1")
   );
   const [editor2Tabs, setEditor2Tabs] = useState(
-    MakeEditorData(2, "Editor Tab")
+    MakeEditorData(2, "Editor Tab2")
   );
   const [consoleTabs, setConsoleTabs] = useState(MakeConsoleData(1, "Console"));
 
@@ -358,7 +360,9 @@ const Main = () => {
                     ))}
                   </SplitPane>
                   <div style={{ marginTop: "8px" }}>
-                    <CompileEditor />
+                    <CompileEditor
+                      consoleHeight={consoleHeight}
+                    />
                   </div>
                 </SplitPane>
               </div>
