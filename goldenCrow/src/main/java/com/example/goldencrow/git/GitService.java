@@ -530,6 +530,7 @@ public class GitService {
     }
 
     /**
+     * 바뀌었던 깃 Url을 기존 상태로 원위치
      * @param oldUrl
      * @param gitPath
      * @return
@@ -600,6 +601,25 @@ public class GitService {
             serviceRes.put("result", UNKNOWN);
         }
         return serviceRes;
+    }
+
+    /**
+     * 유저의 깃정보가 존재하는 지 확인해주는 로직
+     * @param userSeq
+     * @return
+     */
+    public String gitInfoCheck(Long userSeq) {
+        Optional<UserEntity> user = userRepository.findByUserSeq(userSeq);
+        if (!user.isPresent()) {
+            return "유저가 존재하지 않습니다.";
+        }
+        UserEntity gitUser = user.get();
+
+        if (gitUser.getUserGitUsername() == null || gitUser.getUserGitToken() == null) {
+            return "git 연결을 다시 설정해주세요!";
+        }
+
+        return "Success";
     }
 
 }
