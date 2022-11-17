@@ -26,7 +26,6 @@ public class VariableController {
     }
 
     /**
-<<<<<<< HEAD
      * 변수명 추천 API
      * access token 필요
      *

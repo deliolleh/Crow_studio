@@ -6,11 +6,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 
 /**
-<<<<<<< HEAD
- * user Table Entity
-=======
  * User Table Entity
->>>>>>> 554358d6ef72e62a311b25937821dd557a60dd0d
  */
 @Entity
 @DynamicUpdate
@@ -48,21 +44,13 @@ public class UserEntity {
     private String userGitToken;
 
     /**
-<<<<<<< HEAD
-     * 빈 userEntity 생성자
-=======
      * 빈 UserEntity 생성자
->>>>>>> 554358d6ef72e62a311b25937821dd557a60dd0d
      */
     public UserEntity() {
     }
 
     /**
-<<<<<<< HEAD
-     * userEntity 생성자
-=======
      * UserEntity 생성자
->>>>>>> 554358d6ef72e62a311b25937821dd557a60dd0d
      *
      * @param userId 사용자의 아이디
      * @param userNickname 사용자의 닉네임

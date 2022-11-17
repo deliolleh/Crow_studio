@@ -46,7 +46,7 @@ public class CompileService {
             p.destroy();
             return result.trim();
         } catch (IOException | InterruptedException e) {
-            return WRONG;
+            return e.toString();
         }
     }
 
@@ -128,25 +128,41 @@ public class CompileService {
      * @param input         pure python 파일일 때 input값
      * @return              컴파일 성공 시 컴파일 결과 반환, 성패에 따른 result 반환
      */
-    public Map<String, String> pyCompileService(int type, String projectName, Long teamSeq, String input) {
+    public Map<String, String> pyCompileService(String type, String projectName, String teamSeq, String input) {
         Map<String, String> serviceRes = new HashMap<>();
+        int typeNum;
         // 타입 이상한 거 들어오면 리턴
-        if (type > 4 || type < 0) {
-            serviceRes.put("result", WRONG);
-            return serviceRes;
+        switch (type) {
+            case "pure python":
+                typeNum = 1;
+                break;
+            case "django":
+                typeNum = 2;
+                break;
+            case "flask":
+                typeNum = 3;
+                break;
+            case "fastapi":
+                typeNum = 4;
+                break;
+            default:
+                serviceRes.put("result", WRONG);
+                return serviceRes;
         }
         // 프로젝트명과 teamSeq로 docker container와 image 이름 생성
         String conAndImgName = "crowstudio_" + projectName.toLowerCase() + "_" + teamSeq;
         // 절대경로 생성
         String absolutePath = BASE_URL + teamSeq + "/" + projectName;
         // 1 : pure python, 2 : django, 3 : flask, 4 : fastapi
-        if (type == 1) {
+        if (typeNum == 1) {
             String[] command;
+            // input이 없는 경우
             if (input.isEmpty()) {
                 command = new String[]{"python3", absolutePath};
             } else {
                 command = new String[]{"/bin/sh", "-c", "echo " + "\"" + input + "\" | python3 " + absolutePath};
             }
+            // 결과 문자열
             String result = resultString(command);
             // 파일 경로가 틀린 경우
             if (result.contains("Errno 2")) {
@@ -161,8 +177,7 @@ public class CompileService {
         // Django, fastapi, flask 프로젝트일 때
         else {
             // 도커파일 추가
-
-            String dockerfile = createDockerfile(absolutePath, teamSeq, type);
+            String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), typeNum);
             if (!Objects.equals(dockerfile, "SUCCESS")) {
                 serviceRes.put("result", dockerfile);
                 return serviceRes;
@@ -195,6 +210,7 @@ public class CompileService {
     }
 
     /**
+     * 컴파일 중단을 처리하는 내부로직
      *
      * @param projectName   컴파일 중단할 프로젝트의 이름
      * @param teamSeq       컴파일 중단할 프로젝트의 팀 sequence
@@ -206,7 +222,6 @@ public class CompileService {
         String[] containerStop = {"docker", "stop", conAndImgName};
         Map<String, String> serviceRes = new HashMap<>();
         String stopedCon = resultString(containerStop);
-
         // 컨테이너가 없는 경우
         if (stopedCon.equals("No such container")) {
             serviceRes.put("result", NO_SUCH);
