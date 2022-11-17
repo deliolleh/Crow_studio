@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static com.example.goldencrow.common.Constants.*;
@@ -131,8 +134,8 @@ public class CompileService {
      * @param input         pure python 파일일 때 input값
      * @return              컴파일 성공 시 컴파일 결과 반환, 성패에 따른 result 반환
      */
-    public Map<String, String> pyCompileService(String type, String filePath, String input) {
-        Map<String, String> serviceRes = new HashMap<>();
+    public Map<String, Object> pyCompileService(String type, String filePath, String input) {
+        Map<String, Object> serviceRes = new HashMap<>();
         int typeNum;
         // 타입 이상한 거 들어오면 리턴
         switch (type) {
@@ -152,30 +155,48 @@ public class CompileService {
                 serviceRes.put("result", WRONG);
                 return serviceRes;
         }
+        String[] pathList = filePath.split("/");
+        String teamSeq = pathList[0];
+        String teamName = pathList[1];
         // 절대경로 생성
-        String absolutePath = BASE_URL + filePath;
-        String[] pathList = absolutePath.split("/");
-        String teamName = pathList[5];
-        String teamSeq = pathList[4];
+        String absolutePath;
+        // pure Python일 경우 파일명까지, 프로젝트일 경우 프로젝트명까지 절대경로로 선언
+        if (typeNum == 1) {
+            absolutePath = BASE_URL + filePath;
+        } else {
+            absolutePath = BASE_URL + teamSeq + "/" + teamName;
+        }
+
         // 1 : pure python, 2 : django, 3 : flask, 4 : fastapi
         if (typeNum == 1) {
             String[] command;
+            // 에러가 발생할 경우 에러메세지를 저장할 파일 생성
+            File file = new File(BASE_URL + "outfile/" + teamSeq + ".txt");
             // input이 없는 경우
             if (input.isEmpty()) {
-                command = new String[]{"python3", absolutePath};
+                command = new String[]{"python3", absolutePath, " 2> " + "/home/ubuntu/crow_data/outfile/" + teamSeq + ".txt"};
             } else {
                 command = new String[]{"/bin/sh", "-c", "echo " + "\"" + input + "\" | python3 " + absolutePath
-                        + " 2> " + "/home/ubuntu/crow_data/outfile/" + teamSeq + "/" + teamName + ".txt"};
+                        + " 2> " + "/home/ubuntu/crow_data/outfile/" + teamSeq + ".txt"};
             }
             // 결과 문자열
             System.out.println(Arrays.toString(command));
             String result = resultString(command);
+            List<String> message = fileService.readFile(BASE_URL + "outfile/" + teamSeq + ".txt");
+            Path path = Paths.get(BASE_URL + "outfile/" + teamSeq + ".txt");
+            try {
+                Files.deleteIfExists(path);
+            } catch (IOException ioe) {
+                serviceRes.put("result", UNKNOWN);
+                return serviceRes;
+            }
             // 파일 경로가 틀린 경우
             if (result.contains("Errno 2")) {
                 serviceRes.put("result", NO_SUCH);
                 serviceRes.put("response", result);
             } else {
                 serviceRes.put("result", SUCCESS);
+                serviceRes.put("message", message);
                 serviceRes.put("response", result);
             }
             return serviceRes;
