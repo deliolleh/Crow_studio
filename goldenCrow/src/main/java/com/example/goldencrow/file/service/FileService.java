@@ -163,17 +163,6 @@ public class FileService {
 
         return Success;
     }
-//    @Transactional
-//    public boolean updateFileUpdatedAt(Long teamSeq, String filePath){
-//        boolean isPossible = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq, filePath).isPresent();
-//        if (!isPossible) {
-//            return false;
-//        }
-//        FileEntity nFile = fileRepository.findByTeam_TeamSeqAndFilePath(teamSeq, filePath).get();
-//        nFile.setFileUpdatedAt(new Date());
-//        fileRepository.saveAndFlush(nFile);
-//        return true;
-//    }
 
     /**
      * 파일 updatedat 업데이트 함수 안씁니다.
