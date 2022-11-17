@@ -1,6 +1,7 @@
 package com.example.goldencrow.file;
 
-import com.example.goldencrow.file.fileDto.FileCreateDto;
+import com.example.goldencrow.file.dto.FileCreateDto;
+
 import com.mongodb.lang.Nullable;
 import com.sun.istack.NotNull;
 

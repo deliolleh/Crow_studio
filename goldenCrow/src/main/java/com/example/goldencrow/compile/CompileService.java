@@ -66,7 +66,7 @@ public class CompileService {
         }
         // teamSeq랑 filePath에 있는 숫자랑 같은지 체크
         String[] pathList = absolutePath.split("/");
-        String projectName = pathList[4];
+        String projectName = pathList[5];
         String content = "";
         // 2 : Django, 3 : Flask, 4 : FastAPI
         if (type == 2) {
@@ -103,7 +103,6 @@ public class CompileService {
         return SUCCESS;
     }
 
-    // 해당 컨테이너 포트 찾기
     /**
      * 컨테이너 Id로 사용중인 포트 번호를 찾는 내부 로직
      *

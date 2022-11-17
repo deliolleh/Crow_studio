@@ -9,10 +9,7 @@ import com.example.goldencrow.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +35,11 @@ public class GitService {
         List<String> gitInfo = new ArrayList<>();
         String email = userRepository.getReferenceById(userSeq).getUserGitUsername();
         String token = userRepository.getReferenceById(userSeq).getUserGitToken();
+
+        gitInfo.add("깃 정보가 없습니다.");
+        if (email == null || token == null) {
+            return gitInfo;
+        }
         gitInfo.add(email);
         gitInfo.add(token);
         return gitInfo;
@@ -155,14 +157,23 @@ public class GitService {
         }
 
         command.directory(targetFile);
+        StringBuilder msg = new StringBuilder();
 
         try {
-            command.start();
+
+            String result = "";
+            Process p = command.start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((result = br.readLine()) != null) {
+                msg.append(result+"\n");
+            }
         } catch (IOException e) {
             return e.getMessage();
         }
-
-        return "Success";
+        if (msg.length() == 0) {
+            return "Success";
+        }
+        return msg.toString();
     }
 
     /**
@@ -182,13 +193,14 @@ public class GitService {
             command.command("git", "add", filePath);
         }
         command.directory(new File(gitPath));
-
+        StringBuilder msg = new StringBuilder();
         try {
             Process p = command.start();
             String forPrint;
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((forPrint = br.readLine()) != null) {
-                System.out.println(forPrint);
+                msg.append(forPrint);
+                msg.append("\n");
             }
             p.waitFor();
         } catch (IOException e) {
@@ -197,8 +209,11 @@ public class GitService {
             Thread.currentThread().interrupt();
             return e.getMessage();
         }
-        System.out.println("add 성공!");
-        return "Success";
+
+        if (msg.length() == 0) {
+            return "Success";
+        }
+        return msg.toString();
     }
 
     /**
@@ -219,7 +234,7 @@ public class GitService {
 
         ProcessBuilder command = new ProcessBuilder("git", "commit", "-m", message);
         command.directory(new File(gitPath));
-
+        StringBuilder msg = new StringBuilder();
 
         try {
             Process p = command.start();
@@ -227,9 +242,9 @@ public class GitService {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
-            System.out.println(br.readLine());
             while ((forPrint = br.readLine()) != null) {
-                System.out.println(forPrint);
+                msg.append(forPrint);
+                msg.append("\n");
             }
             p.waitFor();
         } catch (IOException e) {
@@ -238,8 +253,10 @@ public class GitService {
             Thread.currentThread().interrupt();
             return e.getMessage();
         }
-        System.out.println("커밋 성공!");
-        return "Success";
+        if (msg.length() == 0) {
+            return "Success";
+        }
+        return msg.toString();
     }
 
     /**
@@ -264,12 +281,19 @@ public class GitService {
         }
 
         List<String> gitInfo = getGitInfo(userSeq);
+
+        if (gitInfo.size() < 2) {
+            return "깃 정보가 없습니다.";
+        }
+
         String email = gitInfo.get(0);
         String pass = gitInfo.get(1);
 
-        String newGitUrl = newRemoteUrl(gitUrl, email, pass);
-        System.out.println(newGitUrl);
-        boolean setNew = setNewUrl(newGitUrl, gitPath);
+
+        String newGitUrl = newRemoteUrl(gitUrl,email,pass);
+
+        boolean setNew = setNewUrl(newGitUrl,gitPath);
+
 
         if (!setNew) {
             return "새로운 url 설정에 실패했습니다.";
@@ -277,9 +301,14 @@ public class GitService {
 
         ProcessBuilder command = new ProcessBuilder("git", "push", "origin", branchName);
         command.directory(new File(gitPath));
-
+        StringBuilder msg = new StringBuilder();
         try {
-            command.start();
+            String read = null;
+            Process p = command.start();
+            BufferedReader result = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((read = result.readLine()) != null) {
+                msg.append(read + "\n");
+            }
         } catch (IOException e) {
             return e.getMessage();
         }
@@ -290,31 +319,7 @@ public class GitService {
             return "url 재설정에 실패했습니다.";
         }
 
-//        UserEntity user = userRepository.findByUserSeq(userSeq);
-//        String email = user.getUserGitId();
-//        String pass = user.getUserPassWord();
-
-//        ProcessBuilder setEmail = new ProcessBuilder(email);
-//
-//        try {
-//            setEmail.start().waitFor();;
-//        } catch (IOException e) {
-//            return e.getMessage();
-//        } catch (InterruptedException e) {
-//            return e.getMessage();
-//        }
-//
-//        ProcessBuilder setPass = new ProcessBuilder(pass);
-//
-//        try {
-//            setPass.start().waitFor();
-//        } catch (IOException e) {
-//            return e.getMessage();
-//        } catch (InterruptedException e) {
-//            return e.getMessage();
-//        }
-
-        return "Success";
+        return msg.toString();
     }
 
     /**
@@ -481,6 +486,11 @@ public class GitService {
         String gitUrl = getRemoteUrl(gitPath);
 
         List<String> gitInfo = getGitInfo(userSeq);
+
+        if (gitInfo.size() < 2) {
+            return "깃 정보가 없습니다.";
+        }
+
         String email = gitInfo.get(0);
         String pass = gitInfo.get(1);
 
@@ -492,16 +502,26 @@ public class GitService {
 
         ProcessBuilder pb = new ProcessBuilder("git", "pull", "origin", brachName);
         pb.directory(new File(gitPath));
-
+        StringBuilder msg = new StringBuilder();
         try {
-            pb.start();
+            String result;
+            Process p = pb.start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((result = br.readLine()) != null) {
+                msg.append(result);
+                msg.append("\n");
+            }
         } catch (IOException e) {
             return e.getMessage();
         }
 
         String result = reUrl(gitUrl, gitPath);
 
-        return "성공";
+        if (msg.length() == 0) {
+            return "Success";
+        }
+
+        return msg.toString();
     }
 
 }

@@ -6,7 +6,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 
 /**
- * user Table Entity
+ * User Table Entity
  */
 @Entity
 @DynamicUpdate
@@ -44,13 +44,13 @@ public class UserEntity {
     private String userGitToken;
 
     /**
-     * 빈 userEntity 생성자
+     * 빈 UserEntity 생성자
      */
     public UserEntity() {
     }
 
     /**
-     * userEntity 생성자
+     * UserEntity 생성자
      *
      * @param userId 사용자의 아이디
      * @param userNickname 사용자의 닉네임

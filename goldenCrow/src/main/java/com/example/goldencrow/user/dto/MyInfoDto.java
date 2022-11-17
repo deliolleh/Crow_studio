@@ -4,20 +4,22 @@ import com.example.goldencrow.user.UserEntity;
 import lombok.Data;
 
 /**
+<<<<<<< HEAD
  * 회원정보 조회에 출력으로 사용될 dto
+=======
+ * 당사자의 회원정보 조회에 출력으로 사용될 DTO
+>>>>>>> 9ea69df187d382645af209bafc835f951dc7cc3a
  */
 @Data
 public class MyInfoDto {
 
+    private String result;
     private Long userSeq;
     private String userId;
     private String userNickname;
     private String userProfile;
-
     private String userGitUsername;
     private String userGitToken;
-
-    private String result;
 
     /**
      * 빈 MyInfoDto 생성자
@@ -42,7 +44,11 @@ public class MyInfoDto {
             this.userGitUsername = userEntity.getUserGitUsername();
         }
 
-        // userGitToken은 service 단에서 encoding을 거쳐 기록
+        if (userEntity.getUserGitToken() == null) {
+            this.userGitToken = "";
+        } else {
+            this.userGitToken = userEntity.getUserGitToken();
+        }
 
     }
 

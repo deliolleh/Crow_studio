@@ -291,7 +291,7 @@ public class TeamService {
 
             if (teamEntityOptional.isPresent()) {
 
-                Optional<TeamEntity> teamEntityConflictCheck = teamRepository.findTeamEntityByTeamLeaderAndTeamName(userRepository.findByUserSeq(userSeq), teamName);
+                Optional<TeamEntity> teamEntityConflictCheck = teamRepository.findTeamEntityByTeamLeaderAndTeamName(userRepository.findByUserSeq(userSeq).get(), teamName);
 
                 if (teamEntityConflictCheck.isPresent()) {
                     // 중복되는 팀 리더와 팀 명이 있음
