@@ -235,7 +235,8 @@ public class GitService {
         ProcessBuilder command = new ProcessBuilder("git", "commit", "-m", message);
         command.directory(new File(gitPath));
         StringBuilder msg = new StringBuilder();
-
+        msg.append("Success");
+        msg.append("\n");
         try {
             Process p = command.start();
             String forPrint;
@@ -271,7 +272,7 @@ public class GitService {
      */
     public String gitPush(String branchName, String message, String gitPath, String filePath, Long userSeq) {
         String check = gitCommit(message, gitPath, filePath);
-        if (!check.equals("Success")) {
+        if (!check.contains("Success")) {
             return check;
         }
 

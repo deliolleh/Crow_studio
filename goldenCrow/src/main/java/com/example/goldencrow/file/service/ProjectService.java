@@ -63,7 +63,8 @@ public class ProjectService {
      * @return
      */
     public Map<Object, Object> readDirectory(String rootPath, String rootName, Map<Object, Object> visit) {
-        File file = new File(rootPath);
+        String path = "/home/ubuntu/crow_data/" +rootPath;
+        File file = new File(path);
         visit.put("id", rootPath);
         visit.put("name", rootName);
         if (file.isDirectory()) {
@@ -74,6 +75,7 @@ public class ProjectService {
                 File dir = files[i];
                 String name = names[i];
                 String thisPath = dir.getPath();
+                thisPath = thisPath.replace("/home/ubuntu/crow_data/","");
                 Map<Object, Object> children = new HashMap<>();
                 child.add(readDirectory(thisPath, name, children));
             }
