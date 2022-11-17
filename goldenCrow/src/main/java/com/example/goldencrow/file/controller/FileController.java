@@ -1,12 +1,7 @@
 package com.example.goldencrow.file.controller;
 
-<<<<<<< HEAD
 
-import com.example.goldencrow.file.fileDto.FileCreateDto;
-import com.example.goldencrow.file.fileDto.FileCreateRequestDto;
-=======
 import com.example.goldencrow.file.dto.FileCreateRequestDto;
->>>>>>> 9ea69df187d382645af209bafc835f951dc7cc3a
 import com.example.goldencrow.file.service.FileService;
 import com.example.goldencrow.user.service.JwtService;
 import org.springframework.http.HttpStatus;
@@ -57,17 +52,11 @@ public class FileController {
      * @param teamSeq 파일 삭제 요청
      */
     @DeleteMapping("/{teamSeq}")
-<<<<<<< HEAD
-    public ResponseEntity<String> userFileDelete(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> filePath) {
-        boolean check = fileService.deleteFile(filePath.get(stringPath), type, teamSeq);
-        if (check) {
-            return new ResponseEntity<>("파일 삭제를 성공했습니다.", HttpStatus.OK);
-=======
+
     public ResponseEntity<Map<String, String>> userFileDelete(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> filePath) {
         Map<String, String> res = fileService.deleteFile(filePath.get(stringPath), type, teamSeq);
         if (res.get("result").equals(SUCCESS)) {
             return new ResponseEntity<>(res, HttpStatus.OK);
->>>>>>> 9ea69df187d382645af209bafc835f951dc7cc3a
         } else {
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }

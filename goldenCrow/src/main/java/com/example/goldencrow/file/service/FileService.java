@@ -3,18 +3,9 @@ package com.example.goldencrow.file.service;
 
 import com.example.goldencrow.file.FileEntity;
 import com.example.goldencrow.file.FileRepository;
-<<<<<<< HEAD
-import com.example.goldencrow.file.fileDto.FileCreateDto;
-
-
-
-import com.example.goldencrow.file.fileDto.FileCreateRequestDto;
-import com.example.goldencrow.team.entity.TeamEntity;
-import com.example.goldencrow.team.repository.TeamRepository;
-=======
 import com.example.goldencrow.file.dto.FileCreateDto;
 import com.example.goldencrow.file.dto.FileCreateRequestDto;
->>>>>>> 9ea69df187d382645af209bafc835f951dc7cc3a
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,17 +17,14 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-<<<<<<< HEAD
 
-import static com.example.goldencrow.common.Constants.*;
-import static java.lang.System.out;
-=======
+
 
 import java.util.List;
 import java.util.Optional;
 
 import static com.example.goldencrow.common.Constants.*;
->>>>>>> 9ea69df187d382645af209bafc835f951dc7cc3a
+
 
 @Service
 public class FileService {
@@ -103,19 +91,12 @@ public class FileService {
     }
 
     /** 파일 삭제  */
-<<<<<<< HEAD
-    public Map<String, String> deleteFile(String filePath, Integer type, Long teamSeq) {
-        Optional<FileEntity> file = fileRepository.findByTeamSeqAfterFilePath(teamSeq, filePath);
-        Map<String, String> serviceRes = new HashMap<>();
-=======
-
 
 
     public Map<String, String> deleteFile(String filePath, Integer type, Long teamSeq) {
         Optional<FileEntity> file = fileRepository.findFileEntityByTeamSeqAndFilePath(teamSeq, filePath);
         Map<String, String> serviceRes = new HashMap<>();
 
->>>>>>> 9ea69df187d382645af209bafc835f951dc7cc3a
         // 만약 이게 DB에 없는 파일 경로나 그렇다면 실패!
         if (!file.isPresent()) {
             serviceRes.put("result", NO_SUCH);
