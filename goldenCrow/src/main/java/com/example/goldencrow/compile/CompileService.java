@@ -45,6 +45,7 @@ public class CompileService {
             p.waitFor();
             in.close();
             p.destroy();
+            System.out.println(result);
             return result.trim();
         } catch (IOException | InterruptedException e) {
             System.out.println("message : " + e.getMessage());
