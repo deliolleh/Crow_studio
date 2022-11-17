@@ -52,21 +52,17 @@ const ConsoleTerminal = (props) => {
   const compileStart = () => {
     const curPathSplit = curPath.split("/");
 
-    console.log(
-      "compileStart curPath:",
-      curPathSplit[curPathSplit.length - 2] +
-        curPathSplit[curPathSplit.length - 1]
-    );
+    console.log("compileStart curPath:", "66/wowhello/wowhello.py");
     const body = {
       type: "pure Python",
-      filePath: curPath,
+      filePath: "66/wowhello/wowhello.py",
       input: "",
     };
     compileApi
       .compilePython(body)
       .then((res) => {
         console.log(res.data);
-        setOutputData(res.data);
+        setOutputData(res.data.result);
       })
       .catch((err) => console.error(err));
   };
@@ -96,7 +92,11 @@ const ConsoleTerminal = (props) => {
         </div>
         <div className="flex items-center">
           {/* btns */}
-          <BsPlayFill onClick={compileStart} className="mr-[10px]" size="30" />
+          <BsPlayFill
+            onClick={compileStart}
+            className="mr-[10px] cursor-pointer"
+            size="30"
+          />
           {/* <BsStopFill onClick={compileStop} size="30" /> */}
         </div>
       </div>
