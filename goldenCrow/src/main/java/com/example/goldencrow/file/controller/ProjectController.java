@@ -52,16 +52,4 @@ public class ProjectController {
         return new ResponseEntity<>(visit, HttpStatus.ACCEPTED);
     }
 
-<<<<<<< HEAD
-
-    @PostMapping("/projectDeleter")
-    public ResponseEntity<String> deletePjt(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String,List<Long>> teamSeqs) {
-        String check = projectService.deleteProject(teamSeqs.get("teamSeqs"));
-        if (check.equals("fail!")) {
-            return new ResponseEntity<>(check,HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>("성공!",HttpStatus.OK);
-    }
-=======
->>>>>>> 9ea69df187d382645af209bafc835f951dc7cc3a
 }
