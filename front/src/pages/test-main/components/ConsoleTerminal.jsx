@@ -50,12 +50,10 @@ const ConsoleTerminal = (props) => {
   const changeInputData = (e) => setInputData(e.target.value);
 
   const compileStart = () => {
-    const curPathSplit = curPath.split("/");
-
-    console.log("compileStart curPath:", "66/wowhello/wowhello.py");
+    console.log("compileStart curPath:", "67/wooyoungtak/wooyoungtak.py");
     const body = {
       type: "pure Python",
-      filePath: "66/wowhello/wowhello.py",
+      filePath: "67/wooyoungtak/wooyoungtak.py",
       input: "",
     };
     compileApi
@@ -81,6 +79,8 @@ const ConsoleTerminal = (props) => {
   //     })
   //     .catch((err) => console.error(err));
   // };
+
+  console.log("curPath:", curPath);
 
   return (
     <div className="ml-[8px] px-3 rounded-[10px] bg-component_-2_dark">
