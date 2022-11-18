@@ -29,7 +29,7 @@ public class TeamEntity {
     private String teamGit;
 
     @Column(name = "teamType")
-    private Integer type;
+    private int type;
 
     public TeamEntity() {
     }

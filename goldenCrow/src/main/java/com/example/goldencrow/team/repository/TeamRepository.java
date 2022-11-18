@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface TeamRepository extends JpaRepository<TeamEntity, Long> {
 
-    Optional<TeamEntity> findTeamEntityByTeamLeaderAndTeamName(UserEntity user, String teamName);
+    Optional<TeamEntity> findTeamEntityByTeamLeader_UserSeqAndTeamName(Long userSeq, String teamName);
 
     Optional<TeamEntity> findByTeamSeqAndTeamLeader_UserSeq(Long teamSeq, Long userSeq);
 
