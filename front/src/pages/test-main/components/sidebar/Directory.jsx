@@ -24,6 +24,8 @@ import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.
 
 // import * as iconsi from "react-icons/io5";
 
+import { selectFile } from "../../../../redux/teamSlice";
+
 // import { getAllFiles } from "../../../../redux/projectSlice";
 // import {
 //   createFile,
