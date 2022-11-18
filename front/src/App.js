@@ -18,6 +18,7 @@ import TeamDetail from "./pages/team-detail/TeamDetail";
 import Test from "./pages/test/Test";
 import TestMain from "./pages/test-main/TestMain";
 import NotFound from "./pages/not-found/NotFound";
+import YMonaco3 from "./pages/code-share/YMonaco3";
 
 const router = createBrowserRouter([
   {
@@ -91,6 +92,10 @@ const router = createBrowserRouter([
   {
     path: "/project/:teamSeq",
     element: <TestMain />,
+  },
+  {
+    path: "project/code-share",
+    element: <YMonaco3 />,
   },
   {
     path: "*",

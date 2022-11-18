@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const NicknameForm = ({ onSubmitNickname, initialNickname }) => {
+const NicknameForm = ({ updateNickname, initialNickname }) => {
   const [inputNickname, setInputNickname] = useState(initialNickname);
   const [errMsg, setErrMsg] = useState("");
 
@@ -19,7 +19,7 @@ const NicknameForm = ({ onSubmitNickname, initialNickname }) => {
     }
     const nicknameData = { userNickname: inputNickname };
     setErrMsg("");
-    onSubmitNickname(JSON.stringify(nicknameData));
+    updateNickname(nicknameData);
   };
 
   return (
@@ -41,7 +41,9 @@ const NicknameForm = ({ onSubmitNickname, initialNickname }) => {
           value={inputNickname}
           onChange={inputChangeHandler}
         />
-        <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">{errMsg}</div>
+        <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
+          {errMsg}
+        </div>
       </div>
 
       <button
