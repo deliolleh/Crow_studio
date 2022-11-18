@@ -8,14 +8,14 @@ import Modify from "./Modify";
 
 const Mypage = () => {
   const { userSeq } = useParams();
-  const { mySeq } = useSelector((state) => state.user.value);
+  const mySeq = useSelector((state) => state.user.value.mySeq);
 
   return (
     <div className="flex flex-col">
       <Header />
       <section className="flex md:flex-row flex-col w-screen h-screen justify-center items-center m-3 mb-6">
         {/* 프로필 */}
-        <Profile userSeq={userSeq} />
+        <Profile userSeq={userSeq} mySeq={mySeq} />
         {/* 회원정보수정 */}
         {+userSeq === mySeq && <Modify />}
       </section>

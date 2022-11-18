@@ -3,8 +3,10 @@ import { useSelector } from "react-redux";
 
 import userApi from "../../api/userApi";
 
-const Profile = ({ userSeq }) => {
-  const { mySeq } = useSelector((state) => state.user.value);
+const Profile = ({ userSeq, mySeq }) => {
+  const { myNickname, myEmail, myGitUsername } = useSelector(
+    (state) => state.user.value
+  );
   const [userInfo, setUserInfo] = useState({});
   const { userNickname, userId, userGitUsername } = userInfo;
 
@@ -13,7 +15,7 @@ const Profile = ({ userSeq }) => {
       .getMypage(userSeq)
       .then((res) => setUserInfo(res.data))
       .catch(console.error);
-  }, [userSeq]);
+  }, [userSeq, myNickname, myGitUsername]);
 
   return (
     <div className="md:w-80 sm:w-[600px] w-[400px] md:h-96 h-80 flex justify-center items-center border border-primary_-2_dark rounded-md md:mr-2 md:mb-0 sm:mr-0 sm:mb-2 mb-2 py-4">
@@ -26,14 +28,22 @@ const Profile = ({ userSeq }) => {
         />
 
         {/* 닉네임 */}
-        <div className="text-white text-2xl font-bold">{userNickname}</div>
+        <div className="text-white text-2xl font-bold">
+          {userSeq === mySeq ? myNickname : userNickname}
+        </div>
 
         {/* 메일 */}
-        <div className="text-sm">{userId}</div>
+        <div className="text-sm">{userSeq === mySeq ? myEmail : userId}</div>
 
         {/* 깃 이메일 */}
         <div className="text-primary_-2_dark text-sm mb-6">
-          {userGitUsername ? userGitUsername : "깃 연결 없음"}
+          {userSeq === mySeq
+            ? myGitUsername
+              ? myGitUsername
+              : "깃 연결 없음"
+            : userGitUsername
+            ? userGitUsername
+            : "깃 연결 없음"}
         </div>
 
         {/* 정보 수정 버튼 */}
