@@ -5,6 +5,7 @@ import teamApi from "../api/teamApi";
 const initialState = {
   value: {
     teamSeq: "",
+    teamName: "",
     projectType: "",
     teamGit: "",
   },
@@ -184,8 +185,9 @@ export const teamSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getTeam.fulfilled, (state, action) => {
-      const { teamSeq, projectType, teamGit } = action.payload;
+      const { teamSeq, teamName, projectType, teamGit } = action.payload;
       state.value.teamSeq = teamSeq;
+      state.value.teamName = teamName;
       state.value.projectType = projectType;
       state.value.teamGit = teamGit;
     });
