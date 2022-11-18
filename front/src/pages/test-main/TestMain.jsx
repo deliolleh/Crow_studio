@@ -28,6 +28,8 @@ const editorOptions = {
   fontFamily: "JetBrains Mono",
   autoIndent: "advanced",
   wrappingIndent: "same",
+  automaticLayout: true,
+  wordWrap: true,
 };
 
 const TestMain = () => {
