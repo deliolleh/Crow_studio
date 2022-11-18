@@ -32,15 +32,15 @@ public class CompileController {
      * @status 200, 400, 401, 404
      */
     @PostMapping("/py")
-    public ResponseEntity<Map<String, String>> pyCompile(@RequestHeader("Authorization") String jwt,
+    public ResponseEntity<Map<String, Object>> pyCompile(@RequestHeader("Authorization") String jwt,
                                                          @RequestBody Map<String, String> req) {
 
         if(req.containsKey("type") && req.containsKey("filePath") && req.containsKey("input")) {
             String type =  req.get("type");
             String filePath = req.get("filePath");
             String input = req.get("input");
-            Map<String, String> res = compileService.pyCompileService(type, filePath, input);
-            String result = res.get("result");
+            Map<String, Object> res = compileService.pyCompileService(type, filePath, input);
+            String result = (String) res.get("result");
             switch (result) {
                 case SUCCESS:
                     return new ResponseEntity<>(res, HttpStatus.OK);
@@ -50,7 +50,7 @@ public class CompileController {
                     return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }
         } else {
-            Map<String, String> res = new HashMap<>();
+            Map<String, Object> res = new HashMap<>();
             res.put("result", BAD_REQ);
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }

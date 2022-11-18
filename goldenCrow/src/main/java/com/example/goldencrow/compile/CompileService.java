@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static com.example.goldencrow.common.Constants.*;
@@ -30,6 +33,7 @@ public class CompileService {
      * @return 명령어 수행 성공 시 결과 문자열 반환, 성패에 따른 result 반환
      */
     public String resultString(String[] cmd) {
+        System.out.println("명령어 실행 !");
         try {
             StringBuffer sb = new StringBuffer();
             Process p = Runtime.getRuntime().exec(cmd);
@@ -44,8 +48,11 @@ public class CompileService {
             p.waitFor();
             in.close();
             p.destroy();
+            System.out.println(result);
             return result.trim();
         } catch (IOException | InterruptedException e) {
+            System.out.println("message : " + e.getMessage());
+            System.out.println("toString : " + e.toString());
             return e.toString();
         }
     }
@@ -127,8 +134,8 @@ public class CompileService {
      * @param input         pure python 파일일 때 input값
      * @return              컴파일 성공 시 컴파일 결과 반환, 성패에 따른 result 반환
      */
-    public Map<String, String> pyCompileService(String type, String filePath, String input) {
-        Map<String, String> serviceRes = new HashMap<>();
+    public Map<String, Object> pyCompileService(String type, String filePath, String input) {
+        Map<String, Object> serviceRes = new HashMap<>();
         int typeNum;
         // 타입 이상한 거 들어오면 리턴
         switch (type) {
@@ -148,31 +155,55 @@ public class CompileService {
                 serviceRes.put("result", WRONG);
                 return serviceRes;
         }
+        String[] pathList = filePath.split("/");
+        String teamSeq = pathList[0];
+        String teamName = pathList[1];
         // 절대경로 생성
-        String absolutePath = BASE_URL + filePath;
-        String[] pathList = absolutePath.split("/");
-        String teamName = pathList[5];
-        String teamSeq = pathList[4];
-        // 프로젝트명과 teamSeq로 docker container와 image 이름 생성
-        String conAndImgName = "crowstudio_" + teamName.toLowerCase() + "_" + teamSeq;
+        String absolutePath;
+        // pure Python일 경우 파일명까지, 프로젝트일 경우 프로젝트명까지 절대경로로 선언
+        if (typeNum == 1) {
+            absolutePath = BASE_URL + filePath;
+        } else {
+            absolutePath = BASE_URL + teamSeq + "/" + teamName;
+        }
+
         // 1 : pure python, 2 : django, 3 : flask, 4 : fastapi
         if (typeNum == 1) {
             String[] command;
-            // input이 없는 경우
+            // 에러가 발생할 경우 에러메세지를 저장할 파일 생성
+            File file = new File(BASE_URL + "outfile/" + teamSeq + ".txt");
+            String outfilePath = BASE_URL + "outfile/" + teamSeq + ".txt";
+            // input이 없는 경우와 있는 경우를 나누어 명령어 생성, '2>' : 해당 명령어 실행 후 나오는 메세지를 파일에 저장
             if (input.isEmpty()) {
-                command = new String[]{"python3", absolutePath};
+                command = new String[]{"python3", absolutePath, " 2> " + outfilePath};
             } else {
-                command = new String[]{"/bin/sh", "-c", "echo " + "\"" + input + "\" | python3 " + absolutePath};
+                command = new String[]{"/bin/sh", "-c", "echo " + "\"" + input + "\" | python3 " + absolutePath
+                        + " 2> " + outfilePath};
             }
             // 결과 문자열
-            String result = resultString(command);
+            System.out.println(Arrays.toString(command));
+            String response = resultString(command);
+            // 에러 메세지 파일에서 읽어오기
+            List<String> messageList = fileService.readFile(outfilePath);
+            String message = messageList.get(1);
+            String pathChangemessage = message;
+            if (message.contains(BASE_URL)) {
+                pathChangemessage = message.replaceAll(BASE_URL + teamSeq + "/", "");
+            }
+            Path path = Paths.get(outfilePath);
+            try {
+                Files.deleteIfExists(path);
+            } catch (IOException ioe) {
+                serviceRes.put("result", UNKNOWN);
+                return serviceRes;
+            }
             // 파일 경로가 틀린 경우
-            if (result.contains("Errno 2")) {
+            if (pathChangemessage.contains("Errno 2")) {
                 serviceRes.put("result", NO_SUCH);
-                serviceRes.put("response", result);
             } else {
                 serviceRes.put("result", SUCCESS);
-                serviceRes.put("response", result);
+                serviceRes.put("message", pathChangemessage);
+                serviceRes.put("response", response);
             }
             return serviceRes;
         }
@@ -185,6 +216,8 @@ public class CompileService {
                 return serviceRes;
             }
         }
+        // 프로젝트명과 teamSeq로 docker container와 image 이름 생성
+        String conAndImgName = "crowstudio_" + teamName.toLowerCase() + "_" + teamSeq;
         // 도커 이미지 빌드
         String[] image = {"docker", "build", "-t", conAndImgName, absolutePath + "/"};
         String imageBuild = resultString(image);
@@ -197,7 +230,7 @@ public class CompileService {
         String container = resultString(command);
         // 포트번호 가져오기
         String portString = portNum(container);
-        if (portString.isEmpty()) {
+        if (portString.equals(NO_SUCH)) {
             serviceRes.put("result", WRONG);
             return serviceRes;
         }
