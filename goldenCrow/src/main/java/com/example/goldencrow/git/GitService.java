@@ -107,8 +107,8 @@ public class GitService {
 
         // 팀 시퀀스 디렉토리 만들기
         String teamFolder = String.valueOf(teamSeq);
-        String newFilePath = projectService.createDir("/home/ubuntu/crow_data", teamFolder);
-        System.out.println(newFilePath);
+        String newFilePath = projectService.createDir(BASE_URL, teamFolder);
+        System.out.println("newFilePath : " +newFilePath);
         if (newFilePath.equals("2")) {
             serviceRes.put("result", WRONG);
             return serviceRes;
