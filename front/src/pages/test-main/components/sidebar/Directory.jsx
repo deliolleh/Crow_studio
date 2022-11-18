@@ -4,8 +4,6 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import TreeView from "@mui/lab/TreeView";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import TreeItem, { treeItemClasses } from "@mui/lab/TreeItem";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -13,9 +11,12 @@ import { styled as muiStyled } from "@mui/material/styles";
 import PropTypes from "prop-types";
 
 // icons
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import FolderIcon from "@mui/icons-material/Folder";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import DescriptionIcon from "@mui/icons-material/Description";
+import { IoLogoPython } from "react-icons/io5";
 
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
@@ -207,11 +208,15 @@ const Directory = (props) => {
   const StyledTreeItemRoot = muiStyled(TreeItem)(({ theme }) => ({
     color: theme.palette.text.secondary,
     [`& .${treeItemClasses.content}`]: {
-      color: theme.palette.text.secondary,
-      borderTopRightRadius: theme.spacing(2),
-      borderBottomRightRadius: theme.spacing(2),
+      color: "#BBBBBB",
+      borderTopRightRadius: theme.spacing(1),
+      borderBottomRightRadius: theme.spacing(1),
       paddingRight: theme.spacing(1),
+      borderTopLeftRadius: theme.spacing(1),
+      borderBottomLeftRadius: theme.spacing(1),
+      paddingLeft: theme.spacing(0),
       fontWeight: theme.typography.fontWeightMedium,
+
       "&.Mui-expanded": {
         fontWeight: theme.typography.fontWeightRegular,
       },
@@ -227,19 +232,21 @@ const Directory = (props) => {
       //   color: "var(--tree-view-color)",
       // },
       "&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused": {
-        backgroundColor: "#786f7b",
-        color: "white",
+        backgroundColor: "transparent",
+        color: "#D4A8E3",
+        fontWeight: "bold",
       },
       [`& .${treeItemClasses.label}`]: {
         fontWeight: "inherit",
         color: "inherit",
       },
+      [`& .${treeItemClasses.iconContainer}`]: {},
     },
     [`& .${treeItemClasses.group}`]: {
-      marginLeft: 0,
-      [`& .${treeItemClasses.content}`]: {
-        paddingLeft: theme.spacing(2),
-      },
+      // marginLeft: 0,
+      // [`& .${treeItemClasses.content}`]: {
+      //   paddingLeft: theme.spacing(2),
+      // },
     },
   }));
 
@@ -257,10 +264,19 @@ const Directory = (props) => {
       <StyledTreeItemRoot
         label={
           <Box sx={{ display: "flex", alignItems: "center", p: 0.5, pr: 0 }}>
-            <Box component={LabelIcon} color="inherit" sx={{ mr: 1 }} />
+            <Box
+              component={LabelIcon}
+              color="inherit"
+              sx={{ mr: 1, width: 20, height: "auto" }}
+            />
             <Typography
               variant="body2"
-              sx={{ fontWeight: "inherit", flexGrow: 1 }}
+              sx={{
+                fontWeight: "inherit",
+                flexGrow: 1,
+                fontSize: 14,
+                width: "100%",
+              }}
             >
               {labelText}
             </Typography>
@@ -289,12 +305,19 @@ const Directory = (props) => {
       key={nodes.id}
       nodeId={nodes.id}
       labelText={nodes.name}
-      labelIcon={nodes?.id?.includes(".") ? DescriptionIcon : FolderIcon}
-      color="#1a73e8"
-      bgColor="#e8f0fe"
+      labelIcon={
+        nodes?.id?.includes(".")
+          ? nodes?.id?.includes(".py")
+            ? IoLogoPython
+            : DescriptionIcon
+          : FolderIcon
+      }
+      // color="#1a73e8"
+      // bgColor="#e8f0fe"
       // onClick={treeItemClickHandler}
       onContextMenu={treeItemContextMenuHandler}
       collapseIcon={nodes?.id?.includes(".") ? null : <ExpandMoreIcon />}
+      expandIcon={nodes?.id?.includes(".") ? null : <ChevronRightIcon />}
     >
       {Array.isArray(nodes.children)
         ? nodes.children.map((node) => renderTree(node))
@@ -338,18 +361,17 @@ const Directory = (props) => {
           </div>
         </div>
 
-        <div className="text-xs" style={{ padding: 15 }}>
-          <hr
-            className="bg-component_dark border-0 m-0 absolute min-h-[3px]"
-            style={{ height: 3, width: 292, top: 140, left: 88 }}
-          />
+        {/* stroke */}
+        <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
 
+        <div className="text-xs" style={{ padding: 15 }}>
           {/* 디렉터리 파일, 폴더 모음 */}
           <TreeView
             aria-label="files and directories"
-            defaultCollapseIcon={<ExpandMoreIcon />}
+            // defaultCollapseIcon={<ExpandMoreIcon />}
             defaultExpanded={["root"]}
-            defaultExpandIcon={<ChevronRightIcon />}
+            // defaultExpandIcon={<ChevronRightIcon />}
+            defaultEndIcon={<div style={{ width: 24 }} />}
             sx={{ flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
             onNodeSelect={nodeSelectHandler}
           >
