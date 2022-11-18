@@ -149,8 +149,8 @@ public class VariableService {
      * @return naver Header을 생성해 RequestEntity<Void>로 반환
      */
     private RequestEntity<Void> naverHeaderService(URI uri) {
-        return RequestEntity.get(uri).header("X-Naver-Client-Id", CLIENT_ID)
-                .header("X-Naver-Client-Secret", CLIENT_PASS).build();
+        return RequestEntity.get(uri).header("X-Naver-Client-Id", "p3IEa7WNGODfNQkwb1z2")
+                .header("X-Naver-Client-Secret", "MSAQnEbctM").build();
     }
 
 //    public String googleApi(String word) {
