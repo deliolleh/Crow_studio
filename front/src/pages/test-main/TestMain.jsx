@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import styled from "styled-components";
@@ -35,6 +35,7 @@ const editorOptions = {
 const TestMain = () => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
+  const { projectType, teamGit } = useSelector((state) => state.team.value);
   const editorRef = useRef(null); // 에디터 내용
   const editorheightRef = useRef(); // 에디터 높이
   const [showComponent, setShowComponent] = useState("Dir");
@@ -44,7 +45,7 @@ const TestMain = () => {
 
   const [curPath, setCurPath] = useState(""); // 현재 선택한 폴더나 파일의 경로
   const [curName, setCurName] = useState(""); // 현재 선택한 폴더나 파일의 이름
-  const [curType, setCurType] = useState(""); // 현재 프로젝트의 타입 (파이썬, 장고, 플라스크, 패스트API)
+  // const [curType, setCurType] = useState(""); // 현재 프로젝트의 타입 (파이썬, 장고, 플라스크, 패스트API)
 
   // 콘솔 높이 초기값 세팅
   useEffect(() => {
@@ -68,11 +69,9 @@ const TestMain = () => {
   };
 
   useEffect(() => {
-    teamApi
-      .getTeam(teamSeq)
-      .then((res) => setCurType(res.data.projectType))
-      .catch(console.error);
-  }, []);
+    dispatch(getTeam(teamSeq)).unwrap().catch(console.error);
+    // .then((res) => setCurType(res.data.projectType))
+  }, [dispatch, teamSeq]);
 
   const showComponentHandler = (componentName) =>
     setShowComponent(componentName);
@@ -203,7 +202,6 @@ const TestMain = () => {
               />
               <ConsoleTerminal
                 curPath={curPath}
-                curType={curType}
                 consoleHeight={consoleHeight}
               />
             </SplitPane>
