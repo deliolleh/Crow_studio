@@ -82,6 +82,7 @@ public class GitService {
      * @return 성패에 따른 result 반환
      */
     public Map<String, String> gitCloneService(String url, Long teamSeq, String projectName) {
+        System.out.println("여기야 여기!");
         Map<String, String> serviceRes = new HashMap<>();
 
         // 팀시퀀스로 팀이 존재하는지 확인
