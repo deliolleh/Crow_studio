@@ -117,7 +117,6 @@ public class ProjectService {
      * 4 = fastapi
      */
     public String createProject(String path, Integer type, String projectName, Long teamSeq) {
-        out.println("여기서 터집니다! 여기");
         String teamFile = createDir(path, String.valueOf(teamSeq));
 
         if (teamFile.equals("2")) {
