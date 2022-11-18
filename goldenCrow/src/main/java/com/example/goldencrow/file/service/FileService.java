@@ -92,7 +92,7 @@ public class FileService {
         System.out.println("fileCreateDto : " + fileCreateDto.getFileTitle());
         System.out.println("fileCreateDto : " + fileCreateDto.getTeamSeq());
         fileRepository.insert(fileEntity);
-
+        fileRepository.save(fileEntity);
     }
 
     /** 파일 삭제  */
