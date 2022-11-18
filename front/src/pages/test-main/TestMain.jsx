@@ -50,7 +50,7 @@ const TestMain = () => {
     const tempSize2 = editorheightRef.current.pane2.clientHeight;
     setConsoleHeight(tempSize2);
     // console.log("consoleHeight: " + consoleHeight);
-  });
+  }, []);
 
   const checkSize = () => {
     // 에디터 높이 변경값 셋
