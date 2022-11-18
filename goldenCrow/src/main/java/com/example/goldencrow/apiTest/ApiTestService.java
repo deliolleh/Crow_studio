@@ -19,11 +19,16 @@ import java.util.Map;
 import static com.example.goldencrow.common.Constants.*;
 
 /**
- * api 응답테스트와 관련된 로직을 처리하는 서비스
+ * api 응답테스트와 관련된 로직을 처리하는 Service
  */
 @Service
 public class ApiTestService {
 
+    /**
+     * RestTemplate을 사용하기 위한 로직
+     *
+     * @return RestTemplateBuilder
+     */
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplateBuilder()
@@ -36,26 +41,12 @@ public class ApiTestService {
 
     /**
      * api 응답테스트를 수행하는 내부 로직
+     * ApiTestDto의 변수들을 이용해, RestTemaplate 통해 Api 통신을 하고 결과를 반환
+     *
      * @param apiTestDto "api", "type", "request", "header" key를 가진 Dto
      * @return api 응답 성공 시 응답 결과와 응답 시간 반환, 성패에 따른 result 반환
-     *
-     * Use variables in ApiTestDto, operating RestTemplate and return result.
-     * <br>
-     * ApiTestDto의 변수들을 이용해, RestTemaplate 통해 Api 통신을 하고 결과를 반환한다
-     * @param apiTestDto "api", "type", "request", "header" key를 가진 Dto
-     * @return If Success Communication, return HashMap with
-     * <br>
-     * data: result.get("body") / time: api response time
-     * <br>
-     * If failed, return HashMap with data: "ERROR"
-     * <br>
-     * API가 성공적으로 작동하면
-     * <br>
-     * data: API 결과물의 Body, time: API 통신시간으로 구성된 HashMap을 반환합니다
-     * <br>
-     * 실패하면, data: "ERROR"의 HashMap을 반환합니다
      */
-    public Map<String, Object> apiTest(ApiTestDto apiTestDto) {
+    public Map<String, Object> apiTestService(ApiTestDto apiTestDto) {
         Map<String, Object> serviceRes = new HashMap<>();
 
         String api = apiTestDto.getApi();
@@ -71,6 +62,7 @@ public class ApiTestService {
 
         // 해당 API에 요청할 request 생성
         HttpEntity<String> request = new HttpEntity<>(objRequest.toJSONString(), headers);
+
         // Request Type에 따라 API 요청
         try {
             Object response;
@@ -93,8 +85,8 @@ public class ApiTestService {
             // 응답시간 계산
             long diffTime = afterTime - beforeTime;
 
-            @SuppressWarnings("unchecked") HashMap<String, Object> body
-                    = new ObjectMapper().convertValue(response, HashMap.class);
+            @SuppressWarnings("unchecked") Map<String, Object> body
+                    = new ObjectMapper().convertValue(response, Map.class);
 
             serviceRes.put("data", body.get("body"));
             serviceRes.put("time", diffTime);
