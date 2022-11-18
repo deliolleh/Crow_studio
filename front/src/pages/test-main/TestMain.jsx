@@ -10,6 +10,7 @@ import { formatPut, formatGet } from "../../redux/editorSlice";
 import { compilePython } from "../../redux/compileSlice";
 import { getTeam } from "../../redux/teamSlice";
 
+import fileApi from "../../api/fileApi";
 import teamApi from "../../api/teamApi";
 
 import Header from "../../components/Header";
@@ -35,7 +36,7 @@ const editorOptions = {
 const TestMain = () => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
-  const { projectType, teamGit } = useSelector((state) => state.team.value);
+  const { teamGit } = useSelector((state) => state.team.value);
   const editorRef = useRef(null); // 에디터 내용
   const editorheightRef = useRef(); // 에디터 높이
   const [showComponent, setShowComponent] = useState("Dir");
@@ -45,7 +46,6 @@ const TestMain = () => {
 
   const [curPath, setCurPath] = useState(""); // 현재 선택한 폴더나 파일의 경로
   const [curName, setCurName] = useState(""); // 현재 선택한 폴더나 파일의 이름
-  // const [curType, setCurType] = useState(""); // 현재 프로젝트의 타입 (파이썬, 장고, 플라스크, 패스트API)
 
   // 콘솔 높이 초기값 세팅
   useEffect(() => {
@@ -70,7 +70,6 @@ const TestMain = () => {
 
   useEffect(() => {
     dispatch(getTeam(teamSeq)).unwrap().catch(console.error);
-    // .then((res) => setCurType(res.data.projectType))
   }, [dispatch, teamSeq]);
 
   const showComponentHandler = (componentName) =>
@@ -79,13 +78,10 @@ const TestMain = () => {
   // 파일 클릭하면 내용 보여주기
   const showFileContentHandler = (type, path) => {
     if (type !== "directory") {
-      const requireData = { filePath: path };
-      // 클릭한 파일 내용 가져옴
-      dispatch(getFileContent(requireData))
-        .unwrap()
-        .then((res) => {
-          editorRef.current.getModel().setValue(res);
-        })
+      const filePathData = { filePath: path };
+      fileApi
+        .getFileContent(filePathData)
+        .then((res) => editorRef.current.getModel().setValue(res.data))
         .catch(console.error);
     }
   };
@@ -124,15 +120,15 @@ const TestMain = () => {
                   })
                   .catch(console.error);
 
-                const requireData = {
-                  filePath: curPath,
-                };
-                dispatch(getFileContent(requireData))
-                  .unwrap()
-                  .then((res) => {
-                    editorRef.current.getModel().setValue(res);
-                  })
-                  .catch(console.error);
+                // const requireData = {
+                //   filePath: curPath,
+                // };
+                // dispatch(getFileContent(requireData))
+                //   .unwrap()
+                //   .then((res) => {
+                //     editorRef.current.getModel().setValue(res);
+                //   })
+                //   .catch(console.error);
               })
               .catch(console.error);
           })

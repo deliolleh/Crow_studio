@@ -12,6 +12,7 @@ const fileApi = {
   fileNameChange: (teamSeq, fileData) =>
     api.put(`/files/${teamSeq}/file-title`, fileData),
   fileCall: (fileData) => api.post("/files/files", fileData),
+  getFileContent: (filePathData) => api.post("/files/files", filePathData),
 };
 
 export default fileApi;

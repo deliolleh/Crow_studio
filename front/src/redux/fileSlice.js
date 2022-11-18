@@ -81,12 +81,6 @@ export const saveFileContent = createAsyncThunk(
   }
 );
 
-//
-
-//
-
-//
-
 export const fileSlice = createSlice({
   name: "file",
   initialState,
