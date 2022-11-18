@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import styled from "styled-components";
@@ -67,7 +67,7 @@ const TestMain = () => {
   };
 
   useEffect(() => {
-    dispatch(getTeam(teamSeq)).unwrap().catch(console.error);
+    dispatch(getTeam(teamSeq)).unwrap().then(console.log).catch(console.error);
   }, [dispatch, teamSeq]);
 
   const showComponentHandler = (componentName) =>

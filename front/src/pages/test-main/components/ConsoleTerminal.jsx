@@ -50,20 +50,24 @@ const ConsoleTerminal = (props) => {
 
   const changeInputData = (e) => setInputData(e.target.value);
 
-  const compileStart = () => {
-    console.log("compileStart curPath:", "67/wooyoungtak/wooyoungtak.py");
-    const body = {
+  const startCompileHandler = async () => {
+    const compileData = {
       type: projectType,
       filePath: curPath,
-      input: "",
+      input: inputData,
     };
-    compileApi
-      .compilePython(body)
-      .then((res) => {
-        console.log(res.data);
-        setOutputData(res.data.response);
-      })
-      .catch(console.error);
+    try {
+      const res = await compileApi.getCompileResult(compileData);
+      setOutputData(res.data.response);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const stopCompileHandler = async () => {
+    const teamData = {
+      teamName: "",
+    };
   };
 
   // const compileStop = () => {
@@ -102,7 +106,7 @@ const ConsoleTerminal = (props) => {
         <div className="flex items-center">
           {/* btns */}
           <BsPlayFill
-            onClick={compileStart}
+            onClick={startCompileHandler}
             className="mr-[10px] cursor-pointer"
             size="30"
           />
