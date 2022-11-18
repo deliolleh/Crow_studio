@@ -135,8 +135,9 @@ const SidebarContainer = styled.div`
   width: 73px;
   min-width: 73px;
   max-width: 73px;
-  height: calc(100vh - 80px);
+  height: 100%;
 `;
+// height: calc(100vh - 56.5px);
 // border-left: 4px solid #d4a8e3;
 const ListHover = styled.li`
   cursor: pointer;
@@ -144,7 +145,7 @@ const ListHover = styled.li`
   &:hover {
     margin: 0 5px 0 5px;
     border-radius: 10px;
-    background-color: #786F7B;
+    background-color: #786f7b;
     & svg {
       & path {
         fill: white;
@@ -154,7 +155,7 @@ const ListHover = styled.li`
   &.activeIcon {
     margin: 0 5px 0 5px;
     border-radius: 10px;
-    background-color: #786F7B;
+    background-color: #786f7b;
     & svg {
       & path {
         fill: white;

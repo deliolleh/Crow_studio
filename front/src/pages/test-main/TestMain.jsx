@@ -31,27 +31,39 @@ const editorOptions = {
 const TestMain = () => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
-  const editorRef = useRef(null);
+  const editorRef = useRef(null); // 에디터 내용
+  const editorheightRef = useRef(); // 에디터 높이
   const [showComponent, setShowComponent] = useState("Dir");
   const [showItem, setShowItem] = useState("Dir");
   const [curFilePath, setCurFilePath] = useState("");
-  const classwatcher = document.querySelector("activeIcon")
 
-  // 사이드바 아이템 유무로 넓이 파악
-  const [ sidebarItemShow, setSidebarItemShow ] = useState(true);
-  useEffect(() => {
-    if (classwatcher) {
-      setSidebarItemShow(true);
-      console.log("sidebarItemShow: " + sidebarItemShow)
-    } else {
-      setSidebarItemShow(false);
-      console.log("sidebarItemShow: " + sidebarItemShow)
-    }
-  }, [classwatcher]);
+  const [editorHeight, setEditorHeight] = useState();
+  const [consoleHeight, setConsoleHeight] = useState("");
 
   const [curPath, setCurPath] = useState("");
   const [curName, setCurName] = useState("");
   const [curType, setCurType] = useState("");
+
+  useEffect(() => {
+    // 콘솔 높이 초기값 세팅
+    const tempSize2 = editorheightRef.current.pane2.clientHeight;
+    setConsoleHeight(tempSize2);
+    console.log("consoleHeight: " + consoleHeight);
+  });
+
+  const checkSize = () => {
+    // 에디터 높이 변경값 셋
+    const tempSize = editorheightRef.current.state.pane1Size;
+    setEditorHeight(tempSize);
+    console.log(
+      "editorheightRef.current.state.pane1Size: ",
+      editorheightRef.current.state.pane1Size
+    );
+    // 콘솔 높이 변경값 셋
+    const tempSize2 = editorheightRef.current.pane2.clientHeight;
+    setConsoleHeight(tempSize2);
+    console.log("consoleHeight: " + consoleHeight);
+  };
 
   useEffect(() => {
     dispatch(getTeam(teamSeq))
@@ -66,7 +78,7 @@ const TestMain = () => {
   const showComponentHandler = (componentName) =>
     setShowComponent(componentName);
 
-    const showItemHandler = (item) => setShowItem(item);
+  const showItemHandler = (item) => setShowItem(item);
 
   // 파일 클릭하면 내용 보여주기
   const showFileContentHandler = (type, path) => {
@@ -137,9 +149,9 @@ const TestMain = () => {
 
   return (
     <React.Fragment>
-      <div className="h-screen w-screen">
+      <div className="h-full w-full">
         <Header />
-        <div className="flex">
+        <div className="flex w-full" style={{ height: "calc(100% - 80px)" }}>
           <div className="flex">
             <Sidebar clickIcon={showItemHandler} showItem={showItem} />
             {showItem && (
@@ -159,9 +171,11 @@ const TestMain = () => {
             )}
           </div>
           <div
-            className="flex flex-col mx-[8px]"
-            style={ 
-              sidebarItemShow === false ? { width: "calc(100vw - 400px)" } : { width: "calc(100vw - 108px)" }
+            className="flex flex-col ml-[8px] mr-3 h-full"
+            style={
+              showItem === ""
+                ? { width: "calc(100vw - 105px)" }
+                : { width: "calc(100vw - 400px)" }
             }
           >
             <SplitPane
@@ -170,12 +184,14 @@ const TestMain = () => {
               minSize={31}
               defaultSize="64%"
               className="vertical Pane1"
+              ref={editorheightRef}
+              onDragFinished={checkSize}
             >
               <Editor
-                style={{ 
+                style={{
                   overflow: "auto",
                 }}
-                height="calc(70vh - 80px)"
+                height={editorHeight}
                 theme="vs-dark"
                 defaultLanguage="python"
                 onMount={(editor) => {
@@ -183,7 +199,6 @@ const TestMain = () => {
                 }}
                 options={editorOptions}
               />
-
               <ConsoleTerminal curPath={curPath} curType={curType} />
             </SplitPane>
           </div>
@@ -198,6 +213,6 @@ export default TestMain;
 const SidebarItems = styled.div`
   width: 292px;
   min-width: 0px;
-  height: calc(100vh -80px);
+  height: 100%;
   margin-left: 3px;
 `;
