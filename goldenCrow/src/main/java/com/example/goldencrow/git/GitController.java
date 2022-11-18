@@ -37,16 +37,15 @@ public class GitController {
 
     /**
      * Git Clone API
+     * access token 필요
      *
-     * @param jwt     회원가입 및 로그인 시 발급되는 access token
      * @param teamSeq 해당 프로젝트의 팀 sequence
      * @param req     "projectName", "gitUrl"를 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
     @PostMapping("/{teamSeq}")
-    public ResponseEntity<Map<String, String>> gitClonePost(@RequestHeader("Authorization") String jwt,
-                                                            @PathVariable Long teamSeq,
+    public ResponseEntity<Map<String, String>> gitClonePost(@PathVariable Long teamSeq,
                                                             @RequestBody Map<String, String> req) {
         if (req.containsKey("projectName") && req.containsKey("gitUrl")) {
             String projectName = req.get("projectName");
@@ -72,16 +71,15 @@ public class GitController {
 
     /**
      * Git Switch API
+     * access token 필요
      *
-     * @param jwt  회원가입 및 로그인 시 발급되는 access token
      * @param type switch할 branch의 종류 (1 : 존재하는 브랜치로 이동, 2 : 브랜치를 새로 생성 후 이동)
      * @param req  "gitPath", "branchName"를 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
-     * @status 200, 401, 404
+     * @status 200, 400, 401, 404
      */
     @PostMapping("/git-switch")
-    public ResponseEntity<Map<String, String>> gitSwitchPost(@RequestHeader("Authorization") String jwt,
-                                                             @RequestParam Integer type,
+    public ResponseEntity<Map<String, String>> gitSwitchPost(@RequestParam Integer type,
                                                              @RequestBody Map<String, String> req) {
         if (req.containsKey("gitPath") && req.containsKey("branchName")) {
             String gitPath = req.get("gitPath");
@@ -105,15 +103,14 @@ public class GitController {
 
     /**
      * Git Commit API
+     * access token 필요
      *
-     * @param jwt 회원가입 및 로그인 시 발급되는 access token
      * @param req "message", "gitPath", "filePath"를 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
-     * @status 200, 401, 404
+     * @status 200, 400, 401, 404
      */
     @PostMapping("/git-commit")
-    public ResponseEntity<Map<String, String>> gitCommitPost(@RequestHeader("Authorization") String jwt,
-                                                             @RequestBody Map<String, String> req) {
+    public ResponseEntity<Map<String, String>> gitCommitPost(@RequestBody Map<String, String> req) {
         if (req.containsKey("message") && req.containsKey("gitPath") && req.containsKey("filePath")) {
             String message = req.get("message");
             String gitPath = req.get("gitPath");
@@ -137,16 +134,15 @@ public class GitController {
 
     /**
      * Git Push API
+     * access token 필요
      *
-     * @param jwt     회원가입 및 로그인 시 발급되는 access token
      * @param userSeq push하는 사용자의 Sequence
      * @param req     "message", "gitPath", "filePath", "branchName"을 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
     @PostMapping("/{userSeq}/git-push")
-    public ResponseEntity<Map<String, String>> gitPushPost(@RequestHeader("Authorization") String jwt,
-                                                           @PathVariable Long userSeq,
+    public ResponseEntity<Map<String, String>> gitPushPost(@PathVariable Long userSeq,
                                                            @RequestBody HashMap<String, String> req) {
         if (req.containsKey("message") && req.containsKey("gitPath")
                 && req.containsKey("filePath") && req.containsKey("branchName")) {
@@ -173,16 +169,15 @@ public class GitController {
 
     /**
      * Git branch 목록을 조회하는 API
+     * access token 필요
      *
-     * @param jwt  회원가입 및 로그인 시 발급되는 access token
      * @param type 조회하려는 브랜치의 종류 (1 : local branch, 2 : remote branch)
      * @param req  "gitPath"를 key로 가지는 Map<String, String>
      * @return branch 목록을 List<String>으로 반환, 없으면 null
      * @status 200, 400, 401
      */
     @PostMapping("/branches")
-    public ResponseEntity<List<String>> getBranchPost(@RequestHeader("Authorization") String jwt,
-                                                      @RequestParam Integer type,
+    public ResponseEntity<List<String>> getBranchPost(@RequestParam Integer type,
                                                       @RequestBody HashMap<String, String> req) {
         if (req.containsKey("gitPath")) {
             String gitPath = req.get("gitPath");
@@ -197,15 +192,16 @@ public class GitController {
     }
 
     /**
-     * @param jwt     회원가입 및 로그인 시 발급되는 access token
+     * Git Pull API
+     * access token 필요
+     *
      * @param userSeq pull하는 사용자의 Sequence
      * @param req     "gitPath", "branchName"를 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
     @PostMapping("/{userSeq}/git-pull")
-    public ResponseEntity<Map<String, String>> gitPullPost(@RequestHeader("Authorization") String jwt,
-                                                           @PathVariable Long userSeq,
+    public ResponseEntity<Map<String, String>> gitPullPost(@PathVariable Long userSeq,
                                                            @RequestBody Map<String, String> req) {
         if (req.containsKey("gitPath") && req.containsKey("branchName")) {
             String gitPath = req.get("gitPath");
