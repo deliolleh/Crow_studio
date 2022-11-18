@@ -82,7 +82,9 @@ public class GitService {
      * @return 성패에 따른 result 반환
      */
     public Map<String, String> gitCloneService(String url, Long teamSeq, String projectName) {
-        System.out.println("여기야 여기!");
+        System.out.println(url);
+        System.out.println(teamSeq);
+        System.out.println(projectName);
         Map<String, String> serviceRes = new HashMap<>();
 
         // 팀시퀀스로 팀이 존재하는지 확인
@@ -106,7 +108,7 @@ public class GitService {
         // 팀 시퀀스 디렉토리 만들기
         String teamFolder = String.valueOf(teamSeq);
         String newFilePath = projectService.createDir("/home/ubuntu/crow_data", teamFolder);
-
+        System.out.println(newFilePath);
         if (newFilePath.equals("2")) {
             serviceRes.put("result", WRONG);
             return serviceRes;
