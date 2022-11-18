@@ -1,9 +1,10 @@
 package com.example.goldencrow.file.service;
 
 
+import com.example.goldencrow.file.FileEntity;
 import com.example.goldencrow.file.FileRepository;
 
-import com.example.goldencrow.team.repository.TeamRepository;
+import com.example.goldencrow.file.dto.FileCreateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -19,7 +20,14 @@ import static java.lang.System.out;
 @Service
 public class ProjectService {
 
-    private FileService fileService;
+    private final FileService fileService;
+    @Autowired
+    private final FileRepository fileRepository;
+
+    public ProjectService(FileService fileService, FileRepository fileRepository) {
+        this.fileService = fileService;
+        this.fileRepository = fileRepository;
+    }
 
     /**
      * 디렉토리 만들어주기
@@ -29,7 +37,7 @@ public class ProjectService {
      * @return Dir or "2"
      */
     public String createDir(String path, String name) {
-        String pjt = path + "/" + name;
+        String pjt = path + name;
         File pjtDir = new File(pjt);
         if (pjtDir.mkdir()) {
             return pjt;
@@ -38,21 +46,6 @@ public class ProjectService {
         return "2";
     }
 
-    /**
-     * 파일 DB에 저장하는 함수
-     * @param fileCreateDto
-     * @param team
-     * @return Boolean
-     */
-//    public boolean saveFileEntity(FileCreateDto fileCreateDto, TeamEntity team) {
-//        FileEntity fileEntity = new FileEntity(fileCreateDto,team);
-//        fileRepository.saveAndFlush(fileEntity);
-//        System.out.println(fileCreateDto.getFilePath()+fileCreateDto.getFileTitle());
-//
-//        System.out.println("파일 저장 제대로 됨!!");
-//
-//        return true;
-//    }
 
     /**
      * 파일 경로를 모두 찾아서 HashMap으로 반환해주는 함수
@@ -63,7 +56,8 @@ public class ProjectService {
      * @return
      */
     public Map<Object, Object> readDirectory(String rootPath, String rootName, Map<Object, Object> visit) {
-        File file = new File(rootPath);
+        String path = BASE_URL + rootPath;
+        File file = new File(path);
         visit.put("id", rootPath);
         visit.put("name", rootName);
         if (file.isDirectory()) {
@@ -74,10 +68,14 @@ public class ProjectService {
                 File dir = files[i];
                 String name = names[i];
                 String thisPath = dir.getPath();
+                thisPath = thisPath.replace(BASE_URL, "");
                 Map<Object, Object> children = new HashMap<>();
                 child.add(readDirectory(thisPath, name, children));
             }
             visit.put("children", child);
+            visit.put("type","folder");
+        } else {
+            visit.put("type", "file");
         }
 
         return visit;
@@ -86,34 +84,27 @@ public class ProjectService {
 
     /**
      * 모든 경로를 재귀적으로 찾고, db에 저장
+     *
      * @param path
      * @param teamSeq
      */
-//    public void saveFilesInDIr(String path, Long teamSeq) {
-//        File file = new File(path);
-//        File files[] = file.listFiles();
-//        Optional<TeamEntity> team = teamRepository.findByTeamSeq(teamSeq);
-//
-//        TeamEntity thisTeam = team.get();
-//
-//        String names[] = file.list();
-//        out.println("여기는 와요! 여긴!");
-//        out.println(path + "여기는 저장 아아 여긴 저장");
-//
-//        for (int i = 0; i < files.length; i++) {
-//            File dir = files[i];
-//            String name = names[i];
-//            String thisPath = dir.getPath();
-//            FileCreateDto newFileCreateDto = new FileCreateDto(name,thisPath);
-//            out.println(thisPath + name);
-//            Boolean check = saveFileEntity(newFileCreateDto,thisTeam);
-//            out.println("저장 결과!"+check);
-//
-//            if (dir.isDirectory()) {
-//                saveFilesInDIr(thisPath,teamSeq);
-//            }
-//        }
-//    }
+    public void saveFilesInDIr(String path, Long teamSeq) {
+        File file = new File(path);
+        FileCreateDto newFileCreateDto = new FileCreateDto(file.getName(), file.getPath(), teamSeq);
+        fileService.insertFile(newFileCreateDto);
+
+        File[] files = file.listFiles();
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                File dir = files[i];
+                String thisPath = dir.getPath();
+
+                if (dir.isDirectory()) {
+                    saveFilesInDIr(thisPath, teamSeq);
+                }
+            }
+        }
+    }
 
 
     /**
@@ -128,7 +119,7 @@ public class ProjectService {
         String teamFile = createDir(path, String.valueOf(teamSeq));
 
         if (teamFile.equals("2")) {
-            return "이미 폴더가 존재합니다";
+            return DUPLICATE;
         }
 
         String fileTitle = projectName;
@@ -153,22 +144,27 @@ public class ProjectService {
             String newPath = teamFile + "/" + fileTitle + "/" + fileTitle + "/" + "settings.py";
             String change = changeSetting(newPath);
 
-//            saveFilesInDIr(path,teamSeq);
-            return "1";
+            if (!change.equals("1")) {
+                return "호스트 세팅에 실패했습니다.";
+            }
+
+            String pjtPath = teamFile + "/" + fileTitle;
+            saveFilesInDIr(pjtPath, teamSeq);
+            return SUCCESS;
         } else if (type == 1) {
             String pjt = createDir(teamFile, fileTitle);
             if (pjt.equals("2")) {
-//                saveFilesInDIr(path,teamSeq);
-                return "이미 폴더가 존재합니다";
+                return DUPLICATE;
             }
 
             File file = new File(pjt + "/" + fileTitle + ".py");
             try {
                 if (file.createNewFile()) {
-//                    saveFilesInDIr(path,teamSeq);
-                    return "1";
+                    String pjtPath = pjt + "/" + fileTitle;
+                    saveFilesInDIr(pjtPath, teamSeq);
+                    return SUCCESS;
                 } else {
-                    return "이미 파일이 존재합니다";
+                    return DUPLICATE;
                 }
             } catch (IOException e) {
                 return e.getMessage();
@@ -176,36 +172,38 @@ public class ProjectService {
         } else if (type == 3) {
             String pjt = createDir(teamFile, fileTitle);
             if (pjt.equals("2")) {
-                return "이미 폴더가 존재합니다";
+                return DUPLICATE;
             }
             File file = new File(pjt + "/main.py");
 
-            String content = "from flask import Flask\n\napp=Flask(__name__)\n\n@app.route(\"/\")\ndef hello_world():\n\treturn \"<p>Hello, World</p>\" \n\nif __name__ == \"__main__\" :\n\tapp.run(\"0.0.0.0\")";
+            String content = "from flask import Flask\nimport sys\nsys.path.append('/prod/app')\n\napp=Flask(__name__)\n\n@app.route(\"/\")\ndef hello_world():\n\treturn \"<p>Hello, World</p>\" \n\nif __name__ == \"__main__\" :\n\tapp.run(\"0.0.0.0\")";
 
             try (FileWriter overWriteFile = new FileWriter(file, false);) {
                 overWriteFile.write(content);
             } catch (IOException e) {
                 return e.getMessage();
             }
-//            saveFilesInDIr(path,teamSeq);
-            return "1";
+            String pjtPath = pjt + "/" + fileTitle;
+            saveFilesInDIr(pjtPath, teamSeq);
+            return SUCCESS;
         } else if (type == 4) {
             String pjt = createDir(teamFile, fileTitle);
             if (pjt.equals("2")) {
-                return "이미 폴더가 존재합니다";
+                return DUPLICATE;
             }
             String pjt1 = createDir(pjt, fileTitle);
             File file = new File(pjt1 + "/main.py");
-            String content = "from fastapi import FastAPI\n\napp=FastAPI()\n\n@app.get(\"/\")\nasync def root():\n\treturn {\"message\" : \"Hello, World\"}";
+            String content = "from fastapi import FastAPI\nimport sys\nsys.path.append('/prod/app')\n\napp=FastAPI()\n\n@app.get(\"/\")\nasync def root():\n\treturn {\"message\" : \"Hello, World\"}";
             try (FileWriter overWriteFile = new FileWriter(file, false);) {
                 overWriteFile.write(content);
             } catch (IOException e) {
                 return e.getMessage();
             }
-//            saveFilesInDIr(path,teamSeq);
-            return "1";
+            String pjtPath = pjt + "/" + fileTitle;
+            saveFilesInDIr(pjtPath, teamSeq);
+            return SUCCESS;
         }
-        return "프로젝트 생성에 실패했습니다";
+        return UNKNOWN;
     }
 
     /**
@@ -219,9 +217,7 @@ public class ProjectService {
         Map<String, String> serviceRes = new HashMap<>();
 
         try {
-
             ProcessBuilder deleter = new ProcessBuilder();
-
             for (Long seq : teamSeqList) {
                 deleter.command("rm", "-r", String.valueOf(seq));
                 deleter.directory(new File(BASE_URL));
@@ -231,23 +227,33 @@ public class ProjectService {
                 } catch (IOException e) {
                     throw e;
                 }
-
+                pjtFileDelete(seq);
             }
-
             // 위의 과정을 무사히 통과했으므로
             serviceRes.put("result", SUCCESS);
 
         } catch (Exception e) {
             serviceRes.put("result", UNKNOWN);
-
         }
 
         return serviceRes;
-
     }
 
-    public String saveProject() {
-        return "true";
+    /**
+     * 해당 시퀀스에 해당하는 DB의 데이터를 모두 삭제
+     *
+     * @param teamSeq
+     */
+    public void pjtFileDelete(Long teamSeq) {
+        Optional<List<FileEntity>> files = fileRepository.findAllByTeamSeq(teamSeq);
+        if (!files.isPresent()) {
+            throw new NullPointerException();
+        }
+
+        List<FileEntity> deleteFile = files.get();
+
+        fileRepository.deleteAll(deleteFile);
+
     }
 
 

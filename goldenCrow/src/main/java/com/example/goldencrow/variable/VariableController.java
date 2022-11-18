@@ -10,7 +10,7 @@ import java.util.Map;
 import static com.example.goldencrow.common.Constants.*;
 
 /**
- * 변수명을 추천하는 컨트롤러
+ * 변수명을 추천하는 Controller
  *
  * @url /api/variable
  */
@@ -21,6 +21,11 @@ public class VariableController {
 
     public VariableService variableService;
 
+    /**
+     * VariableController 생성자
+     *
+     * @param variableService 변수명 관련 로직을 처리하는 Service
+     */
     public VariableController(VariableService variableService) {
         this.variableService = variableService;
     }
@@ -32,13 +37,12 @@ public class VariableController {
      * @param req "data"를 key로 가지는 Map<String, String>
      * @return 추천하는 변수명 리스트 (camelCase, PascalCase, snake_case) 반환, 성패에 따른 result 반환
      * @status 200, 400, 401, 404
-     *
-     * */
+     */
     @PostMapping("")
-    public ResponseEntity<Map<String, Object>> variableRecommend(@RequestBody HashMap<String, String> req) {
+    public ResponseEntity<Map<String, Object>> variableRecommendPost(@RequestBody Map<String, String> req) {
         if (req.containsKey("data")) {
             String data = req.get("data");
-            Map<String, Object> res = variableService.variableRecommend(data);
+            Map<String, Object> res = variableService.variableRecommendService(data);
             String result = (String) res.get("result");
             if (result.equals(SUCCESS)) {
                 return new ResponseEntity<>(res, HttpStatus.OK);
