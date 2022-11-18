@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import styled from "styled-components";
@@ -35,17 +35,17 @@ const editorOptions = {
 const TestMain = () => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
+  const { projectType, teamGit } = useSelector((state) => state.team.value);
   const editorRef = useRef(null); // 에디터 내용
   const editorheightRef = useRef(); // 에디터 높이
   const [showComponent, setShowComponent] = useState("Dir");
-  const [showItem, setShowItem] = useState("Dir");
 
   const [editorHeight, setEditorHeight] = useState();
   const [consoleHeight, setConsoleHeight] = useState("");
 
-  const [curPath, setCurPath] = useState("");
-  const [curName, setCurName] = useState("");
-  const [curType, setCurType] = useState("");
+  const [curPath, setCurPath] = useState(""); // 현재 선택한 폴더나 파일의 경로
+  const [curName, setCurName] = useState(""); // 현재 선택한 폴더나 파일의 이름
+  // const [curType, setCurType] = useState(""); // 현재 프로젝트의 타입 (파이썬, 장고, 플라스크, 패스트API)
 
   // 콘솔 높이 초기값 세팅
   useEffect(() => {
@@ -69,23 +69,17 @@ const TestMain = () => {
   };
 
   useEffect(() => {
-    teamApi
-      .getTeam(teamSeq)
-      .then((res) => setCurType(res.data.projectType))
-      .catch(console.error);
-  }, []);
+    dispatch(getTeam(teamSeq)).unwrap().catch(console.error);
+    // .then((res) => setCurType(res.data.projectType))
+  }, [dispatch, teamSeq]);
 
   const showComponentHandler = (componentName) =>
     setShowComponent(componentName);
 
-  const showItemHandler = (item) => setShowItem(item);
-
   // 파일 클릭하면 내용 보여주기
   const showFileContentHandler = (type, path) => {
     if (type !== "directory") {
-      const requireData = {
-        filePath: path,
-      };
+      const requireData = { filePath: path };
       // 클릭한 파일 내용 가져옴
       dispatch(getFileContent(requireData))
         .unwrap()
@@ -153,10 +147,13 @@ const TestMain = () => {
         <Header />
         <div className="flex w-full" style={{ height: "calc(100% - 80px)" }}>
           <div className="flex">
-            <Sidebar clickIcon={showItemHandler} showItem={showItem} />
-            {showItem && (
+            <Sidebar
+              clickIcon={showComponentHandler}
+              showComponent={showComponent}
+            />
+            {showComponent && (
               <SidebarItems>
-                {showItem === "Dir" && (
+                {showComponent === "Dir" && (
                   <Directory
                     showFileContent={showFileContentHandler}
                     saveFileContent={saveFileContentHandler}
@@ -166,18 +163,18 @@ const TestMain = () => {
                     setCurName={setCurName}
                   />
                 )}
-                {showItem === "Git" && <Git />}
-                {showItem === "Team" && <Team />}
-                {showItem === "Api" && <Api />}
-                {showItem === "Var" && <VariableName />}
-                {showItem === "Set" && <Settings />}
+                {showComponent === "Git" && <Git />}
+                {showComponent === "Team" && <Team />}
+                {showComponent === "Api" && <Api />}
+                {showComponent === "Var" && <VariableName />}
+                {showComponent === "Set" && <Settings />}
               </SidebarItems>
             )}
           </div>
           <div
             className="flex flex-col ml-[8px] mr-3 h-full"
             style={
-              showItem === ""
+              showComponent === ""
                 ? { width: "calc(100vw - 105px)" }
                 : { width: "calc(100vw - 400px)" }
             }
@@ -205,7 +202,6 @@ const TestMain = () => {
               />
               <ConsoleTerminal
                 curPath={curPath}
-                curType={curType}
                 consoleHeight={consoleHeight}
               />
             </SplitPane>

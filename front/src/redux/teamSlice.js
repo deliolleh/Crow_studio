@@ -3,7 +3,11 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import teamApi from "../api/teamApi";
 
 const initialState = {
-  value: {},
+  value: {
+    teamSeq: "",
+    projectType: "",
+    teamGit: "",
+  },
 };
 
 export const getTeams = createAsyncThunk(
@@ -174,16 +178,18 @@ export const modifyProjectType = createAsyncThunk(
   }
 );
 
-//
-
-//
-
-//
-
 export const teamSlice = createSlice({
   name: "team",
   initialState,
   reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(getTeam.fulfilled, (state, action) => {
+      const { teamSeq, projectType, teamGit } = action.payload;
+      state.value.teamSeq = teamSeq;
+      state.value.projectType = projectType;
+      state.value.teamGit = teamGit;
+    });
+  },
 });
 
 export default teamSlice.reducer;

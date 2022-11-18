@@ -9,35 +9,37 @@ import { ReactComponent as IcApi } from "../../../../assets/icons/ic_api.svg";
 import { ReactComponent as IcVar } from "../../../../assets/icons/ic_var.svg";
 import { ReactComponent as IcSettings } from "../../../../assets/icons/ic_set.svg";
 
-const Sidebar = ({ clickIcon, showItem }) => {
+const Sidebar = ({ clickIcon, showComponent }) => {
   const classRef = useRef(null);
-  const activeIconDir = showItem === "Dir" ? " activeIcon" : "";
-  const activeIconGit = showItem === "Git" ? " activeIcon" : "";
-  const activeIconTeam = showItem === "Team" ? " activeIcon" : "";
-  const activeIconApi = showItem === "Api" ? " activeIcon" : "";
-  const activeIconVar = showItem === "Var" ? " activeIcon" : "";
-  const activeIconSet = showItem === "Set" ? " activeIcon" : "";
+  const activeIconDir = showComponent === "Dir" ? " activeIcon" : "";
+  const activeIconGit = showComponent === "Git" ? " activeIcon" : "";
+  const activeIconTeam = showComponent === "Team" ? " activeIcon" : "";
+  const activeIconApi = showComponent === "Api" ? " activeIcon" : "";
+  const activeIconVar = showComponent === "Var" ? " activeIcon" : "";
+  const activeIconSet = showComponent === "Set" ? " activeIcon" : "";
 
   const clickHandler = (clickedName) => {
     const isActive = classRef.current.classList.contains("activeIcon");
     switch (clickedName) {
       case "Dir":
-        isActive || showItem === "Dir" ? clickIcon("") : clickIcon("Dir");
+        isActive || showComponent === "Dir" ? clickIcon("") : clickIcon("Dir");
         break;
       case "Git":
-        isActive || showItem === "Git" ? clickIcon("") : clickIcon("Git");
+        isActive || showComponent === "Git" ? clickIcon("") : clickIcon("Git");
         break;
       case "Team":
-        isActive || showItem === "Team" ? clickIcon("") : clickIcon("Team");
+        isActive || showComponent === "Team"
+          ? clickIcon("")
+          : clickIcon("Team");
         break;
       case "Api":
-        isActive || showItem === "Api" ? clickIcon("") : clickIcon("Api");
+        isActive || showComponent === "Api" ? clickIcon("") : clickIcon("Api");
         break;
       case "Var":
-        isActive || showItem === "Var" ? clickIcon("") : clickIcon("Var");
+        isActive || showComponent === "Var" ? clickIcon("") : clickIcon("Var");
         break;
       case "Set":
-        isActive || showItem === "Set" ? clickIcon("") : clickIcon("Set");
+        isActive || showComponent === "Set" ? clickIcon("") : clickIcon("Set");
         break;
       default:
         break;
@@ -49,7 +51,7 @@ const Sidebar = ({ clickIcon, showItem }) => {
       <SidebarContainer
         className="ml-3 mb-3 bg-component_item_bg_dark"
         style={
-          showItem === ""
+          showComponent === ""
             ? { borderRadius: "10px" }
             : { borderRadius: "10px 0 0 10px" }
         }

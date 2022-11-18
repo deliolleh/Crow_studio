@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
+
 import editorApi from "../../../api/editorApi";
 import compileApi from "../../../api/compileApi";
 
@@ -40,17 +42,18 @@ export const MakeEditorData = (
 };
 
 const ConsoleTerminal = (props) => {
+  const { projectType } = useSelector((state) => state.team.value);
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
 
-  const { curPath, curType, consoleHeight } = props;
+  const { curPath, consoleHeight } = props;
 
   const changeInputData = (e) => setInputData(e.target.value);
 
   const compileStart = () => {
     console.log("compileStart curPath:", "67/wooyoungtak/wooyoungtak.py");
     const body = {
-      type: curType,
+      type: projectType,
       filePath: curPath,
       input: "",
     };
