@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -15,7 +14,7 @@ import static com.example.goldencrow.common.Constants.*;
  * 코드의 스타일(포맷팅), 문법검사(린트)를 처리하는 서비스
  */
 @Service
-public class EditorsService {
+public class EditorService {
     public static final String PATH = BASE_URL + "temp/";
 
     /**
