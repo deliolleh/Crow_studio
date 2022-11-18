@@ -13,8 +13,8 @@ const ApiContainer = styled.div`
 const Api = () => {
   const [uri, setUri] = useState("");
   const [method, setMethod] = useState("");
-  const [request, setRequest] = useState("");
-  const [header, setHeader] = useState("");
+  const [request, setRequest] = useState({});
+  const [header, setHeader] = useState({});
   const [resultActive, setResultActive] = useState(false);
   const [time, setTime] = useState("");
   const [result, setResult] = useState("");
@@ -32,44 +32,47 @@ const Api = () => {
   };
 
   const update = (which, e) => {
-    let jsonVariable = {};
-    let value = e.target.value;
-    value = value.trim().slice(1, -1);
-    const valLIst = value.split(",");
-    valLIst.forEach((li) => {
-      const cut = li.trim();
-      const temp = cut.split(":");
-      const key = temp[0];
-      const value = temp[1];
-      jsonVariable[key] = value;
-    });
+    let jsonVariable = e.target.value;
+    // let jsonVariable = {};
+    // let value = e.target.value;
+    // value = value.trim().slice(1, -1);
+    // const valLIst = value.split(",").trim();
+    // valLIst.forEach((li) => {
+    //   const cut = li.trim();
+    //   const temp = cut.split(":");
+    //   const key = temp[0];
+    //   const value = temp[1];
+    //   jsonVariable[key] = value;
+    // });
+    console.log(jsonVariable);
     if (which === "request") {
       setRequest(() => jsonVariable);
     } else {
-      if (!Object.keys(jsonVariable).includes("Content-Type")) {
-        jsonVariable["Content-Type"] = "application/json";
-      }
+      // if (!Object.keys(jsonVariable).includes("Content-Type")) {
+      //   jsonVariable["Content-Type"] = "application/json";
+      // }
       setHeader(() => jsonVariable);
     }
-    console.log(request);
-    console.log(header);
   };
 
   const sendApi = () => {
+    const jsonRequest = JSON.parse(request);
+    const jsonHeader = JSON.parse(header);
+    if (jsonHeader["Content-Type"] === undefined) {
+      jsonHeader["Content-Type"] = "application/json";
+    }
     const body = {
       api: uri,
       type: method,
-      request: request,
-      header: header,
+      request: jsonRequest,
+      header: jsonHeader,
     };
-    // console.log(JSON.stringify(body));
+    console.log(body);
     editorApi
       .apiRequest(body)
       .then((res) => {
-        console.log("type", res.data.data, typeof res.data.data);
         setResultActive(() => true);
         setResult(() => JSON.stringify(res.data.data, null, 4));
-        console.log(result);
         setTime(() => res.data.time);
       })
       .catch((err) => console.error(err));
