@@ -281,8 +281,6 @@ const Directory = (props) => {
   // const treeItemClickHandler = (e) => console.log(e);
   const treeItemContextMenuHandler = (e) => {
     e.preventDefault();
-    alert("yaho");
-    console.log(e);
   };
 
   // 트리 생성 with 스타일
