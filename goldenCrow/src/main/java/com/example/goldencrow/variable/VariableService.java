@@ -123,7 +123,7 @@ public class VariableService {
                 .path("/v1/papago/n2mt")
                 .queryParam("source", "ko")
                 .queryParam("target", "en")
-                .queryParam("text", word).build().toUri();
+                .queryParam("text", word.replaceAll(" ", "")).build().toUri();
         // naver header 생성
         RequestEntity<Void> requestEntity = naverHeaderService(uri);
 
