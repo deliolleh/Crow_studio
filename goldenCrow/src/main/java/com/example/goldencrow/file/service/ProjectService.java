@@ -82,12 +82,29 @@ public class ProjectService {
         }
 
         if (!file.isDirectory()) {
-            visit.put("type","file");
+            String fileType = checkName(file.getName());
+            visit.put("type",fileType);
         }
-
         return visit;
     }
 
+    /**
+     * 파일 이름에 무엇이 포함되냐에 따라 파일 종류 나누기
+     * @param fileName 판별할 파일 이름
+     * @return 파이썬, html, css, js, text
+     */
+    public String checkName(String fileName) {
+        if (fileName.contains(".py")) {
+            return "python";
+        } else if (fileName.contains(".html")) {
+            return "html";
+        } else if (fileName.contains(".js")) {
+            return "js";
+        } else if (fileName.contains(".css")) {
+            return "css";
+        }
+        return "text";
+    }
 
     /**
      * 모든 경로를 재귀적으로 찾고, db에 저장
