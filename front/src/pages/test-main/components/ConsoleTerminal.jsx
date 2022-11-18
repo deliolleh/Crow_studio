@@ -42,46 +42,36 @@ export const MakeEditorData = (
 };
 
 const ConsoleTerminal = (props) => {
-  const { projectType } = useSelector((state) => state.team.value);
+  const { teamName, projectType } = useSelector((state) => state.team.value);
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
 
-  const { curPath, consoleHeight } = props;
+  const { teamSeq, curPath, consoleHeight } = props;
 
   const changeInputData = (e) => setInputData(e.target.value);
 
-  const compileStart = () => {
-    console.log("compileStart curPath:", "67/wooyoungtak/wooyoungtak.py");
-    const body = {
+  const startCompileHandler = async () => {
+    const compileData = {
       type: projectType,
       filePath: curPath,
-      input: "",
+      input: inputData,
     };
-    compileApi
-      .compilePython(body)
-      .then((res) => {
-        console.log(res.data);
-        setOutputData(res.data.response);
-      })
-      .catch(console.error);
+    try {
+      const res = await compileApi.getCompileResult(compileData);
+      setOutputData(res.data.response);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  // const compileStop = () => {
-  //   setInputData("");
-  //   setOutputData("");
-  //   const body = {
-  //     projectName: "puretest",
-  //     teamSeq: 11,
-  //   };
-  //   compileApi
-  //     .compilePythonStop(body)
-  //     .then((res) => {
-  //       console.log(res.data);
-  //     })
-  //     .catch((err) => console.error(err));
-  // };
-
-  console.log("curPath:", curPath);
+  const stopCompileHandler = async () => {
+    const teamData = { teamSeq, teamName };
+    try {
+      await compileApi.stopCompile(teamData);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const inputChangeHandler = (e) => changeInputData(e);
 
@@ -102,11 +92,15 @@ const ConsoleTerminal = (props) => {
         <div className="flex items-center">
           {/* btns */}
           <BsPlayFill
-            onClick={compileStart}
+            onClick={startCompileHandler}
             className="mr-[10px] cursor-pointer"
             size="30"
           />
-          {/* <BsStopFill onClick={compileStop} size="30" /> */}
+          <BsStopFill
+            className="cursor-pointer"
+            size="30"
+            onClick={stopCompileHandler}
+          />
         </div>
       </div>
       {/* console 하단 */}
