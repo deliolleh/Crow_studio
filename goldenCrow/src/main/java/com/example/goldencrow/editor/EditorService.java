@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -12,17 +11,17 @@ import java.util.*;
 import static com.example.goldencrow.common.Constants.*;
 
 /**
- * 코드의 스타일(포맷팅), 문법검사(린트)를 처리하는 서비스
+ * 코드의 스타일(포맷팅), 문법검사(린트)를 처리하는 Service
  */
 @Service
-public class EditorsService {
+public class EditorService {
     public static final String PATH = BASE_URL + "temp/";
 
     /**
      * 포맷팅을 처리하는 내부 로직
      *
-     * @param language  해당 파일의 언어 종류 ex. python, text
-     * @param code      해당 파일의 내용
+     * @param language 해당 파일의 언어 종류 ex. python, text
+     * @param code     해당 파일의 내용
      * @return 포맷팅 처리를 한 temp 파일의 제목, 성패에 따른 result 반환
      */
     public Map<String, String> formatService(String language, String code) {
@@ -70,11 +69,11 @@ public class EditorsService {
     /**
      * 포맷팅 결과를 읽어오는 내부 로직
      *
-     * @param language  해당 파일의 언어 종류 ex. python, text
-     * @param fileName  포맷팅한 결과가 저장되어있는 파일의 이름
-     * @return          포맷팅한 결과 코드를 반환, 성패에 따른 result 반환
+     * @param language 해당 파일의 언어 종류 ex. python, text
+     * @param fileName 포맷팅한 결과가 저장되어있는 파일의 이름
+     * @return 포맷팅한 결과 코드를 반환, 성패에 따른 result 반환
      */
-    public Map<String, String> formatRead(String language, String fileName) {
+    public Map<String, String> formatReadService(String language, String fileName) {
         Map<String, String> serviceRes = new HashMap<>();
         String type;
         // 파일의 언어 종류
@@ -117,8 +116,8 @@ public class EditorsService {
     /**
      * 린트를 처리하는 내부 로직
      *
-     * @param language  해당 파일의 언어 종류 ex. python
-     * @param code      해당 파일의 내용
+     * @param language 해당 파일의 언어 종류 ex. python
+     * @param code     해당 파일의 내용
      * @return
      */
     public Map<String, Object> lintService(String language, String code) {

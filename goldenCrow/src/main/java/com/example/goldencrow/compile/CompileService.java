@@ -15,7 +15,7 @@ import java.util.*;
 import static com.example.goldencrow.common.Constants.*;
 
 /**
- * 컴파일과 관련된 로직을 처리하는 서비스
+ * 컴파일과 관련된 로직을 처리하는 Service
  */
 @Service
 public class CompileService {
@@ -27,12 +27,12 @@ public class CompileService {
     private TeamRepository teamRepository;
 
     /**
-     * 명령어를 linux bash에 입력, 출력된 내용을 반환하는 내부 로직
+     * 명령어를 linux bash에 입력, 출력된 내용을 String으로 반환하는 내부 로직
      *
      * @param cmd 명령어
      * @return 명령어 수행 성공 시 결과 문자열 반환, 성패에 따른 result 반환
      */
-    public String resultString(String[] cmd) {
+    public String resultStringService(String[] cmd) {
         System.out.println("명령어 실행 !");
         try {
             StringBuffer sb = new StringBuffer();
@@ -51,9 +51,7 @@ public class CompileService {
             System.out.println(result);
             return result.trim();
         } catch (IOException | InterruptedException e) {
-            System.out.println("message : " + e.getMessage());
-            System.out.println("toString : " + e.toString());
-            return e.toString();
+            return e.getMessage();
         }
     }
 
@@ -61,8 +59,8 @@ public class CompileService {
      * 각 프로젝트 종류에 따라 도커파일을 생성하는 내부 로직
      *
      * @param absolutePath 도커파일을 생성하려는 절대 경로
-     * @param teamSeq  도커파일을 생성하려는 프로젝트의 팀 sequence
-     * @param type     프로젝트의 타입 번호 (1: pure python, 2: django, 3: flask, 4: fastapi)
+     * @param teamSeq      도커파일을 생성하려는 프로젝트의 팀 sequence
+     * @param type         프로젝트의 타입 번호 (1: pure python, 2: django, 3: flask, 4: fastapi)
      * @return 성패에 따른 result 반환
      */
     public String createDockerfile(String absolutePath, Long teamSeq, int type) {
@@ -75,6 +73,7 @@ public class CompileService {
         String[] pathList = absolutePath.split("/");
         String projectName = pathList[5];
         String content = "";
+
         // 2 : Django, 3 : Flask, 4 : FastAPI
         if (type == 2) {
             content = "FROM python:3.10\n" +
@@ -101,7 +100,11 @@ public class CompileService {
                     "EXPOSE 8000\n" +
                     "CMD [\"uvicorn\", \"" + projectName + ".main:app" + "\", \"--host\", \"0.0.0.0\"]";
         }
+
+        // Dockerfile 생성
         File file = new File(absolutePath + "/Dockerfile");
+
+        // Dockerfile에 content 저장
         try (FileWriter overWriteFile = new FileWriter(file, false)) {
             overWriteFile.write(content);
         } catch (IOException e) {
@@ -116,10 +119,12 @@ public class CompileService {
      * @param container 포트를 찾으려는 컨테이너 Id
      * @return 명령어를 수행하고 나온 출력값 반환
      */
-    public String portNum(String container) {
+    public String portNumService(String container) {
         // linux bash에서 포트 번호를 검색하는 명령어
         String[] command = {"docker", "port", container};
-        String result = resultString(command);
+
+        // 명령어 실행 로직 수행
+        String result = resultStringService(command);
         if (result.startsWith("Error: No such container")) {
             return NO_SUCH;
         }
@@ -129,15 +134,14 @@ public class CompileService {
     /**
      * 프로젝트 혹은 파일을 컴파일하는 내부 로직
      *
-     * @param type          프로젝트의 타입 번호 (1: pure python, 2: django, 3: flask, 4: fastapi)
-     * @param filePath      컴파일을 수행할 프로젝트 혹은 파일의 경로
-     * @param input         pure python 파일일 때 input값
-     * @return              컴파일 성공 시 컴파일 결과 반환, 성패에 따른 result 반환
+     * @param type     프로젝트의 타입 (1: pure Python, 2: Django, 3: Flask, 4: FastAPI)
+     * @param filePath 컴파일을 수행할 프로젝트 혹은 파일의 경로
+     * @param input    pure python 파일일 때 input값 (없으면 빈 문자열)
+     * @return 컴파일 성공 시 컴파일 결과 반환, 성패에 따른 result 반환
      */
     public Map<String, Object> pyCompileService(String type, String filePath, String input) {
         Map<String, Object> serviceRes = new HashMap<>();
         int typeNum;
-        // 타입 이상한 거 들어오면 리턴
         switch (type) {
             case "pure Python":
                 typeNum = 1;
@@ -182,7 +186,7 @@ public class CompileService {
             }
             // 결과 문자열
             System.out.println(Arrays.toString(command));
-            String response = resultString(command);
+            String response = resultStringService(command);
             // 에러 메세지 파일에서 읽어오기
             List<String> messageList = fileService.readFile(outfilePath);
             String message = messageList.get(1);
@@ -209,27 +213,28 @@ public class CompileService {
         }
         // Django, fastapi, flask 프로젝트일 때
         else {
-            // 도커파일 추가
+            // 도커파일 추가 로직
             String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), typeNum);
             if (!Objects.equals(dockerfile, "SUCCESS")) {
                 serviceRes.put("result", dockerfile);
                 return serviceRes;
             }
         }
+
         // 프로젝트명과 teamSeq로 docker container와 image 이름 생성
         String conAndImgName = "crowstudio_" + teamName.toLowerCase() + "_" + teamSeq;
         // 도커 이미지 빌드
         String[] image = {"docker", "build", "-t", conAndImgName, absolutePath + "/"};
-        String imageBuild = resultString(image);
+        String imageBuild = resultStringService(image);
         if (imageBuild.isEmpty()) {
             serviceRes.put("result", UNKNOWN);
             return serviceRes;
         }
         // 도커 런
         String[] command = {"docker", "run", "--rm", "-d", "--name", conAndImgName, "-P", conAndImgName};
-        String container = resultString(command);
+        String container = resultStringService(command);
         // 포트번호 가져오기
-        String portString = portNum(container);
+        String portString = portNumService(container);
         if (portString.equals(NO_SUCH)) {
             serviceRes.put("result", WRONG);
             return serviceRes;
@@ -247,16 +252,17 @@ public class CompileService {
     /**
      * 컴파일 중단을 처리하는 내부로직
      *
-     * @param projectName   컴파일 중단할 프로젝트의 이름
-     * @param teamSeq       컴파일 중단할 프로젝트의 팀 sequence
-     * @return              성패에 따른 result 반환
+     * @param projectName 컴파일 중단할 프로젝트의 이름
+     * @param teamSeq     컴파일 중단할 프로젝트의 팀 sequence
+     * @return 성패에 따른 result 반환
      */
     public Map<String, String> pyCompileStopService(String projectName, String teamSeq) {
         String conAndImgName = "crowstudio_" + projectName.toLowerCase() + "_" + teamSeq;
+
         // 도커 컨테이너 멈추고 삭제
         String[] containerStop = {"docker", "stop", conAndImgName};
         Map<String, String> serviceRes = new HashMap<>();
-        String stopedCon = resultString(containerStop);
+        String stopedCon = resultStringService(containerStop);
         // 컨테이너가 없는 경우
         if (stopedCon.equals("No such container")) {
             serviceRes.put("result", NO_SUCH);
@@ -268,7 +274,8 @@ public class CompileService {
 
         // 도커 이미지 삭제
         String[] imageRm = {"docker", "rmi", conAndImgName};
-        String rmImg = resultString(imageRm);
+        String rmImg = resultStringService(imageRm);
+
         // 이미지가 없는 경우
         if (rmImg.contains("No such image")) {
             serviceRes.put("result", NO_SUCH);
