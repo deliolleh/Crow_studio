@@ -43,7 +43,7 @@ const ConsoleTerminal = (props) => {
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
 
-  const { curPath, curType } = props;
+  const { curPath, curType, consoleHeight } = props;
 
   const changeInputData = (e) => setInputData(e.target.value);
 
@@ -82,8 +82,14 @@ const ConsoleTerminal = (props) => {
 
   const inputChangeHandler = (e) => changeInputData(e);
 
+  const consoleHeightReal = consoleHeight - 8;
+  const boxHeight = consoleHeight - 90;
+
   return (
-    <div className="mt-[8px] px-3 rounded-[10px] bg-component_-2_dark">
+    <div
+      className="mt-[8px] px-3 rounded-[10px] bg-component_-2_dark"
+      style={{ height: consoleHeightReal }}
+    >
       {/* console 상단 */}
       <div className="flex justify-between items-center mx-[5px] py-1.5">
         <div className="flex items-center text-white font-bold text-[14px]">
@@ -101,11 +107,11 @@ const ConsoleTerminal = (props) => {
         </div>
       </div>
       {/* console 하단 */}
-      <div className="flex justify-between">
+      <div className="flex justify-between" style={{ height: boxHeight }}>
         {/* input */}
         <div className="w-1/2 mr-1">
           <div className="flex items-center sm:w-[138px] w-full h-[31px] px-3 text-sm text-white bg-component_item_bg_dark rounded-t-[10px] border-b-2 border-point_purple">
-            <div className="flex items-center">
+            <div className="flex items-center truncate overflow-hidden">
               <TbTerminal className="mr-1" />
               Input
             </div>
@@ -115,18 +121,18 @@ const ConsoleTerminal = (props) => {
             value={inputData}
             onChange={inputChangeHandler}
             placeholder="Input here"
-            className="resize-none w-full h-[133px] p-[10px] bg-component_item_bg_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
+            className="resize-none w-full h-full p-[10px] bg-component_item_bg_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
           ></textarea>
         </div>
         {/* output */}
         <div className="w-1/2 ml-1">
           <div className="flex items-center sm:w-[138px] w-full h-[31px] px-3 text-sm text-white bg-component_item_bg_+2_dark rounded-t-[10px] border-b-2 border-point_purple">
-            <div className="flex items-center">
+            <div className="flex items-center truncate overflow-hidden">
               <TbTerminal className="mr-1" />
               Output
             </div>
           </div>
-          <div className="w-full h-[133px] p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white">
+          <div className="w-full h-full p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white">
             {outputData}
           </div>
         </div>
