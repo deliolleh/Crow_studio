@@ -350,7 +350,7 @@ const Directory = (props) => {
             defaultCollapseIcon={<ExpandMoreIcon />}
             defaultExpanded={["root"]}
             defaultExpandIcon={<ChevronRightIcon />}
-            sx={{ flexGrow: 1, overflowY: "auto" }}
+            sx={{ flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
             onNodeSelect={nodeSelectHandler}
           >
             {renderTree(filesDirectories)}
