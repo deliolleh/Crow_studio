@@ -1,5 +1,7 @@
 package com.example.goldencrow.git;
 
+import com.example.goldencrow.file.FileRepository;
+import com.example.goldencrow.file.service.FileService;
 import com.example.goldencrow.file.service.ProjectService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
@@ -143,8 +145,12 @@ public class GitService {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
+
+        projectService.saveFilesInDIr(pjt,teamSeq);
         serviceRes.put("result", SUCCESS);
         return serviceRes;
+
+
     }
 
     /**
