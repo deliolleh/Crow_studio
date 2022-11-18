@@ -5,53 +5,71 @@ import * as monaco from "monaco-editor";
 import React, { useEffect, useState } from "react";
 import fileApi from "../../api/fileApi";
 
-const YMonaco = ({ filePath }) => {
+const YMonaco = ({
+  filePath = "/home/ubuntu/crow_data/66/wowhello/wowhello.py",
+}) => {
   const [code, setCode] = useState("");
   useEffect(() => {
+    const path = filePath
+      ? filePath.replace("/home/ubuntu/crow_data/", "")
+      : "68/금오/금오.py";
     const data = {
-      filePath: filePath
-        ? filePath.replace("/home/ubuntu/crow_data/", "")
-        : "68/금오/금오.py",
+      filePath: path,
     };
+
     fileApi.fileCall(data).then((res) => {
       console.log(res.data);
-      setCode(() => res.data.fileContent);
+      setCode(() => res.data);
     });
     // fileApi.fileCall(data).then(res => codes = res.data.fileContent)
   }, [filePath]);
 
-  window.addEventListener("load", () => {
-    const ydoc = new Y.Doc();
-    const provider = new WebsocketProvider(
-      "wss://demos.yjs.dev",
-      "codes",
-      ydoc
-    );
-    const ytext = ydoc.getText("monaco");
+  useEffect(() => {
+    const path = filePath
+      ? filePath.replace("/home/ubuntu/crow_data/", "")
+      : "68/금오/금오.py";
+    const data = {
+      filePath: path,
+    };
 
+    fileApi.fileCall(data).then((res) => {
+      console.log(res.data);
+      setCode(() => res.data);
+    });
     const editor = monaco.editor.create(
       document.getElementById("monaco-editor"),
       {
-        value: code,
+        value: "",
         language: "python",
         theme: "vs-dark",
       }
     );
 
-    const monacoBinding = new MonacoBinding(
-      ytext,
-      /** @type {monaco.editor.ITextModel} */ (editor.getModel()),
-      new Set([editor]),
-      provider.awareness
-    );
+    console.log(code);
 
-    // @ts-ignore
-    window.example = { provider, ydoc, ytext, monacoBinding };
-  });
+    editor.getModel().setValue(code);
+
+    window.addEventListener("load", () => {
+      const ydoc = new Y.Doc();
+      const provider = new WebsocketProvider(
+        "wss://demos.yjs.dev",
+        "room3",
+        ydoc
+      );
+      const ytext = ydoc.getText("monaco");
+      const monacoBinding = new MonacoBinding(
+        ytext,
+        editor.getModel(),
+        new Set([editor]),
+        provider.awareness
+      );
+      window.example = { provider, ydoc, ytext, monacoBinding };
+    });
+  }, []);
 
   return (
     <React.Fragment>
-      <div id="monaco-editor" style={{ height: "200px" }} />
+      <div id="monaco-editor" style={{ height: "500px" }} />
       <script type="text/javascript" src="./dist/monaco.bundle.js"></script>
     </React.Fragment>
   );
