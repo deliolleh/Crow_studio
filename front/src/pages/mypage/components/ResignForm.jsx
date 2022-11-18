@@ -1,9 +1,7 @@
 import React from "react";
 
-const ResignForm = ({ onResign }) => {
-  const submitHandler = () => {
-    onResign();
-  };
+const ResignForm = ({ resign }) => {
+  const submitHandler = () => resign();
 
   return (
     <div className="flex flex-col items-center">

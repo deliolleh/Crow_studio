@@ -73,9 +73,6 @@ public class ProjectService {
                 child.add(readDirectory(thisPath, name, children));
             }
             visit.put("children", child);
-            visit.put("type","folder");
-        } else {
-            visit.put("type", "file");
         }
 
         return visit;
