@@ -10,6 +10,8 @@ import { formatPut, formatGet } from "../../redux/editorSlice";
 import { compilePython } from "../../redux/compileSlice";
 import { getTeam } from "../../redux/teamSlice";
 
+import teamApi from "../../api/teamApi";
+
 import Header from "../../components/Header";
 import Sidebar from "./components/sidebar/Sidebar";
 import Directory from "./components/sidebar/Directory";
@@ -35,7 +37,6 @@ const TestMain = () => {
   const editorheightRef = useRef(); // 에디터 높이
   const [showComponent, setShowComponent] = useState("Dir");
   const [showItem, setShowItem] = useState("Dir");
-  const [curFilePath, setCurFilePath] = useState("");
 
   const [editorHeight, setEditorHeight] = useState();
   const [consoleHeight, setConsoleHeight] = useState("");
@@ -44,34 +45,31 @@ const TestMain = () => {
   const [curName, setCurName] = useState("");
   const [curType, setCurType] = useState("");
 
+  // 콘솔 높이 초기값 세팅
   useEffect(() => {
-    // 콘솔 높이 초기값 세팅
     const tempSize2 = editorheightRef.current.pane2.clientHeight;
     setConsoleHeight(tempSize2);
-    console.log("consoleHeight: " + consoleHeight);
+    // console.log("consoleHeight: " + consoleHeight);
   });
 
   const checkSize = () => {
     // 에디터 높이 변경값 셋
     const tempSize = editorheightRef.current.state.pane1Size;
     setEditorHeight(tempSize);
-    console.log(
-      "editorheightRef.current.state.pane1Size: ",
-      editorheightRef.current.state.pane1Size
-    );
+    // console.log(
+    //   "editorheightRef.current.state.pane1Size: ",
+    //   editorheightRef.current.state.pane1Size
+    // );
     // 콘솔 높이 변경값 셋
     const tempSize2 = editorheightRef.current.pane2.clientHeight;
     setConsoleHeight(tempSize2);
-    console.log("consoleHeight: " + consoleHeight);
+    // console.log("consoleHeight: " + consoleHeight);
   };
 
   useEffect(() => {
-    dispatch(getTeam(teamSeq))
-      .unwrap()
-      .then((res) => {
-        setCurType(res.projectType);
-        console.log(res);
-      })
+    teamApi
+      .getTeam(teamSeq)
+      .then((res) => setCurType(res.data.projectType))
       .catch(console.error);
   }, []);
 
@@ -160,6 +158,10 @@ const TestMain = () => {
                   <Directory
                     showFileContent={showFileContentHandler}
                     saveFileContent={saveFileContentHandler}
+                    curPath={curPath}
+                    setCurPath={setCurPath}
+                    curName={curName}
+                    setCurName={setCurName}
                   />
                 )}
                 {showItem === "Git" && <Git />}
