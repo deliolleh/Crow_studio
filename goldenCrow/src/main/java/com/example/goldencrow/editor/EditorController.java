@@ -42,7 +42,7 @@ public class EditorController {
     @PostMapping("/format/{language}")
     public ResponseEntity<Map<String, String>> fileFormatPost(@PathVariable String language,
                                                               @RequestBody Map<String, String> req) {
-        if (req.containsKey("name")) {
+        if (req.containsKey("text")) {
             String code = req.get("text");
             Map<String, String> res = editorService.formatService(language, code);
             if (res.get("result").equals(SUCCESS)) {
