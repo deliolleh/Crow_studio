@@ -431,14 +431,14 @@ public class GitService {
             BufferedReader branch = new BufferedReader(new InputStreamReader(getBranch.getInputStream()));
             while ((read = branch.readLine()) != null) {
                 branches.add(read.trim());
-                System.out.println(read);
+
             }
             getBranch.waitFor();
         } catch (IOException e) {
             return null;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            System.out.println(e.getMessage());
+
             return null;
         }
         return branches;
@@ -464,7 +464,6 @@ public class GitService {
 
             while ((reader = br.readLine()) != null) {
                 returnUrl = reader;
-                System.out.println(returnUrl);
             }
         } catch (IOException e) {
             return NO_SUCH;
@@ -477,7 +476,7 @@ public class GitService {
             returnUrl = returnUrl.replace("origin", "");
             returnUrl = returnUrl.replace("(push)", "");
             returnUrl = returnUrl.trim();
-            System.out.println(returnUrl);
+
             return returnUrl;
         }
 
@@ -502,7 +501,7 @@ public class GitService {
             sb.append(String.valueOf(email.charAt(i)));
         }
         id = sb.toString();
-        System.out.println(id);
+
         // 기존 Url을 개인정보 양식에 맞게 바꿔서 return 함
         String returnPath = basicPath.replace("https://", String.format("https://%s:%s@", id, pass));
         return returnPath;
@@ -523,7 +522,7 @@ public class GitService {
         try {
             command.start();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+
             return false;
         }
         return true;
