@@ -48,8 +48,13 @@ public class GitService {
      */
     public List<String> getGitInfo(Long userSeq) {
         List<String> gitInfo = new ArrayList<>();
-        String email = userRepository.getReferenceById(userSeq).getUserGitUsername();
-        String token = userRepository.getReferenceById(userSeq).getUserGitToken();
+        Optional<UserEntity> teamLeader = userRepository.findByUserSeq(userSeq);
+        if (!teamLeader.isPresent()) {
+            gitInfo.add(NO_SUCH);
+            return gitInfo;
+        }
+        String email = teamLeader.get().getUserGitUsername();
+        String token = teamLeader.get().getUserGitToken();
 
         // 사용자의 git 정보가 없는 경우
         if (email == null || token == null) {
@@ -83,9 +88,9 @@ public class GitService {
         }
 
         TeamEntity team = thisTeam.get();
-        UserEntity teamLeader = team.getTeamLeader();
+        List<String> gitInfoCheck = getGitInfo(team.getTeamLeader().getUserSeq());
         // 팀 리더의 깃 정보가 존재하는지 확인하는 로직
-        if (teamLeader.getUserGitUsername() == null || teamLeader.getUserGitToken() == null) {
+        if (gitInfoCheck.get(0).equals(NO_SUCH)) {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
@@ -198,7 +203,7 @@ public class GitService {
 
         // 명령어 수행 로직
         try {
-            String result = "";
+            String result;
             Process p = command.start();
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((result = br.readLine()) != null) {
@@ -481,13 +486,13 @@ public class GitService {
     /**
      * 푸쉬를 하기 위한 새로운 Url을 만들어주는 함수(만들기만 하고 세팅하진 않음!)
      *
-     * @param basicPath
-     * @param email
-     * @param pass
-     * @return newUrl
+     * @param basicPath 기존 Git Info Url
+     * @param email 유저의 Git Id
+     * @param pass 유저의 Git token
+     * @return newUrl Git push /pull 할 새로운 Git Info Url
      */
     public String newRemoteUrl(String basicPath, String email, String pass) {
-        String id = "";
+        String id;
         StringBuffer sb = new StringBuffer();
         // @를 포함한 특수문자는 들어갈 수 없으므로, 이메일 형식에서 아이디만 빼온다. 
         for (int i = 0; i < email.length(); i++) {
@@ -550,9 +555,9 @@ public class GitService {
 
     /**
      * 바뀌었던 깃 Url을 기존 상태로 원위치 처리하는 내부 로직
-     * @param oldUrl
-     * @param gitPath
-     * @return
+     * @param oldUrl 원래 팀 Git Info Url
+     * @param gitPath 깃 명령어가 실행될 디렉토리
+     * @return 성패에 따른 result String 반환
      */
     public String reUrl(String oldUrl, String gitPath) {
         // 원래 Url을 받아서 바뀌었던 깃 Url을 원래 Url로 세팅
@@ -621,25 +626,6 @@ public class GitService {
             serviceRes.put("result", UNKNOWN);
         }
         return serviceRes;
-    }
-
-    /**
-     * 유저의 깃정보가 존재하는 지 확인해주는 로직
-     * @param userSeq
-     * @return
-     */
-    public String gitInfoCheck(Long userSeq) {
-        Optional<UserEntity> user = userRepository.findByUserSeq(userSeq);
-        if (!user.isPresent()) {
-            return "유저가 존재하지 않습니다.";
-        }
-        UserEntity gitUser = user.get();
-
-        if (gitUser.getUserGitUsername() == null || gitUser.getUserGitToken() == null) {
-            return "git 연결을 다시 설정해주세요!";
-        }
-
-        return "Success";
     }
 
 }
