@@ -88,8 +88,11 @@ public class FileService {
      */
     public void insertFile(FileCreateDto fileCreateDto) {
         FileEntity fileEntity = new FileEntity(fileCreateDto);
+        System.out.println("fileCreateDto : " + fileCreateDto.getFilePath());
+        System.out.println("fileCreateDto : " + fileCreateDto.getFileTitle());
+        System.out.println("fileCreateDto : " + fileCreateDto.getTeamSeq());
         fileRepository.insert(fileEntity);
-        System.out.println("성공!");
+
     }
 
     /** 파일 삭제  */
