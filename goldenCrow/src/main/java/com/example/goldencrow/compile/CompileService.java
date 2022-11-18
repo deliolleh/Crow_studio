@@ -142,7 +142,6 @@ public class CompileService {
     public Map<String, Object> pyCompileService(String type, String filePath, String input) {
         Map<String, Object> serviceRes = new HashMap<>();
         int typeNum;
-        // 타입 이상한 거 들어오면 리턴
         switch (type) {
             case "pure Python":
                 typeNum = 1;

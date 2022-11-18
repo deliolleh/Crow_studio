@@ -34,7 +34,7 @@ public class TeamDto {
     /**
      * TeamDto 생성자
      *
-     * @param teamEntity
+     * @param teamEntity 팀의 TeamEntity
      */
     public TeamDto(TeamEntity teamEntity) {
         this.teamSeq = teamEntity.getTeamSeq();
@@ -51,26 +51,23 @@ public class TeamDto {
             this.teamGit = teamEntity.getTeamGit();
         }
 
-        if (teamEntity.getType() == null) {
-            this.projectType = "none";
-        } else {
-            switch (teamEntity.getType().intValue()) {
-                case (1):
-                    this.projectType = "pure Python";
-                    break;
-                case (2):
-                    this.projectType = "Django";
-                    break;
-                case (3):
-                    this.projectType = "Flask";
-                    break;
-                case (4):
-                    this.projectType = "FastAPI";
-                    break;
-                default:
-                    this.projectType = "none";
-                    break;
-            }
+        switch (teamEntity.getType()) {
+            case (1):
+                this.projectType = "pure Python";
+                break;
+            case (2):
+                this.projectType = "Django";
+                break;
+            case (3):
+                this.projectType = "Flask";
+                break;
+            case (4):
+                this.projectType = "FastAPI";
+                break;
+            default:
+                this.projectType = "none";
+                break;
+
         }
 
         // memberDtoList는 service 단에서 별도 처리 후 삽입
