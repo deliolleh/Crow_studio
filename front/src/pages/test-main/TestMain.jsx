@@ -5,7 +5,7 @@ import Editor from "@monaco-editor/react";
 import styled from "styled-components";
 import SplitPane from "react-split-pane";
 
-import { saveFileContent } from "../../redux/fileSlice";
+// import { saveFileContent } from "../../redux/fileSlice";
 import { formatPut, formatGet } from "../../redux/editorSlice";
 import { compilePython } from "../../redux/compileSlice";
 import { getTeam } from "../../redux/teamSlice";
@@ -88,7 +88,7 @@ const TestMain = () => {
   };
 
   // 파일 포매팅 후 저장
-  const saveFileContentHandler = (curName, curPath) => {
+  const saveFileContentHandler = () => {
     const beforeFormatData = { text: editorRef.current.getValue() };
     editorApi
       .sendFormatRequest("python", beforeFormatData)
@@ -97,59 +97,21 @@ const TestMain = () => {
         editorApi
           .getFormatResult("python", formatTicketData)
           .then((res) => {
-            console.log("getFormatResult res.data.data:", res.data.data);
+            const saveFileContent = {
+              filePath: curPath,
+              fileContent: res.data.data,
+            };
+            fileApi.saveFileContent(teamSeq, saveFileContent).then(() => {
+              const filePathData = { filePath: curPath };
+              fileApi
+                .getFileContent(filePathData)
+                .then((res) => editorRef.current.getModel().setValue(res.data))
+                .catch(console.error);
+            });
           })
           .catch(console.error);
       })
       .catch(console.error);
-
-    // const codeData = { text: editorRef.current.getValue() };
-    // dispatch(formatPut({ language: "python", codeData }))
-    //   .unwrap()
-    //   .then((res) => {
-    //     console.log("formatPut res:", res);
-    //     const fileNum = { name: res.data };
-    //     dispatch(formatGet({ language: "python", fileNum }))
-    //       .unwrap()
-    //       .then((res) => {
-    //         console.log("formatGet res:", res);
-    //         const saveFileData = {
-    //           filePath: curPath,
-    //           fileContent: res.data,
-    //         };
-    //         dispatch(saveFileContent({ teamSeq, contentData: saveFileData }))
-    //           .unwrap()
-    //           .then((res) => {
-    //             console.log("saveFileContent res:", res);
-
-    //             // 컴파일 이거 가져가셈
-    //             const compileData = {
-    //               type: "1",
-    //               filePath: curPath,
-    //               input: "",
-    //             };
-    //             dispatch(compilePython({ teamSeq, compileData }))
-    //               .unwrap()
-    //               .then((res) => {
-    //                 console.log("compilePython:", res);
-    //               })
-    //               .catch(console.error);
-
-    //             // const requireData = {
-    //             //   filePath: curPath,
-    //             // };
-    //             // dispatch(getFileContent(requireData))
-    //             //   .unwrap()
-    //             //   .then((res) => {
-    //             //     editorRef.current.getModel().setValue(res);
-    //             //   })
-    //             //   .catch(console.error);
-    //           })
-    //           .catch(console.error);
-    //       })
-    //       .catch(console.error);
-    //   })
-    //   .catch(console.error);
   };
 
   return (
