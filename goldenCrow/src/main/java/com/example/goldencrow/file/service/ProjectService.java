@@ -78,6 +78,11 @@ public class ProjectService {
                 child.add(readDirectory(thisPath, name, children));
             }
             visit.put("children", child);
+            visit.put("type","folder");
+        }
+
+        if (!file.isDirectory()) {
+            visit.put("type","file");
         }
 
         return visit;
