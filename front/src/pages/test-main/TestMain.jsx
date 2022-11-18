@@ -74,13 +74,15 @@ const TestMain = () => {
     setShowComponent(componentName);
 
   // 파일 클릭하면 내용 보여주기
-  const showFileContentHandler = (type, path) => {
+  const showFileContentHandler = async (type) => {
     if (type !== "directory") {
-      const filePathData = { filePath: path };
-      fileApi
-        .getFileContent(filePathData)
-        .then((res) => editorRef.current.getModel().setValue(res.data))
-        .catch(console.error);
+      try {
+        const filePathData = { filePath: curPath };
+        const res = await fileApi.getFileContent(filePathData);
+        editorRef.current.getModel().setValue(res.data);
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
