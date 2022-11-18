@@ -6,9 +6,13 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * 팀 정보 조회에 출력으로 사용될 DTO
+ */
 @Data
 public class TeamDto {
 
+    private String result;
     private Long teamSeq;
     private String teamName;
     private Long teamLeaderSeq;
@@ -21,28 +25,36 @@ public class TeamDto {
 
     private List<MemberDto> memberDtoList;
 
+    /**
+     * 빈 TeamDto 생성자
+     */
     public TeamDto() {
     }
 
-    public TeamDto(TeamEntity team) {
-        this.teamSeq = team.getTeamSeq();
-        this.teamName = team.getTeamName();
+    /**
+     * TeamDto 생성자
+     *
+     * @param teamEntity
+     */
+    public TeamDto(TeamEntity teamEntity) {
+        this.teamSeq = teamEntity.getTeamSeq();
+        this.teamName = teamEntity.getTeamName();
 
-        UserEntity userEntity = team.getTeamLeader();
+        UserEntity userEntity = teamEntity.getTeamLeader();
         this.teamLeaderSeq = userEntity.getUserSeq();
         this.teamLeaderNickname = userEntity.getUserNickname();
         this.teamLeaderProfile = userEntity.getUserProfile();
 
-        if (team.getTeamGit() == null) {
+        if (teamEntity.getTeamGit() == null) {
             this.teamGit = "";
         } else {
-            this.teamGit = team.getTeamGit();
+            this.teamGit = teamEntity.getTeamGit();
         }
 
-        if (team.getType() == null) {
+        if (teamEntity.getType() == null) {
             this.projectType = "none";
         } else {
-            switch (team.getType().intValue()) {
+            switch (teamEntity.getType().intValue()) {
                 case (1):
                     this.projectType = "pure Python";
                     break;
@@ -61,6 +73,7 @@ public class TeamDto {
             }
         }
 
-        // 멤버 리스트는 따로 넣어줘야 함
+        // memberDtoList는 service 단에서 별도 처리 후 삽입
+
     }
 }
