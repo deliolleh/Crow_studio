@@ -199,7 +199,11 @@ const TestMain = () => {
                 }}
                 options={editorOptions}
               />
-              <ConsoleTerminal curPath={curPath} curType={curType} />
+              <ConsoleTerminal
+                curPath={curPath}
+                curType={curType}
+                consoleHeight={consoleHeight}
+              />
             </SplitPane>
           </div>
         </div>
