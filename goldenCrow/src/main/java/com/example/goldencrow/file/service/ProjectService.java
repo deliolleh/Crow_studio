@@ -91,6 +91,7 @@ public class ProjectService {
      * @param teamSeq
      */
     public void saveFilesInDIr(String path, Long teamSeq) {
+        out.println(path + teamSeq);
         File file = new File(path);
         FileCreateDto newFileCreateDto = new FileCreateDto(file.getName(), file.getPath(), teamSeq);
         fileService.insertFile(newFileCreateDto);

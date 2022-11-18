@@ -1,8 +1,5 @@
 package com.example.goldencrow.git;
 
-import com.example.goldencrow.common.Constants;
-import com.example.goldencrow.file.FileRepository;
-import com.example.goldencrow.file.service.FileService;
 import com.example.goldencrow.file.service.ProjectService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
@@ -82,9 +79,7 @@ public class GitService {
      * @return 성패에 따른 result 반환
      */
     public Map<String, String> gitCloneService(String url, Long teamSeq, String projectName) {
-        System.out.println(url);
-        System.out.println(teamSeq);
-        System.out.println(projectName);
+
         Map<String, String> serviceRes = new HashMap<>();
 
         // 팀시퀀스로 팀이 존재하는지 확인
@@ -108,7 +103,7 @@ public class GitService {
         // 팀 시퀀스 디렉토리 만들기
         String teamFolder = String.valueOf(teamSeq);
         String newFilePath = projectService.createDir(BASE_URL, teamFolder);
-        System.out.println("newFilePath : " +newFilePath);
+
         if (newFilePath.equals("2")) {
             serviceRes.put("result", WRONG);
             return serviceRes;
@@ -116,7 +111,7 @@ public class GitService {
 
         // 프로젝트 이름 디렉토리 만들기
         String pjt = projectService.createDir(newFilePath+"/", projectName);
-        System.out.println("pjt : " + pjt);
+
         if (pjt.equals("2")) {
             serviceRes.put("result", WRONG);
             return serviceRes;
@@ -135,7 +130,7 @@ public class GitService {
             serviceRes.put("result", WRONG);
             return serviceRes;
         }
-        System.out.println("git cloen 실행");
+
         // 클론을 받아왔지만 아무런 파일과 폴더가 없는 경우 실패처리
         if (newProjectFolder.listFiles() == null
                 || Objects.requireNonNull(newProjectFolder.listFiles()).length == 0) {
@@ -152,7 +147,7 @@ public class GitService {
             return serviceRes;
         }
         
-        projectService.saveFilesInDIr(pjt,teamSeq);
+        projectService.saveFilesInDIr(pjt+"/",teamSeq);
         serviceRes.put("result", SUCCESS);
         return serviceRes;
 
