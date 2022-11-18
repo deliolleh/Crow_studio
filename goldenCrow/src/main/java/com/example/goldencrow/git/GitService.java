@@ -116,6 +116,7 @@ public class GitService {
 
         // 프로젝트 이름 디렉토리 만들기
         String pjt = projectService.createDir(newFilePath, projectName);
+        System.out.println("pjt : " + pjt);
         if (pjt.equals("2")) {
             serviceRes.put("result", WRONG);
             return serviceRes;
@@ -134,7 +135,7 @@ public class GitService {
             serviceRes.put("result", WRONG);
             return serviceRes;
         }
-
+        System.out.println("git cloen 실행");
         // 클론을 받아왔지만 아무런 파일과 폴더가 없는 경우 실패처리
         if (newProjectFolder.listFiles() == null
                 || Objects.requireNonNull(newProjectFolder.listFiles()).length == 0) {
@@ -150,7 +151,7 @@ public class GitService {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
-
+        
         projectService.saveFilesInDIr(pjt,teamSeq);
         serviceRes.put("result", SUCCESS);
         return serviceRes;
