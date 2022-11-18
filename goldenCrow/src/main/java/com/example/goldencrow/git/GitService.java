@@ -1,5 +1,7 @@
 package com.example.goldencrow.git;
 
+import com.example.goldencrow.file.FileRepository;
+import com.example.goldencrow.file.service.FileService;
 import com.example.goldencrow.file.service.ProjectService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
@@ -46,7 +48,7 @@ public class GitService {
      * @param userSeq 불러오려는 Git의 사용자 Sequence
      * @return gitInfo 반환, 없을 시 NO_SUCH 반환
      */
-    public List<String> getGitInfo(Long userSeq) {
+    public List<String> getGitInfoService(Long userSeq) {
         List<String> gitInfo = new ArrayList<>();
         Optional<UserEntity> teamLeader = userRepository.findByUserSeq(userSeq);
         if (!teamLeader.isPresent()) {
@@ -88,7 +90,7 @@ public class GitService {
         }
 
         TeamEntity team = thisTeam.get();
-        List<String> gitInfoCheck = getGitInfo(team.getTeamLeader().getUserSeq());
+        List<String> gitInfoCheck = getGitInfoService(team.getTeamLeader().getUserSeq());
         // 팀 리더의 깃 정보가 존재하는지 확인하는 로직
         if (gitInfoCheck.get(0).equals(NO_SUCH)) {
             serviceRes.put("result", NO_SUCH);
@@ -143,8 +145,12 @@ public class GitService {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
+
+        projectService.saveFilesInDIr(pjt,teamSeq);
         serviceRes.put("result", SUCCESS);
         return serviceRes;
+
+
     }
 
     /**
@@ -229,7 +235,7 @@ public class GitService {
      * @param filePath add할 파일 경로 (특정하지 않으면 all)
      * @return 성패에 따른 String 반환
      */
-    public String gitAdd(String gitPath, String filePath) {
+    public String gitAddService(String gitPath, String filePath) {
         ProcessBuilder command = new ProcessBuilder();
 
         // filePath를 입력했으면 filePath 사용 / add할 파일을 특정하지 않았으면 "."
@@ -280,7 +286,7 @@ public class GitService {
         Map<String, String> serviceRes = new HashMap<>();
 
         // git add 로직 수행
-        String gitAddCheck = gitAdd(gitPath, filePath);
+        String gitAddCheck = gitAddService(gitPath, filePath);
         if (!gitAddCheck.equals(SUCCESS)) {
             serviceRes.put("result", gitAddCheck);
             return serviceRes;
@@ -345,14 +351,14 @@ public class GitService {
         }
 
         // push하기 위해 remote URL 가져오는 로직 수행
-        String gitUrl = getRemoteUrl(gitPath);
+        String gitUrl = getRemoteUrlService(gitPath);
         if (!gitUrl.contains("https")) {
             serviceRes.put("result", gitUrl);
             return serviceRes;
         }
 
         // git 정보 불러오기 (email, password)
-        List<String> gitInfo = getGitInfo(userSeq);
+        List<String> gitInfo = getGitInfoService(userSeq);
         // git 정보를 불러오지 못한 경우
         if (gitInfo.size() < 2) {
             serviceRes.put("result", NO_SUCH);
@@ -362,9 +368,9 @@ public class GitService {
         String email = gitInfo.get(0);
         String pass = gitInfo.get(1);
 
-        String newGitUrl = newRemoteUrl(gitUrl, email, pass);
+        String newGitUrl = newRemoteUrlService(gitUrl, email, pass);
 
-        boolean setNew = setNewUrl(newGitUrl, gitPath);
+        boolean setNew = setNewUrlService(newGitUrl, gitPath);
 
         if (!setNew) {
             serviceRes.put("result", WRONG);
@@ -391,7 +397,7 @@ public class GitService {
         }
 
         // 경로 재설정 로직 수행
-        boolean returnOld = setNewUrl(gitUrl, gitPath);
+        boolean returnOld = setNewUrlService(gitUrl, gitPath);
         // 경로 재설정에 실패한 경우
         if (!returnOld) {
             serviceRes.put("result", UNKNOWN);
@@ -450,7 +456,7 @@ public class GitService {
      * @param gitPath 로직을 수행할 프로젝트의 경로
      * @return 성공 시 remoteURL를 반환, 실패 시 result 반환
      */
-    public String getRemoteUrl(String gitPath) {
+    public String getRemoteUrlService(String gitPath) {
         // 현재 Git을 관리하는 Url을 받아오는 리눅스 명령어
         command = new ProcessBuilder("git", "remote", "-vv");
         command.directory(new File(gitPath));
@@ -490,7 +496,7 @@ public class GitService {
      * @param pass 유저의 Git token
      * @return newUrl Git push /pull 할 새로운 Git Info Url
      */
-    public String newRemoteUrl(String basicPath, String email, String pass) {
+    public String newRemoteUrlService(String basicPath, String email, String pass) {
         String id;
         StringBuffer sb = new StringBuffer();
         // @를 포함한 특수문자는 들어갈 수 없으므로, 이메일 형식에서 아이디만 빼온다. 
@@ -514,7 +520,7 @@ public class GitService {
      * @param gitPath git 로직을 사용할 프로젝트 경로
      * @return 성패에 따른 boolean값 반환
      */
-    public Boolean setNewUrl(String newUrl, String gitPath) {
+    public Boolean setNewUrlService(String newUrl, String gitPath) {
         // 받은 Url로  Git Info Url을 변경
         command.command("git", "remote", "set-url", "origin", newUrl);
         command.directory(new File(gitPath));
@@ -536,16 +542,16 @@ public class GitService {
      * @param pass    사용자의 password 정보
      * @return 성패에 따른 result String 반환
      */
-    public String setUrl(String gitPath, String email, String pass) {
+    public String setUrlService(String gitPath, String email, String pass) {
         // 기존 Git Info Url을 받아옴
-        String gitUrl = getRemoteUrl(gitPath);
+        String gitUrl = getRemoteUrlService(gitPath);
         if (!gitUrl.contains("https")) {
             return gitUrl;
         }
         // 받아온 Git Info Url을 개인 Id에 맞게 변환시킴
-        String newRemoteUrl = newRemoteUrl(gitUrl, email, pass);
+        String newRemoteUrl = newRemoteUrlService(gitUrl, email, pass);
         // 변환된 Url을 Git Info에 세팅함
-        Boolean check = setNewUrl(newRemoteUrl, gitPath);
+        Boolean check = setNewUrlService(newRemoteUrl, gitPath);
         if (!check) {
             return UNKNOWN;
         }
@@ -558,9 +564,9 @@ public class GitService {
      * @param gitPath 깃 명령어가 실행될 디렉토리
      * @return 성패에 따른 result String 반환
      */
-    public String reUrl(String oldUrl, String gitPath) {
+    public String reUrlService(String oldUrl, String gitPath) {
         // 원래 Url을 받아서 바뀌었던 깃 Url을 원래 Url로 세팅
-        Boolean check = setNewUrl(oldUrl, gitPath);
+        Boolean check = setNewUrlService(oldUrl, gitPath);
         if (!check) {
             return UNKNOWN;
         }
@@ -578,9 +584,9 @@ public class GitService {
     public Map<String, String> gitPullService(String gitPath, Long userSeq, String brachName) {
         Map<String, String> serviceRes = new HashMap<>();
         // pull받을 remote URL 조회 로직 수행
-        String gitUrl = getRemoteUrl(gitPath);
+        String gitUrl = getRemoteUrlService(gitPath);
         // git 정보 조회 로직 수행
-        List<String> gitInfo = getGitInfo(userSeq);
+        List<String> gitInfo = getGitInfoService(userSeq);
         // git 정보를 조회할 수 없는 경우
         if (gitInfo.size() < 2) {
             serviceRes.put("result", NO_SUCH);
@@ -591,7 +597,7 @@ public class GitService {
         String pass = gitInfo.get(1);
 
         // Git Push/Pull을 하기 위한 Url 세팅 성공 여부 확인
-        String check = setUrl(gitPath, email, pass);
+        String check = setUrlService(gitPath, email, pass);
         if (!check.equals(SUCCESS)) {
             serviceRes.put("result", check);
             return serviceRes;
@@ -617,7 +623,7 @@ public class GitService {
             return serviceRes;
         }
 
-        String result = reUrl(gitUrl, gitPath);
+        String result = reUrlService(gitUrl, gitPath);
 
         if (msg.length() == 0) {
             serviceRes.put("result", SUCCESS);
