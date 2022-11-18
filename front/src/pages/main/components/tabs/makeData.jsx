@@ -32,6 +32,7 @@ export const MakeEditorData = (
 
   // 포맷팅 영역
   const format = async () => {
+    console.log(editorRef.current.getPosition());
     // When formatting Button Click, useRef of that part's value get
     const sendCode = editorRef.current.getValue();
     const body = {

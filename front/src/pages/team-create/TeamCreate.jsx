@@ -1,8 +1,8 @@
 import React, { useState, Fragment } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Listbox, Transition } from '@headlessui/react'
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { Listbox, Transition } from "@headlessui/react";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
 import { createTeam } from "../../redux/teamSlice";
 
@@ -20,11 +20,11 @@ const initialErrorState = {
 
 // headlist listbox items
 const pjtType = [
-  { name: 'pure Python' },
-  { name: 'Django' },
-  { name: 'Flask' },
-  { name: 'FastAPI' },
-]
+  { name: "pure Python" },
+  { name: "Django" },
+  { name: "Flask" },
+  { name: "FastAPI" },
+];
 
 const TeamCreate = () => {
   const dispatch = useDispatch();
@@ -45,10 +45,10 @@ const TeamCreate = () => {
         setInputs((prev) => {
           return { ...prev, teamName: e.target.value };
         });
-      // } else if (e.target.name === "projectType") {
-      //   setInputs((prev) => {
-      //     return { ...prev, projectType: e.target.value };
-      //   });
+        // } else if (e.target.name === "projectType") {
+        //   setInputs((prev) => {
+        //     return { ...prev, projectType: e.target.value };
+        //   });
       } else if (e.target.name === "projectGit") {
         setInputs((prev) => {
           return { ...prev, projectGit: e.target.value };
@@ -56,8 +56,7 @@ const TeamCreate = () => {
       } else if (e.target.name === "checkGit") {
         setCheckGit((prev) => !prev);
       }
-    };
-
+    }
   };
 
   const submitHandler = (e) => {
@@ -112,16 +111,16 @@ const TeamCreate = () => {
   const goTeamListHandler = () => navigate("/teams");
 
   // listbox
-  const [selected, setSelected] = useState(pjtType[0])
+  const [selected, setSelected] = useState(pjtType[0]);
 
-  const listboxChangeHandler =(e) => {
+  const listboxChangeHandler = (e) => {
     setSelected(e);
-    console.log(e)
+    console.log(e);
     inputChangeHandler(e);
-  }
+  };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full h-full">
       <Header />
       <div className="h-screen flex justify-center items-center mb-2">
         <div className="px-16 py-12 flex flex-col w-fit h-fit justify-center items-center border border-primary_-2_dark rounded-md">
@@ -164,9 +163,7 @@ const TeamCreate = () => {
                   onChange={listboxChangeHandler}
                 >
                   <div className="relative mt-1">
-                    <Listbox.Label>
-                      프로젝트 종류
-                    </Listbox.Label>
+                    <Listbox.Label>프로젝트 종류</Listbox.Label>
                     <Listbox.Button className="relative w-full cursor-default rounded-lg bg-component_item_bg_+2_dark text-white py-2 pl-3 pr-10 text-left shadow-md active:outline-none active:ring-2 active:ring-point_purple focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple">
                       <span className="block truncate">{selected.name}</span>
                       <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -188,7 +185,7 @@ const TeamCreate = () => {
                             key={typeIdx}
                             className={({ active }) =>
                               `relative cursor-default select-none py-1.5 pl-10 pr-4 ${
-                                active ? 'bg-point_purple_op20' : ''
+                                active ? "bg-point_purple_op20" : ""
                               }`
                             }
                             value={type}
@@ -197,14 +194,17 @@ const TeamCreate = () => {
                               <>
                                 <span
                                   className={`block truncate ${
-                                    selected ? 'font-medium' : 'font-normal'
+                                    selected ? "font-medium" : "font-normal"
                                   }`}
                                 >
                                   {type.name}
                                 </span>
                                 {selected ? (
                                   <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-point_purple">
-                                    <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                    <CheckIcon
+                                      className="h-5 w-5"
+                                      aria-hidden="true"
+                                    />
                                   </span>
                                 ) : null}
                               </>
@@ -231,12 +231,15 @@ const TeamCreate = () => {
               />
               <label htmlFor="projectGit" className="">
                 프로젝트 깃 주소
+                <span className="ml-3 text-sm text-primary_-2_dark">
+                  체크박스
+                </span>
               </label>
               <input
                 type="text"
                 id="projectGit"
                 name="projectGit"
-                className="mt-1 w-full text-white py-2 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:outline-none focus:ring-2 focus:ring-point_purple focus:border-none rounded-md transition"
+                className="mt-1 w-full text-white py-2 px-3 bg-component_item_bg_+2_dark disabled:bg-component_-2_dark placeholder:text-gray-300 disabled:placeholder:text-component_item_bg_+2_dark placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:outline-none focus:ring-2 focus:ring-point_purple focus:border-none rounded-md transition"
                 placeholder="프로젝트 깃 주소를 입력하세요"
                 disabled={!checkGit}
                 value={projectGit}

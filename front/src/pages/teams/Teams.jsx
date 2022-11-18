@@ -25,9 +25,9 @@ const Teams = () => {
   }, [dispatch]);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-full w-full">
       <Header />
-      <div className="m-3 mb-6 flex w-screen h-screen items-center justify-center overflow-auto">
+      <div className="m-3 mb-6 flex h-screen items-center justify-center overflow-auto">
         <div className="px-8 py-8 lg:w-4/5 w-fit max-w-[1000px] h-fit flex flex-col justify-center border border-primary_-2_dark rounded-md">
           {/* 타이틀 */}
           <div className="flex justify-between items-center md:mb-5 mb-2">

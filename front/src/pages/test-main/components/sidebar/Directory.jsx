@@ -6,7 +6,16 @@ import styled from "styled-components";
 import TreeView from "@mui/lab/TreeView";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import TreeItem from "@mui/lab/TreeItem";
+import TreeItem, { treeItemClasses } from "@mui/lab/TreeItem";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { styled as muiStyled } from "@mui/material/styles";
+import PropTypes from "prop-types";
+
+// icons
+import FolderIcon from "@mui/icons-material/Folder";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
+import DescriptionIcon from "@mui/icons-material/Description";
 
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
@@ -153,14 +162,14 @@ const Directory = (props) => {
   // 저장
   const saveHandler = () => saveFileContent(curName, curPath);
 
-  // 트리 생성
-  const renderTree = (nodes) => (
-    <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
-      {Array.isArray(nodes.children)
-        ? nodes.children.map((node) => renderTree(node))
-        : null}
-    </TreeItem>
-  );
+  // // 트리 생성
+  // const renderTree = (nodes) => (
+  //   <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
+  //     {Array.isArray(nodes.children)
+  //       ? nodes.children.map((node) => renderTree(node))
+  //       : null}
+  //   </TreeItem>
+  // );
 
   // 노드 선택
   const nodeSelectHandler = (e, nodeIds) => {
@@ -174,6 +183,133 @@ const Directory = (props) => {
   useEffect(() => {
     // console.log("curPath re-rendering");
   }, [curPath]);
+
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+
+  const StyledTreeItemRoot = muiStyled(TreeItem)(({ theme }) => ({
+    color: theme.palette.text.secondary,
+    [`& .${treeItemClasses.content}`]: {
+      color: theme.palette.text.secondary,
+      borderTopRightRadius: theme.spacing(2),
+      borderBottomRightRadius: theme.spacing(2),
+      paddingRight: theme.spacing(1),
+      fontWeight: theme.typography.fontWeightMedium,
+      "&.Mui-expanded": {
+        fontWeight: theme.typography.fontWeightRegular,
+      },
+      // "&:hover": {
+      //   backgroundColor: theme.palette.action.hover,
+      // },
+      "&:hover": {
+        backgroundColor: "#786f7b",
+        color: "white",
+      },
+      // "&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused": {
+      //   backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
+      //   color: "var(--tree-view-color)",
+      // },
+      "&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused": {
+        backgroundColor: "#786f7b",
+        color: "white",
+      },
+      [`& .${treeItemClasses.label}`]: {
+        fontWeight: "inherit",
+        color: "inherit",
+      },
+    },
+    [`& .${treeItemClasses.group}`]: {
+      marginLeft: 0,
+      [`& .${treeItemClasses.content}`]: {
+        paddingLeft: theme.spacing(2),
+      },
+    },
+  }));
+
+  function StyledTreeItem(props) {
+    const {
+      bgColor,
+      color,
+      labelIcon: LabelIcon,
+      labelInfo,
+      labelText,
+      ...other
+    } = props;
+
+    return (
+      <StyledTreeItemRoot
+        label={
+          <Box sx={{ display: "flex", alignItems: "center", p: 0.5, pr: 0 }}>
+            <Box component={LabelIcon} color="inherit" sx={{ mr: 1 }} />
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "inherit", flexGrow: 1 }}
+            >
+              {labelText}
+            </Typography>
+            <Typography variant="caption" color="inherit">
+              {labelInfo}
+            </Typography>
+          </Box>
+        }
+        style={{
+          "--tree-view-color": color,
+          "--tree-view-bg-color": bgColor,
+        }}
+        {...other}
+      />
+    );
+  }
+
+  // const treeItemClickHandler = (e) => console.log(e);
+  const treeItemContextMenuHandler = (e) => {
+    e.preventDefault();
+  };
+
+  // 트리 생성 with 스타일
+  const renderTree = (nodes) => (
+    <StyledTreeItem
+      key={nodes.id}
+      nodeId={nodes.id}
+      labelText={nodes.name}
+      labelIcon={nodes?.id?.includes(".") ? DescriptionIcon : FolderIcon}
+      color="#1a73e8"
+      bgColor="#e8f0fe"
+      // onClick={treeItemClickHandler}
+      onContextMenu={treeItemContextMenuHandler}
+      collapseIcon={nodes?.id?.includes(".") ? null : <ExpandMoreIcon />}
+    >
+      {Array.isArray(nodes.children)
+        ? nodes.children.map((node) => renderTree(node))
+        : null}
+      {console.log("nodes:", nodes)}
+    </StyledTreeItem>
+  );
+
+  StyledTreeItem.propTypes = {
+    bgColor: PropTypes.string,
+    color: PropTypes.string,
+    labelIcon: PropTypes.elementType.isRequired,
+    labelInfo: PropTypes.string,
+    labelText: PropTypes.string.isRequired,
+  };
 
   return (
     <React.Fragment>
@@ -210,11 +346,11 @@ const Directory = (props) => {
 
           {/* 디렉터리 파일, 폴더 모음 */}
           <TreeView
-            aria-label="rich object"
+            aria-label="files and directories"
             defaultCollapseIcon={<ExpandMoreIcon />}
             defaultExpanded={["root"]}
             defaultExpandIcon={<ChevronRightIcon />}
-            sx={{ flexGrow: 1, overflowY: "auto" }}
+            sx={{ flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
             onNodeSelect={nodeSelectHandler}
           >
             {renderTree(filesDirectories)}
@@ -229,7 +365,7 @@ export default Directory;
 
 const DirectoryContainer = styled.div`
   border-radius: 0 10px 10px 0;
-  height: 100vh;
+  height: 100%;
 `;
 
 const IcSpan = styled.span`
