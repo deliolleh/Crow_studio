@@ -486,7 +486,7 @@ public class UserService {
                     // 다인팀의 팀장은 서비스를 탈퇴할 수 없음
                     // 따라서, 사용자가 팀장인 모든 팀이 단일팀이어야 탈퇴가 가능함
 
-                    if (memberRepository.countAllByTeam(t) >= 2) {
+                    if (memberRepository.countAllByTeam_TeamSeq(t.getTeamSeq()) >= 2) {
                         // 단일팀이 아닌 팀이 하나라도 발견될 경우,
                         // 탐색을 중지하고 탈퇴 불가로 처리함
                         serviceRes.put("result", NO_PER);
