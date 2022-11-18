@@ -4,16 +4,16 @@ import { useSelector } from "react-redux";
 import userApi from "../../api/userApi";
 
 const Profile = ({ userSeq }) => {
-  const { mySeq, myNickname } = useSelector((state) => state.user.value);
+  const { mySeq } = useSelector((state) => state.user.value);
   const [userInfo, setUserInfo] = useState({});
-  const { userNickname, userEmail } = userInfo;
+  const { userNickname, userId, userGitUsername } = userInfo;
 
   useEffect(() => {
     userApi
       .getMypage(userSeq)
       .then((res) => setUserInfo(res.data))
       .catch(console.error);
-  }, [userSeq, myNickname]);
+  }, [userSeq]);
 
   return (
     <div className="md:w-80 sm:w-[600px] w-[400px] md:h-96 h-80 flex justify-center items-center border border-primary_-2_dark rounded-md md:mr-2 md:mb-0 sm:mr-0 sm:mb-2 mb-2 py-4">
@@ -29,8 +29,12 @@ const Profile = ({ userSeq }) => {
         <div className="text-white text-2xl font-bold">{userNickname}</div>
 
         {/* 메일 */}
-        <div className="text-primary_-2_dark text-sm mb-6">{userEmail}</div>
-        {/* <div className="text-sm mb-6">상태 메시지</div> */}
+        <div className="text-sm">{userId}</div>
+
+        {/* 깃 이메일 */}
+        <div className="text-primary_-2_dark text-sm mb-6">
+          {userGitUsername ? userGitUsername : "깃 연결 없음"}
+        </div>
 
         {/* 정보 수정 버튼 */}
         {+userSeq === mySeq && (
