@@ -84,31 +84,30 @@ const TestMain = () => {
     }
   };
 
-  // 파일 포매팅 후 저장
-  const saveFileContentHandler = () => {
-    const beforeFormatData = { text: editorRef.current.getValue() };
-    editorApi
-      .sendFormatRequest("python", beforeFormatData)
-      .then((res) => {
-        const formatTicketData = { name: res.data.data };
-        editorApi
-          .getFormatResult("python", formatTicketData)
-          .then((res) => {
-            const saveFileContent = {
-              filePath: curPath,
-              fileContent: res.data.data,
-            };
-            fileApi.saveFileContent(teamSeq, saveFileContent).then(() => {
-              const filePathData = { filePath: curPath };
-              fileApi
-                .getFileContent(filePathData)
-                .then((res) => editorRef.current.getModel().setValue(res.data))
-                .catch(console.error);
-            });
-          })
-          .catch(console.error);
-      })
-      .catch(console.error);
+  const saveFileContentHandler = async () => {
+    try {
+      // 1. 파일 포맷 요청
+      const beforeFormatData = { text: editorRef.current.getValue() };
+      const res1 = await editorApi.sendFormatRequest(
+        "python",
+        beforeFormatData
+      );
+      // 2. 파일 포맷 결과 받기
+      const formatTicketData = { name: res1.data.data };
+      const res2 = await editorApi.getFormatResult("python", formatTicketData);
+      // 3. 파일 저장
+      const saveFileContent = {
+        filePath: curPath,
+        fileContent: res2.data.data,
+      };
+      await fileApi.saveFileContent(teamSeq, saveFileContent);
+      // 4. 파일 내용 가져오기
+      const filePathData = { filePath: curPath };
+      const res3 = await fileApi.getFileContent(filePathData);
+      editorRef.current.getModel().setValue(res3.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
