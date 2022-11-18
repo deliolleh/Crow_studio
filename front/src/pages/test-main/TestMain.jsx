@@ -160,6 +160,10 @@ const TestMain = () => {
                   <Directory
                     showFileContent={showFileContentHandler}
                     saveFileContent={saveFileContentHandler}
+                    curPath={curPath}
+                    setCurPath={setCurPath}
+                    curName={curName}
+                    setCurName={setCurName}
                   />
                 )}
                 {showItem === "Git" && <Git />}
