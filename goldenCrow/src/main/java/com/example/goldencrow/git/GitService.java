@@ -115,7 +115,7 @@ public class GitService {
         }
 
         // 프로젝트 이름 디렉토리 만들기
-        String pjt = projectService.createDir(newFilePath, projectName);
+        String pjt = projectService.createDir(newFilePath+"/", projectName);
         System.out.println("pjt : " + pjt);
         if (pjt.equals("2")) {
             serviceRes.put("result", WRONG);
