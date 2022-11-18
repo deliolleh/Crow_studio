@@ -24,6 +24,8 @@ import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.
 
 // import * as iconsi from "react-icons/io5";
 
+import projectApi from "../../../../api/projectApi";
+
 import { selectFile } from "../../../../redux/teamSlice";
 
 // import { getAllFiles } from "../../../../redux/projectSlice";
@@ -63,10 +65,10 @@ const Directory = (props) => {
   const [filesDirectories, setFilesDirectories] = useState({});
 
   useEffect(() => {
-    // dispatch(getAllFiles(teamSeq))
-    //   .unwrap()
-    //   .then(setFilesDirectories)
-    //   .catch(console.error);
+    projectApi
+      .getAllFiles(teamSeq)
+      .then((res) => setFilesDirectories(res.data))
+      .catch(console.error);
   }, [dispatch, teamSeq]);
 
   // 디렉터리 생성 핸들러
