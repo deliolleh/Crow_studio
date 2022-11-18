@@ -2,8 +2,6 @@ package com.example.goldencrow.team;
 
 import com.example.goldencrow.team.dto.TeamDto;
 import com.example.goldencrow.team.dto.UserInfoListDto;
-import com.example.goldencrow.user.service.JwtService;
-import com.example.goldencrow.user.service.UserService;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,62 +10,71 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.goldencrow.common.Constants.*;
+
+/**
+ * 팀과 관련된 입출력을 처리하는 controller
+ *
+ * @url /api/teams
+ */
 @RestController
 @RequestMapping(value = "/api/teams")
 public class TeamController {
 
-    private final String SUCCESS = "SUCCESS";
-    private final String FAILURE = "FAILURE";
-    private final String FORBIDDEN = "FORBIDDEN";
-    private final String CONFLICT = "CONFLICT";
-    private final String NOT_FOUND = "NOT FOUND";
-
-    private final UserService userService;
-
     private final TeamService teamService;
 
-    private final JwtService jwtService;
-
-    public TeamController(UserService userService, TeamService teamService, JwtService jwtService) {
-        this.userService = userService;
+    /**
+     * TeamController 생성자
+     *
+     * @param teamService team을 관리하는 service
+     */
+    public TeamController(TeamService teamService) {
         this.teamService = teamService;
-        this.jwtService = jwtService;
     }
 
-    // 팀 목록 조회 GET
-    // -
+    /**
+     * 사용자가 속한 팀 목록을 조회하는 API
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @return 조회 성공 시 사용자가 속한 팀의 리스트를 반환
+     * @status 200, 400, 401, 404
+     */
     @GetMapping("")
     public ResponseEntity<List<TeamDto>> teamListGet(@RequestHeader("Authorization") String jwt) {
 
-        // 내가 속한 것만 골라서 반환
-        List<TeamDto> listTeamDto = teamService.teamList(jwt);
+        List<TeamDto> listTeamDto = teamService.teamListService(jwt);
 
         if (listTeamDto == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         } else {
-            // 리스트가 비어있어도 잘못된 게 아니기 때문에 그건 거르지 않는다
             return new ResponseEntity<>(listTeamDto, HttpStatus.OK);
         }
 
     }
 
-    // 팀 하나 조회 (GET)
-    // /{seq}
+    /**
+     * 팀의 세부 정보를 조회하는 API
+     *
+     * @param jwt     회원가입 및 로그인 시 발급되는 access token
+     * @param teamSeq 조회하고자 하는 팀의 Seq
+     * @return 조회 성공 시 해당 팀의 정보를 반환
+     * @status 200, 400, 401, 403, 404
+     */
     @GetMapping("/{teamSeq}")
     public ResponseEntity<TeamDto> teamGet(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
 
-        TeamDto res = teamService.teamGet(jwt, teamSeq);
-        String result = res.getTeamName();
+        TeamDto teamDto = teamService.teamGetService(jwt, teamSeq);
+        String result = teamDto.getResult();
 
-        // null일 경우 문제가 있다는 것
-        if (res == null) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        } else if (result.equals("403")) {
-            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-        } else if (result.equals("400")) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(res, HttpStatus.OK);
+        switch (result) {
+            case SUCCESS:
+                return new ResponseEntity<>(teamDto, HttpStatus.OK);
+            case NO_PER:
+                return new ResponseEntity<>(teamDto, HttpStatus.FORBIDDEN);
+            case NO_SUCH:
+                return new ResponseEntity<>(teamDto, HttpStatus.NOT_FOUND);
+            default:
+                return new ResponseEntity<>(teamDto, HttpStatus.BAD_REQUEST);
         }
 
     }
