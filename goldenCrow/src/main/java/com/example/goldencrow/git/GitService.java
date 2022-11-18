@@ -1,5 +1,6 @@
 package com.example.goldencrow.git;
 
+import com.example.goldencrow.common.Constants;
 import com.example.goldencrow.file.FileRepository;
 import com.example.goldencrow.file.service.FileService;
 import com.example.goldencrow.file.service.ProjectService;
@@ -30,6 +31,7 @@ public class GitService {
 
     @Autowired
     private UserRepository userRepository;
+
 
     /**
      * Git Service 생성자
@@ -93,7 +95,7 @@ public class GitService {
         List<String> gitInfoCheck = getGitInfoService(team.getTeamLeader().getUserSeq());
         // 팀 리더의 깃 정보가 존재하는지 확인하는 로직
         if (gitInfoCheck.get(0).equals(NO_SUCH)) {
-            serviceRes.put("result", NO_SUCH);
+            serviceRes.put("result", NO_PER);
             return serviceRes;
         }
 

@@ -58,6 +58,8 @@ public class GitController {
                     return new ResponseEntity<>(res, HttpStatus.OK);
                 case NO_SUCH:
                     return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                case NO_PER:
+                    return new ResponseEntity<>(res,HttpStatus.FORBIDDEN);
                 default:
                     return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }
