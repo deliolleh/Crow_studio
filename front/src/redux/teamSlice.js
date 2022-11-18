@@ -10,6 +10,7 @@ const initialState = {
     teamGit: "",
     selectedFileName: "",
     selectedFileType: "",
+    selectedFilePath: "",
   },
 };
 
@@ -186,9 +187,14 @@ export const teamSlice = createSlice({
   initialState,
   reducers: {
     selectFile: (state, action) => {
-      const { name, type } = action.payload;
-      state.value.selectedFileName = name;
-      state.value.selectedFileType = type;
+      console.log("selectFile action:", action);
+      // const { name, type } = action.payload;
+      // state.value.selectedFileName = name;
+      // state.value.selectedFileType = type;
+
+      // state.value.selectedFileName
+      // state.value.selectedFilType
+      // state.value.selectedFilePath
     },
   },
   extraReducers: (builder) => {
