@@ -1,15 +1,12 @@
 package com.example.goldencrow.file.service;
 
-
 import com.example.goldencrow.file.FileEntity;
 import com.example.goldencrow.file.FileRepository;
 import com.example.goldencrow.file.dto.FileCreateDto;
 import com.example.goldencrow.file.dto.FileCreateRequestDto;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 
 import java.io.*;
 import java.nio.file.Files;
@@ -18,72 +15,83 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-
-
 import java.util.List;
 import java.util.Optional;
 
 import static com.example.goldencrow.common.Constants.*;
 
-
+/**
+ * file 관련 로직을 처리하는 Service
+ */
 @Service
 public class FileService {
 
     @Autowired
     private FileRepository fileRepository;
 
-    private final String Success = "Success";
+//    private final String Success = "Success";
+//
+//    private final String baseUrl = "/home/ubuntu/crow_data/";
 
-    private final String baseUrl = "/home/ubuntu/crow_data/";
+    /**
+     * 파일(폴더) 생성 내부 로직
+     *
+     * @param type                 생성할 문서의 종류 (1 : 폴더, 2 : 파일)
+     * @param teamSeq              파일(폴더)을 생성할 팀의 sequence
+     * @param fileCreateRequestDto "fileTitle", "filePath"를 key로 가지는 Dto
+     * @return 파일(폴더) 생성 성공 시 파일 경로 반환, 성패에 대한 result 반환
+     */
+    public Map<String, String> createFileService(int type, Long teamSeq, FileCreateRequestDto fileCreateRequestDto) {
+        Map<String, String> serviceRes = new HashMap<>();
 
-    /** 파일 생성 로직
-     * 파일이 성공적으로 생성되면 true
-     * 아니면 false 반환*/
-    public boolean createFile(FileCreateRequestDto fileCreateRequestDto, Integer type, Long teamSeq) {
-        String newFilePath = baseUrl + fileCreateRequestDto.getFilePath() + "/"+ fileCreateRequestDto.getFileTitle();
-        String check = makeNewFile(newFilePath,type);
+        // 생성할 파일 혹은 폴더의 경로
+        String newFilePath = BASE_URL + fileCreateRequestDto.getFilePath() + "/" + fileCreateRequestDto.getFileTitle();
 
-        if (check.equals(Success)) {
-            FileCreateDto newFileCreateDto = new FileCreateDto(fileCreateRequestDto.getFileTitle(),newFilePath,teamSeq);
+        // 경로와 타입으로 file 생성 로직 수행
+        String makeNewFileRes = makeNewFileService(newFilePath, type);
+        if (makeNewFileRes.equals(SUCCESS)) {
+            FileCreateDto newFileCreateDto = new FileCreateDto(fileCreateRequestDto.getFileTitle(), newFilePath, teamSeq);
             insertFile(newFileCreateDto);
-            return true;
+            serviceRes.put("result", SUCCESS);
+            serviceRes.put("filePath", newFilePath);
+            return serviceRes;
         }
-        
-        return false;
+        serviceRes.put("result", UNKNOWN);
+        return serviceRes;
     }
 
     /**
      * 우분투 서버에 파일을 생성하는 로직
      * 성공한다면 디비 저장 함수를 부를 예정
+     *
      * @param filePath
      * @param type
      * @return
      */
-    public String makeNewFile(String filePath, Integer type) {
+    public String makeNewFileService(String filePath, int type) {
         File newFile = new File(filePath);
-        try{
-            if (type == 2){
-                if(newFile.createNewFile()) {
-                    //fileRepository.saveAndFlush(fileEntity);
-                    return Success;
+        try {
+            if (type == 1) {
+                if (newFile.mkdir()) {
+                    return SUCCESS;
                 } else {
-                    return "파일 생성에 실패했습니다.";
+                    return DUPLICATE;
                 }
             } else {
-                if (newFile.mkdir()) {
-                    //fileRepository.saveAndFlush(fileEntity);
-                    return Success;
+                if (newFile.createNewFile()) {
+                    return SUCCESS;
                 } else {
-                    return "폴더 생성에 실패했습니다.";
+                    return DUPLICATE;
                 }
             }
         } catch (IOException e) {
-            return e.getMessage();
+            return UNKNOWN;
         }
     }
 
     /**
      * DB에 파일을 insert해주는 로직
+     *
      * @param fileCreateDto
      */
     public void insertFile(FileCreateDto fileCreateDto) {
@@ -92,7 +100,9 @@ public class FileService {
         System.out.println("성공!");
     }
 
-    /** 파일 삭제  */
+    /**
+     * 파일 삭제
+     */
 
 
     public Map<String, String> deleteFile(String filePath, Integer type, Long teamSeq) {
@@ -104,7 +114,7 @@ public class FileService {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
-        String check = serverFileDelete(type,filePath);
+        String check = serverFileDelete(type, filePath);
         if (!check.equals(SUCCESS)) {
             serviceRes.put("result", check);
             return serviceRes;
@@ -116,6 +126,7 @@ public class FileService {
 
     /**
      * 서버 파일 삭제
+     *
      * @param type
      * @param filePath
      * @return
@@ -125,9 +136,9 @@ public class FileService {
         // 디렉토리라면
         if (type == 1) {
             ProcessBuilder pb = new ProcessBuilder();
-            pb.command("rm","-r",filePath);
+            pb.command("rm", "-r", filePath);
 
-            try{
+            try {
                 pb.start();
             } catch (IOException e) {
                 return e.getMessage();
@@ -147,6 +158,7 @@ public class FileService {
 
     /**
      * 파일 저장 기존 파일을 삭제하고 새로운 파일을 덮어씌우는 형태
+     *
      * @param filePath
      * @param content
      * @return
@@ -168,10 +180,11 @@ public class FileService {
 
     /**
      * 파일 updatedat 업데이트 함수 안씁니다.
+     *
      * @param filePath
      * @return
      */
-    public boolean updateFileName(String filePath, String newFileName,String oldFileName, Long teamSeq) {
+    public boolean updateFileName(String filePath, String newFileName, String oldFileName, Long teamSeq) {
         String newFilePath = filePath;
         String renameFilePath = filePath.replace(oldFileName, newFileName);
         File targetFile = new File(newFilePath);
