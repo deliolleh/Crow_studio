@@ -8,6 +8,10 @@ const editorApi = {
   formatGet: (language, fileNum) =>
     api.post(`/editors/format/read/${language}`, fileNum),
   variableRecommend: (letter) => api.post("/variable", letter),
+  sendFormatRequest: (language, beforeFormatData) =>
+    api.post(`/editors/format/${language}`, beforeFormatData),
+  getFormatResult: (language, formatTicketData) =>
+    api.post(`/editors/format/read/${language}`, formatTicketData),
 };
 
 export default editorApi;

@@ -5,12 +5,11 @@ import Editor from "@monaco-editor/react";
 import styled from "styled-components";
 import SplitPane from "react-split-pane";
 
-import { getFileContent, saveFileContent } from "../../redux/fileSlice";
-import { formatPut, formatGet } from "../../redux/editorSlice";
-import { compilePython } from "../../redux/compileSlice";
 import { getTeam } from "../../redux/teamSlice";
 
-import teamApi from "../../api/teamApi";
+import fileApi from "../../api/fileApi";
+import editorApi from "../../api/editorApi";
+// import teamApi from "../../api/teamApi";
 
 import Header from "../../components/Header";
 import Sidebar from "./components/sidebar/Sidebar";
@@ -35,7 +34,7 @@ const editorOptions = {
 const TestMain = () => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
-  const { projectType, teamGit } = useSelector((state) => state.team.value);
+  // const { teamGit } = useSelector((state) => state.team.value);
   const editorRef = useRef(null); // 에디터 내용
   const editorheightRef = useRef(); // 에디터 높이
   const [showComponent, setShowComponent] = useState("Dir");
@@ -45,7 +44,6 @@ const TestMain = () => {
 
   const [curPath, setCurPath] = useState(""); // 현재 선택한 폴더나 파일의 경로
   const [curName, setCurName] = useState(""); // 현재 선택한 폴더나 파일의 이름
-  // const [curType, setCurType] = useState(""); // 현재 프로젝트의 타입 (파이썬, 장고, 플라스크, 패스트API)
 
   // 콘솔 높이 초기값 세팅
   useEffect(() => {
@@ -70,7 +68,6 @@ const TestMain = () => {
 
   useEffect(() => {
     dispatch(getTeam(teamSeq)).unwrap().catch(console.error);
-    // .then((res) => setCurType(res.data.projectType))
   }, [dispatch, teamSeq]);
 
   const showComponentHandler = (componentName) =>
@@ -79,62 +76,35 @@ const TestMain = () => {
   // 파일 클릭하면 내용 보여주기
   const showFileContentHandler = (type, path) => {
     if (type !== "directory") {
-      const requireData = { filePath: path };
-      // 클릭한 파일 내용 가져옴
-      dispatch(getFileContent(requireData))
-        .unwrap()
-        .then((res) => {
-          editorRef.current.getModel().setValue(res);
-        })
+      const filePathData = { filePath: path };
+      fileApi
+        .getFileContent(filePathData)
+        .then((res) => editorRef.current.getModel().setValue(res.data))
         .catch(console.error);
     }
   };
 
   // 파일 포매팅 후 저장
-  const saveFileContentHandler = (curName, curPath) => {
-    const codeData = { text: editorRef.current.getValue() };
-    dispatch(formatPut({ language: "python", codeData }))
-      .unwrap()
+  const saveFileContentHandler = () => {
+    const beforeFormatData = { text: editorRef.current.getValue() };
+    editorApi
+      .sendFormatRequest("python", beforeFormatData)
       .then((res) => {
-        console.log("formatPut res:", res);
-        const fileNum = { name: res.data };
-        dispatch(formatGet({ language: "python", fileNum }))
-          .unwrap()
+        const formatTicketData = { name: res.data.data };
+        editorApi
+          .getFormatResult("python", formatTicketData)
           .then((res) => {
-            console.log("formatGet res:", res);
-            const saveFileData = {
+            const saveFileContent = {
               filePath: curPath,
-              fileContent: res.data,
+              fileContent: res.data.data,
             };
-            dispatch(saveFileContent({ teamSeq, contentData: saveFileData }))
-              .unwrap()
-              .then((res) => {
-                console.log("saveFileContent res:", res);
-
-                // 컴파일 이거 가져가셈
-                const compileData = {
-                  type: "1",
-                  filePath: curPath,
-                  input: "",
-                };
-                dispatch(compilePython({ teamSeq, compileData }))
-                  .unwrap()
-                  .then((res) => {
-                    console.log("compilePython:", res);
-                  })
-                  .catch(console.error);
-
-                const requireData = {
-                  filePath: curPath,
-                };
-                dispatch(getFileContent(requireData))
-                  .unwrap()
-                  .then((res) => {
-                    editorRef.current.getModel().setValue(res);
-                  })
-                  .catch(console.error);
-              })
-              .catch(console.error);
+            fileApi.saveFileContent(teamSeq, saveFileContent).then(() => {
+              const filePathData = { filePath: curPath };
+              fileApi
+                .getFileContent(filePathData)
+                .then((res) => editorRef.current.getModel().setValue(res.data))
+                .catch(console.error);
+            });
           })
           .catch(console.error);
       })
