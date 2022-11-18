@@ -18,7 +18,10 @@ const Profile = ({ userSeq, mySeq }) => {
   }, [userSeq, myNickname, myGitUsername]);
 
   return (
-    <div className="md:w-80 sm:w-[600px] w-[400px] md:h-96 h-80 flex justify-center items-center border border-primary_-2_dark rounded-md md:mr-2 md:mb-0 sm:mr-0 sm:mb-2 mb-2 py-4">
+    <div
+      className="md:w-80 sm:w-[600px] w-[400px] flex justify-center items-center border border-primary_-2_dark rounded-md md:mr-2 md:mb-0 sm:mr-0 sm:mb-2 mb-2 py-4"
+      style={{ height: "calc(100% - 80px)" }}
+    >
       <div className="flex flex-col items-center">
         {/* 프사 기본 */}
         <img
