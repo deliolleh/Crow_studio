@@ -42,11 +42,11 @@ export const MakeEditorData = (
 };
 
 const ConsoleTerminal = (props) => {
-  const { projectType } = useSelector((state) => state.team.value);
+  const { teamName, projectType } = useSelector((state) => state.team.value);
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
 
-  const { curPath, consoleHeight } = props;
+  const { teamSeq, curPath, consoleHeight } = props;
 
   const changeInputData = (e) => setInputData(e.target.value);
 
@@ -65,27 +65,13 @@ const ConsoleTerminal = (props) => {
   };
 
   const stopCompileHandler = async () => {
-    const teamData = {
-      teamName: "",
-    };
+    const teamData = { teamSeq, teamName };
+    try {
+      await compileApi.stopCompile(teamData);
+    } catch (err) {
+      console.error(err);
+    }
   };
-
-  // const compileStop = () => {
-  //   setInputData("");
-  //   setOutputData("");
-  //   const body = {
-  //     projectName: "puretest",
-  //     teamSeq: 11,
-  //   };
-  //   compileApi
-  //     .compilePythonStop(body)
-  //     .then((res) => {
-  //       console.log(res.data);
-  //     })
-  //     .catch((err) => console.error(err));
-  // };
-
-  console.log("curPath:", curPath);
 
   const inputChangeHandler = (e) => changeInputData(e);
 
@@ -110,7 +96,11 @@ const ConsoleTerminal = (props) => {
             className="mr-[10px] cursor-pointer"
             size="30"
           />
-          {/* <BsStopFill onClick={compileStop} size="30" /> */}
+          <BsStopFill
+            className="cursor-pointer"
+            size="30"
+            onClick={stopCompileHandler}
+          />
         </div>
       </div>
       {/* console 하단 */}

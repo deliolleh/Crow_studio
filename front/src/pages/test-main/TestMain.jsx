@@ -170,6 +170,7 @@ const TestMain = () => {
                 options={editorOptions}
               />
               <ConsoleTerminal
+                teamSeq={teamSeq}
                 curPath={curPath}
                 consoleHeight={consoleHeight}
               />
