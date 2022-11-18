@@ -9,8 +9,8 @@ import java.util.List;
 @Data
 public class ForumPageDto {
 
-//    private int totalPage;
-//    private int page;
+    //    private int totalPage;
+    //    private int page;
     private List<ForumListDto> forumList;
 
     private ForumDto.ForumResult result;

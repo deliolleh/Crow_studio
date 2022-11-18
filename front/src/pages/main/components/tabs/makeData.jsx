@@ -5,7 +5,7 @@ import files from "./files";
 import ReactTerminal from "react-terminal-component";
 import { EmulatorState, FileSystem } from "javascript-terminal";
 import editorApi from "../../../../api/editorApi";
-import compileApi from "../../../../api/compile";
+import compileApi from "../../../../api/compileApi";
 
 // icons
 import { BsPlayFill } from "react-icons/bs";

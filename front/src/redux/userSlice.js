@@ -67,44 +67,13 @@ export const getUser = createAsyncThunk(
   }
 );
 
-// userSeq의 해당 마이페이지 조회
-export const getMypage = createAsyncThunk(
-  "user/getMypage",
-  async (userSeq, { rejectWithValue }) => {
-    try {
-      const response = await userApi.getMypage(userSeq);
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
 // 닉네임 변경
 export const updateNickname = createAsyncThunk(
   "user/updateNickname",
   async (updatedNicknameData, { rejectWithValue }) => {
     try {
       const response = await userApi.updateNickname(updatedNicknameData);
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
-// 비밀번호 변경
-export const updatePassword = createAsyncThunk(
-  "user/updatePassword",
-  async (updatedPasswordData, { rejectWithValue }) => {
-    try {
-      const response = await userApi.updatePassword(updatedPasswordData);
+      console.log("response:", response);
       return response.data;
     } catch (err) {
       if (!err.response) {
@@ -138,22 +107,6 @@ export const searchUser = createAsyncThunk(
   async (searchUserData, { rejectWithValue }) => {
     try {
       const response = await userApi.searchUser(searchUserData);
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
-// 깃 토큰 변경
-export const updateGitAuth = createAsyncThunk(
-  "user/updateGitAuth",
-  async (credentialsData, { rejectWithValue }) => {
-    try {
-      const response = await userApi.updateGitAuth(credentialsData);
       return response.data;
     } catch (err) {
       if (!err.response) {
@@ -198,7 +151,7 @@ export const userSlice = createSlice({
         state.value = initialState.value;
       })
       .addCase(updateNickname.fulfilled, (state, action) => {
-        state.value.myNickname = action.payload;
+        state.value.myNickname = action.payload.userNickname;
       });
   },
 });

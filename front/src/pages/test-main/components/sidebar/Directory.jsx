@@ -32,11 +32,21 @@ const DIRECTORY_DATA = {
   rootName: `root`,
 };
 
-const Directory = ({ showFileContent, saveFileContent }) => {
+const Directory = (props) => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
-  const [curPath, setCurPath] = useState("");
-  const [curName, setCurName] = useState("");
+
+  const {
+    curPath,
+    setCurPath,
+    curName,
+    setCurName,
+    showFileContent,
+    saveFileContent,
+  } = props;
+
+  // const [curPath, setCurPath] = useState("");
+  // const [curName, setCurName] = useState("");
 
   const [filesDirectories, setFilesDirectories] = useState({});
 
@@ -162,7 +172,7 @@ const Directory = ({ showFileContent, saveFileContent }) => {
   };
 
   useEffect(() => {
-    console.log("curPath re-rendering");
+    // console.log("curPath re-rendering");
   }, [curPath]);
 
   return (
@@ -219,7 +229,7 @@ export default Directory;
 
 const DirectoryContainer = styled.div`
   border-radius: 0 10px 10px 0;
-  height: 100vh;
+  height: calc(100vh - 80px);
 `;
 
 const IcSpan = styled.span`
