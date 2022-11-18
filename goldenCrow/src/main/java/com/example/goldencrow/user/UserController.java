@@ -68,6 +68,7 @@ public class UserController {
             Map<String, String> res = new HashMap<>();
             res.put("result", BAD_REQ);
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+
         }
 
     }
@@ -104,6 +105,7 @@ public class UserController {
             Map<String, String> res = new HashMap<>();
             res.put("result", BAD_REQ);
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+
         }
 
     }
