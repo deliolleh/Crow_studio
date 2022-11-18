@@ -1,14 +1,11 @@
 package com.example.goldencrow.team.dto;
 
 import com.example.goldencrow.team.entity.MemberEntity;
-import com.example.goldencrow.user.UserEntity;
 import com.example.goldencrow.user.dto.UserInfoDto;
 import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.example.goldencrow.common.Constants.*;
 
 /**
  * 팀원 목록 조회의 내부 로직에 사용되는 DTO
