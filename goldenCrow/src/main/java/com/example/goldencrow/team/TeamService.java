@@ -78,33 +78,9 @@ public class TeamService {
                 // 비지 않았을 경우, 각 멤버가 속한 팀의 정보를 작성함
 
                 for (MemberEntity m : userMemberEntityList) {
-
-                    // 해당 멤버가 속한 하나의 팀까지 접근함
-                    // 그 팀의 팀장이 누군지를 기록함
-                    TeamEntity teamEntity = m.getTeam();
-                    Long leaderSeq = teamEntity.getTeamLeader().getUserSeq();
-
-                    // 내보내기 위한 List<MemberDto> 생성
-                    List<MemberDto> memberDtoList = new ArrayList<>();
-
-                    // 팀장을 제외한 멤버 리스트를 추출
-                    List<MemberEntity> memberEntityList = memberRepository.findAllByTeam_TeamSeq(teamEntity.getTeamSeq());
-                    for (MemberEntity mm : memberEntityList) {
-
-                        // 팀장이 아닌 멤버만 리스트에 추가
-                        if (!mm.getUser().getUserSeq().equals(leaderSeq)) {
-                            memberDtoList.add(new MemberDto(mm));
-                        }
-
-                    }
-
-                    // TeamDto 생성
-                    // 작성된 멤버 리스트를 TeadmDto에 기록
-                    // 완성된 TeamDto를 리스트에 기록
-                    TeamDto teamDto = new TeamDto(teamEntity);
-                    teamDto.setMemberDtoList(memberDtoList);
-                    teamDto.setResult(SUCCESS);
-                    listTeamDto.add(teamDto);
+                    // MemberEntity로 TeamDto를 반환하는 서비스 호출
+                    // 반환된 TeamDto를 리스트에 삽입
+                    listTeamDto.add(teamReadService(m));
 
                 }
 
@@ -153,33 +129,8 @@ public class TeamService {
             if (memberEntityOptional.isPresent()) {
                 // 존재할 경우 : 사용자는 그 팀에 속해있음
                 // 즉, 조회 권한이 있음
-
-                // 해당 팀에 접근함
-                // 그 팀의 팀장이 누군지를 기록함
-                TeamEntity teamEntity = memberEntityOptional.get().getTeam();
-                Long leaderSeq = teamEntity.getTeamLeader().getUserSeq();
-
-                // 내보내기 위한 List<MemberDto> 생성
-                List<MemberDto> memberDtoList = new ArrayList<>();
-
-                // 팀장을 제외한 멤버 리스트를 추출
-                List<MemberEntity> memberEntityList = memberRepository.findAllByTeam_TeamSeq(teamEntity.getTeamSeq());
-                for (MemberEntity mm : memberEntityList) {
-
-                    // 팀장이 아닌 멤버만 리스트에 추가
-                    if (!mm.getUser().getUserSeq().equals(leaderSeq)) {
-                        memberDtoList.add(new MemberDto(mm));
-                    }
-
-                }
-
-                // TeamDto 생성
-                // 작성된 멤버 리스트를 TeadmDto에 기록
-                // 완성된 TeamDto를 리스트에 기록
-                TeamDto teamDto = new TeamDto(teamEntity);
-                teamDto.setMemberDtoList(memberDtoList);
-                teamDto.setResult(SUCCESS);
-                return teamDto;
+                // MemberEntity로 TeamDto를 반환하는 서비스 호출
+                return teamReadService(memberEntityOptional.get());
 
             } else {
                 // 존재할 경우 : 사용자는 그 팀에 속해있지 않음
@@ -199,7 +150,42 @@ public class TeamService {
 
     }
 
-    public TeamDto tea
+    /**
+     * 입력받은 멤버가 속한 팀 정보를 반환하는 service
+     *
+     * @param memberEntity 소속된 팀의 정보를 얻고 싶은 MemberEntity
+     * @return 해당 멤버가 속한 팀 정보 반환
+     */
+    public TeamDto teamReadService(MemberEntity memberEntity) {
+
+        // 해당 팀에 접근함
+        // 그 팀의 팀장이 누군지를 기록함
+        TeamEntity teamEntity = memberEntity.getTeam();
+        Long leaderSeq = teamEntity.getTeamLeader().getUserSeq();
+
+        // 내보내기 위한 List<MemberDto> 생성
+        List<MemberDto> memberDtoList = new ArrayList<>();
+
+        // 팀장을 제외한 멤버 리스트를 추출
+        List<MemberEntity> memberEntityList = memberRepository.findAllByTeam_TeamSeq(teamEntity.getTeamSeq());
+        for (MemberEntity mm : memberEntityList) {
+
+            // 팀장이 아닌 멤버만 리스트에 추가
+            if (!mm.getUser().getUserSeq().equals(leaderSeq)) {
+                memberDtoList.add(new MemberDto(mm));
+            }
+
+        }
+
+        // TeamDto 생성
+        // 작성된 멤버 리스트를 TeadmDto에 기록
+        // 완성된 TeamDto를 리스트에 기록
+        TeamDto teamDto = new TeamDto(teamEntity);
+        teamDto.setMemberDtoList(memberDtoList);
+        teamDto.setResult(SUCCESS);
+        return teamDto;
+
+    }
 
     // 팀 생성
     public Map<String, Long> teamCreate(String jwt, Map<String, String> req) {
