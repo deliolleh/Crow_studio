@@ -1,0 +1,30 @@
+pipeline { 
+        agent none
+        stages {
+                stage('Docker build') {
+                        agent any
+                        steps {
+                                sh 'docker build -t goldencrow ./goldenCrow'
+                        }
+                }
+                stage('Docker run') {
+                        agent any
+                        steps {
+                                sh 'docker ps -f name=goldencrow -q \
+                                        | xargs --no-run-if-empty docker container stop'
+
+                                sh 'docker container ls -a -f name=goldencrow -q \
+                                        | xargs -r docker container rm'
+
+                                sh 'docker run -d --name goldencrow -u root --privileged \
+                                    -p 8080:8080 \
+                                    -v /home/ubuntu/crow_data:/home/ubuntu/crow_data \
+                                    -v /var/run/docker.sock:/var/run/docker.sock \
+                                    -v /usr/bin:/usr/bin \
+                                    -v /usr/lib:/usr/lib \
+                                    goldencrow'
+                        }
+                }
+        }
+
+}
