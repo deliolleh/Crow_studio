@@ -5,14 +5,11 @@ import Editor from "@monaco-editor/react";
 import styled from "styled-components";
 import SplitPane from "react-split-pane";
 
-// import { saveFileContent } from "../../redux/fileSlice";
-import { formatPut, formatGet } from "../../redux/editorSlice";
-import { compilePython } from "../../redux/compileSlice";
 import { getTeam } from "../../redux/teamSlice";
 
 import fileApi from "../../api/fileApi";
 import editorApi from "../../api/editorApi";
-import teamApi from "../../api/teamApi";
+// import teamApi from "../../api/teamApi";
 
 import Header from "../../components/Header";
 import Sidebar from "./components/sidebar/Sidebar";
@@ -37,7 +34,7 @@ const editorOptions = {
 const TestMain = () => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
-  const { teamGit } = useSelector((state) => state.team.value);
+  // const { teamGit } = useSelector((state) => state.team.value);
   const editorRef = useRef(null); // 에디터 내용
   const editorheightRef = useRef(); // 에디터 높이
   const [showComponent, setShowComponent] = useState("Dir");
