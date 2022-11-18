@@ -7,14 +7,11 @@ import fileApi from "../../api/fileApi";
 import Editor from "@monaco-editor/react";
 import { useRef } from "react";
 
-const YMonaco3 = ({
-  filePath = "69/flask/main.py",
-}) => {
+const YMonaco3 = ({ filePath = "35/대체왜/main.py" }) => {
   const editorRef = useRef(null);
+  const [code, setCode] = useState("");
   useEffect(() => {
-    const path = filePath
-      ? filePath
-      : "68/금오/금오.py";
+    const path = filePath ? filePath : "68/금오/금오.py";
 
     const data = {
       filePath: path,
@@ -22,17 +19,19 @@ const YMonaco3 = ({
 
     fileApi.fileCall(data).then((res) => {
       console.log(res.data);
-      editorRef.current.getModel().setValue(res.data);
+      // editorRef.current.getModel().setValue(res.data);
+      setCode(res.data);
     });
-  });
+  }, []);
 
   const link = () => {
-    const path = filePath
-      ? filePath.replace("/home/ubuntu/crow_data/", "")
-      : "68/금오/금오.py";
+    const path = filePath ? filePath : "68/금오/금오.py";
+
     const ydoc = new Y.Doc();
     const provider = new WebsocketProvider("wss://demos.yjs.dev", path, ydoc);
     const ytext = ydoc.getText("monaco");
+    ytext.insert(0, code);
+
     const monacoBinding = new MonacoBinding(
       ytext,
       editorRef.current.getModel(),
@@ -48,7 +47,7 @@ const YMonaco3 = ({
     return () => {
       window.removeEventListener("load", link);
     };
-  }, []);
+  });
 
   return (
     <React.Fragment>
