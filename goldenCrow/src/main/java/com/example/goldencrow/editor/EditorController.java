@@ -41,7 +41,7 @@ public class EditorController {
      */
     @PostMapping("/format/{language}")
     public ResponseEntity<Map<String, String>> fileFormatPost(@PathVariable String language,
-                                                          @RequestBody Map<String, String> req) {
+                                                              @RequestBody Map<String, String> req) {
         if (req.containsKey("name")) {
             String code = req.get("text");
             Map<String, String> res = editorService.formatService(language, code);
@@ -68,10 +68,11 @@ public class EditorController {
      * @status 200, 400, 401, 404
      */
     @PostMapping("/format/read/{language}")
-    public ResponseEntity<Map<String, String>> formatResultPost(@PathVariable String language, @RequestBody Map<String, String> req) {
+    public ResponseEntity<Map<String, String>> formatResultPost(@PathVariable String language,
+                                                                @RequestBody Map<String, String> req) {
         if (req.containsKey("name")) {
             String name = req.get("name");
-            Map<String, String> res = editorService.formatRead(language, name);
+            Map<String, String> res = editorService.formatReadService(language, name);
             String result = res.get("result");
             switch (result) {
                 case SUCCESS:
@@ -98,7 +99,8 @@ public class EditorController {
      * @status 200, 400, 401, 404
      */
     @PostMapping("/lint/{language}")
-    public ResponseEntity<Map<String, Object>> fileLintPost(@PathVariable String language, @RequestBody Map<String, String> req) {
+    public ResponseEntity<Map<String, Object>> fileLintPost(@PathVariable String language,
+                                                            @RequestBody Map<String, String> req) {
         if (req.containsKey("text")) {
             String code = req.get("text");
             Map<String, Object> res = editorService.lintService(language, code);
