@@ -64,6 +64,11 @@ public class ProjectService {
             List<Object> child = new ArrayList<>();
             File[] files = file.listFiles();
             String[] names = file.list();
+            if (files == null) {
+                Map<Object,Object> errorValue = new HashMap<>();
+                errorValue.put("error",NO_SUCH);
+                return errorValue;
+            }
             for (int i = 0; i < files.length; i++) {
                 File dir = files[i];
                 String name = names[i];
@@ -112,7 +117,7 @@ public class ProjectService {
      * 4 = fastapi
      */
     public String createProject(String path, Integer type, String projectName, Long teamSeq) {
-
+        out.println("여기서 터집니다! 여기");
         String teamFile = createDir(path, String.valueOf(teamSeq));
 
         if (teamFile.equals("2")) {
