@@ -29,7 +29,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full h-full">
       <Header />
       <section className="w-screen h-screen flex flex-col justify-center overflow-auto">
         <LoginTitle />

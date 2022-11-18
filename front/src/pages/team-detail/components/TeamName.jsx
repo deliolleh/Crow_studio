@@ -9,7 +9,10 @@ const TeamName = ({ children, onOpenModify }) => {
         {" "}
         ✏
       </span> */}
-      <BsPencilFill className="ml-3 text-sm text-point_yellow_+2 cursor-pointer" onClick={onOpenModify} />
+      <BsPencilFill
+        className="ml-3 mr-5 text-sm text-point_yellow_+2 cursor-pointer"
+        onClick={onOpenModify}
+      />
     </h1>
   );
 };
