@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import Header from "../../components/Header";
+import Loading from "../../components/Loading";
 
 const Intro = () => {
   const navigate = useNavigate();
@@ -17,7 +18,8 @@ const Intro = () => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-screen">
+      {/* <Loading /> */}
       <Header />
       <div className="flex flex-col h-screen justify-center justify-items-center items-center overflow-auto">
         <img

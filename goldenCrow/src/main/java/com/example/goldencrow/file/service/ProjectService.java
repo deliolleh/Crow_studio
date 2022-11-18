@@ -64,6 +64,11 @@ public class ProjectService {
             List<Object> child = new ArrayList<>();
             File[] files = file.listFiles();
             String[] names = file.list();
+            if (files == null) {
+                Map<Object,Object> errorValue = new HashMap<>();
+                errorValue.put("error",NO_SUCH);
+                return errorValue;
+            }
             for (int i = 0; i < files.length; i++) {
                 File dir = files[i];
                 String name = names[i];
@@ -112,7 +117,7 @@ public class ProjectService {
      * 4 = fastapi
      */
     public String createProject(String path, Integer type, String projectName, Long teamSeq) {
-
+        out.println("여기서 터집니다! 여기");
         String teamFile = createDir(path, String.valueOf(teamSeq));
 
         if (teamFile.equals("2")) {
@@ -173,7 +178,7 @@ public class ProjectService {
             }
             File file = new File(pjt + "/main.py");
 
-            String content = "from flask import Flask\n\napp=Flask(__name__)\n\n@app.route(\"/\")\ndef hello_world():\n\treturn \"<p>Hello, World</p>\" \n\nif __name__ == \"__main__\" :\n\tapp.run(\"0.0.0.0\")";
+            String content = "from flask import Flask\nimport sys\nsys.path.append('/prod/app')\n\napp=Flask(__name__)\n\n@app.route(\"/\")\ndef hello_world():\n\treturn \"<p>Hello, World</p>\" \n\nif __name__ == \"__main__\" :\n\tapp.run(\"0.0.0.0\")";
 
             try (FileWriter overWriteFile = new FileWriter(file, false);) {
                 overWriteFile.write(content);
@@ -190,7 +195,7 @@ public class ProjectService {
             }
             String pjt1 = createDir(pjt, fileTitle);
             File file = new File(pjt1 + "/main.py");
-            String content = "from fastapi import FastAPI\n\napp=FastAPI()\n\n@app.get(\"/\")\nasync def root():\n\treturn {\"message\" : \"Hello, World\"}";
+            String content = "from fastapi import FastAPI\nimport sys\nsys.path.append('/prod/app')\n\napp=FastAPI()\n\n@app.get(\"/\")\nasync def root():\n\treturn {\"message\" : \"Hello, World\"}";
             try (FileWriter overWriteFile = new FileWriter(file, false);) {
                 overWriteFile.write(content);
             } catch (IOException e) {
