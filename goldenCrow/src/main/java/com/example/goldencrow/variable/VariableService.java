@@ -2,6 +2,7 @@ package com.example.goldencrow.variable;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +18,20 @@ import java.util.Map;
 import static com.example.goldencrow.common.Constants.*;
 
 /**
- * 변수명 추천과 관련된 로직을 처리하는 서비스
+ * 변수명 추천과 관련된 로직을 처리하는 Service
  */
 @Service
 public class VariableService {
 
     public RestTemplate restTemplate = new RestTemplate();
-    String clientId = "p3IEa7WNGODfNQkwb1z2";
-    String clientSecret = "MSAQnEbctM";
+    /**
+     * Header를 생성하기 위해 필요한 id와 pass
+     */
+    @Value("${secret.client.id}")
+    private String CLIENT_ID;
+
+    @Value("${secret.client.pass}")
+    private String CLIENT_PASS;
 
     /**
      * 변수명 추천 내부 로직
@@ -33,20 +40,22 @@ public class VariableService {
      * @return 추천받은 변수명 리스트 반환, 성패에 따른 result 반환
      */
 
-    public Map<String, Object> variableRecommend(String data) {
+    public Map<String, Object> variableRecommendService(String data) {
         Map<String, Object> serviceRes = new HashMap<>();
-        /*
+        /**
          * words : 다양한 api를 활용해 단어를 번역하여 담기위한 리스트
          * 현재는 papago api만을 활용하고 있다
-         * */
+         */
         ArrayList<String> words = new ArrayList<>();
+
         // papago api를 활용해 번역
-        String papagoWord = papagoApi(data);
+        String papagoWord = papagoApiService(data);
         if (papagoWord.equals(NO_SUCH)) {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
         words.add(papagoWord);
+
         // camel, pascal, snake 타입으로 변경된 단어들을 저장할 리스트
         ArrayList<String> converts = new ArrayList<>();
 
@@ -59,9 +68,9 @@ public class VariableService {
                 String clearLetter = letter.replaceAll("%20", "");
                 // toLowerCase().equals => equalsIgnoreCase()로 메서드 사용 최소화
                 if (!clearLetter.equalsIgnoreCase("a") && !clearLetter.equalsIgnoreCase("an")) {
-                    /* camel 타입 변수 생성
-                       첫번째 단어일 경우 첫번째 알파벳은 소문자, 나머지 알파벳은 소문자
-                       첫번째 단어가 아닐 경우 첫번째 알파벳은 대문자, 나머지 알파벳은 소문자
+                    /** camel 타입 변수 생성
+                     * 첫번째 단어일 경우 첫번째 알파벳은 소문자, 나머지 알파벳은 소문자
+                     * 첫번째 단어가 아닐 경우 첫번째 알파벳은 대문자, 나머지 알파벳은 소문자
                      */
                     if (camel.length() == 0) {
                         camel.append(letter.toLowerCase());
@@ -69,9 +78,10 @@ public class VariableService {
                         camel.append(letter.substring(0, 1).toUpperCase())
                                 .append(letter.substring(1));
                     }
-                    /* pascal 타입 변수 생성
-                       첫번째 단어일 경우 첫번째 알파벳은 대문자, 나머지 알파벳은 소문자
-                       첫번째 단어가 아닐 경우 첫번째 알파벳은 대문자, 나머지 알파벳은 소문자
+
+                    /** pascal 타입 변수 생성
+                     * 첫번째 단어일 경우 첫번째 알파벳은 대문자, 나머지 알파벳은 소문자
+                     * 첫번째 단어가 아닐 경우 첫번째 알파벳은 대문자, 나머지 알파벳은 소문자
                      */
                     if (pascal.length() == 0) {
                         pascal.append(letter.substring(0, 1).toUpperCase())
@@ -80,9 +90,9 @@ public class VariableService {
                         pascal.append(letter.substring(0, 1).toUpperCase())
                                 .append(letter.substring(1));
                     }
-                    /* snake 타입 변수 생성
-                       첫번째 단어일 경우 모든 알파벳은 소문자
-                       첫번째 단어가 아닐 경우 앞에 "_" 넣고 모든 알파벳은 소문자
+                    /** snake 타입 변수 생성
+                     * 첫번째 단어일 경우 모든 알파벳은 소문자
+                     * 첫번째 단어가 아닐 경우 앞에 "_" 넣고 모든 알파벳은 소문자
                      */
                     if (snake.length() == 0) {
                         snake.append(letter.toLowerCase());
@@ -106,7 +116,7 @@ public class VariableService {
      * @param word  번역에 사용할 단어(한글)
      * @return 성공 시 번역한 단어 반환, 실패 시 실패코드 반환
      */
-    public String papagoApi(String word) {
+    public String papagoApiService(String word) {
         String serviceRes = "";
         // papago api에 활용할 uri 생성
         URI uri = UriComponentsBuilder.fromUriString("https://openapi.naver.com")
@@ -115,7 +125,7 @@ public class VariableService {
                 .queryParam("target", "en")
                 .queryParam("text", word).build().toUri();
         // naver header 생성
-        RequestEntity<Void> requestEntity = naverHeader(uri);
+        RequestEntity<Void> requestEntity = naverHeaderService(uri);
 
         ResponseEntity<String> restTemplateResult
                 = restTemplate.exchange(uri.toString(), HttpMethod.POST, requestEntity, String.class);
@@ -138,9 +148,9 @@ public class VariableService {
      * @param uri   naver Header를 생성하기위해 필요한 URI
      * @return naver Header을 생성해 RequestEntity<Void>로 반환
      */
-    private RequestEntity<Void> naverHeader(URI uri) {
-        return RequestEntity.get(uri).header("X-Naver-Client-Id", clientId)
-                .header("X-Naver-Client-Secret", clientSecret).build();
+    private RequestEntity<Void> naverHeaderService(URI uri) {
+        return RequestEntity.get(uri).header("X-Naver-Client-Id", CLIENT_ID)
+                .header("X-Naver-Client-Secret", CLIENT_PASS).build();
     }
 
 //    public String googleApi(String word) {
