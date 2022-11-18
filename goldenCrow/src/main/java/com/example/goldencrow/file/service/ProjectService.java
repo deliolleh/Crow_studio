@@ -91,8 +91,10 @@ public class ProjectService {
      * @param teamSeq
      */
     public void saveFilesInDIr(String path, Long teamSeq) {
-        out.println(path + teamSeq);
         File file = new File(path);
+        out.println(file.getName());
+        out.println(file.getPath());
+        out.println("path : " + path);
         FileCreateDto newFileCreateDto = new FileCreateDto(file.getName(), file.getPath(), teamSeq);
         fileService.insertFile(newFileCreateDto);
 
@@ -100,6 +102,9 @@ public class ProjectService {
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
                 File dir = files[i];
+                if (dir.getName().equals(".git")) {
+                    continue;
+                }
                 String thisPath = dir.getPath();
 
                 if (dir.isDirectory()) {
