@@ -24,14 +24,14 @@ import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.
 
 // import * as iconsi from "react-icons/io5";
 
-import { getAllFiles } from "../../../../redux/projectSlice";
-import {
-  createFile,
-  deleteFile,
-  renameFile,
-  // getFileContent,
-  // saveFileContent,
-} from "../../../../redux/fileSlice";
+// import { getAllFiles } from "../../../../redux/projectSlice";
+// import {
+//   createFile,
+//   deleteFile,
+//   renameFile,
+//   // getFileContent,
+//   // saveFileContent,
+// } from "../../../../redux/fileSlice";
 
 // const TEAM_SEQ = 3;
 const TYPE_DIRECTORY = 1;
@@ -61,10 +61,10 @@ const Directory = (props) => {
   const [filesDirectories, setFilesDirectories] = useState({});
 
   useEffect(() => {
-    dispatch(getAllFiles(teamSeq))
-      .unwrap()
-      .then(setFilesDirectories)
-      .catch(console.error);
+    // dispatch(getAllFiles(teamSeq))
+    //   .unwrap()
+    //   .then(setFilesDirectories)
+    //   .catch(console.error);
   }, [dispatch, teamSeq]);
 
   // 디렉터리 생성 핸들러
@@ -77,16 +77,16 @@ const Directory = (props) => {
       fileTitle: newDirectoryName,
       filePath: curPath,
     };
-    dispatch(createFile({ teamSeq, type: TYPE_DIRECTORY, fileData }))
-      .unwrap()
-      .then(() => {
-        console.log(`/${newDirectoryName} 생성 완료`);
-        dispatch(getAllFiles(teamSeq))
-          .unwrap()
-          .then(setFilesDirectories)
-          .catch(console.error);
-      })
-      .catch(console.error);
+    // dispatch(createFile({ teamSeq, type: TYPE_DIRECTORY, fileData }))
+    //   .unwrap()
+    //   .then(() => {
+    //     console.log(`/${newDirectoryName} 생성 완료`);
+    //     dispatch(getAllFiles(teamSeq))
+    //       .unwrap()
+    //       .then(setFilesDirectories)
+    //       .catch(console.error);
+    //   })
+    //   .catch(console.error);
   };
 
   // 파일 생성 핸들러
@@ -99,16 +99,16 @@ const Directory = (props) => {
       fileTitle: newFileName,
       filePath: curPath,
     };
-    dispatch(createFile({ teamSeq, type: TYPE_FILE, fileData }))
-      .unwrap()
-      .then(() => {
-        console.log(`${newFileName} 생성 완료`);
-        dispatch(getAllFiles(teamSeq))
-          .unwrap()
-          .then(setFilesDirectories)
-          .catch(console.error);
-      })
-      .catch(console.error);
+    // dispatch(createFile({ teamSeq, type: TYPE_FILE, fileData }))
+    //   .unwrap()
+    //   .then(() => {
+    //     console.log(`${newFileName} 생성 완료`);
+    //     dispatch(getAllFiles(teamSeq))
+    //       .unwrap()
+    //       .then(setFilesDirectories)
+    //       .catch(console.error);
+    //   })
+    //   .catch(console.error);
   };
 
   // 파일 클릭
@@ -127,16 +127,16 @@ const Directory = (props) => {
       oldFileName: curName,
       fileTitle: newName,
     };
-    dispatch(renameFile({ teamSeq, fileData: renameData }))
-      .unwrap()
-      .then(() => {
-        console.log(`${curName} -> ${newName} 변경 성공`);
-        dispatch(getAllFiles(teamSeq))
-          .unwrap()
-          .then(setFilesDirectories)
-          .catch(console.error);
-      })
-      .catch(console.error);
+    // dispatch(renameFile({ teamSeq, fileData: renameData }))
+    //   .unwrap()
+    //   .then(() => {
+    //     console.log(`${curName} -> ${newName} 변경 성공`);
+    //     dispatch(getAllFiles(teamSeq))
+    //       .unwrap()
+    //       .then(setFilesDirectories)
+    //       .catch(console.error);
+    //   })
+    //   .catch(console.error);
   };
 
   // 삭제
@@ -148,16 +148,16 @@ const Directory = (props) => {
     const targetData = {
       filePath: curPath,
     };
-    dispatch(deleteFile({ teamSeq, type: targetType, fileData: targetData }))
-      .unwrap()
-      .then((res) => {
-        console.log("삭제 성공 res:", res);
-        dispatch(getAllFiles(teamSeq))
-          .unwrap()
-          .then(setFilesDirectories)
-          .catch(console.error);
-      })
-      .catch(console.error);
+    // dispatch(deleteFile({ teamSeq, type: targetType, fileData: targetData }))
+    //   .unwrap()
+    //   .then((res) => {
+    //     console.log("삭제 성공 res:", res);
+    //     dispatch(getAllFiles(teamSeq))
+    //       .unwrap()
+    //       .then(setFilesDirectories)
+    //       .catch(console.error);
+    //   })
+    //   .catch(console.error);
   };
 
   // 저장
