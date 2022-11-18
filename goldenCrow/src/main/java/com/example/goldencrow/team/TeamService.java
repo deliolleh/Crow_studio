@@ -10,10 +10,8 @@ import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.MemberRepository;
 import com.example.goldencrow.team.repository.TeamRepository;
 import com.example.goldencrow.user.service.JwtService;
-import com.example.goldencrow.user.dto.UserInfoDto;
 import com.example.goldencrow.user.UserEntity;
 import com.example.goldencrow.user.UserRepository;
-import org.graalvm.compiler.nodes.calc.IntegerDivRemNode;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
