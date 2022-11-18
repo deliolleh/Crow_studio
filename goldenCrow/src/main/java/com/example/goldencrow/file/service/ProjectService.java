@@ -173,7 +173,7 @@ public class ProjectService {
             }
             File file = new File(pjt + "/main.py");
 
-            String content = "from flask import Flask\n\napp=Flask(__name__)\n\n@app.route(\"/\")\ndef hello_world():\n\treturn \"<p>Hello, World</p>\" \n\nif __name__ == \"__main__\" :\n\tapp.run(\"0.0.0.0\")";
+            String content = "from flask import Flask\nimport sys\nsys.path.append('/prod/app')\n\napp=Flask(__name__)\n\n@app.route(\"/\")\ndef hello_world():\n\treturn \"<p>Hello, World</p>\" \n\nif __name__ == \"__main__\" :\n\tapp.run(\"0.0.0.0\")";
 
             try (FileWriter overWriteFile = new FileWriter(file, false);) {
                 overWriteFile.write(content);
@@ -190,7 +190,7 @@ public class ProjectService {
             }
             String pjt1 = createDir(pjt, fileTitle);
             File file = new File(pjt1 + "/main.py");
-            String content = "from fastapi import FastAPI\n\napp=FastAPI()\n\n@app.get(\"/\")\nasync def root():\n\treturn {\"message\" : \"Hello, World\"}";
+            String content = "from fastapi import FastAPI\nimport sys\nsys.path.append('/prod/app')\n\napp=FastAPI()\n\n@app.get(\"/\")\nasync def root():\n\treturn {\"message\" : \"Hello, World\"}";
             try (FileWriter overWriteFile = new FileWriter(file, false);) {
                 overWriteFile.write(content);
             } catch (IOException e) {
