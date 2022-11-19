@@ -28,24 +28,6 @@ import projectApi from "../../../../api/projectApi";
 
 import { selectFile } from "../../../../redux/teamSlice";
 
-// import { getAllFiles } from "../../../../redux/projectSlice";
-// import {
-//   createFile,
-//   deleteFile,
-//   renameFile,
-//   // getFileContent,
-//   // saveFileContent,
-// } from "../../../../redux/fileSlice";
-
-// const TEAM_SEQ = 3;
-const TYPE_DIRECTORY = 1;
-const TYPE_FILE = 2;
-const DIRECTORY_DATA = {
-  // rootPath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
-  // rootPath: `${TEAM_SEQ}`,
-  rootName: `root`,
-};
-
 const getFileType = (filePath) => {
   const filenameExtension = filePath.split(".")[1] ?? null;
   switch (filenameExtension) {
@@ -70,17 +52,7 @@ const Directory = (props) => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
 
-  const {
-    curPath,
-    setCurPath,
-    curName,
-    setCurName,
-    showFileContent,
-    saveFileContent,
-  } = props;
-
-  // const [curPath, setCurPath] = useState("");
-  // const [curName, setCurName] = useState("");
+  const { curPath, curName, saveFileContent } = props;
 
   const [filesDirectories, setFilesDirectories] = useState({});
 
@@ -134,10 +106,6 @@ const Directory = (props) => {
     //   })
     //   .catch(console.error);
   };
-
-  // 파일 클릭
-  // const openFileHandler = (path, type) => showFileContent(type, path);
-  const openFileHandler = (path, type) => showFileContent(type, path);
 
   // 이름 변경
   const renameHandler = () => {
@@ -199,29 +167,14 @@ const Directory = (props) => {
 
   // 노드 선택
   const nodeSelectHandler = (e, nodeIds) => {
-    setCurName(e.target.innerText);
-    setCurPath(nodeIds);
-    console.log("nodeSelectHandler e:", e);
-    console.log("nodeSelectHandler nodesIds:", nodeIds);
-
     const filenameExtension = nodeIds.split(".")[1] ?? null;
-
     const payloadData = {
       type: getFileType(nodeIds),
       name: getFileName(nodeIds),
       path: nodeIds,
     };
-
     dispatch(selectFile(payloadData));
-
-    if (e.target.innerText && e.target.innerText.includes(".")) {
-      openFileHandler(nodeIds, TYPE_FILE);
-    }
   };
-
-  useEffect(() => {
-    // console.log("curPath re-rendering");
-  }, [curPath]);
 
   //
   //
@@ -360,7 +313,6 @@ const Directory = (props) => {
       {Array.isArray(nodes.children)
         ? nodes.children.map((node) => renderTree(node))
         : null}
-      {console.log("nodes:", nodes)}
     </StyledTreeItem>
   );
 

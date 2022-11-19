@@ -187,7 +187,6 @@ export const teamSlice = createSlice({
   initialState,
   reducers: {
     selectFile: (state, action) => {
-      console.log("selectFile action:", action);
       const { name, type, path } = action.payload;
       state.value.selectedFileName = name;
       state.value.selectedFileType = type;

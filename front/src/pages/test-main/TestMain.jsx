@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import styled from "styled-components";
@@ -20,6 +20,7 @@ import Api from "./components/sidebar/Api";
 import VariableName from "./components/sidebar/VariableName";
 import Settings from "./components/sidebar/Settings";
 import ConsoleTerminal from "./components/ConsoleTerminal";
+import { editor } from "monaco-editor";
 
 const editorOptions = {
   scrollBeyondLastLine: false,
@@ -44,6 +45,10 @@ const TestMain = () => {
 
   const [curPath, setCurPath] = useState(""); // 현재 선택한 폴더나 파일의 경로
   const [curName, setCurName] = useState(""); // 현재 선택한 폴더나 파일의 이름
+
+  const { selectedFileName, selectedFileType, selectedFilePath } = useSelector(
+    (state) => state.team.value
+  );
 
   // 콘솔 높이 초기값 세팅
   useEffect(() => {
@@ -73,18 +78,17 @@ const TestMain = () => {
   const showComponentHandler = (componentName) =>
     setShowComponent(componentName);
 
-  // 파일 클릭하면 내용 보여주기
-  const showFileContentHandler = async (type) => {
-    if (type !== "directory") {
+  useEffect(() => {
+    (async () => {
       try {
-        const filePathData = { filePath: curPath };
+        const filePathData = { filePath: selectedFilePath };
         const res = await fileApi.getFileContent(filePathData);
         editorRef.current.getModel().setValue(res.data);
       } catch (err) {
         console.error(err);
       }
-    }
-  };
+    })();
+  }, [dispatch, selectedFileName, selectedFileType, selectedFilePath]);
 
   const saveFileContentHandler = async () => {
     try {
@@ -125,14 +129,7 @@ const TestMain = () => {
             {showComponent && (
               <SidebarItems>
                 {showComponent === "Dir" && (
-                  <Directory
-                    showFileContent={showFileContentHandler}
-                    saveFileContent={saveFileContentHandler}
-                    curPath={curPath}
-                    setCurPath={setCurPath}
-                    curName={curName}
-                    setCurName={setCurName}
-                  />
+                  <Directory saveFileContent={saveFileContentHandler} />
                 )}
                 {showComponent === "Git" && <Git />}
                 {showComponent === "Team" && <Team />}
