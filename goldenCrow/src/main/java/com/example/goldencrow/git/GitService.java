@@ -437,8 +437,8 @@ public class GitService {
             Process getBranch = command.start();
             BufferedReader branch = new BufferedReader(new InputStreamReader(getBranch.getInputStream()));
             while ((read = branch.readLine()) != null) {
+                System.out.println(read);
                 branches.add(read.trim());
-
             }
             getBranch.waitFor();
         } catch (IOException e) {
