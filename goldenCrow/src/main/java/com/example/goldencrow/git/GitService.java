@@ -222,7 +222,8 @@ public class GitService {
      */
     public Map<String, String> gitSwitchService( String branchName, Integer type, Long teamSeq) {
         Map<String, String> serviceRes = new HashMap<>();
-        File targetFile = new File(BASE_URL);
+        String gitPath = getGitPath(teamSeq);
+        File targetFile = new File(gitPath);
 
         ProcessBuilder command = new ProcessBuilder();
         // switch할 branch의 종류로 명령어 저장
