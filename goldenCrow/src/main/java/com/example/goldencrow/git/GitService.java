@@ -355,7 +355,8 @@ public class GitService {
             serviceRes.put("result", UNKNOWN);
             return serviceRes;
         }
-
+        String message2 = msg.toString();
+        System.out.println(message2);
         // 성공 여부 판단
         if (msg.length() == 0) {
             serviceRes.put("result", SUCCESS);
