@@ -24,46 +24,42 @@ import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.
 
 // import * as iconsi from "react-icons/io5";
 
-import { getAllFiles } from "../../../../redux/projectSlice";
-import {
-  createFile,
-  deleteFile,
-  renameFile,
-  // getFileContent,
-  saveFileContent,
-} from "../../../../redux/fileSlice";
+import projectApi from "../../../../api/projectApi";
 
-// const TEAM_SEQ = 3;
-const TYPE_DIRECTORY = 1;
-const TYPE_FILE = 2;
-const DIRECTORY_DATA = {
-  // rootPath: `/home/ubuntu/crow_data/${TEAM_SEQ}`,
-  // rootPath: `${TEAM_SEQ}`,
-  rootName: `root`,
+import { selectFile } from "../../../../redux/teamSlice";
+
+const getFileType = (filePath) => {
+  const filenameExtension = filePath.split(".")[1] ?? null;
+  switch (filenameExtension) {
+    case "py":
+      return "python";
+    case null:
+      return "directory";
+    default:
+      return null;
+  }
+};
+
+const getFileName = (filePath) => {
+  if (filePath.includes(".")) {
+    return filePath.split("/").slice(-1)[0].split(".")[0];
+  } else {
+    return filePath.split("/").slice(-1)[0];
+  }
 };
 
 const Directory = (props) => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
 
-  const {
-    curPath,
-    setCurPath,
-    curName,
-    setCurName,
-    showFileContent,
-    saveFileContent,
-  } = props;
-
-  // const [curPath, setCurPath] = useState("");
-  // const [curName, setCurName] = useState("");
+  const { curPath, curName, saveFileContent } = props;
 
   const [filesDirectories, setFilesDirectories] = useState({});
 
   useEffect(() => {
-    dispatch(getAllFiles(teamSeq))
-      .unwrap()
-      .then(setFilesDirectories)
+    projectApi
+      .getAllFiles(teamSeq)
+      .then((res) => setFilesDirectories(res.data))
       .catch(console.error);
   }, [dispatch, teamSeq]);
 
@@ -77,16 +73,16 @@ const Directory = (props) => {
       fileTitle: newDirectoryName,
       filePath: curPath,
     };
-    dispatch(createFile({ teamSeq, type: TYPE_DIRECTORY, fileData }))
-      .unwrap()
-      .then(() => {
-        console.log(`/${newDirectoryName} 생성 완료`);
-        dispatch(getAllFiles(teamSeq))
-          .unwrap()
-          .then(setFilesDirectories)
-          .catch(console.error);
-      })
-      .catch(console.error);
+    // dispatch(createFile({ teamSeq, type: TYPE_DIRECTORY, fileData }))
+    //   .unwrap()
+    //   .then(() => {
+    //     console.log(`/${newDirectoryName} 생성 완료`);
+    //     dispatch(getAllFiles(teamSeq))
+    //       .unwrap()
+    //       .then(setFilesDirectories)
+    //       .catch(console.error);
+    //   })
+    //   .catch(console.error);
   };
 
   // 파일 생성 핸들러
@@ -99,20 +95,17 @@ const Directory = (props) => {
       fileTitle: newFileName,
       filePath: curPath,
     };
-    dispatch(createFile({ teamSeq, type: TYPE_FILE, fileData }))
-      .unwrap()
-      .then(() => {
-        console.log(`${newFileName} 생성 완료`);
-        dispatch(getAllFiles(teamSeq))
-          .unwrap()
-          .then(setFilesDirectories)
-          .catch(console.error);
-      })
-      .catch(console.error);
+    // dispatch(createFile({ teamSeq, type: TYPE_FILE, fileData }))
+    //   .unwrap()
+    //   .then(() => {
+    //     console.log(`${newFileName} 생성 완료`);
+    //     dispatch(getAllFiles(teamSeq))
+    //       .unwrap()
+    //       .then(setFilesDirectories)
+    //       .catch(console.error);
+    //   })
+    //   .catch(console.error);
   };
-
-  // 파일 클릭
-  const openFileHandler = (path, type) => showFileContent(type, path);
 
   // 이름 변경
   const renameHandler = () => {
@@ -127,16 +120,16 @@ const Directory = (props) => {
       oldFileName: curName,
       fileTitle: newName,
     };
-    dispatch(renameFile({ teamSeq, fileData: renameData }))
-      .unwrap()
-      .then(() => {
-        console.log(`${curName} -> ${newName} 변경 성공`);
-        dispatch(getAllFiles(teamSeq))
-          .unwrap()
-          .then(setFilesDirectories)
-          .catch(console.error);
-      })
-      .catch(console.error);
+    // dispatch(renameFile({ teamSeq, fileData: renameData }))
+    //   .unwrap()
+    //   .then(() => {
+    //     console.log(`${curName} -> ${newName} 변경 성공`);
+    //     dispatch(getAllFiles(teamSeq))
+    //       .unwrap()
+    //       .then(setFilesDirectories)
+    //       .catch(console.error);
+    //   })
+    //   .catch(console.error);
   };
 
   // 삭제
@@ -148,16 +141,16 @@ const Directory = (props) => {
     const targetData = {
       filePath: curPath,
     };
-    dispatch(deleteFile({ teamSeq, type: targetType, fileData: targetData }))
-      .unwrap()
-      .then((res) => {
-        console.log("삭제 성공 res:", res);
-        dispatch(getAllFiles(teamSeq))
-          .unwrap()
-          .then(setFilesDirectories)
-          .catch(console.error);
-      })
-      .catch(console.error);
+    // dispatch(deleteFile({ teamSeq, type: targetType, fileData: targetData }))
+    //   .unwrap()
+    //   .then((res) => {
+    //     console.log("삭제 성공 res:", res);
+    //     dispatch(getAllFiles(teamSeq))
+    //       .unwrap()
+    //       .then(setFilesDirectories)
+    //       .catch(console.error);
+    //   })
+    //   .catch(console.error);
   };
 
   // 저장
@@ -174,16 +167,14 @@ const Directory = (props) => {
 
   // 노드 선택
   const nodeSelectHandler = (e, nodeIds) => {
-    setCurName(e.target.innerText);
-    setCurPath(nodeIds);
-    if (e.target.innerText && e.target.innerText.includes(".")) {
-      openFileHandler(nodeIds, TYPE_FILE);
-    }
+    const filenameExtension = nodeIds.split(".")[1] ?? null;
+    const payloadData = {
+      type: getFileType(nodeIds),
+      name: getFileName(nodeIds),
+      path: nodeIds,
+    };
+    dispatch(selectFile(payloadData));
   };
-
-  useEffect(() => {
-    // console.log("curPath re-rendering");
-  }, [curPath]);
 
   //
   //
@@ -322,7 +313,6 @@ const Directory = (props) => {
       {Array.isArray(nodes.children)
         ? nodes.children.map((node) => renderTree(node))
         : null}
-      {console.log("nodes:", nodes)}
     </StyledTreeItem>
   );
 

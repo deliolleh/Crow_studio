@@ -8,6 +8,9 @@ const initialState = {
     teamName: "",
     projectType: "",
     teamGit: "",
+    selectedFileName: "",
+    selectedFileType: "",
+    selectedFilePath: "",
   },
 };
 
@@ -182,7 +185,14 @@ export const modifyProjectType = createAsyncThunk(
 export const teamSlice = createSlice({
   name: "team",
   initialState,
-  reducers: {},
+  reducers: {
+    selectFile: (state, action) => {
+      const { name, type, path } = action.payload;
+      state.value.selectedFileName = name;
+      state.value.selectedFileType = type;
+      state.value.selectedFilePath = path;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getTeam.fulfilled, (state, action) => {
       const { teamSeq, teamName, projectType, teamGit } = action.payload;
@@ -194,4 +204,5 @@ export const teamSlice = createSlice({
   },
 });
 
+export const { selectFile } = teamSlice.actions;
 export default teamSlice.reducer;
