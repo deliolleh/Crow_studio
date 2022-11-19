@@ -28,7 +28,6 @@ public class FileEntity {
     @NotNull
     private Long teamSeq;
     @NotNull
-
     private String fileTitle;
     @NotNull
     private String filePath;
