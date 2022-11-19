@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import TreeView from "@mui/lab/TreeView";
@@ -27,6 +26,10 @@ import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.
 import projectApi from "../../../../api/projectApi";
 
 import { selectFile } from "../../../../redux/teamSlice";
+import fileApi from "../../../../api/fileApi";
+
+const TYPE_DIRECTORY = "1";
+const TYPE_FILE = "2";
 
 const getFileType = (filePath) => {
   const filenameExtension = filePath.split(".")[1] ?? null;
@@ -50,9 +53,9 @@ const getFileName = (filePath) => {
 
 const Directory = (props) => {
   const dispatch = useDispatch();
-  const { teamSeq } = useParams();
 
-  const { curPath, curName, saveFileContent } = props;
+  const { curPath, curName, teamSeq, selectedFilePath, saveFileContent } =
+    props;
 
   const [filesDirectories, setFilesDirectories] = useState({});
 
@@ -64,37 +67,49 @@ const Directory = (props) => {
   }, [dispatch, teamSeq]);
 
   // 디렉터리 생성 핸들러
-  const createDirectoryHandler = () => {
-    const newDirectoryName = prompt("생성할 폴더 이름 입력");
+  const createDirectoryHandler = async () => {
+    const newDirectoryName = prompt("생성할 폴더 이름을 입력하세요");
     if (newDirectoryName.trim().length === 0) {
       return;
     }
-    const fileData = {
+    if (newDirectoryName.trim().includes(".")) {
+      alert("폴더 이름에 .을 넣을 수 없습니다");
+      return;
+    }
+    const fileInfoData = {
       fileTitle: newDirectoryName,
-      filePath: curPath,
+      filePath: selectedFilePath,
     };
-    // dispatch(createFile({ teamSeq, type: TYPE_DIRECTORY, fileData }))
-    //   .unwrap()
-    //   .then(() => {
-    //     console.log(`/${newDirectoryName} 생성 완료`);
-    //     dispatch(getAllFiles(teamSeq))
-    //       .unwrap()
-    //       .then(setFilesDirectories)
-    //       .catch(console.error);
-    //   })
-    //   .catch(console.error);
+    try {
+      await fileApi.createFile(teamSeq, TYPE_DIRECTORY, fileInfoData);
+      const res = await projectApi.getAllFiles(teamSeq);
+      setFilesDirectories(res.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // 파일 생성 핸들러
-  const createFileHandler = () => {
-    const newFileName = prompt("생성할 파일 이름 입력");
+  const createFileHandler = async () => {
+    const newFileName = prompt("생성할 파일 이름(확장자까지)을 입력하세요");
     if (newFileName.trim().length === 0) {
       return;
     }
-    const fileData = {
+    if (!newFileName.trim().includes(".")) {
+      alert("확장자까지 유효하게 입력해야 합니다");
+      return;
+    }
+    const fileInfoData = {
       fileTitle: newFileName,
-      filePath: curPath,
+      filePath: selectedFilePath,
     };
+    try {
+      await fileApi.createFile(teamSeq, TYPE_FILE, fileInfoData);
+      const res = await projectApi.getAllFiles(teamSeq);
+      setFilesDirectories(res.data);
+    } catch (err) {
+      console.error(err);
+    }
     // dispatch(createFile({ teamSeq, type: TYPE_FILE, fileData }))
     //   .unwrap()
     //   .then(() => {
@@ -331,7 +346,10 @@ const Directory = (props) => {
           className="flex justify-between items-center"
           style={{ padding: 15 }}
         >
-          <div className="text-xl font-bold text-white">Directory</div>
+          <div>
+            <div className="text-xl font-bold text-white">Directory</div>
+            <div className="text-sm">👉 {selectedFilePath}</div>
+          </div>
           <div className="mt-1 flex items-center">
             <IcSpan>
               <IcNewFile alt="IcNewFile" onClick={createFileHandler} />

@@ -9,7 +9,7 @@ const initialState = {
     projectType: "",
     teamGit: "",
     selectedFileName: "",
-    selectedFileType: "",
+    selectedFileType: "directory",
     selectedFilePath: "",
   },
 };
