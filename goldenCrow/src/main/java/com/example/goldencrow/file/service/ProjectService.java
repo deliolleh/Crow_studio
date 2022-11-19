@@ -1,6 +1,5 @@
 package com.example.goldencrow.file.service;
 
-
 import com.example.goldencrow.file.FileEntity;
 import com.example.goldencrow.file.FileRepository;
 
@@ -17,6 +16,9 @@ import static com.example.goldencrow.common.Constants.*;
 
 import static java.lang.System.out;
 
+/**
+ * project 관련 로직을 처리하는 Service
+ */
 @Service
 public class ProjectService {
 
@@ -24,17 +26,23 @@ public class ProjectService {
     @Autowired
     private final FileRepository fileRepository;
 
+    /**
+     * ProjectService 생성자
+     *
+     * @param fileService    file 관련 로직을 처리하는 Service
+     * @param fileRepository file 관련 Repository
+     */
     public ProjectService(FileService fileService, FileRepository fileRepository) {
         this.fileService = fileService;
         this.fileRepository = fileRepository;
     }
 
     /**
-     * 디렉토리 만들어주기
+     * 폴더를 생성하는 내부 로직
      *
-     * @param path
-     * @param name
-     * @return Dir or "2"
+     * @param path 폴더를 생성할 경로
+     * @param name 폴더의 이름
+     * @return 생성한 폴더의 경로 혹은 DUPLICATE(이미 존재할 경우)
      */
     public String createDirService(String path, String name) {
         String pjt = path + name;
@@ -59,6 +67,7 @@ public class ProjectService {
         File file = new File(path);
         visit.put("id", rootPath);
         visit.put("name", rootName);
+        // 폴더일 경우
         if (file.isDirectory()) {
             List<Object> child = new ArrayList<>();
             File[] files = file.listFiles();
@@ -83,10 +92,8 @@ public class ProjectService {
             }
             visit.put("children", child);
             visit.put("type", "folder");
-        }
-
-        if (!file.isDirectory()) {
-            String fileType = checkName(file.getName());
+        } else {
+            String fileType = checkNameService(file.getName());
             visit.put("type", fileType);
         }
         return visit;
@@ -98,7 +105,7 @@ public class ProjectService {
      * @param fileName 판별할 파일 이름
      * @return python, html, css, js, text
      */
-    public String checkName(String fileName) {
+    public String checkNameService(String fileName) {
         if (fileName.contains(".py")) {
             return "python";
         } else if (fileName.contains(".html")) {

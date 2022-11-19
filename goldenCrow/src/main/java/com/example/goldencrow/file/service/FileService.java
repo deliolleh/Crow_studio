@@ -29,10 +29,6 @@ public class FileService {
     @Autowired
     private FileRepository fileRepository;
 
-//    private final String Success = "Success";
-//
-//    private final String baseUrl = "/home/ubuntu/crow_data/";
-
     /**
      * 파일(폴더) 생성 내부 로직
      *
