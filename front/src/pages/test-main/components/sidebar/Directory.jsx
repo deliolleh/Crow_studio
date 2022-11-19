@@ -54,8 +54,15 @@ const getFileName = (filePath) => {
 const Directory = (props) => {
   const dispatch = useDispatch();
 
-  const { teamSeq, selectedFilePath, saveFileContent, curName, curPath } =
-    props;
+  const {
+    teamSeq,
+    selectedFilePath,
+    selectedFileName,
+    selectedFileType,
+    saveFileContent,
+    curName,
+    curPath,
+  } = props;
 
   const [filesDirectories, setFilesDirectories] = useState({});
 
@@ -66,7 +73,7 @@ const Directory = (props) => {
       .catch(console.error);
   }, [dispatch, teamSeq]);
 
-  // 디렉터리 생성 핸들러
+  // 디렉터리 생성
   const createDirectoryHandler = async () => {
     const newDirectoryName = prompt("생성할 폴더 이름을 입력하세요");
     if (newDirectoryName.trim().length === 0) {
@@ -89,7 +96,7 @@ const Directory = (props) => {
     }
   };
 
-  // 파일 생성 핸들러
+  // 파일 생성
   const createFileHandler = async () => {
     const newFileName = prompt("생성할 파일 이름(확장자까지)을 입력하세요");
     if (newFileName.trim().length === 0) {
@@ -136,24 +143,22 @@ const Directory = (props) => {
   };
 
   // 삭제
-  const deleteHandler = () => {
-    if (!window.confirm(`${curName} 삭제할거임?`)) {
+  const deleteHandler = async () => {
+    if (!window.confirm(`${selectedFileName}을(를) 삭제하시겠습니까?`)) {
       return;
     }
-    const targetType = curName.includes(".") ? "2" : "1";
-    const targetData = {
-      filePath: curPath,
-    };
-    // dispatch(deleteFile({ teamSeq, type: targetType, fileData: targetData }))
-    //   .unwrap()
-    //   .then((res) => {
-    //     console.log("삭제 성공 res:", res);
-    //     dispatch(getAllFiles(teamSeq))
-    //       .unwrap()
-    //       .then(setFilesDirectories)
-    //       .catch(console.error);
-    //   })
-    //   .catch(console.error);
+    const filePathData = { filePath: selectedFilePath };
+    try {
+      await fileApi.deleteFile(
+        teamSeq,
+        selectedFileType === "directory" ? TYPE_DIRECTORY : TYPE_FILE,
+        filePathData
+      );
+      const res = await projectApi.getAllFiles(teamSeq);
+      setFilesDirectories(res.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // 저장
