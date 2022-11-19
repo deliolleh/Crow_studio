@@ -182,12 +182,13 @@ public class GitController {
     public ResponseEntity<List<String>> getBranchPost(@RequestParam Integer type,
                                                       @RequestBody HashMap<String, String> req) {
         if (req.containsKey("gitPath")) {
-            String gitPath = req.get("gitPath");
+            String gitPath = BASE_URL + req.get("gitPath");
             List<String> res = gitService.getBranchService(gitPath, type);
+
             if (res != null) {
-                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(res, HttpStatus.OK);
             }
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
