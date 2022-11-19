@@ -105,6 +105,8 @@ public class TeamController {
             switch (result) {
                 case SUCCESS:
                     return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_PER:
+                    return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
                 case NO_SUCH:
                     return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
                 case DUPLICATE:
