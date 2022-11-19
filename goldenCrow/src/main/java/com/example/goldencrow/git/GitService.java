@@ -1,5 +1,7 @@
 package com.example.goldencrow.git;
 
+import com.example.goldencrow.file.FileEntity;
+import com.example.goldencrow.file.FileRepository;
 import com.example.goldencrow.file.service.ProjectService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
@@ -29,6 +31,9 @@ public class GitService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private FileRepository fileRepository;
+
 
     /**
      * Git Service 생성자
@@ -36,9 +41,10 @@ public class GitService {
      * @param projectService project를 관리하는 service
      * @param userRepository user Table에 접속하는 Repository
      */
-    public GitService(ProjectService projectService, UserRepository userRepository) {
+    public GitService(ProjectService projectService, UserRepository userRepository,FileRepository fileRepository) {
         this.projectService = projectService;
         this.userRepository = userRepository;
+        this.fileRepository = fileRepository;
     }
 
     /**
@@ -65,6 +71,28 @@ public class GitService {
         gitInfo.add(email);
         gitInfo.add(token);
         return gitInfo;
+    }
+
+    /**
+     * gitPath 만들어주는 함수
+     * @param teamSeq
+     * @return gitPath
+     */
+    public String getGitPath(Long teamSeq) {
+        Optional<List<FileEntity>> files = fileRepository.findAllByTeamSeq(teamSeq);
+        if (!files.isPresent()) {
+            return NO_SUCH;
+        }
+        List<FileEntity> teamFiles = files.get();
+
+        for (FileEntity teamFile : teamFiles) {
+            if (teamFile.getFileTitle().equals(".git")) {
+                System.out.println("깃 패스 제대로 인식됨!");
+                String gitPath = teamFile.getFilePath().replace("/.git","");
+                return gitPath;
+            }
+        }
+        return NO_SUCH;
     }
 
     /**
@@ -187,13 +215,14 @@ public class GitService {
     /**
      * Git Switch를 처리하는 내부 로직
      *
-     * @param gitPath    switch할 git의 경로
+     * @param teamSeq    팀의 시퀀스
      * @param branchName switch할 brnach의 이름
      * @param type       switch할 branch의 종류 (1 : 존재하는 브랜치로 이동, 2 : 브랜치를 새로 생성 후 이동)
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> gitSwitchService(String gitPath, String branchName, Integer type) {
+    public Map<String, String> gitSwitchService( String branchName, Integer type, Long teamSeq) {
         Map<String, String> serviceRes = new HashMap<>();
+        String gitPath = getGitPath(teamSeq);
         File targetFile = new File(gitPath);
 
         ProcessBuilder command = new ProcessBuilder();
