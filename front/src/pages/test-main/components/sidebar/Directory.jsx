@@ -46,6 +46,26 @@ const DIRECTORY_DATA = {
   rootName: `root`,
 };
 
+const getFileType = (filePath) => {
+  const filenameExtension = filePath.split(".")[1] ?? null;
+  switch (filenameExtension) {
+    case "py":
+      return "python";
+    case null:
+      return "directory";
+    default:
+      return null;
+  }
+};
+
+const getFileName = (filePath) => {
+  if (filePath.includes(".")) {
+    return filePath.split("/").slice(-1)[0].split(".")[0];
+  } else {
+    return filePath.split("/").slice(-1)[0];
+  }
+};
+
 const Directory = (props) => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
@@ -116,6 +136,7 @@ const Directory = (props) => {
   };
 
   // 파일 클릭
+  // const openFileHandler = (path, type) => showFileContent(type, path);
   const openFileHandler = (path, type) => showFileContent(type, path);
 
   // 이름 변경
@@ -180,6 +201,19 @@ const Directory = (props) => {
   const nodeSelectHandler = (e, nodeIds) => {
     setCurName(e.target.innerText);
     setCurPath(nodeIds);
+    console.log("nodeSelectHandler e:", e);
+    console.log("nodeSelectHandler nodesIds:", nodeIds);
+
+    const filenameExtension = nodeIds.split(".")[1] ?? null;
+
+    const payloadData = {
+      type: getFileType(nodeIds),
+      name: getFileName(nodeIds),
+      path: nodeIds,
+    };
+
+    dispatch(selectFile(payloadData));
+
     if (e.target.innerText && e.target.innerText.includes(".")) {
       openFileHandler(nodeIds, TYPE_FILE);
     }

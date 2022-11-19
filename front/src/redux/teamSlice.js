@@ -188,13 +188,10 @@ export const teamSlice = createSlice({
   reducers: {
     selectFile: (state, action) => {
       console.log("selectFile action:", action);
-      // const { name, type } = action.payload;
-      // state.value.selectedFileName = name;
-      // state.value.selectedFileType = type;
-
-      // state.value.selectedFileName
-      // state.value.selectedFilType
-      // state.value.selectedFilePath
+      const { name, type, path } = action.payload;
+      state.value.selectedFileName = name;
+      state.value.selectedFileType = type;
+      state.value.selectedFilePath = path;
     },
   },
   extraReducers: (builder) => {
@@ -208,4 +205,5 @@ export const teamSlice = createSlice({
   },
 });
 
+export const { selectFile } = teamSlice.actions;
 export default teamSlice.reducer;
