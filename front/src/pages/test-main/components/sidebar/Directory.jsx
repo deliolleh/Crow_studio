@@ -264,7 +264,14 @@ const Directory = (props) => {
     return (
       <StyledTreeItemRoot
         label={
-          <Box sx={{ display: "flex", alignItems: "center", p: 0.5, pr: 0 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              p: 0.5,
+              pr: 0,
+            }}
+          >
             <Box
               component={LabelIcon}
               color="inherit"
@@ -352,13 +359,20 @@ const Directory = (props) => {
               <IcNewDir alt="IcNewDir" onClick={createDirectoryHandler} />
             </IcSpan>
             <IcSpan>
-              <BsPencilFill className="h-[16px] text-primary_-2_dark" onClick={renameHandler} />
+              <BsPencilFill
+                className="h-[16px] text-primary_-2_dark"
+                onClick={renameHandler}
+              />
             </IcSpan>
             <IcSpan className="text-primary_-2_dark hover:text-component_dark">
-              <div className="text-xs" onClick={deleteHandler}>⌫</div>
+              <div className="text-xs" onClick={deleteHandler}>
+                ⌫
+              </div>
             </IcSpan>
             <IcSpan>
-              <div className="text-xs" onClick={saveHandler}>💾</div>
+              <div className="text-xs" onClick={saveHandler}>
+                💾
+              </div>
             </IcSpan>
           </div>
         </div>

@@ -177,12 +177,21 @@ input:-webkit-autofill:active {
 }
 
 /* text selection color */
-::-moz-selection { /* Code for Firefox */
+::-moz-selection {
+  /* Code for Firefox */
   color: white;
-  background: #A34DC1;
+  background: #a34dc1;
 }
 
 ::selection {
   color: white;
-  background: #A34DC1;
+  background: #a34dc1;
+}
+
+.css-14gcpgt-MuiTreeView-root p {
+  font-family: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto", "Apple SD Gothic Neo",
+    "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu", "Cantarell",
+    "Fira Sans", "Droid Sans", "Helvetica Neue", "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 }
