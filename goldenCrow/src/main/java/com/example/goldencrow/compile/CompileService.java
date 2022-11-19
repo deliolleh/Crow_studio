@@ -188,8 +188,8 @@ public class CompileService {
             System.out.println(Arrays.toString(command));
             String response = resultStringService(command);
             // 에러 메세지 파일에서 읽어오기
-            List<String> messageList = fileService.readFile(outfilePath);
-            String message = messageList.get(1);
+            Map<String, String> messageList = fileService.readFileService(outfilePath);
+            String message = messageList.get("error");
             String pathChangemessage = message;
             if (message.contains(BASE_URL)) {
                 pathChangemessage = message.replaceAll(BASE_URL + teamSeq + "/", "");
@@ -286,7 +286,7 @@ public class CompileService {
         }
 
         // 도커파일 삭제
-        Map<String, String> deletedFile = fileService.deleteFile(
+        Map<String, String> deletedFile = fileService.deleteFileService(
                 BASE_URL + teamSeq + "/" + projectName + "/Dockerfile", 2, Long.parseLong(teamSeq));
         if (!deletedFile.get("result").equals(SUCCESS)) {
             serviceRes.put("result", deletedFile.get("result"));
