@@ -72,7 +72,10 @@ const Directory = (props) => {
     if (newDirectoryName.trim().length === 0) {
       return;
     }
-
+    if (newDirectoryName.trim().includes(".")) {
+      alert("폴더 이름에 .을 넣을 수 없습니다");
+      return;
+    }
     const fileInfoData = {
       fileTitle: newDirectoryName,
       filePath: selectedFilePath,
@@ -84,23 +87,16 @@ const Directory = (props) => {
     } catch (err) {
       console.error(err);
     }
-
-    // dispatch(createFile({ teamSeq, type: TYPE_DIRECTORY, fileData }))
-    //   .unwrap()
-    //   .then(() => {
-    //     console.log(`/${newDirectoryName} 생성 완료`);
-    //     dispatch(getAllFiles(teamSeq))
-    //       .unwrap()
-    //       .then(setFilesDirectories)
-    //       .catch(console.error);
-    //   })
-    //   .catch(console.error);
   };
 
   // 파일 생성 핸들러
   const createFileHandler = () => {
-    const newFileName = prompt("생성할 파일 이름 입력");
+    const newFileName = prompt("생성할 파일 이름 (확장자까지) 입력");
     if (newFileName.trim().length === 0) {
+      return;
+    }
+    if (!newFileName.trim().includes(".")) {
+      alert("확장자까지 유효하게 입력해야 합니다");
       return;
     }
     const fileData = {
