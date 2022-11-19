@@ -100,6 +100,7 @@ public class FileService {
 
         // 만약 이게 DB에 없는 파일 경로나 그렇다면 실패!
         if (!file.isPresent()) {
+            System.out.println("DB에서 터짐");
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
@@ -135,6 +136,7 @@ public class FileService {
         } else {
             try {
                 Files.delete(path);
+                System.out.println("실제 파일 삭제에서 터짐");
             } catch (NoSuchFileException e) {
                 return NO_SUCH;
             } catch (IOException ioe) {
