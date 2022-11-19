@@ -26,6 +26,10 @@ import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.
 import projectApi from "../../../../api/projectApi";
 
 import { selectFile } from "../../../../redux/teamSlice";
+import fileApi from "../../../../api/fileApi";
+
+const TYPE_DIRECTORY = "1";
+const TYPE_FILE = "2";
 
 const getFileType = (filePath) => {
   const filenameExtension = filePath.split(".")[1] ?? null;
@@ -50,7 +54,8 @@ const getFileName = (filePath) => {
 const Directory = (props) => {
   const dispatch = useDispatch();
 
-  const { curPath, curName, teamSeq, saveFileContent } = props;
+  const { curPath, curName, teamSeq, selectedFilePath, saveFileContent } =
+    props;
 
   const [filesDirectories, setFilesDirectories] = useState({});
 
@@ -62,15 +67,24 @@ const Directory = (props) => {
   }, [dispatch, teamSeq]);
 
   // 디렉터리 생성 핸들러
-  const createDirectoryHandler = () => {
+  const createDirectoryHandler = async () => {
     const newDirectoryName = prompt("생성할 폴더 이름 입력");
     if (newDirectoryName.trim().length === 0) {
       return;
     }
-    const fileData = {
+
+    const fileInfoData = {
       fileTitle: newDirectoryName,
-      filePath: curPath,
+      filePath: selectedFilePath,
     };
+    try {
+      await fileApi.createFile(teamSeq, TYPE_DIRECTORY, fileInfoData);
+      const res = await projectApi.getAllFiles(teamSeq);
+      setFilesDirectories(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+
     // dispatch(createFile({ teamSeq, type: TYPE_DIRECTORY, fileData }))
     //   .unwrap()
     //   .then(() => {

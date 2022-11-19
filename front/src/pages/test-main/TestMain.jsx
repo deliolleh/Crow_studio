@@ -134,6 +134,7 @@ const TestMain = () => {
                 {showComponent === "Dir" && (
                   <Directory
                     teamSeq={teamSeq}
+                    selectedFilePath={selectedFilePath}
                     saveFileContent={saveFileContentHandler}
                   />
                 )}

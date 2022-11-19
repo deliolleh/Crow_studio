@@ -15,6 +15,8 @@ const fileApi = {
   getFileContent: (filePathData) => api.post("/files/files", filePathData),
   saveFileContent: (teamSeq, fileContentData) =>
     api.put(`/files/${teamSeq}/files`, fileContentData),
+  createFile: (teamSeq, fileType, fileInfoData) =>
+    api.post(`/files/${teamSeq}?type=${fileType}`, fileInfoData),
 };
 
 export default fileApi;
