@@ -222,7 +222,7 @@ public class TeamService {
 
             // jwt가 인증하는 사용자의 UserEntity를 추출
             Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
-
+            System.out.println("user ??: "+userEntityOptional);
             // 해당하는 사용자가 존재하는지 확인
             if (!userEntityOptional.isPresent()) {
                 // 해당하는 사용자가 없음
@@ -271,7 +271,7 @@ public class TeamService {
                     // 해당 팀에 연결된 멤버도 자동으로 삭제
                     teamRepository.delete(teamEntity);
 
-                    if (projectCreateResult.equals(DUPLICATE)) {
+                    if (projectCreateResult.get("result").equals(DUPLICATE)) {
                         serviceRes.put("result", DUPLICATE);
                     } else {
                         serviceRes.put("result", UNKNOWN);
