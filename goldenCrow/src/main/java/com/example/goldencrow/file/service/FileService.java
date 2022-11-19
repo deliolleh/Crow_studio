@@ -185,6 +185,7 @@ public class FileService {
         }
 
         FileEntity nameFile = file.get();
+        nameFile.setFilePath(renameFilePath);
         nameFile.setFileTitle(newFileName);
         fileRepository.save(nameFile);
         return targetFile.renameTo(reNameFile);
