@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import TreeView from "@mui/lab/TreeView";
@@ -50,9 +49,8 @@ const getFileName = (filePath) => {
 
 const Directory = (props) => {
   const dispatch = useDispatch();
-  const { teamSeq } = useParams();
 
-  const { curPath, curName, saveFileContent } = props;
+  const { curPath, curName, teamSeq, saveFileContent } = props;
 
   const [filesDirectories, setFilesDirectories] = useState({});
 

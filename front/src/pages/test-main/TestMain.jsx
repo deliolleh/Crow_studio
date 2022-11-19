@@ -132,7 +132,10 @@ const TestMain = () => {
             {showComponent && (
               <SidebarItems>
                 {showComponent === "Dir" && (
-                  <Directory saveFileContent={saveFileContentHandler} />
+                  <Directory
+                    teamSeq={teamSeq}
+                    saveFileContent={saveFileContentHandler}
+                  />
                 )}
                 {showComponent === "Git" && <Git />}
                 {showComponent === "Team" && <Team />}
