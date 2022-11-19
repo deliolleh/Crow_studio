@@ -43,9 +43,6 @@ const TestMain = () => {
   const [editorHeight, setEditorHeight] = useState();
   const [consoleHeight, setConsoleHeight] = useState("");
 
-  const [curPath, setCurPath] = useState(""); // 현재 선택한 폴더나 파일의 경로
-  const [curName, setCurName] = useState(""); // 현재 선택한 폴더나 파일의 이름
-
   const { selectedFileName, selectedFileType, selectedFilePath } = useSelector(
     (state) => state.team.value
   );
@@ -71,13 +68,16 @@ const TestMain = () => {
     // console.log("consoleHeight: " + consoleHeight);
   };
 
+  // 초기 팀 정보 가져옴
   useEffect(() => {
     dispatch(getTeam(teamSeq)).unwrap().then(console.log).catch(console.error);
   }, [dispatch, teamSeq]);
 
+  // 사이드바 아이콘 눌러서 해당 컴포넌트 보여주기
   const showComponentHandler = (componentName) =>
     setShowComponent(componentName);
 
+  // 파일, 폴더 클릭할 때마다 리렌더링, 파일이면 해당 내용 에디터에 출력
   useEffect(() => {
     (async () => {
       try {
@@ -90,6 +90,7 @@ const TestMain = () => {
     })();
   }, [dispatch, selectedFileName, selectedFileType, selectedFilePath]);
 
+  // 파일 저장
   const saveFileContentHandler = async () => {
     try {
       // 1. 파일 포맷 요청
@@ -103,12 +104,12 @@ const TestMain = () => {
       const res2 = await editorApi.getFormatResult("python", formatTicketData);
       // 3. 파일 저장
       const saveFileContent = {
-        filePath: curPath,
+        filePath: selectedFilePath,
         fileContent: res2.data.data,
       };
       await fileApi.saveFileContent(teamSeq, saveFileContent);
       // 4. 파일 내용 가져오기
-      const filePathData = { filePath: curPath };
+      const filePathData = { filePath: selectedFilePath };
       const res3 = await fileApi.getFileContent(filePathData);
       editorRef.current.getModel().setValue(res3.data);
     } catch (err) {
@@ -170,7 +171,7 @@ const TestMain = () => {
               />
               <ConsoleTerminal
                 teamSeq={teamSeq}
-                curPath={curPath}
+                selectedFilePath={selectedFilePath}
                 consoleHeight={consoleHeight}
               />
             </SplitPane>

@@ -46,14 +46,14 @@ const ConsoleTerminal = (props) => {
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
 
-  const { teamSeq, curPath, consoleHeight } = props;
+  const { teamSeq, selectedFilePath, consoleHeight } = props;
 
   const changeInputData = (e) => setInputData(e.target.value);
 
   const startCompileHandler = async () => {
     const compileData = {
       type: projectType,
-      filePath: curPath,
+      filePath: selectedFilePath,
       input: inputData,
     };
     try {
