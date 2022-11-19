@@ -130,15 +130,16 @@ public class ProjectService {
         File[] files = file.listFiles();
         if (files != null) {
             for (File dir : files) {
-                if (dir.getName().equals(".git")) {
-                    continue;
-                }
+
                 FileCreateDto newFileCreateDto = new FileCreateDto(dir.getName(), dir.getPath(), teamSeq);
                 // file 저장
                 fileService.insertFileService(newFileCreateDto);
                 // Directory일 경우
                 if (dir.isDirectory()) {
                     String thisPath = dir.getPath();
+                    if (dir.getName().equals(".git")) {
+                        continue;
+                    }
                     saveFilesInDIrService(thisPath, teamSeq);
                 }
             }
