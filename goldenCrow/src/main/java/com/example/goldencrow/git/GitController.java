@@ -184,6 +184,7 @@ public class GitController {
         if (req.containsKey("gitPath")) {
             String gitPath = req.get("gitPath");
             List<String> res = gitService.getBranchService(gitPath, type);
+            System.out.println("res :" + res);
             if (res != null) {
                 return new ResponseEntity<>(res, HttpStatus.OK);
             }
