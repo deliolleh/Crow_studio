@@ -191,10 +191,10 @@ public class TeamService {
      * @param jwt         회원가입 및 로그인 시 발급되는 access token
      * @param teamName    만들고자 하는 팀의 이름
      * @param projectType 해당 팀에서 작업할 프로젝트의 종류
-     * @param projectGit  git clone을 받아 프로젝트를 초기화할 경우, clone 받을 프로젝트의 git 주소소
+     * @param teamGit     git clone을 받아 프로젝트를 초기화할 경우, clone 받을 프로젝트의 git 주소
      * @return 팀 생성 성공 시 TeamSeq 반환, 성패에 따른 result 반환
      */
-    public Map<String, String> teamCreateService(String jwt, String teamName, String projectType, String projectGit) {
+    public Map<String, String> teamCreateService(String jwt, String teamName, String projectType, String teamGit) {
 
         Map<String, String> serviceRes = new HashMap<>();
 
@@ -222,10 +222,11 @@ public class TeamService {
 
             // jwt가 인증하는 사용자의 UserEntity를 추출
             Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
-
+            System.out.println("user ??: "+userEntityOptional);
             // 해당하는 사용자가 존재하는지 확인
             if (!userEntityOptional.isPresent()) {
                 // 해당하는 사용자가 없음
+                System.out.println("사용자가 업서");
                 serviceRes.put("result", NO_SUCH);
                 return serviceRes;
             }
@@ -243,7 +244,7 @@ public class TeamService {
             }
 
             // 사용자를 팀장으로 하는 팀 생성, DB에 기록
-            TeamEntity teamEntity = new TeamEntity(userEntity, teamName, typeNum);
+            TeamEntity teamEntity = new TeamEntity(userEntity, teamName, typeNum, teamGit);
             teamRepository.saveAndFlush(teamEntity);
             Long teamSeq = teamEntity.getTeamSeq();
 
@@ -252,37 +253,36 @@ public class TeamService {
             memberRepository.saveAndFlush(memberEntity);
 
             // git clone을 받아오는지, 새로 생성하는지 판별
-            if (projectGit == null) {
+            if (teamGit == null) {
 
                 // git 정보가 비어있는 상태이므로 클론을 받아오지 않고, 프로젝트를 생성함
-                String projectCreateResult
-                        = projectService.createProject(BASE_URL, typeNum, teamName, teamSeq);
+                Map<String, String> projectCreateResult
+                        = projectService.createProjectService(BASE_URL, typeNum, teamName, teamSeq);
 
-                if (projectCreateResult.equals(SUCCESS)) {
+                if (projectCreateResult.get("result").equals(SUCCESS)) {
                     // 성공
                     serviceRes.put("result", SUCCESS);
                     serviceRes.put("teamSeq", String.valueOf(teamSeq));
 
                 } else {
                     // 모든 경우의 프로젝트 생성 실패
-                    System.out.println(projectCreateResult);
+                    System.out.println("깃 아니고 플젝 생성 실패 "+projectCreateResult);
 
                     // 등록되었던 팀을 삭제
                     // 해당 팀에 연결된 멤버도 자동으로 삭제
                     teamRepository.delete(teamEntity);
 
-                    if (projectCreateResult.equals(DUPLICATE)) {
+                    if (projectCreateResult.get("result").equals(DUPLICATE)) {
                         serviceRes.put("result", DUPLICATE);
                     } else {
                         serviceRes.put("result", UNKNOWN);
                     }
-
                 }
 
             } else {
 
                 // 쓰여진 주소에서 정보를 받아와 프로젝트를 구축함
-                Map<String, String> gitCloneRes = gitService.gitCloneService(projectGit, teamSeq, teamName);
+                Map<String, String> gitCloneRes = gitService.gitCloneService(teamGit, teamSeq, teamName);
                 String gitCloneResult = gitCloneRes.get("result");
 
                 if (gitCloneResult.equals(SUCCESS)) {
@@ -291,7 +291,7 @@ public class TeamService {
                     serviceRes.put("teamSeq", String.valueOf(teamSeq));
                 } else {
                     // 모든 경우의 프로젝트 생성 실패
-                    System.out.println(gitCloneResult);
+                    System.out.println("깃이고 생성 실패 "+gitCloneResult);
 
                     // 등록되었던 팀을 삭제
                     // 해당 팀에 연결된 멤버도 자동으로 삭제
@@ -300,6 +300,7 @@ public class TeamService {
                     if (gitCloneResult.equals(NO_PER)) {
                         serviceRes.put("result", NO_PER);
                     } else if (gitCloneResult.equals(NO_SUCH)) {
+                        System.out.println("깃 클론에서 노서치인것..");
                         serviceRes.put("result", NO_SUCH);
                     } else {
                         serviceRes.put("result", WRONG);
@@ -570,7 +571,7 @@ public class TeamService {
                 // 서버 내에 있는 해당 팀의 프로젝트 삭제
                 List<Long> teamSeqList = new ArrayList<>();
                 teamSeqList.add(teamSeq);
-                if (projectService.deleteProject(teamSeqList).get("result").equals(UNKNOWN)) {
+                if (projectService.deleteProjectService(teamSeqList).get("result").equals(UNKNOWN)) {
                     serviceRes.put("result", UNKNOWN);
                     return serviceRes;
                 }

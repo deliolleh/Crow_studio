@@ -188,8 +188,8 @@ public class CompileService {
             System.out.println(Arrays.toString(command));
             String response = resultStringService(command);
             // 에러 메세지 파일에서 읽어오기
-            List<String> messageList = fileService.readFile(outfilePath);
-            String message = messageList.get(1);
+            Map<String, String> messageList = fileService.readFileService(outfilePath);
+            String message = messageList.get("error");
             String pathChangemessage = message;
             if (message.contains(BASE_URL)) {
                 pathChangemessage = message.replaceAll(BASE_URL + teamSeq + "/", "");
@@ -252,12 +252,12 @@ public class CompileService {
     /**
      * 컴파일 중단을 처리하는 내부로직
      *
-     * @param projectName 컴파일 중단할 프로젝트의 이름
-     * @param teamSeq     컴파일 중단할 프로젝트의 팀 sequence
+     * @param teamName 컴파일 중단할 프로젝트의 팀 이름
+     * @param teamSeq  컴파일 중단할 프로젝트의 팀 sequence
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> pyCompileStopService(String projectName, String teamSeq) {
-        String conAndImgName = "crowstudio_" + projectName.toLowerCase() + "_" + teamSeq;
+    public Map<String, String> pyCompileStopService(String teamName, String teamSeq) {
+        String conAndImgName = "crowstudio_" + teamName.toLowerCase() + "_" + teamSeq;
 
         // 도커 컨테이너 멈추고 삭제
         String[] containerStop = {"docker", "stop", conAndImgName};
@@ -286,8 +286,8 @@ public class CompileService {
         }
 
         // 도커파일 삭제
-        Map<String, String> deletedFile = fileService.deleteFile(
-                BASE_URL + teamSeq + "/" + projectName + "/Dockerfile", 2, Long.parseLong(teamSeq));
+        Map<String, String> deletedFile = fileService.deleteFileService(
+                BASE_URL + teamSeq + "/" + teamName + "/Dockerfile", 2, Long.parseLong(teamSeq));
         if (!deletedFile.get("result").equals(SUCCESS)) {
             serviceRes.put("result", deletedFile.get("result"));
             return serviceRes;
