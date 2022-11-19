@@ -287,7 +287,7 @@ const TeamDetail = () => {
               <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
                 팀원
               </div>
-              <div className="flex md:flex-row flex-col items-center">
+              <div className="flex md:flex-row flex-col justify-center items-center">
                 {members?.map((member) => (
                   <Member
                     key={`m${member.memberSeq}`}
@@ -297,7 +297,7 @@ const TeamDetail = () => {
                   />
                 ))}
 
-                <div className="flex flex-col items-center px-2 md:py-2 pb-2">
+                <div className="flex flex-col items-center px-2 py-2">
                   {/* isSearch가 아니면 + 버튼, isSearch이면 유저 검색 입력창 나옴 */}
                   {!isSearch ? (
                     <IoAdd
@@ -442,23 +442,6 @@ const TeamDetail = () => {
                         <BsCheckLg className="text-point_light_yellow hover:text-point_yellow" />
                       </button>
                     </div>
-                    // <form onSubmit={submitProjectTypeHandler} className="flex">
-                    //   <select
-                    //     className="w-full text-white mr-1.5 py-1.5 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
-                    //     id="projectType"
-                    //     name="projectType"
-                    //     value={modifiedProjectType}
-                    //     onChange={modifyProjectTypeHandler}
-                    //   >
-                    //     <option value="pure Python">pure Python</option>
-                    //     <option value="Django">Django</option>
-                    //     <option value="Flask">Flask</option>
-                    //     <option value="FastAPI">FastAPI</option>
-                    //   </select>
-                    //   <button onClick={submitProjectTypeHandler}>
-                    //     <BsCheckLg className="text-point_light_yellow hover:text-point_yellow" />
-                    //   </button>
-                    // </form>
                   )}
                 </div>
               </div>

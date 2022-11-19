@@ -16,6 +16,8 @@ import FolderIcon from "@mui/icons-material/Folder";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { IoLogoPython } from "react-icons/io5";
+import { BsPencilFill } from "react-icons/bs";
+import { TiArrowRightThick } from "react-icons/ti";
 
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
@@ -341,7 +343,6 @@ const Directory = (props) => {
         >
           <div>
             <div className="text-xl font-bold text-white">Directory</div>
-            <div className="text-sm">👉 {selectedFilePath}</div>
           </div>
           <div className="mt-1 flex items-center">
             <IcSpan>
@@ -351,13 +352,13 @@ const Directory = (props) => {
               <IcNewDir alt="IcNewDir" onClick={createDirectoryHandler} />
             </IcSpan>
             <IcSpan>
-              <div onClick={renameHandler}>✏</div>
+              <BsPencilFill className="h-[16px] text-primary_-2_dark" onClick={renameHandler} />
+            </IcSpan>
+            <IcSpan className="text-primary_-2_dark hover:text-component_dark">
+              <div className="text-xs" onClick={deleteHandler}>⌫</div>
             </IcSpan>
             <IcSpan>
-              <div onClick={deleteHandler}>🪓</div>
-            </IcSpan>
-            <IcSpan>
-              <div onClick={saveHandler}>💾</div>
+              <div className="text-xs" onClick={saveHandler}>💾</div>
             </IcSpan>
           </div>
         </div>
@@ -366,6 +367,11 @@ const Directory = (props) => {
         <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
 
         <div className="text-xs" style={{ padding: 15 }}>
+          <div className="text-sm flex ml-0.5 mb-2">
+            {/* <div>👉</div> */}
+            <TiArrowRightThick className="text-point_yellow" />
+            <div className="ml-3 break-all">{selectedFilePath}</div>
+          </div>
           {/* 디렉터리 파일, 폴더 모음 */}
           <TreeView
             aria-label="files and directories"

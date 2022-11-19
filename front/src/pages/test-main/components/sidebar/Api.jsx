@@ -159,7 +159,7 @@ const Api = () => {
                 ></textarea>
                 <button
                   onClick={sendApi}
-                  className="h-[26px] w-[45px] rounded-md bg-point_purple text-white"
+                  className="h-[26px] w-[45px] rounded-md bg-point_purple hover:bg-point_purple_-2 text-white"
                 >
                   전송
                 </button>
