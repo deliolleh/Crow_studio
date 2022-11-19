@@ -432,10 +432,9 @@ public class GitService {
         // 명령어를 수행할 프로젝트의 경로 저장
         command.directory(new File(gitPath));
         String read;
-        System.out.println("여기까진 됨!");
+
         // 명령어 수행 로직
         try {
-            System.out.println("여기 안옴!!");
             Process getBranch = command.start();
             BufferedReader branch = new BufferedReader(new InputStreamReader(getBranch.getInputStream()));
             while ((read = branch.readLine()) != null) {
@@ -447,10 +446,8 @@ public class GitService {
             return null;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-
             return null;
         }
-        System.out.println(branches);
         return branches;
     }
 
