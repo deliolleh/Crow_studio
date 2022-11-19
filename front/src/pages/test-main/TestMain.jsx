@@ -77,15 +77,17 @@ const TestMain = () => {
   const showComponentHandler = (componentName) =>
     setShowComponent(componentName);
 
-  // 파일, 폴더 클릭할 때마다 리렌더링, 파일이면 해당 내용 에디터에 출력
+  // 파일, 폴더 클릭할 때마다 리렌더링, 파일이면 해당 내용 서버에서 받아와 에디터에 출력
   useEffect(() => {
     (async () => {
-      try {
-        const filePathData = { filePath: selectedFilePath };
-        const res = await fileApi.getFileContent(filePathData);
-        editorRef.current.getModel().setValue(res.data);
-      } catch (err) {
-        console.error(err);
+      if (selectedFileType !== "directory") {
+        try {
+          const filePathData = { filePath: selectedFilePath };
+          const res = await fileApi.getFileContent(filePathData);
+          editorRef.current.getModel().setValue(res.data);
+        } catch (err) {
+          console.error(err);
+        }
       }
     })();
   }, [dispatch, selectedFileName, selectedFileType, selectedFilePath]);
