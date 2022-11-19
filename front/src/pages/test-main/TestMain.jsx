@@ -36,46 +36,20 @@ const TestMain = () => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
   // const { teamGit } = useSelector((state) => state.team.value);
-  const editorRef = useRef(null); // 에디터 내용
-  const editorheightRef = useRef(); // 에디터 높이
-  const [showComponent, setShowComponent] = useState("Dir");
-
-  const [editorHeight, setEditorHeight] = useState();
-  const [consoleHeight, setConsoleHeight] = useState("");
-
   const { selectedFileName, selectedFileType, selectedFilePath } = useSelector(
     (state) => state.team.value
   );
+  const [showComponent, setShowComponent] = useState("Dir");
 
-  // 콘솔 높이 초기값 세팅
-  useEffect(() => {
-    const tempSize2 = editorheightRef.current.pane2.clientHeight;
-    setConsoleHeight(tempSize2);
-    // console.log("consoleHeight: " + consoleHeight);
-  }, []);
-
-  const checkSize = () => {
-    // 에디터 높이 변경값 셋
-    const tempSize = editorheightRef.current.state.pane1Size;
-    setEditorHeight(tempSize);
-    // console.log(
-    //   "editorheightRef.current.state.pane1Size: ",
-    //   editorheightRef.current.state.pane1Size
-    // );
-    // 콘솔 높이 변경값 셋
-    const tempSize2 = editorheightRef.current.pane2.clientHeight;
-    setConsoleHeight(tempSize2);
-    // console.log("consoleHeight: " + consoleHeight);
-  };
+  const editorRef = useRef(null); // 에디터 내용
+  const editorheightRef = useRef(); // 에디터 높이
+  const [editorHeight, setEditorHeight] = useState();
+  const [consoleHeight, setConsoleHeight] = useState("");
 
   // 초기 팀 정보 가져옴
   useEffect(() => {
     dispatch(getTeam(teamSeq)).unwrap().then(console.log).catch(console.error);
   }, [dispatch, teamSeq]);
-
-  // 사이드바 아이콘 눌러서 해당 컴포넌트 보여주기
-  const showComponentHandler = (componentName) =>
-    setShowComponent(componentName);
 
   // 파일, 폴더 클릭할 때마다 리렌더링, 파일이면 해당 내용 서버에서 받아와 에디터에 출력
   useEffect(() => {
@@ -91,6 +65,10 @@ const TestMain = () => {
       }
     })();
   }, [dispatch, selectedFileName, selectedFileType, selectedFilePath]);
+
+  // 사이드바 아이콘 눌러서 해당 컴포넌트 보여주기
+  const showComponentHandler = (componentName) =>
+    setShowComponent(componentName);
 
   // 파일 저장
   const saveFileContentHandler = async () => {
@@ -120,6 +98,27 @@ const TestMain = () => {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  // 콘솔 높이 초기값 세팅
+  useEffect(() => {
+    const tempSize2 = editorheightRef.current.pane2.clientHeight;
+    setConsoleHeight(tempSize2);
+    // console.log("consoleHeight: " + consoleHeight);
+  }, []);
+
+  const checkSize = () => {
+    // 에디터 높이 변경값 셋
+    const tempSize = editorheightRef.current.state.pane1Size;
+    setEditorHeight(tempSize);
+    // console.log(
+    //   "editorheightRef.current.state.pane1Size: ",
+    //   editorheightRef.current.state.pane1Size
+    // );
+    // 콘솔 높이 변경값 셋
+    const tempSize2 = editorheightRef.current.pane2.clientHeight;
+    setConsoleHeight(tempSize2);
+    // console.log("consoleHeight: " + consoleHeight);
   };
 
   return (
