@@ -319,6 +319,7 @@ public class GitService {
      */
     public Map<String, String> gitCommitService(String message, Long teamSeq, String filePath) {
         Map<String, String> serviceRes = new HashMap<>();
+        serviceRes.put("message","");
         String gitPath = getGitPath(teamSeq);
         // git add 로직 수행
         String gitAddCheck = gitAddService(gitPath, filePath);
@@ -377,6 +378,7 @@ public class GitService {
     public Map<String, String> gitPushService(String branchName, String message, Long teamSeq, String filePath, Long userSeq) {
         Map<String, String> serviceRes = new HashMap<>();
         String gitPath = getGitPath(teamSeq);
+        serviceRes.put("message","");
         // commit 로직 수행
         Map<String, String> gitCommitCheck = gitCommitService(message, teamSeq, filePath);
         if (!gitCommitCheck.get("result").equals(SUCCESS)) {
