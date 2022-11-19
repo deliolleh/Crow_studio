@@ -448,6 +448,7 @@ public class GitService {
 
             return null;
         }
+        System.out.println(branches);
         return branches;
     }
 
