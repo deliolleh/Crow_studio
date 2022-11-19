@@ -94,6 +94,9 @@ const TestMain = () => {
 
   // 파일 저장
   const saveFileContentHandler = async () => {
+    if (selectedFileType === "directory") {
+      return;
+    }
     try {
       // 1. 파일 포맷 요청
       const beforeFormatData = { text: editorRef.current.getValue() };
