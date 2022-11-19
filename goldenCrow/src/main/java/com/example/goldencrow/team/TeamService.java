@@ -191,10 +191,10 @@ public class TeamService {
      * @param jwt         회원가입 및 로그인 시 발급되는 access token
      * @param teamName    만들고자 하는 팀의 이름
      * @param projectType 해당 팀에서 작업할 프로젝트의 종류
-     * @param projectGit  git clone을 받아 프로젝트를 초기화할 경우, clone 받을 프로젝트의 git 주소소
+     * @param teamGit     git clone을 받아 프로젝트를 초기화할 경우, clone 받을 프로젝트의 git 주소
      * @return 팀 생성 성공 시 TeamSeq 반환, 성패에 따른 result 반환
      */
-    public Map<String, String> teamCreateService(String jwt, String teamName, String projectType, String projectGit) {
+    public Map<String, String> teamCreateService(String jwt, String teamName, String projectType, String teamGit) {
 
         Map<String, String> serviceRes = new HashMap<>();
 
@@ -243,7 +243,7 @@ public class TeamService {
             }
 
             // 사용자를 팀장으로 하는 팀 생성, DB에 기록
-            TeamEntity teamEntity = new TeamEntity(userEntity, teamName, typeNum);
+            TeamEntity teamEntity = new TeamEntity(userEntity, teamName, typeNum, teamGit);
             teamRepository.saveAndFlush(teamEntity);
             Long teamSeq = teamEntity.getTeamSeq();
 
@@ -252,7 +252,7 @@ public class TeamService {
             memberRepository.saveAndFlush(memberEntity);
 
             // git clone을 받아오는지, 새로 생성하는지 판별
-            if (projectGit == null) {
+            if (teamGit == null) {
 
                 // git 정보가 비어있는 상태이므로 클론을 받아오지 않고, 프로젝트를 생성함
                 String projectCreateResult
@@ -282,7 +282,7 @@ public class TeamService {
             } else {
 
                 // 쓰여진 주소에서 정보를 받아와 프로젝트를 구축함
-                Map<String, String> gitCloneRes = gitService.gitCloneService(projectGit, teamSeq, teamName);
+                Map<String, String> gitCloneRes = gitService.gitCloneService(teamGit, teamSeq, teamName);
                 String gitCloneResult = gitCloneRes.get("result");
 
                 if (gitCloneResult.equals(SUCCESS)) {
