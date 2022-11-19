@@ -186,28 +186,41 @@ public class FileService {
     }
 
     /**
-     * 파일 updatedat 업데이트 함수 안씁니다.
+     * 파일 이름 변경 내부 로직
      *
-     * @param filePath
-     * @return
+     * @param filePath    이름을 변경할 파일 경로
+     * @param newFileName 변경할 파일 이름
+     * @param oldFileName 현재 파일 이름
+     * @param teamSeq     변경할 파일의 프로젝트(팀)의 Sequence
+     * @return 성패에 따른 result 반환
      */
-    public boolean updateFileName(String filePath, String newFileName, String oldFileName, Long teamSeq) {
-        String newFilePath = filePath;
+    public Map<String, String> updateFileNameService(String filePath, String newFileName, String oldFileName, Long teamSeq) {
+        Map<String, String> serviceRes = new HashMap<>();
+
+        // 파일명을 변경한 파일 경로
         String renameFilePath = filePath.replace(oldFileName, newFileName);
-        File targetFile = new File(newFilePath);
+        File targetFile = new File(filePath);
         File reNameFile = new File(renameFilePath);
 
         Optional<FileEntity> file = fileRepository.findFileEntityByTeamSeqAndFilePath(teamSeq, filePath);
-
         if (!file.isPresent()) {
-            return false;
+            serviceRes.put("result", NO_SUCH);
+            return serviceRes;
         }
 
+        // DB에 변경된 경로와 파일명 저장
         FileEntity nameFile = file.get();
         nameFile.setFilePath(renameFilePath);
         nameFile.setFileTitle(newFileName);
         fileRepository.save(nameFile);
-        return targetFile.renameTo(reNameFile);
+
+        // 파일명 변경
+        if (targetFile.renameTo(reNameFile)) {
+            serviceRes.put("result", SUCCESS);
+        } else {
+            serviceRes.put("result", UNKNOWN);
+        }
+        return serviceRes;
     }
 
     public List<String> readFile(String filePath) {

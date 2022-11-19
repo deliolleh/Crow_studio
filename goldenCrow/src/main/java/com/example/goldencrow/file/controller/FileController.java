@@ -24,7 +24,7 @@ public class FileController {
     private final FileService fileService;
     private final JwtService jwtService;
 
-    private String stringPath = "filePath";
+//    private String stringPath = "filePath";
 
 //    private final String basePath = "/home/ubuntu/crow_data/";
 
@@ -72,7 +72,7 @@ public class FileController {
     @DeleteMapping("/{teamSeq}")
     public ResponseEntity<Map<String, String>> userFileDelete(@PathVariable Long teamSeq,
                                                               @RequestParam int type,
-                                                              @RequestBody HashMap<String, String> req) {
+                                                              @RequestBody Map<String, String> req) {
         if (req.containsKey("filePath")) {
             String filePath = req.get("filePath");
             Map<String, String> res = fileService.deleteFileService(BASE_URL + filePath, type, teamSeq);
@@ -93,24 +93,33 @@ public class FileController {
     }
 
     /**
-     * 파일 이름 변경 요청
+     * 파일 이름 변경 API
      *
-     * @param teamSeq
-     * @param filePath
-     * @return
+     * @param teamSeq 이름을 변경하려는 파일(폴더)의 프로젝트(팀)의 Sequence
+     * @param req     "filePath", "oldFileName", "fileTitle"을 key로 가지는 Map<String, String>
+     * @return 성패에 따른 result 반환
+     * @status 200, 400, 401, 404
      */
     @PutMapping("/{teamSeq}/file-title")
-    public ResponseEntity<String> fileNameUpdate(@PathVariable Long teamSeq, @RequestBody HashMap<String, String> filePath) {
-        String path = filePath.get(stringPath);
-        String title = filePath.get("fileTitle");
-        String oldFileName = filePath.get("oldFileName");
+    public ResponseEntity<Map<String, String>> fileNameUpdate(@PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
+        if (req.containsKey("filePath") && req.containsKey("oldFileName") && req.containsKey("fileTitle")) {
+            String filePath = req.get("filePath");
+            String fileTitle = req.get("fileTitle");
+            String oldFileName = req.get("oldFileName");
 
-        boolean result = fileService.updateFileName(basePath + path, title, oldFileName, teamSeq);
-
-        if (result) {
-            return new ResponseEntity<>("파일 이름 변경 성공!", HttpStatus.CREATED);
+            Map<String, String> res = fileService.updateFileNameService(BASE_URL + filePath, fileTitle, oldFileName, teamSeq);
+            switch (res.get("result")) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
         } else {
-            return new ResponseEntity<>("파일 이름 변경 실패!", HttpStatus.SERVICE_UNAVAILABLE);
+            Map<String, String> res = new HashMap<>();
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
     }
 
