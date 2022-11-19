@@ -19,6 +19,8 @@ const fileApi = {
     api.post(`/files/${teamSeq}?type=${fileType}`, fileInfoData),
   renameFile: (teamSeq, renameData) =>
     api.put(`/files/${teamSeq}/file-title`, renameData),
+  deleteFile: (teamSeq, fileType, filePathData) =>
+    api.delete(`/files/${teamSeq}?type=${fileType}`, { data: filePathData }),
 };
 
 export default fileApi;
