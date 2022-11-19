@@ -223,6 +223,7 @@ public class GitService {
     public Map<String, String> gitSwitchService( String branchName, Integer type, Long teamSeq) {
         Map<String, String> serviceRes = new HashMap<>();
         String gitPath = getGitPath(teamSeq);
+        System.out.println("깃 패스 : " + gitPath);
         File targetFile = new File(gitPath);
 
         ProcessBuilder command = new ProcessBuilder();
