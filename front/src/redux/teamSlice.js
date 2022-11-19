@@ -14,21 +14,6 @@ const initialState = {
   },
 };
 
-export const getTeams = createAsyncThunk(
-  "team/getTeams",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await teamApi.getTeams();
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
 export const getTeam = createAsyncThunk(
   "team/getTeam",
   async (teamSeq, { rejectWithValue }) => {

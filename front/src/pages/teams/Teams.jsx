@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { getTeams } from "../../redux/teamSlice";
+import teamApi from "../../api/teamApi";
 
 import Header from "../../components/Header";
 import TeamList from "./components/TeamList";
@@ -18,9 +18,9 @@ const Teams = () => {
 
   useEffect(() => {
     // 본인이 속한 팀들 가져옴
-    dispatch(getTeams())
-      .unwrap()
-      .then((res) => setMyTeams(res))
+    teamApi
+      .getTeams()
+      .then((res) => setMyTeams(res.data))
       .catch(console.error);
   }, [dispatch]);
 
