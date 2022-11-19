@@ -54,7 +54,7 @@ const getFileName = (filePath) => {
 const Directory = (props) => {
   const dispatch = useDispatch();
 
-  const { curPath, curName, teamSeq, selectedFilePath, saveFileContent } =
+  const { teamSeq, selectedFilePath, saveFileContent, curName, curPath } =
     props;
 
   const [filesDirectories, setFilesDirectories] = useState({});
@@ -110,41 +110,29 @@ const Directory = (props) => {
     } catch (err) {
       console.error(err);
     }
-    // dispatch(createFile({ teamSeq, type: TYPE_FILE, fileData }))
-    //   .unwrap()
-    //   .then(() => {
-    //     console.log(`${newFileName} 생성 완료`);
-    //     dispatch(getAllFiles(teamSeq))
-    //       .unwrap()
-    //       .then(setFilesDirectories)
-    //       .catch(console.error);
-    //   })
-    //   .catch(console.error);
   };
 
   // 이름 변경
-  const renameHandler = () => {
-    const newName = prompt("변경할 이름 입력", curName);
-    if (newName === curName) {
+  const renameHandler = async () => {
+    const oldFileName = selectedFilePath.split("/").slice(-1)[0];
+    const newName = prompt("변경할 이름 입력", oldFileName);
+    if (newName === oldFileName) {
       return;
     } else if (!newName) {
       return;
     }
     const renameData = {
-      filePath: curPath,
-      oldFileName: curName,
+      filePath: selectedFilePath,
+      oldFileName,
       fileTitle: newName,
     };
-    // dispatch(renameFile({ teamSeq, fileData: renameData }))
-    //   .unwrap()
-    //   .then(() => {
-    //     console.log(`${curName} -> ${newName} 변경 성공`);
-    //     dispatch(getAllFiles(teamSeq))
-    //       .unwrap()
-    //       .then(setFilesDirectories)
-    //       .catch(console.error);
-    //   })
-    //   .catch(console.error);
+    try {
+      await fileApi.renameFile(teamSeq, renameData);
+      const res = await projectApi.getAllFiles(teamSeq);
+      setFilesDirectories(res.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // 삭제
@@ -182,7 +170,6 @@ const Directory = (props) => {
 
   // 노드 선택
   const nodeSelectHandler = (e, nodeIds) => {
-    const filenameExtension = nodeIds.split(".")[1] ?? null;
     const payloadData = {
       type: getFileType(nodeIds),
       name: getFileName(nodeIds),
