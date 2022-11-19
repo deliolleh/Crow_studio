@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import teamApi from "../../api/teamApi";
@@ -8,7 +8,6 @@ import Header from "../../components/Header";
 import TeamList from "./components/TeamList";
 
 const Teams = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const myNickname = useSelector((state) => state.user.value.myNickname);
   const [myTeams, setMyTeams] = useState([]);
@@ -22,7 +21,7 @@ const Teams = () => {
       .getTeams()
       .then((res) => setMyTeams(res.data))
       .catch(console.error);
-  }, [dispatch]);
+  }, []);
 
   return (
     <div className="flex flex-col h-full w-full">
