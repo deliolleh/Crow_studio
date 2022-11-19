@@ -339,7 +339,10 @@ const Directory = (props) => {
           className="flex justify-between items-center"
           style={{ padding: 15 }}
         >
-          <div className="text-xl font-bold text-white">Directory</div>
+          <div>
+            <div className="text-xl font-bold text-white">Directory</div>
+            <div className="text-sm">👉 {selectedFilePath}</div>
+          </div>
           <div className="mt-1 flex items-center">
             <IcSpan>
               <IcNewFile alt="IcNewFile" onClick={createFileHandler} />
