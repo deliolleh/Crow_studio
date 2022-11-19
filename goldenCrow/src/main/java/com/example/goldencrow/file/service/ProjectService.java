@@ -152,8 +152,8 @@ public class ProjectService {
             serviceRes.put("result", DUPLICATE);
             return serviceRes;
         }
+
         // 기본 프로젝트 구성, 기본 파일 생성
-        // Django인 경우
         if (type == 2) {
             ProcessBuilder djangoStarter = new ProcessBuilder();
             djangoStarter.command("django-admin", "startproject", projectName);
@@ -223,6 +223,7 @@ public class ProjectService {
                     "if __name__ == \"__main__\" :\n" +
                     "\tapp.run(\"0.0.0.0\")";
 
+            // 파일에 내용 저장
             try (FileWriter overWriteFile = new FileWriter(file, false)) {
                 overWriteFile.write(content);
             } catch (IOException e) {
@@ -241,6 +242,8 @@ public class ProjectService {
             }
             String pjt1 = createDirService(pjt, projectName);
             File file = new File(pjt1 + "/main.py");
+
+            // main.py에 저장할 내용
             String content = "from fastapi import FastAPI\n" +
                     "import sys\nsys.path.append('/prod/app')\n\n" +
                     "app=FastAPI()\n\n" +
@@ -248,6 +251,7 @@ public class ProjectService {
                     "async def root():\n\t" +
                     "return {\"message\" : \"Hello, World\"}";
 
+            // 파일에 내용 저장
             try (FileWriter overWriteFile = new FileWriter(file, false)) {
                 overWriteFile.write(content);
             } catch (IOException e) {
