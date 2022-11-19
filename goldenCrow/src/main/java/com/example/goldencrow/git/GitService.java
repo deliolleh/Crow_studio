@@ -356,13 +356,10 @@ public class GitService {
             return serviceRes;
         }
         String message2 = msg.toString();
-        System.out.println(message2);
+
         // 성공 여부 판단
-        if (msg.length() == 0) {
-            serviceRes.put("result", SUCCESS);
-        } else {
-            serviceRes.put("result", UNKNOWN);
-        }
+        serviceRes.put("result",SUCCESS);
+        serviceRes.put("message",message2);
         return serviceRes;
     }
 
