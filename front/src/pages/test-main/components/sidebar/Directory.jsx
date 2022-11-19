@@ -54,8 +54,15 @@ const getFileName = (filePath) => {
 const Directory = (props) => {
   const dispatch = useDispatch();
 
-  const { curPath, curName, teamSeq, selectedFilePath, saveFileContent } =
-    props;
+  const {
+    teamSeq,
+    selectedFilePath,
+    selectedFileName,
+    selectedFileType,
+    saveFileContent,
+    curName,
+    curPath,
+  } = props;
 
   const [filesDirectories, setFilesDirectories] = useState({});
 
@@ -66,7 +73,7 @@ const Directory = (props) => {
       .catch(console.error);
   }, [dispatch, teamSeq]);
 
-  // 디렉터리 생성 핸들러
+  // 디렉터리 생성
   const createDirectoryHandler = async () => {
     const newDirectoryName = prompt("생성할 폴더 이름을 입력하세요");
     if (newDirectoryName.trim().length === 0) {
@@ -89,7 +96,7 @@ const Directory = (props) => {
     }
   };
 
-  // 파일 생성 핸들러
+  // 파일 생성
   const createFileHandler = async () => {
     const newFileName = prompt("생성할 파일 이름(확장자까지)을 입력하세요");
     if (newFileName.trim().length === 0) {
@@ -110,62 +117,48 @@ const Directory = (props) => {
     } catch (err) {
       console.error(err);
     }
-    // dispatch(createFile({ teamSeq, type: TYPE_FILE, fileData }))
-    //   .unwrap()
-    //   .then(() => {
-    //     console.log(`${newFileName} 생성 완료`);
-    //     dispatch(getAllFiles(teamSeq))
-    //       .unwrap()
-    //       .then(setFilesDirectories)
-    //       .catch(console.error);
-    //   })
-    //   .catch(console.error);
   };
 
   // 이름 변경
-  const renameHandler = () => {
-    const newName = prompt("변경할 이름 입력", curName);
-    if (newName === curName) {
+  const renameHandler = async () => {
+    const oldFileName = selectedFilePath.split("/").slice(-1)[0];
+    const newName = prompt("변경할 이름 입력", oldFileName);
+    if (newName === oldFileName) {
       return;
     } else if (!newName) {
       return;
     }
     const renameData = {
-      filePath: curPath,
-      oldFileName: curName,
+      filePath: selectedFilePath,
+      oldFileName,
       fileTitle: newName,
     };
-    // dispatch(renameFile({ teamSeq, fileData: renameData }))
-    //   .unwrap()
-    //   .then(() => {
-    //     console.log(`${curName} -> ${newName} 변경 성공`);
-    //     dispatch(getAllFiles(teamSeq))
-    //       .unwrap()
-    //       .then(setFilesDirectories)
-    //       .catch(console.error);
-    //   })
-    //   .catch(console.error);
+    try {
+      await fileApi.renameFile(teamSeq, renameData);
+      const res = await projectApi.getAllFiles(teamSeq);
+      setFilesDirectories(res.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // 삭제
-  const deleteHandler = () => {
-    if (!window.confirm(`${curName} 삭제할거임?`)) {
+  const deleteHandler = async () => {
+    if (!window.confirm(`${selectedFileName}을(를) 삭제하시겠습니까?`)) {
       return;
     }
-    const targetType = curName.includes(".") ? "2" : "1";
-    const targetData = {
-      filePath: curPath,
-    };
-    // dispatch(deleteFile({ teamSeq, type: targetType, fileData: targetData }))
-    //   .unwrap()
-    //   .then((res) => {
-    //     console.log("삭제 성공 res:", res);
-    //     dispatch(getAllFiles(teamSeq))
-    //       .unwrap()
-    //       .then(setFilesDirectories)
-    //       .catch(console.error);
-    //   })
-    //   .catch(console.error);
+    const filePathData = { filePath: selectedFilePath };
+    try {
+      await fileApi.deleteFile(
+        teamSeq,
+        selectedFileType === "directory" ? TYPE_DIRECTORY : TYPE_FILE,
+        filePathData
+      );
+      const res = await projectApi.getAllFiles(teamSeq);
+      setFilesDirectories(res.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // 저장
@@ -182,7 +175,6 @@ const Directory = (props) => {
 
   // 노드 선택
   const nodeSelectHandler = (e, nodeIds) => {
-    const filenameExtension = nodeIds.split(".")[1] ?? null;
     const payloadData = {
       type: getFileType(nodeIds),
       name: getFileName(nodeIds),

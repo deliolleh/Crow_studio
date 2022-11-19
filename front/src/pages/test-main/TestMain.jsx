@@ -135,6 +135,8 @@ const TestMain = () => {
                   <Directory
                     teamSeq={teamSeq}
                     selectedFilePath={selectedFilePath}
+                    selectedFileName={selectedFileName}
+                    selectedFileType={selectedFileType}
                     saveFileContent={saveFileContentHandler}
                   />
                 )}
