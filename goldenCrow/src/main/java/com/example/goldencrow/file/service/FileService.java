@@ -238,26 +238,28 @@ public class FileService {
         return serviceRes;
     }
 
-    public List<String> readFile(String filePath) {
-        String content = "";
+    /**
+     * 파일의 내용을 조회하는 내부 로직
+     *
+     * @param filePath 내용을 조회할 파일의 경로
+     * @return 파일의 내용을 반환, 성패에 따른 result 반환
+     */
+    public Map<String, String> readFileService(String filePath) {
+        Map<String, String> serviceRes = new HashMap<>();
 
-        List<String> res = new ArrayList<>();
-
+        // 내용 조회 로직
+        StringBuilder content = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-
-            String line = null;
-
+            String line;
             while ((line = br.readLine()) != null) {
-                content += line + "\n";
+                content.append(line).append("\n");
             }
-
         } catch (Exception e) {
-            res.add("Failed");
-            res.add(e.getMessage());
+            serviceRes.put("result", NO_SUCH);
+            return serviceRes;
         }
-
-        res.add("Success");
-        res.add(content);
-        return res;
+        serviceRes.put("result", SUCCESS);
+        serviceRes.put("fileContent", content.toString());
+        return serviceRes;
     }
 }

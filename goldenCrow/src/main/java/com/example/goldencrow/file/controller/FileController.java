@@ -165,16 +165,30 @@ public class FileController {
         }
     }
 
+    /**
+     * 파일 내용을 조회하는 API
+     *
+     * @param req "filePath"를 key로 가지는 Map<String, String>
+     * @return 파일의 내용 반환, 성패에 따른 result 반환
+     * @status 200, 400, 401, 404
+     */
     @PostMapping("/files")
-    public ResponseEntity<String> readFile(@RequestHeader("Authorization") String jwt, @RequestBody HashMap<String, String> path) {
-        List<String> content = fileService.readFile(basePath + path.get(stringPath));
-        if (content.get(0).equals("Success")) {
-            return new ResponseEntity<>(content.get(1), HttpStatus.OK);
+    public ResponseEntity<Map<String, String>> readFilePost(@RequestBody Map<String, String> req) {
+        if (req.containsKey("filePath")) {
+            String filePath = req.get("filePath");
+            Map<String, String> res = fileService.readFileService(BASE_URL + filePath);
+            switch (res.get("result")) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
         } else {
-            return new ResponseEntity<>(content.get(1), HttpStatus.BAD_REQUEST);
+            Map<String, String> res = new HashMap<>();
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
-
     }
-
-
 }
