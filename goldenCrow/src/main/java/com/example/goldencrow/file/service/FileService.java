@@ -36,12 +36,12 @@ public class FileService {
     /**
      * 파일(폴더) 생성 내부 로직
      *
+     * @param teamSeq              파일(폴더)를 생성할 팀의 sequence
      * @param type                 생성할 문서의 종류 (1 : 폴더, 2 : 파일)
-     * @param teamSeq              파일(폴더)을 생성할 팀의 sequence
      * @param fileCreateRequestDto "fileTitle", "filePath"를 key로 가지는 Dto
      * @return 파일(폴더) 생성 성공 시 파일 경로 반환, 성패에 대한 result 반환
      */
-    public Map<String, String> createFileService(int type, Long teamSeq, FileCreateRequestDto fileCreateRequestDto) {
+    public Map<String, String> createFileService(Long teamSeq, int type, FileCreateRequestDto fileCreateRequestDto) {
         Map<String, String> serviceRes = new HashMap<>();
 
         // 생성할 파일 혹은 폴더의 경로
@@ -51,7 +51,7 @@ public class FileService {
         String makeNewFileRes = makeNewFileService(newFilePath, type);
         if (makeNewFileRes.equals(SUCCESS)) {
             FileCreateDto newFileCreateDto = new FileCreateDto(fileCreateRequestDto.getFileTitle(), newFilePath, teamSeq);
-            insertFile(newFileCreateDto);
+            insertFileService(newFileCreateDto);
             serviceRes.put("result", SUCCESS);
             serviceRes.put("filePath", newFilePath);
             return serviceRes;
@@ -61,12 +61,11 @@ public class FileService {
     }
 
     /**
-     * 우분투 서버에 파일을 생성하는 로직
-     * 성공한다면 디비 저장 함수를 부를 예정
+     * Ubuntu에 파일을 생성하는 내부 로직
      *
-     * @param filePath
-     * @param type
-     * @return
+     * @param filePath 파일을 생성할 경로
+     * @param type      생성할 문서의 종류 (1 : 폴더, 2 : 파일)
+     * @return 성패에 따른 result string 반환
      */
     public String makeNewFileService(String filePath, int type) {
         File newFile = new File(filePath);
@@ -90,14 +89,13 @@ public class FileService {
     }
 
     /**
-     * DB에 파일을 insert해주는 로직
+     * MongoDB에 파일을 insert하는 내부 로직
      *
      * @param fileCreateDto
      */
-    public void insertFile(FileCreateDto fileCreateDto) {
+    public void insertFileService(FileCreateDto fileCreateDto) {
         FileEntity fileEntity = new FileEntity(fileCreateDto);
         fileRepository.insert(fileEntity);
-        System.out.println("성공!");
     }
 
     /**

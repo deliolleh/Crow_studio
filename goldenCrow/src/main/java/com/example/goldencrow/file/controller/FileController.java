@@ -42,17 +42,17 @@ public class FileController {
     /**
      * 파일(폴더) 생성 API
      *
-     * @param type                 생성할 문서의 종류 (1 : 폴더, 2 : 파일)
      * @param teamSeq              파일(폴더)를 생성할 팀의 sequence
+     * @param type                 생성할 문서의 종류 (1 : 폴더, 2 : 파일)
      * @param fileCreateRequestDto "fileTitle", "filePath"를 key로 가지는 Dto
      * @return 파일(폴더) 생성 성공 시 파일 경로 반환, 성패에 대한 result 반환
      * @status 200, 400, 401
      */
     @PostMapping("/{teamSeq}")
-    public ResponseEntity<Map<String, String>> userFileCreatePost(@RequestParam int type,
-                                                                  @PathVariable Long teamSeq,
+    public ResponseEntity<Map<String, String>> userFileCreatePost(@PathVariable Long teamSeq,
+                                                                  @RequestParam int type,
                                                                   @RequestBody FileCreateRequestDto fileCreateRequestDto) {
-        Map<String, String> res = fileService.createFileService(type, teamSeq, fileCreateRequestDto);
+        Map<String, String> res = fileService.createFileService(teamSeq, type, fileCreateRequestDto);
         if (res.get("result").equals(SUCCESS)) {
             return new ResponseEntity<>(res, HttpStatus.OK);
         } else {
@@ -61,12 +61,19 @@ public class FileController {
     }
 
     /**
-     * @param teamSeq 파일 삭제 요청
+     * 파일(폴더) 삭제 API
+     *
+     * @param teamSeq   파일(폴더)를 삭제할 팀의 sequence
+     * @param type      삭제할 문서의 종류 (1 : 폴더, 2 : 파일)
+     * @param filePath  삭제할 문서의 경로
+     * @return
+     * @status
      */
     @DeleteMapping("/{teamSeq}")
-
-    public ResponseEntity<Map<String, String>> userFileDelete(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestParam Integer type, @RequestBody HashMap<String, String> filePath) {
-        Map<String, String> res = fileService.deleteFile(basePath + filePath.get(stringPath), type, teamSeq);
+    public ResponseEntity<Map<String, String>> userFileDelete(@PathVariable Long teamSeq,
+                                                              @RequestParam int type,
+                                                              @RequestBody HashMap<String, String> filePath) {
+        Map<String, String> res = fileService.deleteFile(BASE_URL + filePath.get(stringPath), type, teamSeq);
         if (res.get("result").equals(SUCCESS)) {
             return new ResponseEntity<>(res, HttpStatus.OK);
         } else {
