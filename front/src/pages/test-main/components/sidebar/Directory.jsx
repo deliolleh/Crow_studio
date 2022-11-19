@@ -24,13 +24,14 @@ import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.
 // import * as iconsi from "react-icons/io5";
 
 import projectApi from "../../../../api/projectApi";
+import fileApi from "../../../../api/fileApi";
 
 import { selectFile } from "../../../../redux/teamSlice";
-import fileApi from "../../../../api/fileApi";
 
 const TYPE_DIRECTORY = "1";
 const TYPE_FILE = "2";
 
+// filePath를 받아 확장자가 무엇인지 확인하고 해당 파일 타입을 리턴
 const getFileType = (filePath) => {
   const filenameExtension = filePath.split(".")[1] ?? null;
   switch (filenameExtension) {
@@ -43,6 +44,7 @@ const getFileType = (filePath) => {
   }
 };
 
+// filePath를 받아 해당 파일이나 폴더의 이름을 리턴
 const getFileName = (filePath) => {
   if (filePath.includes(".")) {
     return filePath.split("/").slice(-1)[0].split(".")[0];
@@ -51,17 +53,16 @@ const getFileName = (filePath) => {
   }
 };
 
+//
+
 const Directory = (props) => {
   const dispatch = useDispatch();
-
   const {
     teamSeq,
     selectedFilePath,
     selectedFileName,
     selectedFileType,
     saveFileContent,
-    curName,
-    curPath,
   } = props;
 
   const [filesDirectories, setFilesDirectories] = useState({});
@@ -162,7 +163,7 @@ const Directory = (props) => {
   };
 
   // 저장
-  const saveHandler = () => saveFileContent(curName, curPath);
+  const saveHandler = () => saveFileContent();
 
   // // 트리 생성
   // const renderTree = (nodes) => (
