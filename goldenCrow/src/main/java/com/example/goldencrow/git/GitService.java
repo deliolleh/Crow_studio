@@ -1,8 +1,5 @@
 package com.example.goldencrow.git;
 
-import com.example.goldencrow.common.Constants;
-import com.example.goldencrow.file.FileRepository;
-import com.example.goldencrow.file.service.FileService;
 import com.example.goldencrow.file.service.ProjectService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
@@ -82,7 +79,7 @@ public class GitService {
      * @return 성패에 따른 result 반환
      */
     public Map<String, String> gitCloneService(String url, Long teamSeq, String projectName) {
-        System.out.println("여기야 여기!");
+
         Map<String, String> serviceRes = new HashMap<>();
 
         // 팀시퀀스로 팀이 존재하는지 확인
@@ -105,7 +102,7 @@ public class GitService {
 
         // 팀 시퀀스 디렉토리 만들기
         String teamFolder = String.valueOf(teamSeq);
-        String newFilePath = projectService.createDir("/home/ubuntu/crow_data", teamFolder);
+        String newFilePath = projectService.createDir(BASE_URL, teamFolder);
 
         if (newFilePath.equals("2")) {
             serviceRes.put("result", WRONG);
@@ -113,7 +110,8 @@ public class GitService {
         }
 
         // 프로젝트 이름 디렉토리 만들기
-        String pjt = projectService.createDir(newFilePath, projectName);
+        String pjt = projectService.createDir(newFilePath+"/", projectName);
+
         if (pjt.equals("2")) {
             serviceRes.put("result", WRONG);
             return serviceRes;
@@ -148,8 +146,8 @@ public class GitService {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
-
-        projectService.saveFilesInDIr(pjt,teamSeq);
+        
+        projectService.saveFilesInDIr(pjt+"/",teamSeq);
         serviceRes.put("result", SUCCESS);
         return serviceRes;
 
@@ -434,20 +432,20 @@ public class GitService {
         // 명령어를 수행할 프로젝트의 경로 저장
         command.directory(new File(gitPath));
         String read;
+
         // 명령어 수행 로직
         try {
             Process getBranch = command.start();
             BufferedReader branch = new BufferedReader(new InputStreamReader(getBranch.getInputStream()));
             while ((read = branch.readLine()) != null) {
+                System.out.println(read);
                 branches.add(read.trim());
-
             }
             getBranch.waitFor();
         } catch (IOException e) {
             return null;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-
             return null;
         }
         return branches;

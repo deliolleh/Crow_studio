@@ -78,11 +78,33 @@ public class ProjectService {
                 child.add(readDirectory(thisPath, name, children));
             }
             visit.put("children", child);
+            visit.put("type","folder");
         }
 
+        if (!file.isDirectory()) {
+            String fileType = checkName(file.getName());
+            visit.put("type",fileType);
+        }
         return visit;
     }
 
+    /**
+     * 파일 이름에 무엇이 포함되냐에 따라 파일 종류 나누기
+     * @param fileName 판별할 파일 이름
+     * @return 파이썬, html, css, js, text
+     */
+    public String checkName(String fileName) {
+        if (fileName.contains(".py")) {
+            return "python";
+        } else if (fileName.contains(".html")) {
+            return "html";
+        } else if (fileName.contains(".js")) {
+            return "js";
+        } else if (fileName.contains(".css")) {
+            return "css";
+        }
+        return "text";
+    }
 
     /**
      * 모든 경로를 재귀적으로 찾고, db에 저장
@@ -92,17 +114,22 @@ public class ProjectService {
      */
     public void saveFilesInDIr(String path, Long teamSeq) {
         File file = new File(path);
-        FileCreateDto newFileCreateDto = new FileCreateDto(file.getName(), file.getPath(), teamSeq);
-        fileService.insertFile(newFileCreateDto);
 
         File[] files = file.listFiles();
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
                 File dir = files[i];
-                String thisPath = dir.getPath();
+                if (dir.getName().equals(".git")) {
+                    continue;
+                }
+                FileCreateDto newFileCreateDto = new FileCreateDto(dir.getName(), dir.getPath(), teamSeq);
+
+                fileService.insertFile(newFileCreateDto);
 
                 if (dir.isDirectory()) {
+                    String thisPath = dir.getPath();
                     saveFilesInDIr(thisPath, teamSeq);
+
                 }
             }
         }

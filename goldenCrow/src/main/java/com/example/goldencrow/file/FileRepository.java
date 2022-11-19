@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-
 public interface FileRepository extends MongoRepository<FileEntity, ObjectId> {
     /** 시퀀스로 단일 파일 조회  */
     Optional<FileEntity> findById(ObjectId id);
