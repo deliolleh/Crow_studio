@@ -147,7 +147,7 @@ public class GitService {
             return serviceRes;
         }
         
-        projectService.saveFilesInDIr(pjt+"/",teamSeq);
+        projectService.saveFilesInDIrService(pjt+"/",teamSeq);
         serviceRes.put("result", SUCCESS);
         return serviceRes;
 

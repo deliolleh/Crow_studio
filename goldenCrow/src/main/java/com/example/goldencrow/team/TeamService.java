@@ -570,7 +570,7 @@ public class TeamService {
                 // 서버 내에 있는 해당 팀의 프로젝트 삭제
                 List<Long> teamSeqList = new ArrayList<>();
                 teamSeqList.add(teamSeq);
-                if (projectService.deleteProject(teamSeqList).get("result").equals(UNKNOWN)) {
+                if (projectService.deleteProjectService(teamSeqList).get("result").equals(UNKNOWN)) {
                     serviceRes.put("result", UNKNOWN);
                     return serviceRes;
                 }

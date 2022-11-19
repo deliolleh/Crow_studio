@@ -58,21 +58,32 @@ public class ProjectController {
         }
     }
 
+    /**
+     * 프로젝트 디렉토리 조회 API
+     *
+     * @param teamSeq 조회하려는 프로젝트의 팀 Sequence
+     * @return 디렉토리 구조를 반환
+     * @status 200, 400, 401
+     */
     @GetMapping("/directories/{teamSeq}")
-    public ResponseEntity<Map<Object, Object>> pjtRead(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
-        String baseUrl = "/home/ubuntu/crow_data/" + String.valueOf(teamSeq);
-        File teamPjt = new File(baseUrl);
+    public ResponseEntity<Map<Object, Object>> pjtReadGet(@PathVariable Long teamSeq) {
+        String pjtPath = BASE_URL + teamSeq;
+        File teamPjt = new File(pjtPath);
         File[] files = teamPjt.listFiles();
-        Map<Object, Object> visit = new HashMap<>();
-        if (files != null && files.length == 0) {
-            return new ResponseEntity<>(visit, HttpStatus.BAD_REQUEST);
+
+        Map<Object, Object> res = new HashMap<>();
+        if (files == null) {
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+        } else if (files.length == 0) {
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
+
         String rootPath = files[0].getPath();
         String rootName = files[0].getName();
-        rootPath = rootPath.replace("/home/ubuntu/crow_data/", "");
-        projectService.readDirectory(rootPath, rootName, visit);
-
-        return new ResponseEntity<>(visit, HttpStatus.ACCEPTED);
+        rootPath = rootPath.replace(BASE_URL, "");
+        res = projectService.readDirectoryService(rootPath, rootName, res);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
-
 }

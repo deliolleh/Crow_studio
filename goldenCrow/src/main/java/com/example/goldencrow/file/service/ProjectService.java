@@ -47,14 +47,14 @@ public class ProjectService {
 
 
     /**
-     * 파일 경로를 모두 찾아서 HashMap으로 반환해주는 함수
+     * 파일 경로 조회 내부 로직
      *
-     * @param rootPath
-     * @param rootName
-     * @param visit
-     * @return
+     * @param rootPath 조회하려는 경로
+     * @param rootName 조회하려는 파일(폴더)명
+     * @param visit    현재까지의 파일 경로들이 저장된 Map
+     * @return 파일경로를 조회해 반환
      */
-    public Map<Object, Object> readDirectory(String rootPath, String rootName, Map<Object, Object> visit) {
+    public Map<Object, Object> readDirectoryService(String rootPath, String rootName, Map<Object, Object> visit) {
         String path = BASE_URL + rootPath;
         File file = new File(path);
         visit.put("id", rootPath);
@@ -68,13 +68,18 @@ public class ProjectService {
                 errorValue.put("error", NO_SUCH);
                 return errorValue;
             }
+            if (names == null) {
+                Map<Object, Object> errorValue = new HashMap<>();
+                errorValue.put("error", NO_SUCH);
+                return errorValue;
+            }
             for (int i = 0; i < files.length; i++) {
                 File dir = files[i];
                 String name = names[i];
                 String thisPath = dir.getPath();
                 thisPath = thisPath.replace(BASE_URL, "");
                 Map<Object, Object> children = new HashMap<>();
-                child.add(readDirectory(thisPath, name, children));
+                child.add(readDirectoryService(thisPath, name, children));
             }
             visit.put("children", child);
             visit.put("type", "folder");
@@ -88,10 +93,10 @@ public class ProjectService {
     }
 
     /**
-     * 파일 이름에 무엇이 포함되냐에 따라 파일 종류 나누기
+     * 파일 이름에 무엇이 포함되냐에 따라 파일 종류 나누는 내부 로직
      *
      * @param fileName 판별할 파일 이름
-     * @return 파이썬, html, css, js, text
+     * @return python, html, css, js, text
      */
     public String checkName(String fileName) {
         if (fileName.contains(".py")) {
@@ -107,29 +112,27 @@ public class ProjectService {
     }
 
     /**
-     * 모든 경로를 재귀적으로 찾고, db에 저장
+     * 모든 경로를 재귀적으로 찾고, db에 저장하는 내부 로직
      *
-     * @param path
-     * @param teamSeq
+     * @param path    조회하는 경로
+     * @param teamSeq 해당 프로젝트의 팀 Sequence
      */
-    public void saveFilesInDIr(String path, Long teamSeq) {
+    public void saveFilesInDIrService(String path, Long teamSeq) {
         File file = new File(path);
 
         File[] files = file.listFiles();
         if (files != null) {
-            for (int i = 0; i < files.length; i++) {
-                File dir = files[i];
+            for (File dir : files) {
                 if (dir.getName().equals(".git")) {
                     continue;
                 }
                 FileCreateDto newFileCreateDto = new FileCreateDto(dir.getName(), dir.getPath(), teamSeq);
-
+                // file 저장
                 fileService.insertFileService(newFileCreateDto);
-
+                // Directory일 경우
                 if (dir.isDirectory()) {
                     String thisPath = dir.getPath();
-                    saveFilesInDIr(thisPath, teamSeq);
-
+                    saveFilesInDIrService(thisPath, teamSeq);
                 }
             }
         }
@@ -181,7 +184,7 @@ public class ProjectService {
 
             // file 저장
             String pjtPath = teamFile + "/" + projectName;
-            saveFilesInDIr(pjtPath, teamSeq);
+            saveFilesInDIrService(pjtPath, teamSeq);
             serviceRes.put("result", SUCCESS);
             return serviceRes;
         } else if (type == 1) {
@@ -195,7 +198,7 @@ public class ProjectService {
             try {
                 if (file.createNewFile()) {
                     String pjtPath = pjt + "/" + projectName;
-                    saveFilesInDIr(pjtPath, teamSeq);
+                    saveFilesInDIrService(pjtPath, teamSeq);
                     serviceRes.put("result", SUCCESS);
                 } else {
                     serviceRes.put("result", DUPLICATE);
@@ -231,7 +234,7 @@ public class ProjectService {
                 return serviceRes;
             }
             String pjtPath = pjt + "/" + projectName;
-            saveFilesInDIr(pjtPath, teamSeq);
+            saveFilesInDIrService(pjtPath, teamSeq);
             serviceRes.put("result", SUCCESS);
             return serviceRes;
         } else if (type == 4) {
@@ -259,7 +262,7 @@ public class ProjectService {
                 return serviceRes;
             }
             String pjtPath = pjt + "/" + projectName;
-            saveFilesInDIr(pjtPath, teamSeq);
+            saveFilesInDIrService(pjtPath, teamSeq);
             serviceRes.put("result", SUCCESS);
             return serviceRes;
         }
@@ -273,48 +276,48 @@ public class ProjectService {
      * @param teamSeqList 삭제하고자 하는 팀의 시퀀스로 이루어진 리스트
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> deleteProject(List<Long> teamSeqList) {
-
+    public Map<String, String> deleteProjectService(List<Long> teamSeqList) {
         Map<String, String> serviceRes = new HashMap<>();
-
+        // 삭제 로직 수행
         try {
             ProcessBuilder deleter = new ProcessBuilder();
             for (Long seq : teamSeqList) {
+                // 서버에서 프로젝트 삭제
                 deleter.command("rm", "-r", String.valueOf(seq));
                 deleter.directory(new File(BASE_URL));
-
                 try {
                     deleter.start();
                 } catch (IOException e) {
-                    throw e;
+                    serviceRes.put("result", UNKNOWN);
+                    return serviceRes;
                 }
-                pjtFileDelete(seq);
+                // DB에서 프로젝트 삭제
+                String pjtDeleted = pjtFileDeleteService(seq);
+                if (!pjtDeleted.equals(SUCCESS)) {
+                    serviceRes.put("result", pjtDeleted);
+                    return serviceRes;
+                }
             }
-            // 위의 과정을 무사히 통과했으므로
             serviceRes.put("result", SUCCESS);
-
         } catch (Exception e) {
             serviceRes.put("result", UNKNOWN);
         }
-
         return serviceRes;
     }
 
     /**
-     * 해당 시퀀스에 해당하는 DB의 데이터를 모두 삭제
+     * 해당 시퀀스에 해당하는 DB의 데이터를 모두 삭제하는 내부 로직
      *
-     * @param teamSeq
+     * @param teamSeq 삭제하려는 팀의 Sequence
      */
-    public void pjtFileDelete(Long teamSeq) {
+    public String pjtFileDeleteService(Long teamSeq) {
         Optional<List<FileEntity>> files = fileRepository.findAllByTeamSeq(teamSeq);
         if (!files.isPresent()) {
-            throw new NullPointerException();
+            return NO_SUCH;
         }
-
         List<FileEntity> deleteFile = files.get();
-
         fileRepository.deleteAll(deleteFile);
-
+        return SUCCESS;
     }
 
 
@@ -329,6 +332,7 @@ public class ProjectService {
         String oldFileName = "settings.py";
         String tmpFileName = "tmp_settings.py";
         String newFilePath = filePath.replace(oldFileName, tmpFileName);
+
         // 기존 settings.py의 내용을 불러오되 ALLOWED_HOST 부분 수정하여 저장
         try (BufferedReader br = new BufferedReader(new FileReader(filePath));
              BufferedWriter bw = new BufferedWriter(new FileWriter(newFilePath))) {
@@ -344,10 +348,12 @@ public class ProjectService {
             return UNKNOWN;
         }
 
+        // 변경된 settings.py를 저장할 경로
         String newPath = filePath.replace(oldFileName, "");
+
+        // tmpFileName을 'settings.py'로 변경하는 명령어
         ProcessBuilder pro = new ProcessBuilder("mv", tmpFileName, oldFileName);
         pro.directory(new File(newPath));
-
         try {
             pro.start();
         } catch (IOException e) {
