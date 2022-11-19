@@ -266,7 +266,7 @@ public class GitService {
     /**
      * Git add를 처리하는 내부 로직
      *
-     * @param gitPath  프로젝트 경로
+     * @param gitPath 명령어를 수행할 디렉토리
      * @param filePath add할 파일 경로 (특정하지 않으면 all)
      * @return 성패에 따른 String 반환
      */
@@ -313,13 +313,13 @@ public class GitService {
      * Git add 후 성공한다면 Git commit
      *
      * @param message  commit message
-     * @param gitPath  프로젝트 경로
+     * @param teamSeq 커밋할 팀 Seq
      * @param filePath add할 파일 경로 (특정하지 않으면 all)
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> gitCommitService(String message, String gitPath, String filePath) {
+    public Map<String, String> gitCommitService(String message, Long teamSeq, String filePath) {
         Map<String, String> serviceRes = new HashMap<>();
-
+        String gitPath = getGitPath(teamSeq);
         // git add 로직 수행
         String gitAddCheck = gitAddService(gitPath, filePath);
         if (!gitAddCheck.equals(SUCCESS)) {
@@ -371,15 +371,16 @@ public class GitService {
      *
      * @param branchName push할 branch의 이름
      * @param message    commit message
-     * @param gitPath    push할 프로젝트의 경로
+     * @param teamSeq    commit할 팀 Seq
      * @param filePath   push할 파일의 경로 (특정하지 않을 경우 all)
      * @param userSeq    push하는 사용자의 Sequence
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> gitPushService(String branchName, String message, String gitPath, String filePath, Long userSeq) {
+    public Map<String, String> gitPushService(String branchName, String message, Long teamSeq, String filePath, Long userSeq) {
         Map<String, String> serviceRes = new HashMap<>();
+        String gitPath = getGitPath(teamSeq);
         // commit 로직 수행
-        Map<String, String> gitCommitCheck = gitCommitService(message, gitPath, filePath);
+        Map<String, String> gitCommitCheck = gitCommitService(message, teamSeq, filePath);
         if (!gitCommitCheck.get("result").equals(SUCCESS)) {
             serviceRes.put("result", gitCommitCheck.get("result"));
             return serviceRes;
@@ -446,13 +447,15 @@ public class GitService {
     /**
      * Branch 목록을 조회하는 내부 로직
      *
-     * @param gitPath branch 목록을 조회할 프로젝트의 경로
+     * @param teamSeq 브랜치 조회하려는 팀 Seq
      * @param type    조회하려는 branch의 종류 (1 : local branch, 2 : remote branch)
      * @return branch 목록을 List<String>으로 반환, 없거나 오류가 날 경우 null
      */
-    public List<String> getBranchService(String gitPath, Integer type) {
+    public List<String> getBranchService(Long teamSeq, Integer type) {
         List<String> branches = new ArrayList<>();
         ProcessBuilder command = new ProcessBuilder();
+
+        String gitPath = getGitPath(teamSeq);
 
         // 조회하려는 브랜치에 따라 명령어 저장
         if (type == 1) {
@@ -611,13 +614,14 @@ public class GitService {
     /**
      * Git pull을 처리하는 내부 로직
      *
-     * @param gitPath   pull받을 프로젝트의 경로
+     * @param teamSeq   pull 실행할 team Seq
      * @param userSeq   pull받을 사용자의 sequence
      * @param brachName pull받을 branch의 이름
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> gitPullService(String gitPath, Long userSeq, String brachName) {
+    public Map<String, String> gitPullService(Long teamSeq, Long userSeq, String brachName) {
         Map<String, String> serviceRes = new HashMap<>();
+        String gitPath = getGitPath(teamSeq);
         // pull받을 remote URL 조회 로직 수행
         String gitUrl = getRemoteUrlService(gitPath);
         // git 정보 조회 로직 수행
