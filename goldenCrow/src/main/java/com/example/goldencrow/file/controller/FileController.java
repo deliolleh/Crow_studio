@@ -24,10 +24,6 @@ public class FileController {
     private final FileService fileService;
     private final JwtService jwtService;
 
-//    private String stringPath = "filePath";
-
-//    private final String basePath = "/home/ubuntu/crow_data/";
-
     /**
      * FileController 생성자
      *
