@@ -253,7 +253,7 @@ public class GitService {
         System.out.println(msg);
         String message = msg.toString();
         // 성공 여부 판단
-        if (message.contains("Switched to branch") || message.contains("up to")) {
+        if (message.contains("Switched to branch") || message.contains("up to") || message.contains("new branch")) {
             serviceRes.put("result", SUCCESS);
         } else if (message.contains("invalid")){
             serviceRes.put("result", NO_SUCH);
