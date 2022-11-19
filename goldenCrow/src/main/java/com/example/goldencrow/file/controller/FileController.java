@@ -101,13 +101,15 @@ public class FileController {
      * @status 200, 400, 401, 404
      */
     @PutMapping("/{teamSeq}/file-title")
-    public ResponseEntity<Map<String, String>> fileNameUpdate(@PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
+    public ResponseEntity<Map<String, String>> fileNameUpdatePut(@PathVariable Long teamSeq,
+                                                                 @RequestBody Map<String, String> req) {
         if (req.containsKey("filePath") && req.containsKey("oldFileName") && req.containsKey("fileTitle")) {
             String filePath = req.get("filePath");
             String fileTitle = req.get("fileTitle");
             String oldFileName = req.get("oldFileName");
 
-            Map<String, String> res = fileService.updateFileNameService(BASE_URL + filePath, fileTitle, oldFileName, teamSeq);
+            Map<String, String> res =
+                    fileService.updateFileNameService(BASE_URL + filePath, fileTitle, oldFileName, teamSeq);
             switch (res.get("result")) {
                 case SUCCESS:
                     return new ResponseEntity<>(res, HttpStatus.OK);
@@ -123,26 +125,44 @@ public class FileController {
         }
     }
 
-
+    /**
+     * @param jwt
+     * @param teamSeq
+     * @return
+     */
     @GetMapping("/{teamSeq}")
     public ResponseEntity<String> getDirectory(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
         Long result = jwtService.JWTtoUserSeq(jwt);
         return new ResponseEntity<>(String.valueOf(result), HttpStatus.OK);
     }
 
+    /**
+     * 파일 저장 API
+     *
+     * @param teamSeq 파일을 저장할 프로젝트(팀)의 Sequence
+     * @param req     "fileContent", "filePath"를 key로 가지는 Map<String, String>
+     * @return 성패에 따른 result 반환
+     * @status 200, 400, 401, 404
+     */
     @PutMapping("/{teamSeq}/files")
-    public ResponseEntity<String> saveFile(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq, @RequestBody HashMap<String, String> fileContent) {
-        String content = fileContent.get("fileContent");
-        String filePath = fileContent.get(stringPath);
-        String result = fileService.saveFile(basePath + filePath, content);
-
-        if (result.equals("Success")) {
-            return new ResponseEntity<>("Success", HttpStatus.OK);
+    public ResponseEntity<Map<String, String>> saveFilePut(@PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
+        if (req.containsKey("fileContent") && req.containsKey("filePath")) {
+            String fileContent = req.get("fileContent");
+            String filePath = req.get("filePath");
+            Map<String, String> res = fileService.saveFileService(BASE_URL + filePath, fileContent);
+            switch (res.get("result")) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
         } else {
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            Map<String, String> res = new HashMap<>();
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
-
-        // boolean result2 = fileService.updateFileUpdatedAt(teamSeq,filePath);
     }
 
     @PostMapping("/files")

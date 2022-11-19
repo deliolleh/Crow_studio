@@ -164,25 +164,40 @@ public class FileService {
     }
 
     /**
+     * 파일 내용 저장 내부 로직
      * 파일 저장 기존 파일을 삭제하고 새로운 파일을 덮어씌우는 형태
      *
-     * @param filePath
-     * @param content
-     * @return
+     * @param filePath 저장할 파일의 경로
+     * @param content  저장할 내용
+     * @return 성패에 따른 result 반환
      */
-    public String saveFile(String filePath, String content) {
-        File oldFile = new File(filePath);
-        oldFile.delete();
+    public Map<String, String> saveFileService(String filePath, String content) {
+        Map<String, String> serviceRes = new HashMap<>();
 
-        File newFile = new File(filePath);
-
-        try (FileWriter overWriteFile = new FileWriter(newFile, false);) {
-            overWriteFile.write(content);
-        } catch (IOException e) {
-            return e.getMessage();
+        // 원래 있던 파일 조회
+        File oldFile;
+        try {
+            oldFile = new File(filePath);
+        } catch (NullPointerException e) {
+            serviceRes.put("result", NO_SUCH);
+            return serviceRes;
         }
 
-        return Success;
+        // 파일 삭제
+        if (!oldFile.delete()) {
+            serviceRes.put("result", UNKNOWN);
+            return serviceRes;
+        }
+
+        // 새로운 파일 생성 & 내용 저장
+        File newFile = new File(filePath);
+        try (FileWriter overWriteFile = new FileWriter(newFile, false)) {
+            overWriteFile.write(content);
+            serviceRes.put("result", SUCCESS);
+        } catch (IOException e) {
+            serviceRes.put("result", UNKNOWN);
+        }
+        return serviceRes;
     }
 
     /**
