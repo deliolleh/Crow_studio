@@ -250,11 +250,15 @@ public class GitService {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
+        System.out.println(msg);
+        String message = msg.toString();
         // 성공 여부 판단
-        if (msg.length() == 0) {
+        if (message.contains("Switched to branch")) {
             serviceRes.put("result", SUCCESS);
+        } else if (message.contains("invalid")){
+            serviceRes.put("result", NO_SUCH);
         } else {
-            serviceRes.put("result", UNKNOWN);
+            serviceRes.put("result",UNKNOWN);
         }
         return serviceRes;
     }
