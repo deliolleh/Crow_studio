@@ -80,13 +80,14 @@ public class GitController {
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
-    @PostMapping("/git-switch")
-    public ResponseEntity<Map<String, String>> gitSwitchPost(@RequestParam Integer type,
+    @PostMapping("/{teamSeq}/git-switch")
+    public ResponseEntity<Map<String, String>> gitSwitchPost(@PathVariable Long teamSeq,
+                                                             @RequestParam Integer type,
                                                              @RequestBody Map<String, String> req) {
-        if (req.containsKey("gitPath") && req.containsKey("branchName")) {
+        if ( req.containsKey("branchName")) {
             String gitPath = req.get("gitPath");
             String branchName = req.get("branchName");
-            Map<String, String> res = gitService.gitSwitchService(gitPath, branchName, type);
+            Map<String, String> res = gitService.gitSwitchService(branchName, type, teamSeq);
             String result = res.get("result");
             switch (result) {
                 case SUCCESS:
