@@ -36,14 +36,13 @@ public class ProjectService {
      * @param name
      * @return Dir or "2"
      */
-    public String createDir(String path, String name) {
+    public String createDirService(String path, String name) {
         String pjt = path + name;
         File pjtDir = new File(pjt);
         if (pjtDir.mkdir()) {
             return pjt;
         }
-        ;
-        return "2";
+        return DUPLICATE;
     }
 
 
@@ -65,8 +64,8 @@ public class ProjectService {
             File[] files = file.listFiles();
             String[] names = file.list();
             if (files == null) {
-                Map<Object,Object> errorValue = new HashMap<>();
-                errorValue.put("error",NO_SUCH);
+                Map<Object, Object> errorValue = new HashMap<>();
+                errorValue.put("error", NO_SUCH);
                 return errorValue;
             }
             for (int i = 0; i < files.length; i++) {
@@ -78,18 +77,19 @@ public class ProjectService {
                 child.add(readDirectory(thisPath, name, children));
             }
             visit.put("children", child);
-            visit.put("type","folder");
+            visit.put("type", "folder");
         }
 
         if (!file.isDirectory()) {
             String fileType = checkName(file.getName());
-            visit.put("type",fileType);
+            visit.put("type", fileType);
         }
         return visit;
     }
 
     /**
      * 파일 이름에 무엇이 포함되냐에 따라 파일 종류 나누기
+     *
      * @param fileName 판별할 파일 이름
      * @return 파이썬, html, css, js, text
      */
@@ -135,103 +135,132 @@ public class ProjectService {
         }
     }
 
-
     /**
-     * 프로젝트 이니셜 파일 생성
-     * type 1 = pure python
-     * 2 = django
-     * 3 = flask
-     * 4 = fastapi
+     * 프로젝트 생성 내부 로직
+     *
+     * @param path        프로젝트 생성할 경로
+     * @param type        생성할 프로젝트의 종류 (1: pure Python, 2: Django, 3: Flask, 4: FastAPI)
+     * @param projectName 생성할 프로젝트의 이름
+     * @param teamSeq     생성할 프로젝트의 팀 Sequence
+     * @return 성패에 따른 result 반환
      */
-    public String createProject(String path, Integer type, String projectName, Long teamSeq) {
-        String teamFile = createDir(path, String.valueOf(teamSeq));
+    public Map<String, String> createProjectService(String path, int type, String projectName, Long teamSeq) {
+        Map<String, String> serviceRes = new HashMap<>();
+        String teamFile = createDirService(path, String.valueOf(teamSeq));
 
-        if (teamFile.equals("2")) {
-            return DUPLICATE;
+        if (teamFile.equals(DUPLICATE)) {
+            serviceRes.put("result", DUPLICATE);
+            return serviceRes;
         }
-
-        String fileTitle = projectName;
-
+        // 기본 프로젝트 구성, 기본 파일 생성
+        // Django인 경우
         if (type == 2) {
-
             ProcessBuilder djangoStarter = new ProcessBuilder();
-            djangoStarter.command("django-admin", "startproject", fileTitle);
+            djangoStarter.command("django-admin", "startproject", projectName);
             djangoStarter.directory(new File(teamFile));
 
             try {
                 Process p = djangoStarter.start();
                 p.waitFor();
             } catch (IOException e) {
-                return e.getMessage();
+                serviceRes.put("result", UNKNOWN);
+                return serviceRes;
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                return e.getMessage();
-
+                serviceRes.put("result", UNKNOWN);
+                return serviceRes;
             }
 
-            String newPath = teamFile + "/" + fileTitle + "/" + fileTitle + "/" + "settings.py";
-            String change = changeSetting(newPath);
+            String newPath = teamFile + "/" + projectName + "/" + projectName + "/" + "settings.py";
+            String changeSetting = changeSettingService(newPath);
 
-            if (!change.equals("1")) {
-                return "호스트 세팅에 실패했습니다.";
+            if (!changeSetting.equals(SUCCESS)) {
+                serviceRes.put("result", UNKNOWN);
+                return serviceRes;
             }
 
-            String pjtPath = teamFile + "/" + fileTitle;
+            // file 저장
+            String pjtPath = teamFile + "/" + projectName;
             saveFilesInDIr(pjtPath, teamSeq);
-            return SUCCESS;
+            serviceRes.put("result", SUCCESS);
+            return serviceRes;
         } else if (type == 1) {
-            String pjt = createDir(teamFile, fileTitle);
-            if (pjt.equals("2")) {
-                return DUPLICATE;
+            String pjt = createDirService(teamFile, projectName);
+            if (pjt.equals(DUPLICATE)) {
+                serviceRes.put("result", DUPLICATE);
+                return serviceRes;
             }
 
-            File file = new File(pjt + "/" + fileTitle + ".py");
+            File file = new File(pjt + "/" + projectName + ".py");
             try {
                 if (file.createNewFile()) {
-                    String pjtPath = pjt + "/" + fileTitle;
+                    String pjtPath = pjt + "/" + projectName;
                     saveFilesInDIr(pjtPath, teamSeq);
-                    return SUCCESS;
+                    serviceRes.put("result", SUCCESS);
                 } else {
-                    return DUPLICATE;
+                    serviceRes.put("result", DUPLICATE);
                 }
+                return serviceRes;
             } catch (IOException e) {
-                return e.getMessage();
+                serviceRes.put("result", UNKNOWN);
+                return serviceRes;
             }
         } else if (type == 3) {
-            String pjt = createDir(teamFile, fileTitle);
-            if (pjt.equals("2")) {
-                return DUPLICATE;
+            String pjt = createDirService(teamFile, projectName);
+            if (pjt.equals(DUPLICATE)) {
+                serviceRes.put("result", DUPLICATE);
+                return serviceRes;
             }
             File file = new File(pjt + "/main.py");
 
-            String content = "from flask import Flask\nimport sys\nsys.path.append('/prod/app')\n\napp=Flask(__name__)\n\n@app.route(\"/\")\ndef hello_world():\n\treturn \"<p>Hello, World</p>\" \n\nif __name__ == \"__main__\" :\n\tapp.run(\"0.0.0.0\")";
+            String content = "from flask import Flask\n" +
+                    "import sys\n" +
+                    "sys.path.append('/prod/app')\n\n" +
+                    "app=Flask(__name__)\n\n" +
+                    "@app.route(\"/\")\n" +
+                    "def hello_world():\n" +
+                    "\treturn \"<p>Hello, World</p>\" \n\n" +
+                    "if __name__ == \"__main__\" :\n" +
+                    "\tapp.run(\"0.0.0.0\")";
 
-            try (FileWriter overWriteFile = new FileWriter(file, false);) {
+            try (FileWriter overWriteFile = new FileWriter(file, false)) {
                 overWriteFile.write(content);
             } catch (IOException e) {
-                return e.getMessage();
+                serviceRes.put("result", UNKNOWN);
+                return serviceRes;
             }
-            String pjtPath = pjt + "/" + fileTitle;
+            String pjtPath = pjt + "/" + projectName;
             saveFilesInDIr(pjtPath, teamSeq);
-            return SUCCESS;
+            serviceRes.put("result", SUCCESS);
+            return serviceRes;
         } else if (type == 4) {
-            String pjt = createDir(teamFile, fileTitle);
-            if (pjt.equals("2")) {
-                return DUPLICATE;
+            String pjt = createDirService(teamFile, projectName);
+            if (pjt.equals(DUPLICATE)) {
+                serviceRes.put("result", DUPLICATE);
+                return serviceRes;
             }
-            String pjt1 = createDir(pjt, fileTitle);
+            String pjt1 = createDirService(pjt, projectName);
             File file = new File(pjt1 + "/main.py");
-            String content = "from fastapi import FastAPI\nimport sys\nsys.path.append('/prod/app')\n\napp=FastAPI()\n\n@app.get(\"/\")\nasync def root():\n\treturn {\"message\" : \"Hello, World\"}";
-            try (FileWriter overWriteFile = new FileWriter(file, false);) {
+            String content = "from fastapi import FastAPI\n" +
+                    "import sys\nsys.path.append('/prod/app')\n\n" +
+                    "app=FastAPI()\n\n" +
+                    "@app.get(\"/\")\n" +
+                    "async def root():\n\t" +
+                    "return {\"message\" : \"Hello, World\"}";
+
+            try (FileWriter overWriteFile = new FileWriter(file, false)) {
                 overWriteFile.write(content);
             } catch (IOException e) {
-                return e.getMessage();
+                serviceRes.put("result", UNKNOWN);
+                return serviceRes;
             }
-            String pjtPath = pjt + "/" + fileTitle;
+            String pjtPath = pjt + "/" + projectName;
             saveFilesInDIr(pjtPath, teamSeq);
-            return SUCCESS;
+            serviceRes.put("result", SUCCESS);
+            return serviceRes;
         }
-        return UNKNOWN;
+        serviceRes.put("result", UNKNOWN);
+        return serviceRes;
     }
 
     /**
@@ -286,57 +315,40 @@ public class ProjectService {
 
 
     /**
-     * @param filePath - 파일 이름까지 붙어있는 filePath줘야 함
-     * @return
+     * Django project의 settings.py에서
+     * ALLOWED_HOSTS에 서버 주소를 넣어 배포가 가능하게 하는 내부 로직
+     *
+     * @param filePath 파일의 경로 (파일 이름까지 포함)
+     * @return 성패에 따른 result string 반환
      */
-    public String changeSetting(String filePath) {
-        out.println(filePath);
+    public String changeSettingService(String filePath) {
         String oldFileName = "settings.py";
         String tmpFileName = "tmp_settings.py";
         String newFilePath = filePath.replace(oldFileName, tmpFileName);
-        BufferedReader br = null;
-        BufferedWriter bw = null;
-        out.println("여기 호스트 바꾸는 거!" + newFilePath);
-        try {
-            br = new BufferedReader(new FileReader(filePath));
-            bw = new BufferedWriter(new FileWriter(newFilePath));
+        // 기존 settings.py의 내용을 불러오되 ALLOWED_HOST 부분 수정하여 저장
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath));
+             BufferedWriter bw = new BufferedWriter(new FileWriter(newFilePath))) {
             String line;
             while ((line = br.readLine()) != null) {
-
                 if (line.contains("ALLOWED_HOSTS = []")) {
-                    out.println(line);
-                    line = line.replace("ALLOWED_HOSTS = []", "ALLOWED_HOSTS = [\"k7d207.p.ssafy.io\"]");
-                    out.println(line);
+                    line = line.replace("ALLOWED_HOSTS = []",
+                            "ALLOWED_HOSTS = [\"k7d207.p.ssafy.io\"]");
                 }
-
                 bw.write(line + "\n");
             }
         } catch (Exception e) {
-            return e.getMessage();
-        } finally {
-            try {
-                if (br != null)
-                    br.close();
-            } catch (IOException e) {
-                //
-            }
-            try {
-                if (bw != null)
-                    bw.close();
-            } catch (IOException e) {
-                //
-            }
+            return UNKNOWN;
         }
+
         String newPath = filePath.replace(oldFileName, "");
-        out.println(newPath);
         ProcessBuilder pro = new ProcessBuilder("mv", tmpFileName, oldFileName);
         pro.directory(new File(newPath));
 
         try {
             pro.start();
         } catch (IOException e) {
-            return e.getMessage();
+            return UNKNOWN;
         }
-        return "1";
+        return SUCCESS;
     }
 }

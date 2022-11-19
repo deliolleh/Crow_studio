@@ -102,7 +102,7 @@ public class GitService {
 
         // 팀 시퀀스 디렉토리 만들기
         String teamFolder = String.valueOf(teamSeq);
-        String newFilePath = projectService.createDir(BASE_URL, teamFolder);
+        String newFilePath = projectService.createDirService(BASE_URL, teamFolder);
 
         if (newFilePath.equals("2")) {
             serviceRes.put("result", WRONG);
@@ -110,7 +110,7 @@ public class GitService {
         }
 
         // 프로젝트 이름 디렉토리 만들기
-        String pjt = projectService.createDir(newFilePath+"/", projectName);
+        String pjt = projectService.createDirService(newFilePath+"/", projectName);
 
         if (pjt.equals("2")) {
             serviceRes.put("result", WRONG);

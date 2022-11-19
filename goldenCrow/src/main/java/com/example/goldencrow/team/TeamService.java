@@ -255,10 +255,10 @@ public class TeamService {
             if (projectGit == null) {
 
                 // git 정보가 비어있는 상태이므로 클론을 받아오지 않고, 프로젝트를 생성함
-                String projectCreateResult
-                        = projectService.createProject(BASE_URL, typeNum, teamName, teamSeq);
+                Map<String, String> projectCreateResult
+                        = projectService.createProjectService(BASE_URL, typeNum, teamName, teamSeq);
 
-                if (projectCreateResult.equals(SUCCESS)) {
+                if (projectCreateResult.get("result").equals(SUCCESS)) {
                     // 성공
                     serviceRes.put("result", SUCCESS);
                     serviceRes.put("teamSeq", String.valueOf(teamSeq));

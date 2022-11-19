@@ -188,8 +188,8 @@ public class CompileService {
             System.out.println(Arrays.toString(command));
             String response = resultStringService(command);
             // 에러 메세지 파일에서 읽어오기
-            List<String> messageList = fileService.readFile(outfilePath);
-            String message = messageList.get(1);
+            Map<String, String> messageList = fileService.readFileService(outfilePath);
+            String message = messageList.get("error");
             String pathChangemessage = message;
             if (message.contains(BASE_URL)) {
                 pathChangemessage = message.replaceAll(BASE_URL + teamSeq + "/", "");
