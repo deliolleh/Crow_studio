@@ -97,7 +97,7 @@ public class FileService {
     public Map<String, String> deleteFile(String filePath, Integer type, Long teamSeq) {
         Optional<FileEntity> file = fileRepository.findFileEntityByTeamSeqAndFilePath(teamSeq, filePath);
         Map<String, String> serviceRes = new HashMap<>();
-
+        System.out.println(filePath);
         // 만약 이게 DB에 없는 파일 경로나 그렇다면 실패!
         if (!file.isPresent()) {
             System.out.println("DB에서 터짐");
