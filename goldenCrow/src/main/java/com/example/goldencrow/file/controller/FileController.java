@@ -63,22 +63,33 @@ public class FileController {
     /**
      * 파일(폴더) 삭제 API
      *
-     * @param teamSeq   파일(폴더)를 삭제할 팀의 sequence
-     * @param type      삭제할 문서의 종류 (1 : 폴더, 2 : 파일)
-     * @param filePath  삭제할 문서의 경로
-     * @return
-     * @status
+     * @param teamSeq 파일(폴더)를 삭제할 팀의 sequence
+     * @param type    삭제할 문서의 종류 (1 : 폴더, 2 : 파일)
+     * @param req     "filePath"를 key로 가지는 Map<String, String>
+     * @return 성패에 따른 result 반환
+     * @status 200, 400, 401, 404
      */
     @DeleteMapping("/{teamSeq}")
     public ResponseEntity<Map<String, String>> userFileDelete(@PathVariable Long teamSeq,
                                                               @RequestParam int type,
-                                                              @RequestBody HashMap<String, String> filePath) {
-        Map<String, String> res = fileService.deleteFile(BASE_URL + filePath.get(stringPath), type, teamSeq);
-        if (res.get("result").equals(SUCCESS)) {
-            return new ResponseEntity<>(res, HttpStatus.OK);
+                                                              @RequestBody HashMap<String, String> req) {
+        if (req.containsKey("filePath")) {
+            String filePath = req.get("filePath");
+            Map<String, String> res = fileService.deleteFileService(BASE_URL + filePath, type, teamSeq);
+            switch (res.get("result")) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
         } else {
+            Map<String, String> res = new HashMap<>();
+            res.put("result", BAD_REQ);
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
+
     }
 
     /**

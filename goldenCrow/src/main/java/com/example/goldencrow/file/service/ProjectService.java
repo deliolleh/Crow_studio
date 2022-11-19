@@ -124,7 +124,7 @@ public class ProjectService {
                 }
                 FileCreateDto newFileCreateDto = new FileCreateDto(dir.getName(), dir.getPath(), teamSeq);
 
-                fileService.insertFile(newFileCreateDto);
+                fileService.insertFileService(newFileCreateDto);
 
                 if (dir.isDirectory()) {
                     String thisPath = dir.getPath();

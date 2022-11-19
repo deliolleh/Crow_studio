@@ -61,10 +61,10 @@ public class FileService {
     }
 
     /**
-     * Ubuntu에 파일을 생성하는 내부 로직
+     * 서버에 파일을 생성하는 내부 로직
      *
      * @param filePath 파일을 생성할 경로
-     * @param type      생성할 문서의 종류 (1 : 폴더, 2 : 파일)
+     * @param type     생성할 문서의 종류 (1 : 폴더, 2 : 파일)
      * @return 성패에 따른 result string 반환
      */
     public String makeNewFileService(String filePath, int type) {
@@ -91,7 +91,7 @@ public class FileService {
     /**
      * MongoDB에 파일을 insert하는 내부 로직
      *
-     * @param fileCreateDto
+     * @param fileCreateDto insert할 파일 정보
      */
     public void insertFileService(FileCreateDto fileCreateDto) {
         FileEntity fileEntity = new FileEntity(fileCreateDto);
@@ -99,50 +99,57 @@ public class FileService {
     }
 
     /**
-     * 파일 삭제
+     * 파일(폴더) 삭제 관련 내부 로직
+     *
+     * @param filePath 삭제할 파일(폴더)의 경로
+     * @param type     삭제할 문서의 종류 (1 : 폴더, 2 : 파일)
+     * @param teamSeq  삭제할 문서의 프로젝트(팀) Sequence
+     * @return 성패에 따른 result 반환
      */
-
-
-    public Map<String, String> deleteFile(String filePath, Integer type, Long teamSeq) {
+    public Map<String, String> deleteFileService(String filePath, int type, Long teamSeq) {
         Optional<FileEntity> file = fileRepository.findFileEntityByTeamSeqAndFilePath(teamSeq, filePath);
         Map<String, String> serviceRes = new HashMap<>();
         System.out.println(filePath);
-        // 만약 이게 DB에 없는 파일 경로나 그렇다면 실패!
+
+        // DB에 없는 파일 경로인 경우
         if (!file.isPresent()) {
             System.out.println("DB에서 터짐");
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
-        String check = serverFileDelete(type, filePath);
-        if (!check.equals(SUCCESS)) {
-            serviceRes.put("result", check);
+        // 서버에서 파일 삭제 로직 수행
+        String fileDelete = serverFileDeleteService(type, filePath);
+        if (!fileDelete.equals(SUCCESS)) {
+            serviceRes.put("result", fileDelete);
             return serviceRes;
         }
+        // DB에서 파일 삭제 로직 수행
         fileRepository.delete(file.get());
         serviceRes.put("result", SUCCESS);
         return serviceRes;
     }
 
     /**
-     * 서버 파일 삭제
+     * 서버에서 파일(폴더) 삭제 내부 로직
      *
-     * @param type
-     * @param filePath
-     * @return
+     * @param type     삭제할 문서의 종류 (1 : 폴더, 2 : 파일)
+     * @param filePath 삭제할 파일(폴더)의 경로
+     * @return 성패에 따른 result 반환
      */
-    public String serverFileDelete(Integer type, String filePath) {
+    public String serverFileDeleteService(int type, String filePath) {
         Path path = Paths.get(filePath);
-        // 디렉토리라면
+        // 디렉토리인 경우
         if (type == 1) {
             ProcessBuilder pb = new ProcessBuilder();
+            // 디렉토리 삭제 명령어
             pb.command("rm", "-r", filePath);
-
+            // 명령어 수행 로직
             try {
                 pb.start();
             } catch (IOException e) {
                 return e.getMessage();
             }
-            // 파일 이라면
+            // 파일인 경우
         } else {
             try {
                 Files.delete(path);

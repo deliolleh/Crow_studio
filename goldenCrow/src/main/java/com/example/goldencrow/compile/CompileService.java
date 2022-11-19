@@ -286,7 +286,7 @@ public class CompileService {
         }
 
         // 도커파일 삭제
-        Map<String, String> deletedFile = fileService.deleteFile(
+        Map<String, String> deletedFile = fileService.deleteFileService(
                 BASE_URL + teamSeq + "/" + projectName + "/Dockerfile", 2, Long.parseLong(teamSeq));
         if (!deletedFile.get("result").equals(SUCCESS)) {
             serviceRes.put("result", deletedFile.get("result"));
