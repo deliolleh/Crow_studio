@@ -68,7 +68,7 @@ const Directory = (props) => {
 
   // 디렉터리 생성 핸들러
   const createDirectoryHandler = async () => {
-    const newDirectoryName = prompt("생성할 폴더 이름 입력");
+    const newDirectoryName = prompt("생성할 폴더 이름을 입력하세요");
     if (newDirectoryName.trim().length === 0) {
       return;
     }
@@ -90,8 +90,8 @@ const Directory = (props) => {
   };
 
   // 파일 생성 핸들러
-  const createFileHandler = () => {
-    const newFileName = prompt("생성할 파일 이름 (확장자까지) 입력");
+  const createFileHandler = async () => {
+    const newFileName = prompt("생성할 파일 이름(확장자까지)을 입력하세요");
     if (newFileName.trim().length === 0) {
       return;
     }
@@ -99,10 +99,17 @@ const Directory = (props) => {
       alert("확장자까지 유효하게 입력해야 합니다");
       return;
     }
-    const fileData = {
+    const fileInfoData = {
       fileTitle: newFileName,
-      filePath: curPath,
+      filePath: selectedFilePath,
     };
+    try {
+      await fileApi.createFile(teamSeq, TYPE_FILE, fileInfoData);
+      const res = await projectApi.getAllFiles(teamSeq);
+      setFilesDirectories(res.data);
+    } catch (err) {
+      console.error(err);
+    }
     // dispatch(createFile({ teamSeq, type: TYPE_FILE, fileData }))
     //   .unwrap()
     //   .then(() => {
