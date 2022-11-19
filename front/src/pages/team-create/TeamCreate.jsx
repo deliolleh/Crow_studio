@@ -11,11 +11,11 @@ import Header from "../../components/Header";
 const initialInputState = {
   teamName: "",
   projectType: "pure Python",
-  projectGit: "",
+  teamGit: "",
 };
 const initialErrorState = {
   teamNameErrMsg: "",
-  projectGitErrMsg: "",
+  teamGitErrMsg: "",
 };
 
 // headlist listbox items
@@ -31,8 +31,8 @@ const TeamCreate = () => {
   const navigate = useNavigate();
   const [inputs, setInputs] = useState(initialInputState);
   const [errorMsgs, setErrorMsgs] = useState(initialErrorState);
-  const { teamName, projectType, projectGit } = inputs;
-  const { teamNameErrMsg, projectGitErrMsg } = errorMsgs;
+  const { teamName, projectType, teamGit } = inputs;
+  const { teamNameErrMsg, teamGitErrMsg } = errorMsgs;
   const [checkGit, setCheckGit] = useState(false);
 
   const inputChangeHandler = (e) => {
@@ -45,13 +45,9 @@ const TeamCreate = () => {
         setInputs((prev) => {
           return { ...prev, teamName: e.target.value };
         });
-        // } else if (e.target.name === "projectType") {
-        //   setInputs((prev) => {
-        //     return { ...prev, projectType: e.target.value };
-        //   });
-      } else if (e.target.name === "projectGit") {
+      } else if (e.target.name === "teamGit") {
         setInputs((prev) => {
-          return { ...prev, projectGit: e.target.value };
+          return { ...prev, teamGit: e.target.value };
         });
       } else if (e.target.name === "checkGit") {
         setCheckGit((prev) => !prev);
@@ -76,9 +72,9 @@ const TeamCreate = () => {
       isInvalid = true;
     }
     if (checkGit) {
-      if (projectGit.trim().length === 0) {
+      if (teamGit.trim().length === 0) {
         setErrorMsgs((prev) => {
-          return { ...prev, projectGitErrMsg: "프로젝트 깃 주소를 입력하세요" };
+          return { ...prev, teamGitErrMsg: "팀 깃 주소를 입력하세요" };
         });
         isInvalid = true;
       }
@@ -87,9 +83,9 @@ const TeamCreate = () => {
       return;
     }
 
-    console.log(teamName, projectType, projectGit);
+    console.log(teamName, projectType, teamGit);
 
-    const teamData = { teamName, projectType, projectGit: projectGit ?? "" };
+    const teamData = { teamName, projectType, teamGit: teamGit ?? "" };
     setErrorMsgs(initialErrorState);
     dispatch(createTeam(teamData))
       .unwrap()
@@ -218,7 +214,7 @@ const TeamCreate = () => {
               </div>
             </div>
 
-            {/* 프로젝트 깃 주소 */}
+            {/* 팀 깃 주소 */}
             <div className="w-80 mb-4">
               {/* 체크박스 */}
               <input
@@ -229,7 +225,7 @@ const TeamCreate = () => {
                 defaultValue={checkGit}
                 onChange={inputChangeHandler}
               />
-              <label htmlFor="projectGit" className="">
+              <label htmlFor="teamGit" className="">
                 프로젝트 깃 주소
                 <span className="ml-3 text-sm text-primary_-2_dark">
                   체크박스
@@ -237,16 +233,16 @@ const TeamCreate = () => {
               </label>
               <input
                 type="text"
-                id="projectGit"
-                name="projectGit"
+                id="teamGit"
+                name="teamGit"
                 className="mt-1 w-full text-white py-2 px-3 bg-component_item_bg_+2_dark disabled:bg-component_-2_dark placeholder:text-gray-300 disabled:placeholder:text-component_item_bg_+2_dark placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:outline-none focus:ring-2 focus:ring-point_purple focus:border-none rounded-md transition"
                 placeholder="프로젝트 깃 주소를 입력하세요"
                 disabled={!checkGit}
-                value={projectGit}
+                value={teamGit}
                 onChange={inputChangeHandler}
               />
               <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-                {projectGitErrMsg}
+                {teamGitErrMsg}
               </div>
             </div>
 
