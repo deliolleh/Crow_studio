@@ -85,7 +85,6 @@ public class GitController {
                                                              @RequestParam Integer type,
                                                              @RequestBody Map<String, String> req) {
         if ( req.containsKey("branchName")) {
-            String gitPath = req.get("gitPath");
             String branchName = req.get("branchName");
             Map<String, String> res = gitService.gitSwitchService(branchName, type, teamSeq);
             String result = res.get("result");
