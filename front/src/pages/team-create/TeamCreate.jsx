@@ -160,7 +160,7 @@ const TeamCreate = () => {
                 >
                   <div className="relative mt-1">
                     <Listbox.Label>프로젝트 종류</Listbox.Label>
-                    <Listbox.Button className="relative w-full cursor-default rounded-lg bg-component_item_bg_+2_dark text-white py-2 pl-3 pr-10 text-left shadow-md active:outline-none active:ring-2 active:ring-point_purple focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple">
+                    <Listbox.Button className="relative w-full cursor-default rounded-md bg-component_item_bg_+2_dark text-white py-2 pl-3 pr-10 text-left shadow-md active:outline-none active:ring-2 active:ring-point_purple focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple">
                       <span className="block truncate">{selected.name}</span>
                       <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                         <ChevronUpDownIcon

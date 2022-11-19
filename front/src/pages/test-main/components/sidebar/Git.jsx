@@ -130,13 +130,13 @@ const Git = (
                   <div className="flex justify-end">
                     <button
                       onClick={justCommit}
-                      className="h-[26px] w-[70px] rounded-md bg-point_purple text-white mr-2"
+                      className="h-[26px] w-[70px] rounded-md bg-point_purple hover:bg-point_purple_-2 text-white mr-2"
                     >
                       Commit
                     </button>
                     <button
                       onClick={commitAndPush}
-                      className="h-[26px] w-[110px] rounded-md bg-point_purple text-white"
+                      className="h-[26px] w-[110px] rounded-md bg-point_purple hover:bg-point_purple_-2 text-white"
                     >
                       Commit&Push
                     </button>
@@ -154,7 +154,7 @@ const Git = (
                     />
                     <button
                       onClick={newBranch}
-                      className="h-[26px] w-[45px] rounded-md bg-point_purple text-white ml-2"
+                      className="h-[26px] w-[45px] rounded-md bg-point_purple hover:bg-point_purple_-2 text-white ml-2"
                     >
                       생성
                     </button>

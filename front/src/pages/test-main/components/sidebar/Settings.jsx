@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Combobox, Transition, Switch } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import userApi from "../../../../api/userApi";
+
 // styled
 const SettingsContainer = styled.div`
   border-radius: 0 10px 10px 0;
@@ -12,13 +13,10 @@ const SettingsContainer = styled.div`
 // Combobox items
 const fonts = [
   { id: 1, name: "JetBrains Mono" }, // default
-  { id: 2, name: "Monospace" }, //
+  { id: 2, name: "Monospace" },
   { id: 3, name: "IBM Plex Sans" },
   { id: 5, name: "Inter" },
   { id: 6, name: "Courier" },
-  // <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-  // <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  // <link rel="stylesheet" href="https://use.typekit.net/eqy3ulj.css">
 ];
 
 const Settings = ({ verticalSplit, horizontalSplit, com }) => {
@@ -141,7 +139,6 @@ const Settings = ({ verticalSplit, horizontalSplit, com }) => {
             >
               <div className="relative mt-1">
                 <div
-                  // className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"
                   className="flex justify-between items-center rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left shadow-sm hover:bg-point_purple_op20 active:outline-none active:ring-2 active:ring-point_purple"
                   style={{ height: 26, width: 217 }}
                 >
@@ -166,7 +163,6 @@ const Settings = ({ verticalSplit, horizontalSplit, com }) => {
                   afterLeave={() => setQuery("")}
                 >
                   <Combobox.Options
-                    // className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg focus:outline-none sm:text-sm"
                     className="absolute left-0 z-10 mt-0.5 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                     style={{ height: 130, width: 217 }}
                   >
@@ -293,7 +289,6 @@ const Settings = ({ verticalSplit, horizontalSplit, com }) => {
             >
               <div className="relative mt-1">
                 <div
-                  // className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"
                   className="flex justify-between items-center rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left shadow-sm hover:bg-point_purple_op20 active:outline-none active:ring-2 active:ring-point_purple"
                   style={{ height: 26, width: 217 }}
                 >
@@ -318,7 +313,6 @@ const Settings = ({ verticalSplit, horizontalSplit, com }) => {
                   afterLeave={() => setQuery("")}
                 >
                   <Combobox.Options
-                    // className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg focus:outline-none sm:text-sm"
                     className="absolute left-0 z-10 mt-0.5 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                     style={{ height: 130, width: 217 }}
                   >
@@ -392,8 +386,13 @@ const Settings = ({ verticalSplit, horizontalSplit, com }) => {
               placeholder="Console Icon"
             />
           </div>
-          <div>
-            <button onClick={sendSetting}>저장하기</button>
+          <div className="ml-1 my-5">
+            <button
+              onClick={sendSetting}
+              className="h-[26px] w-[60px] rounded-md bg-point_purple hover:bg-point_purple_-2 text-white text-sm font-bold"
+            >
+              저장하기
+            </button>
           </div>
         </div>
       </SettingsContainer>
