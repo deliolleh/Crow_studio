@@ -19,6 +19,11 @@ import static com.example.goldencrow.common.Constants.*;
 public class CompileController {
     private final CompileService compileService;
 
+    /**
+     * CompileController 생성자
+     *
+     * @param compileService 컴파일 관련 로직을 처리하는 Service
+     */
     public CompileController(CompileService compileService) {
         this.compileService = compileService;
     }
