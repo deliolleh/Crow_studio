@@ -19,6 +19,11 @@ import static com.example.goldencrow.common.Constants.*;
 public class CompileController {
     private final CompileService compileService;
 
+    /**
+     * CompileController 생성자
+     *
+     * @param compileService 컴파일 관련 로직을 처리하는 Service
+     */
     public CompileController(CompileService compileService) {
         this.compileService = compileService;
     }
@@ -59,17 +64,17 @@ public class CompileController {
      * 컴파일 중지 API
      * access token 필요
      *
-     * @param req "projectName", "teamSeq"을 key로 가지는 Map<String, String>
+     * @param req "teamName", "teamSeq"을 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
     @PostMapping("/py/stop")
     public ResponseEntity<Map<String, String>> pyCompileStopPost(@RequestBody Map<String, String> req) {
 
-        if (req.containsKey("projectName") && req.containsKey("teamSeq")) {
-            String projectName = req.get("projectName");
+        if (req.containsKey("teamName") && req.containsKey("teamSeq")) {
+            String teamName = req.get("teamName");
             String teamSeq = req.get("teamSeq");
-            Map<String, String> res = compileService.pyCompileStopService(projectName, teamSeq);
+            Map<String, String> res = compileService.pyCompileStopService(teamName, teamSeq);
             String result = res.get("result");
             switch (result) {
                 case SUCCESS:

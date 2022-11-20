@@ -49,10 +49,8 @@ public class ForumService {
     public ForumPageDto forumAll() {
 
         List<ForumEntity> forumEntityList;
-        System.out.println("make List");
 
         forumEntityList = forumRepository.findAll();
-//        System.out.println("Entity" + forumEntityList);
 
         return new ForumPageDto(forumEntityList);
     }
@@ -60,15 +58,12 @@ public class ForumService {
     // 게시글 하나 읽기
     public ForumDto forumOne(Long forumSeq) {
         ForumEntity forumEntity = forumRepository.findByPostSeq(forumSeq);
-        System.out.println(forumEntity == null);
 
         if (forumEntity == null) {
-            System.out.println("Read fail");
             ForumDto forumDto = new ForumDto();
             forumDto.setResult(ForumDto.ForumResult.FAILURE);
             return forumDto;
         } else {
-            System.out.println("Read success");
             ForumDto forumDto = new ForumDto(forumEntity);
             forumDto.setResult(ForumDto.ForumResult.SUCCESS);
             return forumDto;

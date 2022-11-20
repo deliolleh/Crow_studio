@@ -123,7 +123,7 @@ public class VariableService {
                 .path("/v1/papago/n2mt")
                 .queryParam("source", "ko")
                 .queryParam("target", "en")
-                .queryParam("text", word).build().toUri();
+                .queryParam("text", word.replaceAll(" ", "")).build().toUri();
         // naver header 생성
         RequestEntity<Void> requestEntity = naverHeaderService(uri);
 
@@ -151,7 +151,6 @@ public class VariableService {
     private RequestEntity<Void> naverHeaderService(URI uri) {
         return RequestEntity.get(uri).header("X-Naver-Client-Id", "p3IEa7WNGODfNQkwb1z2")
                 .header("X-Naver-Client-Secret", "MSAQnEbctM").build();
-
     }
 
 //    public String googleApi(String word) {

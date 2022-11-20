@@ -6,13 +6,18 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
+/**
+ * Team Table Entity
+ */
 @Entity
 @DynamicUpdate
 @Table(name = "team")
 @Data
 public class TeamEntity {
 
-    //pk
+    /**
+     * Primary Key
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -31,12 +36,25 @@ public class TeamEntity {
     @Column(name = "teamType")
     private int type;
 
+    /**
+     * 빈 TeamEntity 생성자
+     */
     public TeamEntity() {
     }
 
-    public TeamEntity(UserEntity userEntity, String teamName, Integer type) {
+    /**
+     * TeamEntity 생성자
+     *
+     * @param userEntity 사용자의 UserEntity
+     * @param teamName    만들고자 하는 팀의 이름
+     * @param projectType 해당 팀에서 작업할 프로젝트
+     * @param teamGit 해당 팀에 연결될
+     */
+    public TeamEntity(UserEntity userEntity, String teamName, int projectType, String teamGit) {
         this.teamLeader = userEntity;
         this.teamName = teamName;
-        this.type = type;
+        this.teamGit = teamGit;
+        this.type= projectType;
+
     }
 }
