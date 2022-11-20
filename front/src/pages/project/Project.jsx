@@ -44,7 +44,7 @@ const Project = () => {
     editors: {
       fontSize: 14,
       font: "Monospace",
-      autoLine: "on",
+      autoLine: true,
     },
     consoles: {
       fontSize: 14,
@@ -56,10 +56,10 @@ const Project = () => {
     scrollBeyondLastLine: false,
     fontSize: setting.editors.fontSize,
     fontFamily: setting.editors.font,
-    autoIndent: setting.editors.autoLine === "on" ? "advanced" : "none",
+    autoIndent: "advanced",
     wrappingIndent: "same",
     automaticLayout: true,
-    wordWrap: true,
+    wordWrap: setting.editors.autoLine,
   };
 
   const navigate = useNavigate();
@@ -68,7 +68,7 @@ const Project = () => {
   useEffect(() => {
     dispatch(getTeam(teamSeq))
       .unwrap()
-      .then(console.log)
+      .then()
       .catch((errStatusCode) => {
         console.error("errStatusCode:", errStatusCode);
         if (errStatusCode === 404) {
@@ -95,7 +95,6 @@ const Project = () => {
 
   // 개인 환경 세팅 저장
   const saveSetting = async () => {
-    console.log(JSON.stringify(setting, null, 2));
     userApi
       .setPersonalSetting(teamSeq, setting)
       .then(() => alert("저장되었습니다."))
@@ -175,33 +174,24 @@ const Project = () => {
   useEffect(() => {
     const tempSize2 = editorheightRef.current.pane2.clientHeight;
     setConsoleHeight(tempSize2);
-    // console.log("consoleHeight: " + consoleHeight);
   }, []);
 
   const checkSize = () => {
     // 에디터 높이 변경값 셋
     const tempSize = editorheightRef.current.state.pane1Size;
     const offsetSize = editorheightRef.current.splitPane.clientHeight;
-    // console.log(editorheightRef.current.splitPane.clientHeight);
     setSetting((prev) => {
       return { ...prev, horizonSplit: parseInt((tempSize / offsetSize) * 100) };
     });
     setEditorHeight(tempSize);
-    // console.log(
-    //   "editorheightRef.current.state.pane1Size: ",
-    //   editorheightRef.current.state.pane1Size
-    // );
     // 콘솔 높이 변경값 셋
     const tempSize2 = editorheightRef.current.pane2.clientHeight;
     setConsoleHeight(tempSize2);
-    // console.log("consoleHeight: " + consoleHeight);
   };
 
   // 동시 편집 파트로 이동
   const goCodeShare = () => {
-    console.log(JSON.stringify(setting, null, 2));
-    userApi
-      .setPersonalSetting(teamSeq, setting)
+    userApi.setPersonalSetting(teamSeq, setting);
     navigate("/project/code-share", {
       state: {
         data: editorRef.current.getValue(),
