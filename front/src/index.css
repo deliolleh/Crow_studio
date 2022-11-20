@@ -207,3 +207,16 @@ input:-webkit-autofill:active {
   --contexify-arrow-color: #6f6e77;
   --contexify-activeArrow-color: #fff;
 }
+
+.contexify-crow-nav {
+  --contexify-menu-bgColor: rgba(40, 40, 40, 0.98);
+  --contexify-separator-color: #4c4c4c;
+  --contexify-item-color: #fff;
+  --contexify-activeItem-color: #fff;
+  --contexify-activeItem-bgColor: #786f7b;
+  --contexify-rightSlot-color: #6f6e77;
+  --contexify-activeRightSlot-color: #fff;
+  --contexify-arrow-color: #6f6e77;
+  --contexify-activeArrow-color: #fff;
+  --contexify-menu-minWidth: 110px;
+}
