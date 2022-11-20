@@ -274,7 +274,7 @@ const Project = () => {
               onDragFinished={checkSize}
             >
               <div className="w-full">
-                <div className="text-sm flex items-center bg-component_item_bg_dark p-1 rounded-lg">
+                <div className="text-sm flex items-center bg-component_item_bg_dark p-1 rounded-lg mb-1.5">
                   <TiArrowRightThick className="text-point_yellow" />
                   <div className="ml-2 break-all">
                     {selectedFilePath?.split("/").slice(1).join("/")}
