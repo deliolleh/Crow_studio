@@ -174,7 +174,7 @@ const Project = () => {
 
   // 콘솔 높이 초기값 세팅
   useEffect(() => {
-    const tempSize2 = editorheightRef.current.pane2.clientHeight - 1;
+    const tempSize2 = editorheightRef.current.pane2.clientHeight - 0.5;
     setConsoleHeight(tempSize2);
     const tempSize = editorheightRef.current.pane1.clientHeight - 34;
     setEditorHeight(tempSize);
@@ -194,7 +194,7 @@ const Project = () => {
     const tempSize1 = editorheightRef.current.pane1.clientHeight - 34;
     setEditorHeight(tempSize1);
     // 콘솔 높이 변경값 셋
-    const tempSize2 = editorheightRef.current.pane2.clientHeight - 1;
+    const tempSize2 = editorheightRef.current.pane2.clientHeight - 0.5;
     setConsoleHeight(tempSize2);
   };
 

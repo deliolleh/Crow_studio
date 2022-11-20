@@ -51,7 +51,7 @@ const ConsoleTerminal = (props) => {
   const inputChangeHandler = (e) => changeInputData(e);
 
   const consoleHeightReal = consoleHeight - 8;
-  const boxHeight = consoleHeight - 90;
+  const boxHeight = consoleHeight - 88;
 
   return (
     <div
@@ -69,11 +69,11 @@ const ConsoleTerminal = (props) => {
           <BsPlayFill
             onClick={startCompileHandler}
             className="mr-[10px] cursor-pointer"
-            size="30"
+            size="27"
           />
           <BsStopFill
             className="cursor-pointer"
-            size="30"
+            size="27"
             onClick={stopCompileHandler}
           />
         </div>
