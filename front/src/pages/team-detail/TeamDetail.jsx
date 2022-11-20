@@ -221,7 +221,7 @@ const TeamDetail = () => {
               className="text-white font-bold"
               ref={(_subtitle) => (subtitle = _subtitle)}
             >
-              Hello
+              팀원 추가
             </h2>
             <IoClose
               className="cursor-pointer text-primary_dark ml-2"
