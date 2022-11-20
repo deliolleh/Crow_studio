@@ -7,8 +7,6 @@ import { getUser } from "./redux/userSlice";
 import ProtectedRoute from "./route/ProtectedRoute";
 import PrivateRoute from "./route/PrivateRoute";
 
-import WithLoading from "./components/WithLoading";
-
 import Intro from "./pages/intro/Intro";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
@@ -18,8 +16,9 @@ import TeamCreate from "./pages/team-create/TeamCreate";
 import TeamDetail from "./pages/team-detail/TeamDetail";
 import Project from "./pages/project/Project";
 import NotFound from "./pages/not-found/NotFound";
-import YMonaco3 from "./pages/code-share/YMonaco3";
 import Forbidden from "./pages/forbidden/Forbidden";
+import WithLoading from "./components/WithLoading";
+import YMonaco3 from "./pages/code-share/YMonaco3";
 
 const router = createBrowserRouter([
   {
