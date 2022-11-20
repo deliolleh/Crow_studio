@@ -235,6 +235,11 @@ public class CompileService {
 
         // 프로젝트명과 teamSeq로 docker container와 image 이름 생성
         String conAndImgName = "crowstudio_" + teamName.toLowerCase() + "_" + teamSeq;
+        // 만약 현재 실행되고있다면, 멈추기
+        String[] stopContainer = {"docker", "stop", conAndImgName};
+        resultStringService(stopContainer);
+        String[] stopImage = {"dockder", "rmi", conAndImgName};
+        resultStringService(stopImage);
         // 도커 이미지 빌드
         String[] image = {"docker", "build", "-t", conAndImgName, absolutePath + "/"};
         String imageBuild = resultStringService(image);
