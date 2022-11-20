@@ -134,14 +134,14 @@ public class TeamService {
                 // 존재할 경우 : 사용자는 그 팀에 속해있지 않음
                 // 즉, 조회 권한이 없음, 탐색 종료
                 TeamDto teamDto = new TeamDto();
-                teamDto.setTeamName(NO_PER);
+                teamDto.setResult(NO_PER);
                 return teamDto;
 
             }
 
         } catch (Exception e) {
             TeamDto teamDto = new TeamDto();
-            teamDto.setTeamName(UNKNOWN);
+            teamDto.setResult(UNKNOWN);
             return teamDto;
 
         }
