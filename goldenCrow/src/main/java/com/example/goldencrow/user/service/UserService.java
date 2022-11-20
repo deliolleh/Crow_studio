@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -630,6 +629,13 @@ public class UserService {
 
             MemberEntity memberEntity = memberEntityOptional.get();
             String settings = memberEntity.getSettings();
+
+            if(settings.isEmpty()){
+                // 만약 기존에 저장되어 있는 내용이 없으므로
+                SettingsDto settingsDto = new SettingsDto();
+                settingsDto.setResult("NO_VALUE");
+                return settingsDto;
+            }
 
             // 내보내기 위한 SettingsDto 생성
             ObjectMapper mapper = new ObjectMapper();
