@@ -1,5 +1,7 @@
 package com.example.goldencrow.git;
 
+import com.example.goldencrow.file.FileEntity;
+import com.example.goldencrow.file.FileRepository;
 import com.example.goldencrow.file.service.ProjectService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
@@ -29,6 +31,9 @@ public class GitService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private FileRepository fileRepository;
+
 
     /**
      * Git Service 생성자
@@ -36,9 +41,10 @@ public class GitService {
      * @param projectService project를 관리하는 service
      * @param userRepository user Table에 접속하는 Repository
      */
-    public GitService(ProjectService projectService, UserRepository userRepository) {
+    public GitService(ProjectService projectService, UserRepository userRepository,FileRepository fileRepository) {
         this.projectService = projectService;
         this.userRepository = userRepository;
+        this.fileRepository = fileRepository;
     }
 
     /**
@@ -65,6 +71,28 @@ public class GitService {
         gitInfo.add(email);
         gitInfo.add(token);
         return gitInfo;
+    }
+
+    /**
+     * gitPath 만들어주는 함수
+     * @param teamSeq
+     * @return gitPath
+     */
+    public String getGitPath(Long teamSeq) {
+        Optional<List<FileEntity>> files = fileRepository.findAllByTeamSeq(teamSeq);
+        if (!files.isPresent()) {
+            return NO_SUCH;
+        }
+        List<FileEntity> teamFiles = files.get();
+
+        for (FileEntity teamFile : teamFiles) {
+            if (teamFile.getFileTitle().equals(".git")) {
+                System.out.println("깃 패스 제대로 인식됨!");
+                String gitPath = teamFile.getFilePath().replace("/.git","");
+                return gitPath;
+            }
+        }
+        return NO_SUCH;
     }
 
     /**
@@ -102,7 +130,7 @@ public class GitService {
 
         // 팀 시퀀스 디렉토리 만들기
         String teamFolder = String.valueOf(teamSeq);
-        String newFilePath = projectService.createDir(BASE_URL, teamFolder);
+        String newFilePath = projectService.createDirService(BASE_URL, teamFolder);
 
         if (newFilePath.equals("2")) {
             serviceRes.put("result", WRONG);
@@ -110,7 +138,7 @@ public class GitService {
         }
 
         // 프로젝트 이름 디렉토리 만들기
-        String pjt = projectService.createDir(newFilePath+"/", projectName);
+        String pjt = projectService.createDirService(newFilePath+"/", projectName);
 
         if (pjt.equals("2")) {
             serviceRes.put("result", WRONG);
@@ -147,7 +175,7 @@ public class GitService {
             return serviceRes;
         }
         
-        projectService.saveFilesInDIr(pjt+"/",teamSeq);
+        projectService.saveFilesInDIrService(pjt+"/",teamSeq);
         serviceRes.put("result", SUCCESS);
         return serviceRes;
 
@@ -187,14 +215,18 @@ public class GitService {
     /**
      * Git Switch를 처리하는 내부 로직
      *
-     * @param gitPath    switch할 git의 경로
+     * @param teamSeq    팀의 시퀀스
      * @param branchName switch할 brnach의 이름
      * @param type       switch할 branch의 종류 (1 : 존재하는 브랜치로 이동, 2 : 브랜치를 새로 생성 후 이동)
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> gitSwitchService(String gitPath, String branchName, Integer type) {
+    public Map<String, String> gitSwitchService( String branchName, Integer type, Long teamSeq) {
         Map<String, String> serviceRes = new HashMap<>();
+        String gitPath = getGitPath(teamSeq);
+
         File targetFile = new File(gitPath);
+
+        serviceRes.put("message", "");
 
         ProcessBuilder command = new ProcessBuilder();
         // switch할 branch의 종류로 명령어 저장
@@ -220,19 +252,18 @@ public class GitService {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
+
+        String message = msg.toString();
+        serviceRes.put("result",SUCCESS);
         // 성공 여부 판단
-        if (msg.length() == 0) {
-            serviceRes.put("result", SUCCESS);
-        } else {
-            serviceRes.put("result", UNKNOWN);
-        }
+        serviceRes.put("message", message);
         return serviceRes;
     }
 
     /**
      * Git add를 처리하는 내부 로직
      *
-     * @param gitPath  프로젝트 경로
+     * @param gitPath 명령어를 수행할 디렉토리
      * @param filePath add할 파일 경로 (특정하지 않으면 all)
      * @return 성패에 따른 String 반환
      */
@@ -279,13 +310,14 @@ public class GitService {
      * Git add 후 성공한다면 Git commit
      *
      * @param message  commit message
-     * @param gitPath  프로젝트 경로
+     * @param teamSeq 커밋할 팀 Seq
      * @param filePath add할 파일 경로 (특정하지 않으면 all)
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> gitCommitService(String message, String gitPath, String filePath) {
+    public Map<String, String> gitCommitService(String message, Long teamSeq, String filePath) {
         Map<String, String> serviceRes = new HashMap<>();
-
+        serviceRes.put("message","");
+        String gitPath = getGitPath(teamSeq);
         // git add 로직 수행
         String gitAddCheck = gitAddService(gitPath, filePath);
         if (!gitAddCheck.equals(SUCCESS)) {
@@ -321,13 +353,11 @@ public class GitService {
             serviceRes.put("result", UNKNOWN);
             return serviceRes;
         }
+        String message2 = msg.toString();
 
         // 성공 여부 판단
-        if (msg.length() == 0) {
-            serviceRes.put("result", SUCCESS);
-        } else {
-            serviceRes.put("result", UNKNOWN);
-        }
+        serviceRes.put("result",SUCCESS);
+        serviceRes.put("message",message2);
         return serviceRes;
     }
 
@@ -337,15 +367,17 @@ public class GitService {
      *
      * @param branchName push할 branch의 이름
      * @param message    commit message
-     * @param gitPath    push할 프로젝트의 경로
+     * @param teamSeq    commit할 팀 Seq
      * @param filePath   push할 파일의 경로 (특정하지 않을 경우 all)
      * @param userSeq    push하는 사용자의 Sequence
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> gitPushService(String branchName, String message, String gitPath, String filePath, Long userSeq) {
+    public Map<String, String> gitPushService(String branchName, String message, Long teamSeq, String filePath, Long userSeq) {
         Map<String, String> serviceRes = new HashMap<>();
+        String gitPath = getGitPath(teamSeq);
+        serviceRes.put("message","");
         // commit 로직 수행
-        Map<String, String> gitCommitCheck = gitCommitService(message, gitPath, filePath);
+        Map<String, String> gitCommitCheck = gitCommitService(message, teamSeq, filePath);
         if (!gitCommitCheck.get("result").equals(SUCCESS)) {
             serviceRes.put("result", gitCommitCheck.get("result"));
             return serviceRes;
@@ -412,13 +444,15 @@ public class GitService {
     /**
      * Branch 목록을 조회하는 내부 로직
      *
-     * @param gitPath branch 목록을 조회할 프로젝트의 경로
+     * @param teamSeq 브랜치 조회하려는 팀 Seq
      * @param type    조회하려는 branch의 종류 (1 : local branch, 2 : remote branch)
      * @return branch 목록을 List<String>으로 반환, 없거나 오류가 날 경우 null
      */
-    public List<String> getBranchService(String gitPath, Integer type) {
+    public List<String> getBranchService(Long teamSeq, Integer type) {
         List<String> branches = new ArrayList<>();
         ProcessBuilder command = new ProcessBuilder();
+
+        String gitPath = getGitPath(teamSeq);
 
         // 조회하려는 브랜치에 따라 명령어 저장
         if (type == 1) {
@@ -577,13 +611,14 @@ public class GitService {
     /**
      * Git pull을 처리하는 내부 로직
      *
-     * @param gitPath   pull받을 프로젝트의 경로
+     * @param teamSeq   pull 실행할 team Seq
      * @param userSeq   pull받을 사용자의 sequence
      * @param brachName pull받을 branch의 이름
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> gitPullService(String gitPath, Long userSeq, String brachName) {
+    public Map<String, String> gitPullService(Long teamSeq, Long userSeq, String brachName) {
         Map<String, String> serviceRes = new HashMap<>();
+        String gitPath = getGitPath(teamSeq);
         // pull받을 remote URL 조회 로직 수행
         String gitUrl = getRemoteUrlService(gitPath);
         // git 정보 조회 로직 수행

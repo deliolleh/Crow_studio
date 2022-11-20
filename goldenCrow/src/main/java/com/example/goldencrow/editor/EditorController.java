@@ -35,7 +35,7 @@ public class EditorController {
      * access token 필요
      *
      * @param language 해당 파일의 언어 종류 ex. python, text
-     * @param req      "name" 을 key로 가지는 Map<String, String>
+     * @param req      "text" 을 key로 가지는 Map<String, String>
      * @return 포맷팅 처리를 한 temp 파일의 제목, 성패에 따른 result 반환
      * @status 200, 400, 401
      */

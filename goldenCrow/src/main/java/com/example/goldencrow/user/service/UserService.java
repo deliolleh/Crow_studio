@@ -503,7 +503,7 @@ public class UserService {
             // 사용자가 팀장인 다인팀이 존재하지 않음, 탈퇴 가능
             // 사용자가 팀장인 단일팀을 서버에서 삭제해야 함
 
-            Map<String, String> deleteProjectRes = projectService.deleteProject(teamSeqList);
+            Map<String, String> deleteProjectRes = projectService.deleteProjectService(teamSeqList);
             String result = deleteProjectRes.get("result");
 
             if (!result.equals(SUCCESS)) {

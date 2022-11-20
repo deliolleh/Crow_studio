@@ -2,7 +2,6 @@ package com.example.goldencrow.file;
 
 import com.example.goldencrow.file.dto.FileCreateDto;
 
-import com.mongodb.lang.Nullable;
 import com.sun.istack.NotNull;
 
 import lombok.Getter;
@@ -15,14 +14,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.persistence.*;
 import java.util.Date;
 
-
+/**
+ * file Entity
+ */
 @Document(collection = "file")
-@Getter @Setter
+@Getter
+@Setter
 public class FileEntity {
-    // 파일, 팀, 멤버 pk
-    // 제목, 경로, 작성일자, 수정일자
 
-    @Id @NotNull
+    /**
+     * Primary Key
+     */
+    @Id
+    @NotNull
     private ObjectId id;
     @NotNull
     private Long teamSeq;
@@ -39,16 +43,21 @@ public class FileEntity {
     @LastModifiedDate
     private Date fileUpdatedAt;
 
+    /**
+     * 빈 FileEntity 생성자
+     */
     public FileEntity() {
     }
 
-    ;
-
+    /**
+     * FileEntity 생성자
+     *
+     * @param fileCreateDto 파일 정보가 저장되어있는 Dto
+     */
     public FileEntity(FileCreateDto fileCreateDto) {
         this.fileTitle = fileCreateDto.getFileTitle();
         this.filePath = fileCreateDto.getFilePath();
         this.teamSeq = fileCreateDto.getTeamSeq();
     }
-
 
 }
