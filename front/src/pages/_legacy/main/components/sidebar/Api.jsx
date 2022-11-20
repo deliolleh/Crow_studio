@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 
 import SelectMethod from "./ApiMethod";
-import editorApi from "../../../../api/editorApi";
+import editorApi from "../../../../../api/editorApi";
 
 // styled
 const ApiContainer = styled.div`
