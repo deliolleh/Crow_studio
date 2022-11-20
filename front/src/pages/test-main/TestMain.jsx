@@ -51,8 +51,16 @@ const TestMain = () => {
 
   // 초기 팀 정보 가져옴
   useEffect(() => {
-    dispatch(getTeam(teamSeq)).unwrap().then(console.log).catch(console.error);
-  }, [dispatch, teamSeq]);
+    dispatch(getTeam(teamSeq))
+      .unwrap()
+      .then(console.log)
+      .catch((errStatusCode) => {
+        console.error("errStatusCode:", errStatusCode);
+        if (errStatusCode === 404) {
+          navigate("/404", { replace: true });
+        }
+      });
+  }, [dispatch, teamSeq, navigate]);
 
   // 파일, 폴더 클릭할 때마다 리렌더링, 파일이면 해당 내용 서버에서 받아와 에디터에 출력
   useEffect(() => {

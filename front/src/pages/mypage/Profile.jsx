@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import userApi from "../../api/userApi";
 
 const Profile = ({ userSeq, mySeq }) => {
+  const navigate = useNavigate();
   const { myNickname, myEmail, myGitUsername } = useSelector(
     (state) => state.user.value
   );
@@ -14,8 +16,13 @@ const Profile = ({ userSeq, mySeq }) => {
     userApi
       .getMypage(userSeq)
       .then((res) => setUserInfo(res.data))
-      .catch(console.error);
-  }, [userSeq, myNickname, myGitUsername]);
+      .catch((err) => {
+        console.error(err);
+        if (err.response.status === 404) {
+          navigate("/404", { replace: true });
+        }
+      });
+  }, [userSeq, myNickname, myGitUsername, navigate]);
 
   return (
     <div

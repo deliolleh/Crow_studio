@@ -97,16 +97,6 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/test/main",
-    element: (
-      <PrivateRoute>
-        <WithLoading>
-          <TestMain />
-        </WithLoading>
-      </PrivateRoute>
-    ),
-  },
-  {
     path: "/project/:teamSeq",
     element: (
       <WithLoading>
@@ -115,7 +105,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "project/code-share",
+    path: "/project/code-share",
     element: (
       <WithLoading>
         <YMonaco3 />
@@ -123,12 +113,12 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/404",
+    element: <NotFound />,
+  },
+  {
     path: "*",
-    element: (
-      <WithLoading>
-        <NotFound />
-      </WithLoading>
-    ),
+    element: <NotFound />,
   },
 ]);
 
