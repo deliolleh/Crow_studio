@@ -86,6 +86,9 @@ public class ProjectService {
             for (int i = 0; i < files.length; i++) {
                 File dir = files[i];
                 String name = names[i];
+                if (name.equals("Dockerfile")) {
+                    continue;
+                }
                 String thisPath = dir.getPath();
                 thisPath = thisPath.replace(BASE_URL, "");
                 Map<Object, Object> children = new HashMap<>();
@@ -247,7 +250,7 @@ public class ProjectService {
             serviceRes.put("result", SUCCESS);
             return serviceRes;
         } else if (type == 4) {
-            String pjt = createDirService(teamFile, projectName);
+            String pjt = createDirService(teamFile + "/", projectName);
             if (pjt.equals(DUPLICATE)) {
                 serviceRes.put("result", DUPLICATE);
                 return serviceRes;
