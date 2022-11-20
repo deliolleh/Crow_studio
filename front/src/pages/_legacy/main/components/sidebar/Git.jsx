@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import gitApi from "../../../../api/gitApi";
+import gitApi from "../../../../../api/gitApi";
 import { BsCircleFill } from "react-icons/bs";
 
 // styled

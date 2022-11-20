@@ -14,7 +14,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Tab, Panel, helpers, ExtraButton } from "@react-tabtab-next/tabtab";
 
 // components
-import Header from "../../components/Header";
+import Header from "../../../components/Header";
 import Sidebar from "./components/sidebar/Sidebar";
 import Directory from "./components/sidebar/Directory";
 import Git from "./components/sidebar/Git";
@@ -26,18 +26,18 @@ import CustomTabs from "./components/tabs/CustomTabs";
 import CustomTabs2 from "./components/tabs/CustomTabs2";
 
 // api
-import projectApi from "../../api/projectApi";
+import projectApi from "../../../api/projectApi";
 
 // tabtab dummy data
 import {
   MakeEditorData,
   MakeConsoleData,
   CompileEditor,
-} from "../main/components/tabs/makeData";
+} from "./components/tabs/makeData";
 
 // svg
 import { ReactComponent as IcAdd } from "../../assets/icons/ic_add.svg";
-import userApi from "../../api/userApi";
+import userApi from "../../../api/userApi";
 
 // styled
 const SidebarItems = styled.div`
@@ -360,9 +360,7 @@ const Main = () => {
                     ))}
                   </SplitPane>
                   <div style={{ marginTop: "8px" }}>
-                    <CompileEditor
-                      consoleHeight={consoleHeight}
-                    />
+                    <CompileEditor consoleHeight={consoleHeight} />
                   </div>
                 </SplitPane>
               </div>

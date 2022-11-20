@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react";
 import styled from "styled-components";
 import { Combobox, Transition, Switch } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import userApi from "../../../../api/userApi";
+import userApi from "../../../../../api/userApi";
 // styled
 const SettingsContainer = styled.div`
   border-radius: 0 10px 10px 0;

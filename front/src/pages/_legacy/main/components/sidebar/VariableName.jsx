@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import editorApi from "../../../../api/editorApi";
+import editorApi from "../../../../../api/editorApi";
 
 // styled
 const VariableNameContainer = styled.div`
