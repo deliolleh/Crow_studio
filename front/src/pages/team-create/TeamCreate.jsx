@@ -11,11 +11,11 @@ import Header from "../../components/Header";
 const initialInputState = {
   teamName: "",
   projectType: "pure Python",
-  projectGit: "",
+  teamGit: "",
 };
 const initialErrorState = {
   teamNameErrMsg: "",
-  projectGitErrMsg: "",
+  teamGitErrMsg: "",
 };
 
 // headlist listbox items
@@ -31,8 +31,8 @@ const TeamCreate = () => {
   const navigate = useNavigate();
   const [inputs, setInputs] = useState(initialInputState);
   const [errorMsgs, setErrorMsgs] = useState(initialErrorState);
-  const { teamName, projectType, projectGit } = inputs;
-  const { teamNameErrMsg, projectGitErrMsg } = errorMsgs;
+  const { teamName, projectType, teamGit } = inputs;
+  const { teamNameErrMsg, teamGitErrMsg } = errorMsgs;
   const [checkGit, setCheckGit] = useState(false);
 
   const inputChangeHandler = (e) => {
@@ -45,13 +45,9 @@ const TeamCreate = () => {
         setInputs((prev) => {
           return { ...prev, teamName: e.target.value };
         });
-        // } else if (e.target.name === "projectType") {
-        //   setInputs((prev) => {
-        //     return { ...prev, projectType: e.target.value };
-        //   });
-      } else if (e.target.name === "projectGit") {
+      } else if (e.target.name === "teamGit") {
         setInputs((prev) => {
-          return { ...prev, projectGit: e.target.value };
+          return { ...prev, teamGit: e.target.value };
         });
       } else if (e.target.name === "checkGit") {
         setCheckGit((prev) => !prev);
@@ -69,16 +65,20 @@ const TeamCreate = () => {
       });
       isInvalid = true;
     }
-    if (teamName.trim() === "400" || teamName.trim() === "403") {
+    if (
+      teamName.trim() === "400" ||
+      teamName.trim() === "403" ||
+      teamName.match(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/)
+    ) {
       setErrorMsgs((prev) => {
         return { ...prev, teamNameErrMsg: "사용할 수 없는 팀 이름입니다" };
       });
       isInvalid = true;
     }
     if (checkGit) {
-      if (projectGit.trim().length === 0) {
+      if (teamGit.trim().length === 0) {
         setErrorMsgs((prev) => {
-          return { ...prev, projectGitErrMsg: "프로젝트 깃 주소를 입력하세요" };
+          return { ...prev, teamGitErrMsg: "팀 깃 주소를 입력하세요" };
         });
         isInvalid = true;
       }
@@ -87,9 +87,11 @@ const TeamCreate = () => {
       return;
     }
 
-    console.log(teamName, projectType, projectGit);
-
-    const teamData = { teamName, projectType, projectGit: projectGit ?? "" };
+    const teamData = {
+      teamName,
+      projectType,
+      teamGit: checkGit ? teamGit : null,
+    };
     setErrorMsgs(initialErrorState);
     dispatch(createTeam(teamData))
       .unwrap()
@@ -119,6 +121,18 @@ const TeamCreate = () => {
     inputChangeHandler(e);
   };
 
+  // 키보드입력제한
+  const chkCharCode = (e) => {
+    // const regExp = /[^0-9a-zA-Z]/g;
+    // const ele = e.target;
+    // if (regExp.test(ele.value)) {
+    //   ele.value = ele.value.replace(regExp, "");
+    // }
+    if (e.key.match(/[^0-9a-zA-Z]/g)) {
+      e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    }
+  };
+
   return (
     <div className="flex flex-col w-full h-full">
       <Header />
@@ -141,11 +155,13 @@ const TeamCreate = () => {
                 type="teamName"
                 id="teamName"
                 name="teamName"
+                pattern="[A-Za-z0-9]"
                 className="mt-1 w-full text-white bg-component_item_bg_+2_dark transition:bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
                 placeholder="팀 이름을 입력하세요"
                 required
                 value={teamName}
                 onChange={inputChangeHandler}
+                onKeyDown={chkCharCode}
               />
               <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
                 {teamNameErrMsg}
@@ -164,7 +180,7 @@ const TeamCreate = () => {
                 >
                   <div className="relative mt-1">
                     <Listbox.Label>프로젝트 종류</Listbox.Label>
-                    <Listbox.Button className="relative w-full cursor-default rounded-lg bg-component_item_bg_+2_dark text-white py-2 pl-3 pr-10 text-left shadow-md active:outline-none active:ring-2 active:ring-point_purple focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple">
+                    <Listbox.Button className="relative w-full cursor-default rounded-md bg-component_item_bg_+2_dark text-white py-2 pl-3 pr-10 text-left shadow-md active:outline-none active:ring-2 active:ring-point_purple focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple">
                       <span className="block truncate">{selected.name}</span>
                       <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                         <ChevronUpDownIcon
@@ -218,7 +234,7 @@ const TeamCreate = () => {
               </div>
             </div>
 
-            {/* 프로젝트 깃 주소 */}
+            {/* 팀 깃 주소 */}
             <div className="w-80 mb-4">
               {/* 체크박스 */}
               <input
@@ -229,7 +245,7 @@ const TeamCreate = () => {
                 defaultValue={checkGit}
                 onChange={inputChangeHandler}
               />
-              <label htmlFor="projectGit" className="">
+              <label htmlFor="teamGit" className="">
                 프로젝트 깃 주소
                 <span className="ml-3 text-sm text-primary_-2_dark">
                   체크박스
@@ -237,16 +253,16 @@ const TeamCreate = () => {
               </label>
               <input
                 type="text"
-                id="projectGit"
-                name="projectGit"
+                id="teamGit"
+                name="teamGit"
                 className="mt-1 w-full text-white py-2 px-3 bg-component_item_bg_+2_dark disabled:bg-component_-2_dark placeholder:text-gray-300 disabled:placeholder:text-component_item_bg_+2_dark placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:outline-none focus:ring-2 focus:ring-point_purple focus:border-none rounded-md transition"
                 placeholder="프로젝트 깃 주소를 입력하세요"
                 disabled={!checkGit}
-                value={projectGit}
+                value={teamGit}
                 onChange={inputChangeHandler}
               />
               <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-                {projectGitErrMsg}
+                {teamGitErrMsg}
               </div>
             </div>
 

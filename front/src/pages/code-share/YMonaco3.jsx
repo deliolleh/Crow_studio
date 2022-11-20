@@ -1,38 +1,31 @@
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import { MonacoBinding } from "y-monaco";
-import * as monaco from "monaco-editor";
+// import * as monaco from "monaco-editor";
 import React, { useEffect, useState } from "react";
-import fileApi from "../../api/fileApi";
 import Editor from "@monaco-editor/react";
 import { useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const YMonaco3 = ({
-  filePath = "69/flask/main.py",
-}) => {
+const YMonaco3 = () => {
   const editorRef = useRef(null);
-  useEffect(() => {
-    const path = filePath
-      ? filePath
-      : "68/금오/금오.py";
+  const location = useLocation();
+  const [tick, setTick] = useState(0);
+  const selectedFileName = location.state.selectedFileName;
+  const data = location.state.data;
 
-    const data = {
-      filePath: path,
-    };
-
-    fileApi.fileCall(data).then((res) => {
-      console.log(res.data);
-      editorRef.current.getModel().setValue(res.data);
-    });
-  });
+  const navigate = useNavigate();
 
   const link = () => {
-    const path = filePath
-      ? filePath.replace("/home/ubuntu/crow_data/", "")
-      : "68/금오/금오.py";
     const ydoc = new Y.Doc();
-    const provider = new WebsocketProvider("wss://demos.yjs.dev", path, ydoc);
+    const provider = new WebsocketProvider(
+      "wss://demos.yjs.dev",
+      selectedFileName,
+      ydoc
+    );
     const ytext = ydoc.getText("monaco");
+    console.log("ytext: ", ytext);
+
     const monacoBinding = new MonacoBinding(
       ytext,
       editorRef.current.getModel(),
@@ -44,14 +37,32 @@ const YMonaco3 = ({
 
   useEffect(() => {
     window.addEventListener("load", link);
+    if (tick < 10) {
+      if (
+        editorRef.current !== null &&
+        !editorRef?.current.getModel().getValue()
+      ) {
+        editorRef.current.getModel().setValue(data);
+      }
+      setTick((prev) => prev + 1);
+    }
 
     return () => {
       window.removeEventListener("load", link);
     };
-  }, []);
+  });
+
+  const goBack = () => {
+    navigate(-1);
+  };
 
   return (
     <React.Fragment>
+      <div>
+        <div onClick={goBack} style={{ cursor: "pointer" }}>
+          뒤로가기
+        </div>
+      </div>
       <Editor
         style={{ overflow: "auto" }}
         height="calc(100vh - 31px)"

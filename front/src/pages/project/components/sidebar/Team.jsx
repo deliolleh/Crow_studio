@@ -39,10 +39,10 @@ const Team = () => {
           className="flex justify-between items-center"
           style={{ padding: 15 }}
         >
-          <div className="text-xl font-bold text-white">Teams</div>
+          <div className="text-xl font-bold text-white my-1">Teams</div>
           <div className="mt-1 flex items-center">
-            <IcSpan style={{ padding: 6.544 }}>
-              <IcAddTeam alt="IcAddTeam" />
+            <IcSpan>
+              <IcAddTeam className="h-[15px]" alt="IcAddTeam" />
             </IcSpan>
             {/* 드롭다운 */}
             {/* <Menu as="div" className="relative">
@@ -134,24 +134,24 @@ const Team = () => {
           <div className="pl-1">
             <div className="mb-4">
               <span
-                className="text-white text-lg cursor-pointer"
+                className="text-point_light_yellow text-md font-bold cursor-pointer"
                 onClick={() => navigate(`/teams/${teamSeq}`)}
               >
                 {teamName}
               </span>
             </div>
             <div className="mb-4">
-              <div className="text-primary_dark text-sm font-bold">팀장</div>
-              <div className="flex items-center text-white text-lg">
+              <div className="text-primary_dark text-sm font-bold mb-1">팀장</div>
+              <div className="flex items-center text-white text-md">
                 <div>{teamLeaderNickname}</div>
               </div>
             </div>
             <div>
-              <div className="text-primary_dark text-sm font-bold">팀원</div>
+              <div className="text-primary_dark text-sm font-bold mb-1">팀원</div>
               {members?.map((member) => (
                 <div
                   key={`m${member.memberSeq}`}
-                  className="text-white text-lg"
+                  className="text-white text-md"
                 >
                   {member.memberNickname}
                 </div>

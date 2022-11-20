@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const NotFound = () => {
+const Forbidden = () => {
   const navigate = useNavigate();
 
   const goHomeHandler = () => navigate("/", { replace: true });
@@ -20,7 +20,7 @@ const NotFound = () => {
           까마귀공방
         </div>
         <div className="text-center text-white flex-col mt-11">
-          <div className="text-4xl">404 Not Found</div>
+          <div className="text-4xl">403 Forbidden</div>
         </div>
         <button
           onClick={goHomeHandler}
@@ -33,4 +33,4 @@ const NotFound = () => {
   );
 };
 
-export default NotFound;
+export default Forbidden;
