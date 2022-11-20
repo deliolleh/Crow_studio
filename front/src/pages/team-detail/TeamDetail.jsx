@@ -86,7 +86,12 @@ const TeamDetail = () => {
         setTeam(res);
         console.log("res:", res);
       })
-      .catch(console.error);
+      .catch((errStatusCode) => {
+        console.error("errStatusCode:", errStatusCode);
+        if (errStatusCode === 404) {
+          navigate("/404", { replace: true });
+        }
+      });
   }, [dispatch, teamSeq]);
 
   const setTeamNameHandler = (resTeamName) =>
