@@ -199,8 +199,9 @@ const Project = () => {
 
   // 동시 편집 파트로 이동
   const goCodeShare = () => {
-    // console.log(editorRef.current.getValue());
-    console.log(selectedFileName);
+    console.log(JSON.stringify(setting, null, 2));
+    userApi
+      .setPersonalSetting(teamSeq, setting)
     navigate("/project/code-share", {
       state: {
         data: editorRef.current.getValue(),
@@ -209,6 +210,7 @@ const Project = () => {
       target: "_blank",
       rel: "noopener noreferrer",
     });
+    window.location.reload();
   };
 
   return (
