@@ -114,7 +114,7 @@ public class GitController {
     @PostMapping("/{teamSeq}/git-commit")
     public ResponseEntity<Map<String, String>> gitCommitPost(@PathVariable Long teamSeq,
                                                              @RequestBody Map<String, String> req) {
-        if (req.containsKey("message") && req.containsKey("gitPath") && req.containsKey("filePath")) {
+        if (req.containsKey("message") && req.containsKey("filePath")) {
             String message = req.get("message");
             String filePath = req.get("filePath");
             Map<String, String> res = gitService.gitCommitService(message, teamSeq, filePath);
