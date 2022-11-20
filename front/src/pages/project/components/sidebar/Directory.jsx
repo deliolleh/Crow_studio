@@ -444,12 +444,13 @@ const Directory = (props) => {
         <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
 
         <div className="text-xs" style={{ padding: 15 }}>
-          <div className="text-sm flex ml-0.5 mb-2">
+          {/* 경로 표시 */}
+          {/* <div className="text-sm flex ml-0.5 mb-2">
             <TiArrowRightThick className="text-point_yellow" />
             <div className="ml-3 break-all">
               {selectedFilePath?.split("/").slice(1).join("/")}
             </div>
-          </div>
+          </div> */}
           {/* 디렉터리 파일, 폴더 모음 */}
           <TreeView
             aria-label="files and directories"
