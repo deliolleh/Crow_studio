@@ -65,7 +65,11 @@ const TeamCreate = () => {
       });
       isInvalid = true;
     }
-    if (teamName.trim() === "400" || teamName.trim() === "403") {
+    if (
+      teamName.trim() === "400" ||
+      teamName.trim() === "403" ||
+      teamName.match(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/)
+    ) {
       setErrorMsgs((prev) => {
         return { ...prev, teamNameErrMsg: "사용할 수 없는 팀 이름입니다" };
       });
@@ -117,6 +121,18 @@ const TeamCreate = () => {
     inputChangeHandler(e);
   };
 
+  // 키보드입력제한
+  const chkCharCode = (e) => {
+    // const regExp = /[^0-9a-zA-Z]/g;
+    // const ele = e.target;
+    // if (regExp.test(ele.value)) {
+    //   ele.value = ele.value.replace(regExp, "");
+    // }
+    if (e.key.match(/[^0-9a-zA-Z]/g)) {
+      e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    }
+  };
+
   return (
     <div className="flex flex-col w-full h-full">
       <Header />
@@ -139,11 +155,13 @@ const TeamCreate = () => {
                 type="teamName"
                 id="teamName"
                 name="teamName"
+                pattern="[A-Za-z0-9]"
                 className="mt-1 w-full text-white bg-component_item_bg_+2_dark transition:bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
                 placeholder="팀 이름을 입력하세요"
                 required
                 value={teamName}
                 onChange={inputChangeHandler}
+                onKeyDown={chkCharCode}
               />
               <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
                 {teamNameErrMsg}
