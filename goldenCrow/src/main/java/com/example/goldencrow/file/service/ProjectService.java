@@ -48,6 +48,7 @@ public class ProjectService {
         String pjt = path + name;
         File pjtDir = new File(pjt);
         if (pjtDir.mkdir()) {
+            out.println("여기에 폴더 만들어요!"+pjt);
             return pjt;
         }
         return DUPLICATE;
@@ -163,7 +164,7 @@ public class ProjectService {
             serviceRes.put("result", DUPLICATE);
             return serviceRes;
         }
-        String teamFile = createDirService(teamSeqFile, projectName);
+        String teamFile = createDirService(teamSeqFile+"/", projectName);
 
         if (teamFile.equals(DUPLICATE)) {
             serviceRes.put("result", DUPLICATE);
