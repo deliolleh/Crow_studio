@@ -103,16 +103,16 @@ public class FileService {
      * @return 성패에 따른 result 반환
      */
     public Map<String, String> deleteFileService(String filePath, int type, Long teamSeq) {
-        Optional<FileEntity> file = fileRepository.findFileEntityByTeamSeqAndFilePath(teamSeq, filePath);
+//        Optional<FileEntity> file = fileRepository.findFileEntityByTeamSeqAndFilePath(teamSeq, filePath);
         Map<String, String> serviceRes = new HashMap<>();
         System.out.println(filePath);
 
-        // DB에 없는 파일 경로인 경우
-        if (!file.isPresent()) {
-            System.out.println("DB에서 터짐");
-            serviceRes.put("result", NO_SUCH);
-            return serviceRes;
-        }
+//        // DB에 없는 파일 경로인 경우
+//        if (!file.isPresent()) {
+//            System.out.println("DB에서 터짐");
+//            serviceRes.put("result", NO_SUCH);
+//            return serviceRes;
+//        }
         // 서버에서 파일 삭제 로직 수행
         String fileDelete = serverFileDeleteService(type, filePath);
         if (!fileDelete.equals(SUCCESS)) {
@@ -120,7 +120,7 @@ public class FileService {
             return serviceRes;
         }
         // DB에서 파일 삭제 로직 수행
-        fileRepository.delete(file.get());
+//        fileRepository.delete(file.get());
         serviceRes.put("result", SUCCESS);
         return serviceRes;
     }
