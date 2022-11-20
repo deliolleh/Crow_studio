@@ -223,8 +223,10 @@ public class GitService {
     public Map<String, String> gitSwitchService( String branchName, Integer type, Long teamSeq) {
         Map<String, String> serviceRes = new HashMap<>();
         String gitPath = getGitPath(teamSeq);
-        System.out.println("깃 패스 : " + gitPath);
+
         File targetFile = new File(gitPath);
+
+        serviceRes.put("message", "");
 
         ProcessBuilder command = new ProcessBuilder();
         // switch할 branch의 종류로 명령어 저장
@@ -250,16 +252,10 @@ public class GitService {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
-        System.out.println(msg);
+
         String message = msg.toString();
         // 성공 여부 판단
-        if (message.contains("Switched to branch") || message.contains("up to") || message.contains("new branch") || message.contains("Switched")) {
-            serviceRes.put("result", SUCCESS);
-        } else if (message.contains("invalid")){
-            serviceRes.put("result", NO_SUCH);
-        } else {
-            serviceRes.put("result",UNKNOWN);
-        }
+        serviceRes.put("message", message);
         return serviceRes;
     }
 
