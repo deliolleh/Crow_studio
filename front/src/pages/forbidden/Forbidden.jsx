@@ -9,7 +9,13 @@ const Forbidden = () => {
   return (
     <div className="flex flex-col">
       <div className="flex flex-col h-screen justify-center justify-items-center items-center overflow-auto">
-        <div className="text-center">logo</div>
+        <div className="text-center">
+          <img
+            className="w-20 rounded-full"
+            src={require("../../assets/images/logo.png")}
+            alt="logo-img"
+          />
+        </div>
         <div className="text-7xl font-bold text-center text-white mt-5">
           까마귀공방
         </div>
