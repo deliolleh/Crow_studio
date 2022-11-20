@@ -219,7 +219,7 @@ public class CompileService {
             System.out.println(Arrays.toString(dockerfileExist));
             String fileExistResult = resultStringService(dockerfileExist);
             System.out.println(fileExistResult);
-            if (fileExistResult.equals("not")) {
+            if (fileExistResult.isEmpty()) {
                 // 도커파일 추가 로직
                 String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), typeNum);
                 if (!Objects.equals(dockerfile, "SUCCESS")) {
