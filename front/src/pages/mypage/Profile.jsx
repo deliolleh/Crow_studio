@@ -32,21 +32,15 @@ const Profile = ({ userSeq, mySeq }) => {
 
         {/* 닉네임 */}
         <div className="text-white text-2xl font-bold">
-          {userSeq === mySeq ? myNickname : userNickname}
+          {+userSeq === mySeq ? myNickname : userNickname}
         </div>
 
         {/* 메일 */}
-        <div className="text-sm">{userSeq === mySeq ? myEmail : userId}</div>
+        <div className="text-sm">{+userSeq === mySeq ? myEmail : userId}</div>
 
         {/* 깃 이메일 */}
         <div className="text-primary_-2_dark text-sm mb-6">
-          {userSeq === mySeq
-            ? myGitUsername
-              ? myGitUsername
-              : "깃 연결 없음"
-            : userGitUsername
-            ? userGitUsername
-            : "깃 연결 없음"}
+          {+userSeq === mySeq ? myGitUsername : userGitUsername}
         </div>
 
         {/* 정보 수정 버튼 */}

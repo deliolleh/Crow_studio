@@ -58,7 +58,6 @@ const Modify = () => {
     dispatch(updateGitAuth(credentialsData))
       .unwrap()
       .then((res) => {
-        console.log("res:", res);
         alert("깃 연결 성공");
       })
       .catch(console.error);
