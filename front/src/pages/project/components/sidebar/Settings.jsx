@@ -87,7 +87,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
           editors: {
             fontSize: setting.editors.fontSize,
             font: setting.editors.font,
-            autoLine: setting.editors.autoLine === "on" ? "off" : "on",
+            autoLine: !setting.editors.autoLine,
           },
         };
       });
