@@ -254,6 +254,7 @@ public class GitService {
         }
 
         String message = msg.toString();
+        serviceRes.put("result",SUCCESS);
         // 성공 여부 판단
         serviceRes.put("message", message);
         return serviceRes;
