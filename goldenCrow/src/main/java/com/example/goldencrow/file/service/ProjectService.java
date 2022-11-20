@@ -157,13 +157,18 @@ public class ProjectService {
      */
     public Map<String, String> createProjectService(String path, int type, String projectName, Long teamSeq) {
         Map<String, String> serviceRes = new HashMap<>();
-        String teamFile = createDirService(path, String.valueOf(teamSeq));
+        String teamSeqFile = createDirService(BASE_URL,String.valueOf(teamSeq));
+
+        if (teamSeqFile.equals(DUPLICATE)) {
+            serviceRes.put("result", DUPLICATE);
+            return serviceRes;
+        }
+        String teamFile = createDirService(teamSeqFile, projectName);
 
         if (teamFile.equals(DUPLICATE)) {
             serviceRes.put("result", DUPLICATE);
             return serviceRes;
         }
-
         // 기본 프로젝트 구성, 기본 파일 생성
         if (type == 2) {
             ProcessBuilder djangoStarter = new ProcessBuilder();
