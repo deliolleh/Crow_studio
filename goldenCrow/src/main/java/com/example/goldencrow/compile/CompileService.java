@@ -1,5 +1,6 @@
 package com.example.goldencrow.compile;
 
+import com.example.goldencrow.file.dto.FileCreateDto;
 import com.example.goldencrow.file.service.FileService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
@@ -110,6 +111,9 @@ public class CompileService {
         } catch (IOException e) {
             return UNKNOWN;
         }
+        FileCreateDto fileCreateDto =
+                new FileCreateDto("Dockerfile", absolutePath + "/Dockerfile", teamSeq);
+        fileService.insertFileService(fileCreateDto);
         return SUCCESS;
     }
 
