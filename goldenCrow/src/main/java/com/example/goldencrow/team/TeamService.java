@@ -10,7 +10,6 @@ import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.MemberRepository;
 import com.example.goldencrow.team.repository.TeamRepository;
 import com.example.goldencrow.user.service.JwtService;
-import com.example.goldencrow.user.dto.UserInfoDto;
 import com.example.goldencrow.user.UserEntity;
 import com.example.goldencrow.user.UserRepository;
 import org.springframework.stereotype.Service;
@@ -135,14 +134,14 @@ public class TeamService {
                 // 존재할 경우 : 사용자는 그 팀에 속해있지 않음
                 // 즉, 조회 권한이 없음, 탐색 종료
                 TeamDto teamDto = new TeamDto();
-                teamDto.setTeamName(NO_PER);
+                teamDto.setResult(NO_PER);
                 return teamDto;
 
             }
 
         } catch (Exception e) {
             TeamDto teamDto = new TeamDto();
-            teamDto.setTeamName(UNKNOWN);
+            teamDto.setResult(UNKNOWN);
             return teamDto;
 
         }
@@ -192,10 +191,10 @@ public class TeamService {
      * @param jwt         회원가입 및 로그인 시 발급되는 access token
      * @param teamName    만들고자 하는 팀의 이름
      * @param projectType 해당 팀에서 작업할 프로젝트의 종류
-     * @param projectGit  git clone을 받아 프로젝트를 초기화할 경우, clone 받을 프로젝트의 git 주소소
+     * @param teamGit     git clone을 받아 프로젝트를 초기화할 경우, clone 받을 프로젝트의 git 주소
      * @return 팀 생성 성공 시 TeamSeq 반환, 성패에 따른 result 반환
      */
-    public Map<String, String> teamCreateService(String jwt, String teamName, String projectType, String projectGit) {
+    public Map<String, String> teamCreateService(String jwt, String teamName, String projectType, String teamGit) {
 
         Map<String, String> serviceRes = new HashMap<>();
 
@@ -223,7 +222,6 @@ public class TeamService {
 
             // jwt가 인증하는 사용자의 UserEntity를 추출
             Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
-
             // 해당하는 사용자가 존재하는지 확인
             if (!userEntityOptional.isPresent()) {
                 // 해당하는 사용자가 없음
@@ -244,7 +242,7 @@ public class TeamService {
             }
 
             // 사용자를 팀장으로 하는 팀 생성, DB에 기록
-            TeamEntity teamEntity = new TeamEntity(userEntity, teamName, typeNum);
+            TeamEntity teamEntity = new TeamEntity(userEntity, teamName, typeNum, teamGit);
             teamRepository.saveAndFlush(teamEntity);
             Long teamSeq = teamEntity.getTeamSeq();
 
@@ -253,37 +251,35 @@ public class TeamService {
             memberRepository.saveAndFlush(memberEntity);
 
             // git clone을 받아오는지, 새로 생성하는지 판별
-            if (projectGit == null) {
+            if (teamGit == null) {
 
                 // git 정보가 비어있는 상태이므로 클론을 받아오지 않고, 프로젝트를 생성함
-                String projectCreateResult
-                        = projectService.createProject(BASE_URL, typeNum, teamName, teamSeq);
+                Map<String, String> projectCreateResult
+                        = projectService.createProjectService(BASE_URL, typeNum, teamName, teamSeq);
 
-                if (projectCreateResult.equals(SUCCESS)) {
+                if (projectCreateResult.get("result").equals(SUCCESS)) {
                     // 성공
                     serviceRes.put("result", SUCCESS);
                     serviceRes.put("teamSeq", String.valueOf(teamSeq));
 
                 } else {
                     // 모든 경우의 프로젝트 생성 실패
-                    System.out.println(projectCreateResult);
 
                     // 등록되었던 팀을 삭제
                     // 해당 팀에 연결된 멤버도 자동으로 삭제
                     teamRepository.delete(teamEntity);
 
-                    if (projectCreateResult.equals(DUPLICATE)) {
+                    if (projectCreateResult.get("result").equals(DUPLICATE)) {
                         serviceRes.put("result", DUPLICATE);
                     } else {
                         serviceRes.put("result", UNKNOWN);
                     }
-
                 }
 
             } else {
 
                 // 쓰여진 주소에서 정보를 받아와 프로젝트를 구축함
-                Map<String, String> gitCloneRes = gitService.gitCloneService(projectGit, teamSeq, teamName);
+                Map<String, String> gitCloneRes = gitService.gitCloneService(teamGit, teamSeq, teamName);
                 String gitCloneResult = gitCloneRes.get("result");
 
                 if (gitCloneResult.equals(SUCCESS)) {
@@ -292,8 +288,6 @@ public class TeamService {
                     serviceRes.put("teamSeq", String.valueOf(teamSeq));
                 } else {
                     // 모든 경우의 프로젝트 생성 실패
-                    System.out.println(gitCloneResult);
-
                     // 등록되었던 팀을 삭제
                     // 해당 팀에 연결된 멤버도 자동으로 삭제
                     teamRepository.delete(teamEntity);
@@ -322,8 +316,8 @@ public class TeamService {
     /**
      * 팀명을 수정하는 내부 로직
      *
-     * @param jwt 회원가입 및 로그인 시 발급되는 access token
-     * @param teamSeq 팀명을 바꾸고자 하는 팀의 Seq
+     * @param jwt      회원가입 및 로그인 시 발급되는 access token
+     * @param teamSeq  팀명을 바꾸고자 하는 팀의 Seq
      * @param teamName 적용될 새로운 teamName
      * @return 성공 시 수정된 팀명 반환, 성패에 따른 result 반환
      */
@@ -392,7 +386,7 @@ public class TeamService {
     /**
      * 팀의 Git을 수정하는 내부 로직
      *
-     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param jwt     회원가입 및 로그인 시 발급되는 access token
      * @param teamSeq Git을 바꾸고자 하는 팀의 Seq
      * @param teamGit 적용될 새로운 Git 주소
      * @return 성공 시 수정된 Git 주소 반환, 성패에 따른 result 반환
@@ -451,8 +445,8 @@ public class TeamService {
     /**
      * 팀의 프로젝트 타입을 수정하는 내부 로직
      *
-     * @param jwt 회원가입 및 로그인 시 발급되는 access token
-     * @param teamSeq 프로젝트 타입을 바꾸고자 하는 팀의 Seq
+     * @param jwt         회원가입 및 로그인 시 발급되는 access token
+     * @param teamSeq     프로젝트 타입을 바꾸고자 하는 팀의 Seq
      * @param projectType 적용될 새로운 프로젝트 타입
      * @return 성공 시 수정된 프로젝트 타입 반환, 성패에 따른 result 반환
      */
@@ -530,7 +524,7 @@ public class TeamService {
     /**
      * 팀을 삭제하는 내부 로직
      *
-     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param jwt     회원가입 및 로그인 시 발급되는 access token
      * @param teamSeq 삭제하고자 하는 팀의 Seq
      * @return 성패에 따른 result 반환
      */
@@ -571,7 +565,7 @@ public class TeamService {
                 // 서버 내에 있는 해당 팀의 프로젝트 삭제
                 List<Long> teamSeqList = new ArrayList<>();
                 teamSeqList.add(teamSeq);
-                if (projectService.deleteProject(teamSeqList).get("result").equals(UNKNOWN)) {
+                if (projectService.deleteProjectService(teamSeqList).get("result").equals(UNKNOWN)) {
                     serviceRes.put("result", UNKNOWN);
                     return serviceRes;
                 }
@@ -600,7 +594,7 @@ public class TeamService {
     /**
      * 팀의 팀원 목록을 조회하는 내부 로직
      *
-     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param jwt     회원가입 및 로그인 시 발급되는 access token
      * @param teamSeq 조회하고자 하는 팀의 Seq
      * @return 팀의 팀원 목록 리스트 반환
      */
@@ -660,176 +654,313 @@ public class TeamService {
         }
 
     }
-//
-//    // 팀원 추가
-//    public String memberAddService(String jwt, Long teamSeq, Long memberSeq) {
-//
-//        try {
-//
-//            // jwt에서 userSeq를 뽑아내고
-//            Long userSeq = jwtService.JWTtoUserSeq(jwt);
-//
-//            // 그런 팀이 존재하는지 체크
-//            Optional<TeamEntity> teamEntity = teamRepository.findById(teamSeq);
-//
-//            // 팀이 존재하는지 체크
-//            if (teamEntity.isPresent()) {
-//                // 내가 장이 맞는지 체크
-//                if (teamEntity.get().getTeamLeader().getUserSeq() == userSeq) {
-//                    // 이 멤버가 여기 원래 없는게 맞는지 체크
-//                    if (!memberRepository.findByUser_UserSeqAndTeam_TeamSeq(memberSeq, teamSeq).isPresent()) {
-//                        // 모든 조건 만족
-//                        MemberEntity memberEntity = new MemberEntity(userRepository.findById(memberSeq).get(), teamEntity.get());
-//                        memberRepository.saveAndFlush(memberEntity);
-//                        return "success";
-//
-//                    } else {
-//                        return "409";
-//                    }
-//                } else {
-//                    return "403";
-//                }
-//            } else {
-//                return "404";
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return "error";
-//        }
-//
-//    }
-//
-//    // 팀원 제거
-//    public String memberRemoveService(String jwt, Long teamSeq, Long memberSeq) {
-//
-//        try {
-//
-//            // jwt에서 userSeq를 뽑아내고
-//            Long userSeq = jwtService.JWTtoUserSeq(jwt);
-//
-//            // 자기 자신이 아닌게 맞는지 체크
-//            if (userSeq == memberSeq) {
-//                return "409";
-//            }
-//
-//            // 그런 팀이 존재하는지 체크
-//            Optional<TeamEntity> teamEntity = teamRepository.findById(teamSeq);
-//
-//            // 팀이 존재하는지 체크
-//            if (teamEntity.isPresent()) {
-//                // 내가 장이 맞는지 체크
-//                if (teamEntity.get().getTeamLeader().getUserSeq() == userSeq) {
-//                    // 이 멤버가 여기 원래 있는게 맞는지 체크
-//                    if (memberRepository.findByUser_UserSeqAndTeam_TeamSeq(memberSeq, teamSeq).isPresent()) {
-//                        // 모든 조건 만족
-//                        MemberEntity memberEntity = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(memberSeq, teamSeq).get();
-//                        memberRepository.delete(memberEntity);
-//                        return "success";
-//
-//                    } else {
-//                        return "409";
-//                    }
-//                } else {
-//                    return "403";
-//                }
-//            } else {
-//                return "404";
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return "error";
-//        }
-//
-//    }
-//
-//    // 팀장 위임
-//    public String memberBeLeaderService(String jwt, Long teamSeq, Long memberSeq) {
-//
-//        try {
-//
-//            // jwt에서 userSeq를 뽑아내고
-//            Long userSeq = jwtService.JWTtoUserSeq(jwt);
-//
-//            // 자기 자신이 아닌게 맞는지 체크
-//            if (userSeq == memberSeq) {
-//                return "409";
-//            }
-//
-//            // 그런 팀이 존재하는지 체크
-//            Optional<TeamEntity> teamEntityOptional = teamRepository.findById(teamSeq);
-//
-//            // 팀이 존재하는지 체크
-//            if (teamEntityOptional.isPresent()) {
-//                // 내가 장이 맞는지 체크
-//                if (teamEntityOptional.get().getTeamLeader().getUserSeq() == userSeq) {
-//                    // 이 멤버가 여기 원래 있는게 맞는지 체크
-//                    if (memberRepository.findByUser_UserSeqAndTeam_TeamSeq(memberSeq, teamSeq).isPresent()) {
-//                        // 모든 조건 만족
-//                        // 팀 레포지토리의 팀장을 바꾼다
-//                        TeamEntity teamEntity = teamEntityOptional.get();
-//                        teamEntity.setTeamLeader(userRepository.findById(memberSeq).get());
-//                        teamRepository.saveAndFlush(teamEntity);
-//                        return "success";
-//
-//                    } else {
-//                        return "409";
-//                    }
-//                } else {
-//                    return "403";
-//                }
-//            } else {
-//                return "404";
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return "error";
-//        }
-//
-//    }
-//
-//    // 팀 탈퇴
-//    public String memberQuitService(String jwt, Long teamSeq) {
-//
-//        try {
-//
-//            Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
-//
-//            if (!teamEntityFoundCheck.isPresent()) {
-//                return "404";
-//            }
-//
-//            // jwt에서 userSeq를 뽑아내고
-//            Long userSeq = jwtService.JWTtoUserSeq(jwt);
-//
-//            // 저 팀 시퀀스를 가지고 내가 속한 멤버가 있는지 확인
-//            Optional<MemberEntity> memberEntityOptional = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(userSeq, teamSeq);
-//
-//            if (memberEntityOptional.isPresent()) {
-//                // 있다면 그 팀 리더가 내가 아닌 게 맞는지 확인
-//                Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
-//                if (!teamEntityOptional.isPresent()) {
-//                    // 내가 리더가 아니라면
-//                    // 그 멤버 엔티티만 찾아서 삭제하면 됨
-//                    MemberEntity memberEntity = memberEntityOptional.get();
-//                    memberRepository.delete(memberEntity);
-//                    return "success";
-//                } else {
-//                    // 저 팀이 있다는 건 내가 팀 리더란 소리이므로
-//                    return "403";
-//                }
-//            } else {
-//                return "409";
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return "error";
-//        }
-//
-//    }
 
+    /**
+     * 팀에 팀원을 추가하는 내부 로직
+     *
+     * @param jwt       회원가입 및 로그인 시 발급되는 access token
+     * @param teamSeq   추가하고자 하는 팀의 Seq
+     * @param memberSeq 추가시킬 사용자의 User Seq
+     * @return 성패에 따른 result 반환
+     */
+    public Map<String, String> memberAddService(String jwt, Long teamSeq, Long memberSeq) {
 
+        Map<String, String> serviceRes = new HashMap<>();
+
+        try {
+
+            // jwt가 인증하는 사용자의 UserEntity를 추출
+            Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
+
+            // 해당하는 사용자가 존재하는지 확인
+            if (!userEntityOptional.isPresent()) {
+                // 해당하는 사용자가 없음
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
+            }
+
+            UserEntity userEntity = userEntityOptional.get();
+            Long userSeq = userEntity.getUserSeq();
+
+            // 입력받은 팀이 존재하는지 확인
+            Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
+            if (!teamEntityFoundCheck.isPresent()) {
+                // 해당하는 팀이 없음
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
+            }
+
+            // 그 팀의 팀장이 사용자가 맞는지 확인
+            Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
+
+            if (teamEntityOptional.isPresent()) {
+
+                // 팀장과 팀 시퀀스가 일치하는 팀이 존재함
+
+                // 추가하려는 팀원이 그 팀에 속해있지 않은지 확인
+                Optional<MemberEntity> memberEntityOptional
+                        = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(memberSeq, teamSeq);
+
+                if (!memberEntityOptional.isPresent()) {
+                    // 팀원이 이 팀에 속해있지 않음
+                    // DB에 멤버와 팀을 기록
+
+                    Optional<UserEntity> memberUserEntityOptional = userRepository.findByUserSeq(memberSeq);
+
+                    if (memberUserEntityOptional.isPresent()) {
+                        // 팀에 해당 팀원을 추가함
+                        UserEntity memberUserEntity = memberUserEntityOptional.get();
+                        MemberEntity memberEntity = new MemberEntity(memberUserEntity, teamEntityOptional.get());
+                        memberRepository.saveAndFlush(memberEntity);
+                        serviceRes.put("result", SUCCESS);
+
+                    } else {
+                        // 해당 팀원은 존재하지 않는 유저임
+                        serviceRes.put("result", NO_SUCH);
+
+                    }
+
+                } else {
+                    // 그 팀원은 이미 해당 팀에 속해 있음
+                    serviceRes.put("result", DUPLICATE);
+
+                }
+
+            } else {
+                // 그 팀의 팀장이 사용자가 아니므로, 수정할 수 없음
+                serviceRes.put("result", NO_PER);
+
+            }
+
+        } catch (Exception e) {
+            serviceRes.put("result", UNKNOWN);
+        }
+
+        return serviceRes;
+
+    }
+
+    /**
+     * 팀원을 삭제하는 내부 로직
+     *
+     * @param jwt       회원가입 및 로그인 시 발급되는 access token
+     * @param teamSeq   삭제하고자 하는 팀의 Seq
+     * @param memberSeq 삭제시킬 사용자의 User Seq
+     * @return 성패에 따른 result 반환
+     */
+    public Map<String, String> memberRemoveService(String jwt, Long teamSeq, Long memberSeq) {
+
+        Map<String, String> serviceRes = new HashMap<>();
+
+        try {
+
+            // jwt가 인증하는 사용자의 UserEntity를 추출
+            Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
+
+            // 해당하는 사용자가 존재하는지 확인
+            if (!userEntityOptional.isPresent()) {
+                // 해당하는 사용자가 없음
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
+            }
+
+            UserEntity userEntity = userEntityOptional.get();
+            Long userSeq = userEntity.getUserSeq();
+
+            // 입력받은 팀이 존재하는지 확인
+            Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
+            if (!teamEntityFoundCheck.isPresent()) {
+                // 해당하는 팀이 없음
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
+            }
+
+            // 그 팀의 팀장이 사용자가 맞는지 확인
+            Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
+
+            if (teamEntityOptional.isPresent()) {
+
+                // 팀장과 팀 시퀀스가 일치하는 팀이 존재함
+
+                // 추가하려는 팀원이 그 팀에 속해있지 않은지 확인
+                Optional<MemberEntity> memberEntityOptional
+                        = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(memberSeq, teamSeq);
+
+                if (memberEntityOptional.isPresent()) {
+                    // 팀원이 이 팀에 속해있음
+                    // DB의 해당 팀의 멤버를 삭제
+                    memberRepository.delete(memberEntityOptional.get());
+                    serviceRes.put("result", SUCCESS);
+                } else {
+                    // 그 팀원은 이미 해당 팀에 존재하지 않음
+                    serviceRes.put("result", WRONG);
+                }
+
+            } else {
+                // 그 팀의 팀장이 사용자가 아니므로, 수정할 수 없음
+                serviceRes.put("result", NO_PER);
+
+            }
+
+        } catch (Exception e) {
+            serviceRes.put("result", UNKNOWN);
+        }
+
+        return serviceRes;
+
+    }
+
+    /**
+     * 팀의 팀장을 위임하는 내부 로직
+     *
+     * @param jwt       회원가입 및 로그인 시 발급되는 access token
+     * @param teamSeq   삭제하고자 하는 팀의 Seq
+     * @param memberSeq 삭제시킬 사용자의 User Seq
+     * @return 성패에 따른 result 반환
+     * @deprecated 현재 사용되고 있지 않으나, 이용 가능함
+     */
+    public Map<String, String> memberBeLeaderService(String jwt, Long teamSeq, Long memberSeq) {
+
+        Map<String, String> serviceRes = new HashMap<>();
+
+        try {
+
+            // jwt가 인증하는 사용자의 UserEntity를 추출
+            Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
+
+            // 해당하는 사용자가 존재하는지 확인
+            if (!userEntityOptional.isPresent()) {
+                // 해당하는 사용자가 없음
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
+            }
+
+            UserEntity userEntity = userEntityOptional.get();
+            Long userSeq = userEntity.getUserSeq();
+
+            // 입력받은 팀이 존재하는지 확인
+            Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
+            if (!teamEntityFoundCheck.isPresent()) {
+                // 해당하는 팀이 없음
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
+            }
+
+            // 그 팀의 팀장이 사용자가 맞는지 확인
+            Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
+
+            if (teamEntityOptional.isPresent()) {
+
+                // 팀장과 팀 시퀀스가 일치하는 팀이 존재함
+
+                // 추가하려는 팀원이 그 팀에 속해있지 않은지 확인
+                Optional<MemberEntity> memberEntityOptional
+                        = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(memberSeq, teamSeq);
+
+                if (memberEntityOptional.isPresent()) {
+                    // 팀원이 이 팀에 속해있음
+
+                    Optional<UserEntity> memberUserEntityOptional = userRepository.findByUserSeq(memberSeq);
+
+                    if (memberUserEntityOptional.isPresent()) {
+                        // 그 팀원을 팀장으로 바꾸고, DB에 기록함
+                        UserEntity memberUserEntity = memberUserEntityOptional.get();
+                        TeamEntity teamEntity = teamEntityOptional.get();
+                        teamEntity.setTeamLeader(memberUserEntity);
+                        teamRepository.saveAndFlush(teamEntity);
+                        serviceRes.put("result", SUCCESS);
+
+                    } else {
+                        // 해당 팀원은 존재하지 않는 유저임
+                        serviceRes.put("result", NO_SUCH);
+
+                    }
+
+                } else {
+                    // 그 팀원은 해당 팀에 속해 있지 않음
+                    serviceRes.put("result", WRONG);
+                }
+
+            } else {
+                // 그 팀의 팀장이 사용자가 아니므로, 수정할 수 없음
+                serviceRes.put("result", NO_PER);
+
+            }
+
+        } catch (Exception e) {
+            serviceRes.put("result", UNKNOWN);
+        }
+
+        return serviceRes;
+
+    }
+
+    /**
+     * 팀을 탈퇴하는 내부 로직
+     *
+     * @param jwt     회원가입 및 로그인 시 발급되는 access token
+     * @param teamSeq 탈퇴하고자하는 팀의 Seq
+     * @return 성패에 따른 result 반환
+     */
+    public Map<String, String> memberQuitService(String jwt, Long teamSeq) {
+
+        Map<String, String> serviceRes = new HashMap<>();
+
+        try {
+
+            // jwt가 인증하는 사용자의 UserEntity를 추출
+            Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
+
+            // 해당하는 사용자가 존재하는지 확인
+            if (!userEntityOptional.isPresent()) {
+                // 해당하는 사용자가 없음
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
+            }
+
+            UserEntity userEntity = userEntityOptional.get();
+            Long userSeq = userEntity.getUserSeq();
+
+            // 입력받은 팀이 존재하는지 확인
+            Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
+            if (!teamEntityFoundCheck.isPresent()) {
+                // 해당하는 팀이 없음
+                serviceRes.put("result", NO_SUCH);
+                return serviceRes;
+            }
+
+            // 그 팀에 사용자가 속해있는지 확인
+            Optional<MemberEntity> memberEntityOptional
+                    = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(userSeq, teamSeq);
+
+            if (memberEntityOptional.isPresent()) {
+
+                // 사용자는 현재 그 팀에 속해 있음
+
+                // 그 팀의 팀장이 사용자인지 확인
+                Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
+
+                if (!teamEntityOptional.isPresent()) {
+                    // 사용자가 팀장이 아니므로, 탈퇴 가능함
+                    MemberEntity memberEntity = memberEntityOptional.get();
+                    memberRepository.delete(memberEntity);
+                    serviceRes.put("result", SUCCESS);
+                } else {
+                    // 그 팀의 팀장이 사용자이므로, 탈퇴할 수 없음
+                    serviceRes.put("result", NO_PER);
+                }
+
+            } else {
+                // 사용자는 그 팀에 이미 속해있지 않음
+                serviceRes.put("result", WRONG);
+
+            }
+
+        } catch (Exception e) {
+            serviceRes.put("result", UNKNOWN);
+        }
+
+        return serviceRes;
+
+    }
 }

@@ -6,13 +6,18 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
+/**
+ * Member Table Entity
+ */
 @Entity
 @DynamicUpdate
 @Table(name = "member")
 @Data
 public class MemberEntity {
 
-    //pk
+    /**
+     * Primary Key
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -26,11 +31,24 @@ public class MemberEntity {
     @JoinColumn(name = "teamSeq", referencedColumnName = "teamSeq")
     private TeamEntity team;
 
+    @Column
+    private String settings;
+
+    /**
+     * 빈 MemberEntity 생성자
+     */
     public MemberEntity() {
     }
 
+    /**
+     * MemberEntity 생성자
+     *
+     * @param userEntity 사용자의 UserEntity
+     * @param teamEntity 팀의 TeamEntity
+     */
     public MemberEntity(UserEntity userEntity, TeamEntity teamEntity) {
         this.user = userEntity;
         this.team = teamEntity;
+        this.settings = "";
     }
 }

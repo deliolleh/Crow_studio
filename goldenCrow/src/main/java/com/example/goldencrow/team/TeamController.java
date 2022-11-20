@@ -85,26 +85,28 @@ public class TeamController {
      * 팀을 생성하는 API
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
-     * @param req "teamName", "projectType", "projectGit"을 key로 가지는 Map<String, String>
+     * @param req "teamName", "projectType", "teamGit"을 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404, 409
      */
     @PostMapping("/create")
     public ResponseEntity<Map<String, String>> teamCreatePost(@RequestHeader("Authorization") String jwt,
-                                                            @RequestBody Map<String, String> req) {
+                                                              @RequestBody Map<String, String> req) {
 
-        if(req.containsKey("teamName")&&req.containsKey("projectType")&& req.containsKey("projectGit")) {
+        if (req.containsKey("teamName") && req.containsKey("projectType") && req.containsKey("teamGit")) {
 
             String teamName = req.get("teamName");
             String projectType = req.get("projectType");
-            String projectGit = req.get("projectGit");
+            String teamGit = req.get("teamGit");
 
-            Map<String, String> res = teamService.teamCreateService(jwt, teamName, projectType, projectGit);
+            Map<String, String> res = teamService.teamCreateService(jwt, teamName, projectType, teamGit);
             String result = res.get("result");
 
             switch (result) {
                 case SUCCESS:
                     return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_PER:
+                    return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
                 case NO_SUCH:
                     return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
                 case DUPLICATE:
@@ -125,17 +127,17 @@ public class TeamController {
     /**
      * 팀명을 수정하는 API
      *
-     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param jwt     회원가입 및 로그인 시 발급되는 access token
      * @param teamSeq 팀명을 바꾸고자 하는 팀의 Seq
-     * @param req "teamName"을 key로 가지는 Map<String, String>
+     * @param req     "teamName"을 key로 가지는 Map<String, String>
      * @return 성공 시 수정된 팀명 반환, 성패에 따른 result 반환
      * @status 200, 400, 401, 403, 404, 409
      */
     @PutMapping("/modify/name/{teamSeq}")
     public ResponseEntity<Map<String, String>> teamModifyNamePut(@RequestHeader("Authorization") String jwt,
-                                                    @PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
+                                                                 @PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
 
-        if(req.containsKey("teamName")) {
+        if (req.containsKey("teamName")) {
 
             String teamName = req.get("teamName");
 
@@ -167,17 +169,17 @@ public class TeamController {
     /**
      * 팀의 Git을 수정하는 API
      *
-     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param jwt     회원가입 및 로그인 시 발급되는 access token
      * @param teamSeq Git을 바꾸고자 하는 팀의 Seq
-     * @param req "teamGit"을 key로 가지는 Map<String, String>
+     * @param req     "teamGit"을 key로 가지는 Map<String, String>
      * @return 성공 시 수정된 Git 주소 반환, 성패에 따른 result 반환
      * @status 200, 400, 401, 403, 404
      */
     @PutMapping("/modify/git/{teamSeq}")
     public ResponseEntity<Map<String, String>> teamModifyGitPut(@RequestHeader("Authorization") String jwt,
-                                                   @PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
+                                                                @PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
 
-        if(req.containsKey("teamGit")) {
+        if (req.containsKey("teamGit")) {
 
             String teamGit = req.get("teamGit");
 
@@ -207,17 +209,17 @@ public class TeamController {
     /**
      * 팀의 프로젝트 타입을 수정하는 API
      *
-     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param jwt     회원가입 및 로그인 시 발급되는 access token
      * @param teamSeq 프로젝트 타입을 바꾸고자 하는 팀의 Seq
-     * @param req "projectType"을 key로 가지는 Map<String, String>
+     * @param req     "projectType"을 key로 가지는 Map<String, String>
      * @return 성공 시 수정된 프로젝트 타입 반환, 성패에 따른 result 반환
      * @status 200, 400, 401, 403, 404
      */
     @PutMapping("/modify/type/{teamSeq}")
     public ResponseEntity<Map<String, String>> teamModifyTypePut(@RequestHeader("Authorization") String jwt,
-                                                    @PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
+                                                                 @PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
 
-        if(req.containsKey("projectType")) {
+        if (req.containsKey("projectType")) {
 
             String projectType = req.get("projectType");
 
@@ -247,7 +249,7 @@ public class TeamController {
     /**
      * 팀을 삭제하는 API
      *
-     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param jwt     회원가입 및 로그인 시 발급되는 access token
      * @param teamSeq 삭제하고자 하는 팀의 Seq
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 403, 404
@@ -256,26 +258,26 @@ public class TeamController {
     public ResponseEntity<Map<String, String>> teamDelete(@RequestHeader("Authorization") String jwt,
                                                           @PathVariable Long teamSeq) {
 
-            Map<String, String> res = teamService.teamDeleteService(jwt, teamSeq);
-            String result = res.get("result");
+        Map<String, String> res = teamService.teamDeleteService(jwt, teamSeq);
+        String result = res.get("result");
 
-            switch (result) {
-                case SUCCESS:
-                    return new ResponseEntity<>(res, HttpStatus.OK);
-                case NO_PER:
-                    return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
-                case NO_SUCH:
-                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
-                default:
-                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
-            }
+        switch (result) {
+            case SUCCESS:
+                return new ResponseEntity<>(res, HttpStatus.OK);
+            case NO_PER:
+                return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
+            case NO_SUCH:
+                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+            default:
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+        }
 
     }
 
     /**
      * 팀의 팀원 목록을 조회하는 API
      *
-     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param jwt     회원가입 및 로그인 시 발급되는 access token
      * @param teamSeq 조회하고자 하는 팀의 Seq
      * @return 팀의 팀원 목록 리스트 반환
      * @status 200, 400, 401, 403, 404
@@ -300,117 +302,156 @@ public class TeamController {
 
     }
 
-//    // 팀원 추가 PUT
-//    // add
-//    @PutMapping("/add")
-//    public ResponseEntity<String> memberAddPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req) {
-//
-//        // 리더 권한 없으면 터질 예정임
-//        // 이미 팀 내 유저면 터질 예정임
-//
-//        if (req.get("teamSeq") == null || req.get("memberSeq") == null) {
-//            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
-//        }
-//
-//        String result = teamService.memberAdd(jwt, req.get("teamSeq"), req.get("memberSeq"));
-//
-//        if (result.equals("success")) {
-//            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-//        } else if (result.equals("403")) {
-//            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
-//        } else if (result.equals("404")) {
-//            return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
-//        } else if (result.equals("409")) {
-//            return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
-//        } else {
-//            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
-//        }
-//    }
-//
-//    // 팀원 삭제 DELETE
-//    // remove
-//    @DeleteMapping("/remove")
-//    public ResponseEntity<String> memberRemoveDelete(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req) {
-//
-//        // 리더 권한 없으면 터질 예정임 403
-//        // 팀 내 유저가 아니면 터질 예정임 409
-//        // 스스로는 내보낼 수 없음 409
-//        // 그런 팀 없음 404
-//
-//        if (req.get("teamSeq") == null || req.get("memberSeq") == null) {
-//            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
-//        }
-//
-//        String result = teamService.memberRemove(jwt, req.get("teamSeq"), req.get("memberSeq"));
-//
-//        if (result.equals("success")) {
-//            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-//        } else if (result.equals("403")) {
-//            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
-//        } else if (result.equals("404")) {
-//            return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
-//        } else if (result.equals("409")) {
-//            return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
-//        } else {
-//            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
-//        }
-//
-//    }
-//
-//    // 팀장 위임 PUT
-//    // 지금 안쓴다
-//    // beLeader
-//    @PutMapping("/beLeader")
-//    public ResponseEntity<String> memberBeLeaderPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req) {
-//
-//        // 리더 권한 없으면 터질 예정임 403
-//        // 팀 내 유저가 아니면 터질 예정임 409
-//        // 스스로는 팀장으로 바꿀 수 없다 409
-//        // 그런 팀 없음 404
-//
-//        if (req.get("teamSeq") == null || req.get("memberSeq") == null) {
-//            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
-//        }
-//
-//        String result = teamService.memberBeLeader(jwt, req.get("teamSeq"), req.get("memberSeq"));
-//
-//        if (result.equals("success")) {
-//            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-//        } else if (result.equals("403")) {
-//            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
-//        } else if (result.equals("404")) {
-//            return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
-//        } else if (result.equals("409")) {
-//            return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
-//        } else {
-//            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
-//        }
-//
-//    }
-//
-//    // 팀 탈퇴 DELETE
-//    // quit/{teamSeq}
-//    @DeleteMapping("/quit/{teamSeq}")
-//    public ResponseEntity<String> memberQuitDelete(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
-//
-//        // 리더면 못 나갈 예정임 403 감히
-//        // 원래 내 팀이 아님 409
-//        // 그런 팀이 없음 404
-//
-//        String result = teamService.memberQuit(jwt, teamSeq);
-//
-//        if (result.equals("success")) {
-//            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-//        } else if (result.equals("403")) {
-//            return new ResponseEntity<>(FORBIDDEN, HttpStatus.FORBIDDEN);
-//        } else if (result.equals("404")) {
-//            return new ResponseEntity<>(NOT_FOUND, HttpStatus.NOT_FOUND);
-//        } else if (result.equals("409")) {
-//            return new ResponseEntity<>(CONFLICT, HttpStatus.CONFLICT);
-//        } else {
-//            return new ResponseEntity<>(FAILURE, HttpStatus.BAD_REQUEST);
-//        }
-//
-//    }
+    /**
+     * 팀에 팀원을 추가하는 API
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param req "teamSeq"와 "memberSeq"를 key로 가지는 Map<String, Long>
+     * @return 성패에 따른 result 반환
+     * @status 200, 400, 401, 403, 404, 409
+     */
+    @PutMapping("/add")
+    public ResponseEntity<Map<String, String>> memberAddPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req) {
+
+        if (req.containsKey("teamSeq") && req.containsKey("memberSeq")) {
+
+            Long teamSeq = req.get("teamSeq");
+            Long memberSeq = req.get("memberSeq");
+
+            Map<String, String> res = teamService.memberAddService(jwt, teamSeq, memberSeq);
+            String result = res.get("result");
+
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_PER:
+                    return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                case DUPLICATE:
+                    return new ResponseEntity<>(res, HttpStatus.CONFLICT);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
+
+        } else {
+            Map<String, String> res = new HashMap<>();
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+
+        }
+
+    }
+
+    /**
+     * 팀원을 삭제하는 API
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param req "teamSeq"와 "memberSeq"를 key로 가지는 Map<String, Long>
+     * @return 성패에 따른 result 반환
+     * @status 200, 400, 401, 403, 404, 409
+     */
+    @DeleteMapping("/remove")
+    public ResponseEntity<Map<String, String>> memberRemoveDelete(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req) {
+
+        if (req.containsKey("teamSeq") && req.containsKey("memberSeq")) {
+
+            Long teamSeq = req.get("teamSeq");
+            Long memberSeq = req.get("memberSeq");
+
+            Map<String, String> res = teamService.memberRemoveService(jwt, teamSeq, memberSeq);
+            String result = res.get("result");
+
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_PER:
+                    return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                case WRONG:
+                    return new ResponseEntity<>(res, HttpStatus.CONFLICT);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
+
+        } else {
+            Map<String, String> res = new HashMap<>();
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+
+        }
+
+    }
+
+    /**
+     * 팀의 팀장을 위임하는 API
+     *
+     * @param jwt 회원가입 및 로그인 시 발급되는 access token
+     * @param req "teamSeq"와 "memberSeq"를 key로 가지는 Map<String, Long>
+     * @return 성패에 따른 result 반환
+     * @status 200, 400, 401, 403, 404, 409
+     * @deprecated 현재 사용되고 있지 않으나, 이용 가능함
+     */
+    @PutMapping("/beLeader")
+    public ResponseEntity<Map<String, String>> memberBeLeaderPut(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> req) {
+
+        if (req.containsKey("teamSeq") && req.containsKey("memberSeq")) {
+
+            Long teamSeq = req.get("teamSeq");
+            Long memberSeq = req.get("memberSeq");
+
+            Map<String, String> res = teamService.memberBeLeaderService(jwt, teamSeq, memberSeq);
+            String result = res.get("result");
+
+            switch (result) {
+                case SUCCESS:
+                    return new ResponseEntity<>(res, HttpStatus.OK);
+                case NO_PER:
+                    return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
+                case NO_SUCH:
+                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                case WRONG:
+                    return new ResponseEntity<>(res, HttpStatus.CONFLICT);
+                default:
+                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
+
+        } else {
+            Map<String, String> res = new HashMap<>();
+            res.put("result", BAD_REQ);
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+
+        }
+
+    }
+
+    /**
+     * 팀을 탈퇴하는 API
+     *
+     * @param jwt     회원가입 및 로그인 시 발급되는 access token
+     * @param teamSeq 탈퇴하고자하는 팀의 Seq
+     * @return 성패에 따른 result 반환
+     * @status 200, 400, 401, 403, 404, 409
+     */
+    @DeleteMapping("/quit/{teamSeq}")
+    public ResponseEntity<Map<String, String>> memberQuitDelete(@RequestHeader("Authorization") String jwt, @PathVariable Long teamSeq) {
+
+        Map<String, String> res = teamService.memberQuitService(jwt, teamSeq);
+        String result = res.get("result");
+
+        switch (result) {
+            case SUCCESS:
+                return new ResponseEntity<>(res, HttpStatus.OK);
+            case NO_PER:
+                return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
+            case NO_SUCH:
+                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+            case WRONG:
+                return new ResponseEntity<>(res, HttpStatus.CONFLICT);
+            default:
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }
