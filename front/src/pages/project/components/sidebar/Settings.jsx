@@ -26,6 +26,9 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
   const [nowConsoleFont, setNowConsoleFont] = useState(
     fonts.filter((font) => font.name === setting.consoles.font)[0]
   );
+  const [checkSwitch, setCheckSwitch] = useState(
+    setting.editors.autoLine ? true : false
+  );
 
   // // 에디터 라인
   // const [editorSide, setEditorSide] = useState({
@@ -88,6 +91,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
           },
         };
       });
+      setCheckSwitch((prev) => !prev);
       // setEditorSide({ ...editorSide, autoLine: !editorSide.autoLine });
     }
   };
@@ -251,12 +255,10 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
               에디터 자동 줄바꿈
             </div>
             <Switch
-              checked={setting.editors.autoLine}
+              checked={checkSwitch}
               onChange={(e) => editorChange("autoLine", e)}
               className={`${
-                setting.editors.autoLine
-                  ? "bg-point_purple"
-                  : "bg-component_item_bg_+2_dark"
+                checkSwitch ? "bg-point_purple" : "bg-component_item_bg_+2_dark"
               }
                 relative inline-flex h-[26px] w-[46px] ml-[68px] text-right shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
             >
@@ -264,9 +266,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
               <span
                 aria-hidden="true"
                 className={`${
-                  setting.editors.autoLine
-                    ? "translate-x-[20px]"
-                    : "translate-x-[0.5px]"
+                  checkSwitch ? "translate-x-[20px]" : "translate-x-[0.5px]"
                 }
                   pointer-events-none inline-block h-[22px] w-[22px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
               />

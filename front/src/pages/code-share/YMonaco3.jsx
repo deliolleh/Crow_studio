@@ -5,7 +5,7 @@ import { MonacoBinding } from "y-monaco";
 import React, { useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
 import { useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const YMonaco3 = () => {
   const editorRef = useRef(null);
@@ -13,6 +13,8 @@ const YMonaco3 = () => {
   const [tick, setTick] = useState(0);
   const selectedFileName = location.state.selectedFileName;
   const data = location.state.data;
+
+  const navigate = useNavigate();
 
   const link = () => {
     const ydoc = new Y.Doc();
@@ -50,10 +52,17 @@ const YMonaco3 = () => {
     };
   });
 
-  useEffect(() => {}, []);
+  const goBack = () => {
+    navigate(-1);
+  };
 
   return (
     <React.Fragment>
+      <div>
+        <div onClick={goBack} style={{ cursor: "pointer" }}>
+          뒤로가기
+        </div>
+      </div>
       <Editor
         style={{ overflow: "auto" }}
         height="calc(100vh - 31px)"
