@@ -76,7 +76,7 @@ public class GitController {
      * access token 필요
      *
      * @param type switch할 branch의 종류 (1 : 존재하는 브랜치로 이동, 2 : 브랜치를 새로 생성 후 이동)
-     * @param req  "gitPath", "branchName"를 key로 가지는 Map<String, String>
+     * @param req  "branchName"를 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
@@ -107,7 +107,7 @@ public class GitController {
      * Git Commit API
      * access token 필요
      *
-     * @param req "message", "gitPath", "filePath"를 key로 가지는 Map<String, String>
+     * @param req "message","filePath"를 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
@@ -139,15 +139,14 @@ public class GitController {
      * access token 필요
      *
      * @param userSeq push하는 사용자의 Sequence
-     * @param req     "message", "gitPath", "filePath", "branchName"을 key로 가지는 Map<String, String>
+     * @param req     "message","filePath", "branchName"을 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
     @PostMapping("/{userSeq}/git-push")
     public ResponseEntity<Map<String, String>> gitPushPost(@PathVariable Long userSeq,
                                                            @RequestBody HashMap<String, String> req) {
-        if (req.containsKey("message") && req.containsKey("gitPath")
-                && req.containsKey("filePath") && req.containsKey("branchName")) {
+        if (req.containsKey("message") && req.containsKey("filePath") && req.containsKey("branchName")) {
             String message = req.get("message");
             Long teamSeq = Long.parseLong(req.get("teamSeq"));
             String filePath = req.get("filePath");
@@ -193,7 +192,7 @@ public class GitController {
      * access token 필요
      *
      * @param userSeq pull하는 사용자의 Sequence
-     * @param req     "gitPath", "branchName"를 key로 가지는 Map<String, String>
+     * @param req     "branchName"를 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
