@@ -306,7 +306,6 @@ public class UserController {
 
     }
 
-
     /**
      * 회원 탈퇴 API
      *
