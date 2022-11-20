@@ -189,7 +189,7 @@ public class CompileService {
             String response = resultStringService(command);
             // 에러 메세지 파일에서 읽어오기
             Map<String, String> messageList = fileService.readFileService(outfilePath);
-            String message = messageList.get("error");
+            String message = messageList.get("fileContent");
             String pathChangemessage = message;
             if (message.contains(BASE_URL)) {
                 pathChangemessage = message.replaceAll(BASE_URL + teamSeq + "/", "");
