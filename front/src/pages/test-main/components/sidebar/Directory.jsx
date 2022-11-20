@@ -26,9 +26,9 @@ import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.
 // import * as iconsi from "react-icons/io5";
 
 import projectApi from "../../../../api/projectApi";
-import fileApi from "../../../../api/fileApi";
 
 import { selectFile } from "../../../../redux/teamSlice";
+import fileApi from "../../../../api/fileApi";
 
 const TYPE_DIRECTORY = "1";
 const TYPE_FILE = "2";
@@ -65,6 +65,7 @@ const Directory = (props) => {
     selectedFileName,
     selectedFileType,
     saveFileContent,
+    goCodeShare,
   } = props;
 
   const [filesDirectories, setFilesDirectories] = useState({});
@@ -344,10 +345,7 @@ const Directory = (props) => {
   return (
     <React.Fragment>
       <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
-        <div
-          className="flex justify-between items-center"
-          style={{ padding: 15 }}
-        >
+        <div className="justify-between items-center" style={{ padding: 15 }}>
           <div>
             <div className="text-xl font-bold text-white">Directory</div>
           </div>
@@ -373,6 +371,15 @@ const Directory = (props) => {
               <div className="text-xs" onClick={saveHandler}>
                 💾
               </div>
+            </IcSpan>
+            <IcSpan
+              style={
+                selectedFilePath.includes(".py")
+                  ? {}
+                  : { pointerEvents: "none", opacity: 0.3 }
+              }
+            >
+              <div onClick={goCodeShare}>👥</div>
             </IcSpan>
           </div>
         </div>
