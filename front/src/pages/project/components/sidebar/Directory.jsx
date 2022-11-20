@@ -99,7 +99,16 @@ const Directory = (props) => {
   useEffect(() => {
     projectApi
       .getAllFiles(teamSeq)
-      .then((res) => setFilesDirectories(res.data))
+      .then((res) => {
+        setFilesDirectories(res.data);
+        console.log("res:", res);
+        const payloadData = {
+          type: res.data.type,
+          name: res.data.name,
+          path: res.data.id,
+        };
+        dispatch(selectFile(payloadData));
+      })
       .catch(console.error);
   }, [dispatch, teamSeq]);
 
@@ -393,17 +402,16 @@ const Directory = (props) => {
 
       <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
         <div className="justify-between items-center" style={{ padding: 15 }}>
-          <div>
+          <div className="flex items-center gap-4">
             <div className="text-xl font-bold text-white">Directory</div>
-          </div>
-          <div className="mt-1 flex items-center">
-            <IcSpan>
-              <IcNewFile alt="IcNewFile" onClick={createFileHandler} />
-            </IcSpan>
-            <IcSpan>
-              <IcNewDir alt="IcNewDir" onClick={createDirectoryHandler} />
-            </IcSpan>
-            {/* <IcSpan>
+            <div className="mt-1 flex items-center">
+              <IcSpan>
+                <IcNewFile alt="IcNewFile" onClick={createFileHandler} />
+              </IcSpan>
+              <IcSpan>
+                <IcNewDir alt="IcNewDir" onClick={createDirectoryHandler} />
+              </IcSpan>
+              {/* <IcSpan>
               <BsPencilFill
                 className="h-[16px] text-primary_-2_dark"
                 onClick={renameHandler}
@@ -414,20 +422,21 @@ const Directory = (props) => {
                 ⌫
               </div>
             </IcSpan> */}
-            <IcSpan>
-              <div className="text-xs" onClick={saveHandler}>
-                💾
-              </div>
-            </IcSpan>
-            <IcSpan
-              style={
-                selectedFilePath.includes(".py")
-                  ? {}
-                  : { pointerEvents: "none", opacity: 0.3 }
-              }
-            >
-              <div onClick={goCodeShare}>👥</div>
-            </IcSpan>
+              <IcSpan>
+                <div className="text-xs" onClick={saveHandler}>
+                  💾
+                </div>
+              </IcSpan>
+              <IcSpan
+                style={
+                  selectedFilePath.includes(".py")
+                    ? {}
+                    : { pointerEvents: "none", opacity: 0.3 }
+                }
+              >
+                <div onClick={goCodeShare}>👥</div>
+              </IcSpan>
+            </div>
           </div>
         </div>
 
@@ -436,9 +445,10 @@ const Directory = (props) => {
 
         <div className="text-xs" style={{ padding: 15 }}>
           <div className="text-sm flex ml-0.5 mb-2">
-            {/* <div>👉</div> */}
             <TiArrowRightThick className="text-point_yellow" />
-            <div className="ml-3 break-all">{selectedFilePath}</div>
+            <div className="ml-3 break-all">
+              {selectedFilePath?.split("/").slice(1).join("/")}
+            </div>
           </div>
           {/* 디렉터리 파일, 폴더 모음 */}
           <TreeView
