@@ -9,34 +9,29 @@ const GitContainer = styled.div`
   height: 100%;
 `;
 
-const Git = (
-  teamSeq = 12
-  // propAddress = "/home/ubuntu/crow_data/12/Medici_study/Medici_study/.git/objects/90"
-) => {
+const Git = (props) => {
   const [repoBranch, setRepoBranch] = useState([]);
   const [localBranch, setLocalBranch] = useState([]);
   const [commitMessage, setCommitMessage] = useState("");
   const [newBranchName, setNewBranchName] = useState("");
   const [callBell, setCallBell] = useState(0);
-  const nowAddress = "/home/ubuntu/crow_data/12/Medici_study/Medici_study/";
-  const nowBranch = "";
+  const [nowBranch, setNowBranch] = useState("");
+  const { selectedFilePath, teamSeq, mySeq } = props;
   // const seq = useSelector((state) => state.user.value.mySeq);
-  const seq = 4;
 
   useEffect(() => {
-    // console.log(nowAddress);
     const body = {
-      gitPath: nowAddress,
+      gitPath: selectedFilePath,
     };
-    gitApi.gitBranch(2, body).then((res) => {
+    gitApi.gitBranch(teamSeq, 2, body).then((res) => {
       // console.log("repo: ", res.data);
       setRepoBranch(() => res.data);
     });
-    gitApi.gitBranch(1, body).then((res) => {
+    gitApi.gitBranch(teamSeq, 1, body).then((res) => {
       // console.log("local: ", res.data);
       setLocalBranch(() => res.data);
     });
-  }, [nowAddress, callBell]);
+  }, [callBell]);
 
   const changeCommit = (e) => {
     setCommitMessage(() => e.target.value);
@@ -44,18 +39,21 @@ const Git = (
 
   const changeBranch = (event) => {
     const ChangingBranch = event.target.textContent;
-    console.log("click: ", ChangingBranch);
-    const pureBranch = ChangingBranch.split(" ")[0].replaceAll("origin/", "");
-    console.log(pureBranch);
+    const pureBranch = ChangingBranch.replaceAll(" ", "").replace(
+      "origin/",
+      ""
+    );
+    // console.log("click: ", pureBranch);
     const gitData = {
-      gitPath: nowAddress,
       branchName: pureBranch,
     };
+    // console.log(gitData);
     gitApi
-      .gitSwitch(1, gitData)
+      .gitSwitch(teamSeq, 1, gitData)
       .then(() => {
         console.log("깃 스위치에 성공했습니다");
         setCallBell((prev) => prev + 1);
+        setNowBranch(() => pureBranch);
       })
       .catch((err) => console.error(err));
   };
@@ -67,40 +65,52 @@ const Git = (
   const newBranch = () => {
     console.log("new branch: ", newBranchName);
     const gitData = {
-      gitPath: nowAddress,
       branchName: newBranchName,
     };
     gitApi
-      .gitSwitch(2, gitData)
+      .gitSwitch(teamSeq, 2, gitData)
       .then(() => {
         console.log("새로운 브랜치를 생성했습니다.");
         setCallBell((prev) => prev + 1);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        alert("잘못된 이름입니다.");
+      });
     setNewBranchName("");
   };
 
-  const justCommit = () => {
+  const justCommit = async () => {
     const body = {
       message: commitMessage,
-      gitPath: nowAddress,
+      // gitPath: selectedFilePath,
       filePath: "all",
     };
-    gitApi.gitCommit(body).then((res) => {
-      console.log(res.data);
-    });
+    console.log(body);
+    try {
+      const res = await gitApi.gitCommit(teamSeq, body);
+      console.log(res);
+      setCommitMessage(() => "");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const commitAndPush = () => {
     const body = {
       message: commitMessage,
-      gitPath: nowAddress,
+      // gitPath: selectedFilePath,
+      teamSeq: teamSeq,
       filePath: "all",
       branchName: nowBranch,
     };
-    gitApi.gitPush(seq, body).then((res) => {
-      console.log(res.data);
-    });
+    gitApi
+      .gitPush(mySeq, body)
+      .then((res) => {
+        console.log(res.data);
+        setCommitMessage("");
+      })
+      .catch((err) => console.error(err));
   };
 
   return (
