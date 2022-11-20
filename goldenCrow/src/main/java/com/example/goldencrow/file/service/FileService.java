@@ -252,7 +252,7 @@ public class FileService {
             }
         } catch (Exception e) {
             serviceRes.put("result", NO_SUCH);
-            serviceRes.put("error", e.getMessage());
+            serviceRes.put("fileContent", e.getMessage());
             return serviceRes;
         }
         serviceRes.put("result", SUCCESS);
