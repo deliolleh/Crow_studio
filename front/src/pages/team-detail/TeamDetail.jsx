@@ -101,7 +101,7 @@ const TeamDetail = () => {
       return { ...prev, teamName: resTeamName };
     });
 
-  const openSearchInputHandler = () => setIsSearch(true);
+  // const openSearchInputHandler = () => setIsSearch(true);
   const closeSearchInputHandler = () => setIsSearch(false);
   const searchUserChangeHandler = (e) => setSearchUserName(e.target.value);
   const submitSearchUserHandler = (e) => {
