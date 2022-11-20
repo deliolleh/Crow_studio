@@ -23,6 +23,15 @@ import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_fil
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
 // import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
+import {
+  Menu,
+  Item,
+  Separator,
+  Submenu,
+  useContextMenu,
+} from "react-contexify";
+import "react-contexify/dist/ReactContexify.css";
+
 // import * as iconsi from "react-icons/io5";
 
 import projectApi from "../../../../api/projectApi";
@@ -32,6 +41,8 @@ import fileApi from "../../../../api/fileApi";
 
 const TYPE_DIRECTORY = "1";
 const TYPE_FILE = "2";
+
+const MENU_ID = "menu-id";
 
 // filePath를 받아 확장자가 무엇인지 확인하고 해당 파일 타입을 리턴
 const getFileType = (filePath) => {
@@ -69,6 +80,21 @@ const Directory = (props) => {
   } = props;
 
   const [filesDirectories, setFilesDirectories] = useState({});
+
+  const { show } = useContextMenu({
+    id: MENU_ID,
+  });
+
+  const handleItemClick = ({ event, props, triggerEvent, data }) => {
+    console.log(event, props, triggerEvent, data);
+  };
+
+  const displayMenu = (e) => {
+    show({
+      event: e,
+    });
+    return e;
+  };
 
   useEffect(() => {
     projectApi
@@ -124,7 +150,8 @@ const Directory = (props) => {
   };
 
   // 이름 변경
-  const renameHandler = async () => {
+  const renameHandler = async (e) => {
+    console.log("e:", e);
     const oldFileName = selectedFilePath.split("/").slice(-1)[0];
     const newName = prompt("변경할 이름 입력", oldFileName);
     if (newName === oldFileName) {
@@ -179,6 +206,12 @@ const Directory = (props) => {
 
   // 노드 선택
   const nodeSelectHandler = (e, nodeIds) => {
+    // e.target.click();
+    // e.preventDefault();
+    console.log("e:", e);
+    console.log("nodeIds:", nodeIds);
+    // displayMenu(e);
+    // treeItemContextMenuHandler(e);
     const payloadData = {
       type: getFileType(nodeIds),
       name: getFileName(nodeIds),
@@ -304,8 +337,10 @@ const Directory = (props) => {
   }
 
   // const treeItemClickHandler = (e) => console.log(e);
-  const treeItemContextMenuHandler = (e) => {
+  const treeItemContextMenuHandler = (e, nodeIds) => {
     e.preventDefault();
+    console.log("e:", e);
+    displayMenu(e);
   };
 
   // 트리 생성 with 스타일
@@ -344,6 +379,25 @@ const Directory = (props) => {
 
   return (
     <React.Fragment>
+      {/* Context Menu */}
+      <div>
+        {/* just display the menu on right click */}
+        <div onContextMenu={show}>Right click inside the box</div>
+        {/* run custom logic then display the menu */}
+        <div onContextMenu={displayMenu}>Right click inside the box</div>
+
+        <Menu
+          id={MENU_ID}
+          // disableBoundariesCheck={false}
+          className="contexify-crow"
+        >
+          <Item onClick={renameHandler}>
+            이름 변경 <BsPencilFill className="ml-1" />
+          </Item>
+          <Item onClick={deleteHandler}>삭제 ⌫</Item>
+        </Menu>
+      </div>
+
       <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
         <div className="justify-between items-center" style={{ padding: 15 }}>
           <div>
@@ -356,7 +410,7 @@ const Directory = (props) => {
             <IcSpan>
               <IcNewDir alt="IcNewDir" onClick={createDirectoryHandler} />
             </IcSpan>
-            <IcSpan>
+            {/* <IcSpan>
               <BsPencilFill
                 className="h-[16px] text-primary_-2_dark"
                 onClick={renameHandler}
@@ -366,7 +420,7 @@ const Directory = (props) => {
               <div className="text-xs" onClick={deleteHandler}>
                 ⌫
               </div>
-            </IcSpan>
+            </IcSpan> */}
             <IcSpan>
               <div className="text-xs" onClick={saveHandler}>
                 💾
@@ -402,6 +456,7 @@ const Directory = (props) => {
             defaultEndIcon={<div style={{ width: 24 }} />}
             sx={{ flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
             onNodeSelect={nodeSelectHandler}
+            // onContextMenu={(e) => e.target.click()}
           >
             {renderTree(filesDirectories)}
           </TreeView>
