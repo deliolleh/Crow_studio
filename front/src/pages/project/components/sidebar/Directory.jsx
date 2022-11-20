@@ -380,23 +380,16 @@ const Directory = (props) => {
   return (
     <React.Fragment>
       {/* Context Menu */}
-      <div>
-        {/* just display the menu on right click */}
-        <div onContextMenu={show}>Right click inside the box</div>
-        {/* run custom logic then display the menu */}
-        <div onContextMenu={displayMenu}>Right click inside the box</div>
-
-        <Menu
-          id={MENU_ID}
-          // disableBoundariesCheck={false}
-          className="contexify-crow"
-        >
-          <Item onClick={renameHandler}>
-            이름 변경 <BsPencilFill className="ml-1" />
-          </Item>
-          <Item onClick={deleteHandler}>삭제 ⌫</Item>
-        </Menu>
-      </div>
+      <Menu
+        id={MENU_ID}
+        // disableBoundariesCheck={false}
+        className="contexify-crow"
+      >
+        <Item onClick={renameHandler}>
+          이름 변경 <BsPencilFill className="ml-1" />
+        </Item>
+        <Item onClick={deleteHandler}>삭제 ⌫</Item>
+      </Menu>
 
       <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
         <div className="justify-between items-center" style={{ padding: 15 }}>
