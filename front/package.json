@@ -22,7 +22,6 @@
     "monaco-editor": "^0.34.1",
     "net": "^1.0.2",
     "react": "^18.2.0",
-    "react-arborist": "^2.1.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.6.0",
     "react-lottie": "^1.2.3",
