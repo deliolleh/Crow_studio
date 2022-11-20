@@ -5,6 +5,8 @@ import Editor from "@monaco-editor/react";
 import styled from "styled-components";
 import SplitPane from "react-split-pane";
 
+import { TiArrowRightThick } from "react-icons/ti";
+
 import { getTeam } from "../../redux/teamSlice";
 
 import fileApi from "../../api/fileApi";
@@ -262,18 +264,26 @@ const Project = () => {
               ref={editorheightRef}
               onDragFinished={checkSize}
             >
-              <Editor
-                style={{
-                  overflow: "auto",
-                }}
-                height={editorHeight}
-                theme="vs-dark"
-                defaultLanguage="python"
-                onMount={(editor) => {
-                  editorRef.current = editor;
-                }}
-                options={editorOptions}
-              />
+              <div className="w-full">
+                <div className="text-sm flex items-center bg-component_item_bg_dark p-1 rounded-lg mb-1.5">
+                  <TiArrowRightThick className="text-point_yellow" />
+                  <div className="ml-2 break-all">
+                    {selectedFilePath?.split("/").slice(1).join("/")}
+                  </div>
+                </div>
+                <Editor
+                  style={{
+                    overflow: "auto",
+                  }}
+                  height={editorHeight}
+                  theme="vs-dark"
+                  defaultLanguage="python"
+                  onMount={(editor) => {
+                    editorRef.current = editor;
+                  }}
+                  options={editorOptions}
+                />
+              </div>
               <ConsoleTerminal
                 teamSeq={teamSeq}
                 selectedFilePath={selectedFilePath}
