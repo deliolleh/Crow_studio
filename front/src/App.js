@@ -12,12 +12,11 @@ import WithLoading from "./components/WithLoading";
 import Intro from "./pages/intro/Intro";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
-import Main from "./pages/main/Main";
 import Mypage from "./pages/mypage/Mypage";
 import Teams from "./pages/teams/Teams";
 import TeamCreate from "./pages/team-create/TeamCreate";
 import TeamDetail from "./pages/team-detail/TeamDetail";
-import TestMain from "./pages/test-main/TestMain";
+import Project from "./pages/project/Project";
 import NotFound from "./pages/not-found/NotFound";
 import YMonaco3 from "./pages/code-share/YMonaco3";
 import Forbidden from "./pages/forbidden/Forbidden";
@@ -49,14 +48,6 @@ const router = createBrowserRouter([
           <Signup />
         </WithLoading>
       </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/main",
-    element: (
-      <WithLoading>
-        <Main />
-      </WithLoading>
     ),
   },
   {
@@ -101,7 +92,7 @@ const router = createBrowserRouter([
     path: "/project/:teamSeq",
     element: (
       <WithLoading>
-        <TestMain />
+        <Project />
       </WithLoading>
     ),
   },
