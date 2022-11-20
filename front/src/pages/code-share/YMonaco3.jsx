@@ -36,6 +36,12 @@ const YMonaco3 = () => {
   useEffect(() => {
     window.addEventListener("load", link);
     if (tick < 10) {
+      if (
+        editorRef.current !== null &&
+        !editorRef?.current.getModel().getValue()
+      ) {
+        editorRef.current.getModel().setValue(data);
+      }
       setTick((prev) => prev + 1);
     }
 
@@ -44,14 +50,7 @@ const YMonaco3 = () => {
     };
   });
 
-  useEffect(() => {
-    if (
-      editorRef.current !== null &&
-      !editorRef?.current.getModel().getValue()
-    ) {
-      editorRef.current.getModel().setValue(data);
-    }
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <React.Fragment>
