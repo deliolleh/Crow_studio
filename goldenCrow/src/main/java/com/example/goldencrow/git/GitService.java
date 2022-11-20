@@ -41,7 +41,7 @@ public class GitService {
      * @param projectService project를 관리하는 service
      * @param userRepository user Table에 접속하는 Repository
      */
-    public GitService(ProjectService projectService, UserRepository userRepository,FileRepository fileRepository) {
+    public GitService(ProjectService projectService, UserRepository userRepository, FileRepository fileRepository) {
         this.projectService = projectService;
         this.userRepository = userRepository;
         this.fileRepository = fileRepository;
@@ -75,7 +75,8 @@ public class GitService {
 
     /**
      * gitPath 만들어주는 함수
-     * @param teamSeq
+     *
+     * @param teamSeq gitPath를 만들 팀의 Sequence
      * @return gitPath
      */
     public String getGitPath(Long teamSeq) {
@@ -87,8 +88,7 @@ public class GitService {
 
         for (FileEntity teamFile : teamFiles) {
             if (teamFile.getFileTitle().equals(".git")) {
-                System.out.println("깃 패스 제대로 인식됨!");
-                String gitPath = teamFile.getFilePath().replace("/.git","");
+                String gitPath = teamFile.getFilePath().replace("/.git", "");
                 return gitPath;
             }
         }
@@ -138,7 +138,7 @@ public class GitService {
         }
 
         // 프로젝트 이름 디렉토리 만들기
-        String pjt = projectService.createDirService(newFilePath+"/", projectName);
+        String pjt = projectService.createDirService(newFilePath + "/", projectName);
 
         if (pjt.equals("2")) {
             serviceRes.put("result", WRONG);
@@ -174,8 +174,8 @@ public class GitService {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
-        
-        projectService.saveFilesInDIrService(pjt+"/",teamSeq);
+
+        projectService.saveFilesInDIrService(pjt + "/", teamSeq);
         serviceRes.put("result", SUCCESS);
         return serviceRes;
 
@@ -220,7 +220,7 @@ public class GitService {
      * @param type       switch할 branch의 종류 (1 : 존재하는 브랜치로 이동, 2 : 브랜치를 새로 생성 후 이동)
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> gitSwitchService( String branchName, Integer type, Long teamSeq) {
+    public Map<String, String> gitSwitchService(String branchName, Integer type, Long teamSeq) {
         Map<String, String> serviceRes = new HashMap<>();
         String gitPath = getGitPath(teamSeq);
 
@@ -254,7 +254,7 @@ public class GitService {
         }
 
         String message = msg.toString();
-        serviceRes.put("result",SUCCESS);
+        serviceRes.put("result", SUCCESS);
         // 성공 여부 판단
         serviceRes.put("message", message);
         return serviceRes;
@@ -263,7 +263,7 @@ public class GitService {
     /**
      * Git add를 처리하는 내부 로직
      *
-     * @param gitPath 명령어를 수행할 디렉토리
+     * @param gitPath  명령어를 수행할 디렉토리
      * @param filePath add할 파일 경로 (특정하지 않으면 all)
      * @return 성패에 따른 String 반환
      */
@@ -310,13 +310,13 @@ public class GitService {
      * Git add 후 성공한다면 Git commit
      *
      * @param message  commit message
-     * @param teamSeq 커밋할 팀 Seq
+     * @param teamSeq  커밋할 팀 Seq
      * @param filePath add할 파일 경로 (특정하지 않으면 all)
      * @return 성패에 따른 result 반환
      */
     public Map<String, String> gitCommitService(String message, Long teamSeq, String filePath) {
         Map<String, String> serviceRes = new HashMap<>();
-        serviceRes.put("message","");
+        serviceRes.put("message", "");
         String gitPath = getGitPath(teamSeq);
         // git add 로직 수행
         String gitAddCheck = gitAddService(gitPath, filePath);
@@ -356,8 +356,8 @@ public class GitService {
         String message2 = msg.toString();
 
         // 성공 여부 판단
-        serviceRes.put("result",SUCCESS);
-        serviceRes.put("message",message2);
+        serviceRes.put("result", SUCCESS);
+        serviceRes.put("message", message2);
         return serviceRes;
     }
 
@@ -375,7 +375,7 @@ public class GitService {
     public Map<String, String> gitPushService(String branchName, String message, Long teamSeq, String filePath, Long userSeq) {
         Map<String, String> serviceRes = new HashMap<>();
         String gitPath = getGitPath(teamSeq);
-        serviceRes.put("message","");
+        serviceRes.put("message", "");
         // commit 로직 수행
         Map<String, String> gitCommitCheck = gitCommitService(message, teamSeq, filePath);
         if (!gitCommitCheck.get("result").equals(SUCCESS)) {
@@ -472,7 +472,6 @@ public class GitService {
             Process getBranch = command.start();
             BufferedReader branch = new BufferedReader(new InputStreamReader(getBranch.getInputStream()));
             while ((read = branch.readLine()) != null) {
-                System.out.println(read);
                 branches.add(read.trim());
             }
             getBranch.waitFor();
@@ -527,8 +526,8 @@ public class GitService {
      * 푸쉬를 하기 위한 새로운 Url을 만들어주는 함수(만들기만 하고 세팅하진 않음!)
      *
      * @param basicPath 기존 Git Info Url
-     * @param email 유저의 Git Id
-     * @param pass 유저의 Git token
+     * @param email     유저의 Git Id
+     * @param pass      유저의 Git token
      * @return newUrl Git push /pull 할 새로운 Git Info Url
      */
     public String newRemoteUrlService(String basicPath, String email, String pass) {
@@ -595,7 +594,8 @@ public class GitService {
 
     /**
      * 바뀌었던 깃 Url을 기존 상태로 원위치 처리하는 내부 로직
-     * @param oldUrl 원래 팀 Git Info Url
+     *
+     * @param oldUrl  원래 팀 Git Info Url
      * @param gitPath 깃 명령어가 실행될 디렉토리
      * @return 성패에 따른 result String 반환
      */

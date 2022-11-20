@@ -222,11 +222,9 @@ public class TeamService {
 
             // jwt가 인증하는 사용자의 UserEntity를 추출
             Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
-            System.out.println("user ??: "+userEntityOptional);
             // 해당하는 사용자가 존재하는지 확인
             if (!userEntityOptional.isPresent()) {
                 // 해당하는 사용자가 없음
-                System.out.println("사용자가 업서");
                 serviceRes.put("result", NO_SUCH);
                 return serviceRes;
             }
@@ -266,7 +264,6 @@ public class TeamService {
 
                 } else {
                     // 모든 경우의 프로젝트 생성 실패
-                    System.out.println("깃 아니고 플젝 생성 실패 "+projectCreateResult);
 
                     // 등록되었던 팀을 삭제
                     // 해당 팀에 연결된 멤버도 자동으로 삭제
@@ -291,8 +288,6 @@ public class TeamService {
                     serviceRes.put("teamSeq", String.valueOf(teamSeq));
                 } else {
                     // 모든 경우의 프로젝트 생성 실패
-                    System.out.println("깃이고 생성 실패 "+gitCloneResult);
-
                     // 등록되었던 팀을 삭제
                     // 해당 팀에 연결된 멤버도 자동으로 삭제
                     teamRepository.delete(teamEntity);
@@ -300,7 +295,6 @@ public class TeamService {
                     if (gitCloneResult.equals(NO_PER)) {
                         serviceRes.put("result", NO_PER);
                     } else if (gitCloneResult.equals(NO_SUCH)) {
-                        System.out.println("깃 클론에서 노서치인것..");
                         serviceRes.put("result", NO_SUCH);
                     } else {
                         serviceRes.put("result", WRONG);

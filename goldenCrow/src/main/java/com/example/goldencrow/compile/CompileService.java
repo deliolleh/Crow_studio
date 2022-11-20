@@ -34,7 +34,6 @@ public class CompileService {
      * @return 명령어 수행 성공 시 결과 문자열 반환, 성패에 따른 result 반환
      */
     public String resultStringService(String[] cmd) {
-        System.out.println("명령어 실행 !");
         try {
             StringBuffer sb = new StringBuffer();
             Process p = Runtime.getRuntime().exec(cmd);
@@ -49,7 +48,6 @@ public class CompileService {
             p.waitFor();
             in.close();
             p.destroy();
-            System.out.println(result);
             return result.trim();
         } catch (IOException | InterruptedException e) {
             return e.getMessage();
@@ -189,7 +187,6 @@ public class CompileService {
                         + " 2> " + outfilePath};
             }
             // 결과 문자열
-            System.out.println(Arrays.toString(command));
             String response = resultStringService(command);
             // 에러 메세지 파일에서 읽어오기
             Map<String, String> messageList = fileService.readFileService(outfilePath);
@@ -220,9 +217,7 @@ public class CompileService {
             // 도커파일이 있다면 생성하지 않고 넘어가기
             String[] dockerfileExist = {"/bin/sh", "-c", "[ -f ", absolutePath + "/Dockerfile",
                     "]", "&& echo \"dockerfile\""};
-            System.out.println(Arrays.toString(dockerfileExist));
             String fileExistResult = resultStringService(dockerfileExist);
-            System.out.println(fileExistResult);
             if (fileExistResult.isEmpty()) {
                 // 도커파일 추가 로직
                 String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), typeNum);
