@@ -342,12 +342,12 @@ const TeamDetail = () => {
             </div>
 
             {/* 팀 깃 주소 */}
-            <div className="flex items-center mb-2 md:w-full w-[285px] h-fit bg-component_item_bg_dark rounded-md">
-              <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
+            <div className="flex mb-2 md:w-full w-[285px] bg-component_item_bg_dark rounded-md">
+              <div className="md:w-48 w-32 min-w-[128px] text-white font-bold bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
                 깃
               </div>
               <div className="flex">
-                <div className="text-white text-sm p-2">
+                <div className="text-white text-sm break-all p-2">
                   {teamGit ? teamGit : "-"}
                 </div>
               </div>

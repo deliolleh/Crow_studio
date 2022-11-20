@@ -129,7 +129,7 @@ const Api = () => {
                 onChange={(e) => update("request", e)}
                 cols="25"
                 rows="6"
-                placeholder="{ key: value }"
+                placeholder='{ "key": "value" }'
                 className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5"
               ></textarea>
               <div className="mb-2">Header</div>
@@ -140,7 +140,7 @@ const Api = () => {
                   onChange={(e) => update("header", e)}
                   cols="25"
                   rows="6"
-                  placeholder="{ key: value } // Content-Type, Authorization, etc..."
+                  placeholder='{ "key": "value" } // Content-Type, Authorization, etc...'
                   className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
                 ></textarea>
                 <button
@@ -154,7 +154,7 @@ const Api = () => {
                 <div className="mt-5">
                   <div className="flex">
                     <div className="mr-4">소요시간 :</div>
-                    <div className="text-point_yellow">{time / 100}</div>
+                    <div className="text-point_yellow">{time / 1000}</div>
                     <div className="ml-1">초</div>
                   </div>
                   <div className="flex mb-5">
