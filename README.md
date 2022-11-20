@@ -106,6 +106,11 @@
 - 변수명 추천
   ![변수명 추천](asset/%EB%B3%80%EC%88%98%EB%AA%85%20%EC%B6%94%EC%B2%9C_%EA%B2%B0%EA%B3%BC%EB%AC%BC%20%ED%81%B4%EB%A6%AD%20%EC%8B%9C%20%EB%B3%B5%EC%82%AC%20%ED%8F%AC%ED%95%A8.gif)
 
+### 환경 세팅
+
+- 환경 세팅
+  ![환경 세팅](asset/%ED%99%98%EA%B2%BD%EC%84%A4%EC%A0%95%20%EC%A0%80%EC%9E%A5.gif)
+
 ### 포맷팅, 린트
 
 - 포맷팅& 린트
