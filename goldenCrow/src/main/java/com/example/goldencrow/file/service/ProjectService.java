@@ -48,6 +48,7 @@ public class ProjectService {
         String pjt = path + name;
         File pjtDir = new File(pjt);
         if (pjtDir.mkdir()) {
+            out.println("여기에 폴더 만들어요!"+pjt);
             return pjt;
         }
         return DUPLICATE;
@@ -85,6 +86,9 @@ public class ProjectService {
             for (int i = 0; i < files.length; i++) {
                 File dir = files[i];
                 String name = names[i];
+                if (name.equals("Dockerfile")) {
+                    continue;
+                }
                 String thisPath = dir.getPath();
                 thisPath = thisPath.replace(BASE_URL, "");
                 Map<Object, Object> children = new HashMap<>();
@@ -157,18 +161,13 @@ public class ProjectService {
      */
     public Map<String, String> createProjectService(String path, int type, String projectName, Long teamSeq) {
         Map<String, String> serviceRes = new HashMap<>();
-        String teamSeqFile = createDirService(BASE_URL,String.valueOf(teamSeq));
-
-        if (teamSeqFile.equals(DUPLICATE)) {
-            serviceRes.put("result", DUPLICATE);
-            return serviceRes;
-        }
-        String teamFile = createDirService(teamSeqFile, projectName);
+        String teamFile = createDirService(BASE_URL,String.valueOf(teamSeq));
 
         if (teamFile.equals(DUPLICATE)) {
             serviceRes.put("result", DUPLICATE);
             return serviceRes;
         }
+
         // 기본 프로젝트 구성, 기본 파일 생성
         if (type == 2) {
             ProcessBuilder djangoStarter = new ProcessBuilder();
@@ -201,7 +200,7 @@ public class ProjectService {
             serviceRes.put("result", SUCCESS);
             return serviceRes;
         } else if (type == 1) {
-            String pjt = createDirService(teamFile, projectName);
+            String pjt = createDirService(teamFile+"/", projectName);
             if (pjt.equals(DUPLICATE)) {
                 serviceRes.put("result", DUPLICATE);
                 return serviceRes;
@@ -222,7 +221,7 @@ public class ProjectService {
                 return serviceRes;
             }
         } else if (type == 3) {
-            String pjt = createDirService(teamFile, projectName);
+            String pjt = createDirService(teamFile+"/", projectName);
             if (pjt.equals(DUPLICATE)) {
                 serviceRes.put("result", DUPLICATE);
                 return serviceRes;
@@ -251,12 +250,12 @@ public class ProjectService {
             serviceRes.put("result", SUCCESS);
             return serviceRes;
         } else if (type == 4) {
-            String pjt = createDirService(teamFile, projectName);
+            String pjt = createDirService(teamFile + "/", projectName);
             if (pjt.equals(DUPLICATE)) {
                 serviceRes.put("result", DUPLICATE);
                 return serviceRes;
             }
-            String pjt1 = createDirService(pjt, projectName);
+            String pjt1 = createDirService(pjt+"/", projectName);
             File file = new File(pjt1 + "/main.py");
 
             // main.py에 저장할 내용

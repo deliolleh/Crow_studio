@@ -1,5 +1,6 @@
 package com.example.goldencrow.compile;
 
+import com.example.goldencrow.file.dto.FileCreateDto;
 import com.example.goldencrow.file.service.FileService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
@@ -110,6 +111,9 @@ public class CompileService {
         } catch (IOException e) {
             return UNKNOWN;
         }
+        FileCreateDto fileCreateDto =
+                new FileCreateDto("Dockerfile", absolutePath + "/Dockerfile", teamSeq);
+        fileService.insertFileService(fileCreateDto);
         return SUCCESS;
     }
 
@@ -189,7 +193,7 @@ public class CompileService {
             String response = resultStringService(command);
             // 에러 메세지 파일에서 읽어오기
             Map<String, String> messageList = fileService.readFileService(outfilePath);
-            String message = messageList.get("error");
+            String message = messageList.get("fileContent");
             String pathChangemessage = message;
             if (message.contains(BASE_URL)) {
                 pathChangemessage = message.replaceAll(BASE_URL + teamSeq + "/", "");
@@ -213,11 +217,19 @@ public class CompileService {
         }
         // Django, fastapi, flask 프로젝트일 때
         else {
-            // 도커파일 추가 로직
-            String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), typeNum);
-            if (!Objects.equals(dockerfile, "SUCCESS")) {
-                serviceRes.put("result", dockerfile);
-                return serviceRes;
+            // 도커파일이 있다면 생성하지 않고 넘어가기
+            String[] dockerfileExist = {"/bin/sh", "-c", "[ -f ", absolutePath + "/Dockerfile",
+                    "]", "&& echo \"dockerfile\""};
+            System.out.println(Arrays.toString(dockerfileExist));
+            String fileExistResult = resultStringService(dockerfileExist);
+            System.out.println(fileExistResult);
+            if (fileExistResult.isEmpty()) {
+                // 도커파일 추가 로직
+                String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), typeNum);
+                if (!Objects.equals(dockerfile, "SUCCESS")) {
+                    serviceRes.put("result", dockerfile);
+                    return serviceRes;
+                }
             }
         }
 
