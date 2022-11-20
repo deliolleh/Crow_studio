@@ -74,6 +74,8 @@ const TestMain = () => {
         console.error("errStatusCode:", errStatusCode);
         if (errStatusCode === 404) {
           navigate("/404", { replace: true });
+        } else if (errStatusCode === 403) {
+          navigate("/403", { replace: true });
         }
       });
   }, [dispatch, teamSeq, navigate]);

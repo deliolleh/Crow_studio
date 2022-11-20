@@ -20,6 +20,7 @@ import TeamDetail from "./pages/team-detail/TeamDetail";
 import TestMain from "./pages/test-main/TestMain";
 import NotFound from "./pages/not-found/NotFound";
 import YMonaco3 from "./pages/code-share/YMonaco3";
+import Forbidden from "./pages/forbidden/Forbidden";
 
 const router = createBrowserRouter([
   {
@@ -111,6 +112,10 @@ const router = createBrowserRouter([
         <YMonaco3 />
       </WithLoading>
     ),
+  },
+  {
+    path: "/403",
+    element: <Forbidden />,
   },
   {
     path: "/404",
