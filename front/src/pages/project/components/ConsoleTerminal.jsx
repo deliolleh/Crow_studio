@@ -93,7 +93,7 @@ const ConsoleTerminal = (props) => {
             value={inputData}
             onChange={inputChangeHandler}
             placeholder="Input here"
-            className="resize-none w-full h-full p-[10px] bg-component_item_bg_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
+            className="resize-none w-full h-full p-[10px] bg-component_item_bg_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple focus:border-none placeholder:text-primary_dark overflow-auto"
             style={{
               fontSize: parseInt(setting.fontSize),
               fontFamily: setting.font,
@@ -109,7 +109,7 @@ const ConsoleTerminal = (props) => {
             </div>
           </div>
           <div
-            className="w-full h-full p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white"
+            className="w-full h-full p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white  overflow-auto"
             style={{
               fontSize: parseInt(setting.fontSize),
               fontFamily: setting.font,
