@@ -215,6 +215,7 @@ public class CompileService {
         else {
             // 도커파일이 있다면 생성하지 않고 넘어가기
             String[] dockerfileExist = {"/bin/sh", "-c", "if ", "[ -f ", absolutePath + "/Dockerfile", " ] ; then echo \"dockerfile\"; else echo \"not\"; fi"};
+            System.out.println(dockerfileExist.toString());
             String fileExistResult = resultStringService(dockerfileExist);
             System.out.println(fileExistResult);
             if (fileExistResult.equals("not")) {
