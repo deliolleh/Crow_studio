@@ -1,4 +1,3 @@
-![logo](asset/%EA%B9%8C%EB%A7%88%EA%B7%80%EA%B3%B5%EB%B0%A9%20%EB%A1%9C%EA%B3%A0.png)
 <img src="asset/%EA%B9%8C%EB%A7%88%EA%B7%80%EA%B3%B5%EB%B0%A9%20%EB%A1%9C%EA%B3%A0.png" width="150" height="auto">
 
 # 까마귀공방
