@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import styled from "styled-components";
 import SplitPane from "react-split-pane";
@@ -20,7 +20,6 @@ import Api from "./components/sidebar/Api";
 import VariableName from "./components/sidebar/VariableName";
 import Settings from "./components/sidebar/Settings";
 import ConsoleTerminal from "./components/ConsoleTerminal";
-import { editor } from "monaco-editor";
 
 const editorOptions = {
   scrollBeyondLastLine: false,
@@ -39,12 +38,15 @@ const TestMain = () => {
   const { selectedFileName, selectedFileType, selectedFilePath } = useSelector(
     (state) => state.team.value
   );
+  const { mySeq } = useSelector((state) => state.user.value);
   const [showComponent, setShowComponent] = useState("Dir");
 
   const editorRef = useRef(null); // 에디터 내용
   const editorheightRef = useRef(); // 에디터 높이
   const [editorHeight, setEditorHeight] = useState();
   const [consoleHeight, setConsoleHeight] = useState("");
+
+  const navigate = useNavigate();
 
   // 초기 팀 정보 가져옴
   useEffect(() => {
@@ -58,7 +60,7 @@ const TestMain = () => {
         try {
           const filePathData = { filePath: selectedFilePath };
           const res = await fileApi.getFileContent(filePathData);
-          editorRef.current.getModel().setValue(res.data);
+          editorRef.current.getModel().setValue(res.data.fileContent);
         } catch (err) {
           console.error(err);
         }
@@ -121,6 +123,19 @@ const TestMain = () => {
     // console.log("consoleHeight: " + consoleHeight);
   };
 
+  // 동시 편집 파트로 이동
+  const goCodeShare = () => {
+    // console.log(editorRef.current.getValue());
+    navigate("/project/code-share", {
+      state: {
+        data: editorRef.current.getValue(),
+        selectedFileName,
+      },
+      target: "_blank",
+      rel: "noopener noreferrer",
+    });
+  };
+
   return (
     <React.Fragment>
       <div className="h-full w-full">
@@ -140,9 +155,16 @@ const TestMain = () => {
                     selectedFileName={selectedFileName}
                     selectedFileType={selectedFileType}
                     saveFileContent={saveFileContentHandler}
+                    goCodeShare={goCodeShare}
                   />
                 )}
-                {showComponent === "Git" && <Git />}
+                {showComponent === "Git" && (
+                  <Git
+                    selectedFilePath={selectedFilePath}
+                    teamSeq={teamSeq}
+                    mySeq={mySeq}
+                  />
+                )}
                 {showComponent === "Team" && <Team />}
                 {showComponent === "Api" && <Api />}
                 {showComponent === "Var" && <VariableName />}
