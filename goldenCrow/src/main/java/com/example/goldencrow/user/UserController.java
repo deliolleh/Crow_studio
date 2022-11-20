@@ -366,7 +366,7 @@ public class UserController {
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
      * @return 조회 성공 시 개인 환경 세팅 정보 반환, 성패에 따른 result 반환
-     * @status 200, 400, 401, 404
+     * @status 200, 400, 401, 403, 404
      */
     @GetMapping("/personal/{teamSeq}")
     public ResponseEntity<SettingsDto> personalGet(@RequestHeader("Authorization") String jwt,
@@ -377,7 +377,10 @@ public class UserController {
 
         switch (result) {
             case SUCCESS:
+            case "NO_VALUE":
                 return new ResponseEntity<>(settingsDtoRes, HttpStatus.OK);
+            case NO_PER:
+                return new ResponseEntity<>(settingsDtoRes, HttpStatus.FORBIDDEN);
             case NO_SUCH:
                 return new ResponseEntity<>(settingsDtoRes, HttpStatus.NOT_FOUND);
             default:
