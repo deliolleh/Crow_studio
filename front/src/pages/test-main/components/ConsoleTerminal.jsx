@@ -1,56 +1,29 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
-import editorApi from "../../../api/editorApi";
 import compileApi from "../../../api/compileApi";
 
 import { BsPlayFill } from "react-icons/bs";
 import { BsStopFill } from "react-icons/bs";
 import { TbTerminal } from "react-icons/tb";
 
-export const MakeEditorData = (
-  number,
-  titlePrefix = "Tab",
-  useTitleCounter = true
-) => {
-  const [fileName, setFileName] = useState("script.js");
-  const [language, setLanguage] = useState("python");
-
-  const lint = () => {
-    // const sendCode = editorRef.current.getValue();
-    const body = {
-      // text: sendCode,
-      text: "",
-    };
-    editorApi
-      .lint(language, body)
-      .then((res) => {
-        console.log(res.data);
-        const data = res.data.data;
-        const index = res.data.index;
-        const length = res.data.data.length;
-        let lintResult = [];
-        for (let i = 0; i < length; i++) {
-          const sentence = `Line ${index[i]}: ${data[i]}`;
-          lintResult.push(sentence);
-        }
-        lintResult.sort();
-        // console.log("lineResult: ", lintResult);
-      })
-      .catch(console.error);
-  };
-};
-
 const ConsoleTerminal = (props) => {
   const { teamName, projectType } = useSelector((state) => state.team.value);
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
 
-  const { teamSeq, selectedFilePath, consoleHeight } = props;
+  const {
+    teamSeq,
+    selectedFilePath,
+    consoleHeight,
+    lintResultList,
+    setLintResultList,
+  } = props;
 
   const changeInputData = (e) => setInputData(e.target.value);
 
   const startCompileHandler = async () => {
+    setLintResultList([]);
     const compileData = {
       type: projectType,
       filePath: selectedFilePath,
@@ -65,6 +38,7 @@ const ConsoleTerminal = (props) => {
   };
 
   const stopCompileHandler = async () => {
+    setLintResultList([]);
     const teamData = { teamSeq, teamName };
     try {
       await compileApi.stopCompile(teamData);
@@ -131,6 +105,8 @@ const ConsoleTerminal = (props) => {
           </div>
           <div className="w-full h-full p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white">
             {outputData}
+            {lintResultList.length > 0 &&
+              lintResultList.map((lintResult) => <div>{lintResult}</div>)}
           </div>
         </div>
       </div>
