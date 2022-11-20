@@ -31,6 +31,9 @@ public class MemberEntity {
     @JoinColumn(name = "teamSeq", referencedColumnName = "teamSeq")
     private TeamEntity team;
 
+    @Column
+    private String settings;
+
     /**
      * 빈 MemberEntity 생성자
      */
@@ -46,5 +49,6 @@ public class MemberEntity {
     public MemberEntity(UserEntity userEntity, TeamEntity teamEntity) {
         this.user = userEntity;
         this.team = teamEntity;
+        this.settings = "";
     }
 }

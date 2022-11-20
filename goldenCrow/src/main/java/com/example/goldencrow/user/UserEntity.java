@@ -32,9 +32,6 @@ public class UserEntity {
     private String userNickname;
 
     @Column
-    private String userSettings;
-
-    @Column
     private String userProfile;
 
     @Column
@@ -58,7 +55,6 @@ public class UserEntity {
     public UserEntity(String userId, String userNickname) {
         this.userId = userId;
         this.userNickname = userNickname;
-        this.userSettings = "";
 
         // userPassword는 service 단에서 encoding을 거쳐 기록
 
