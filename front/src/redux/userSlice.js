@@ -73,7 +73,6 @@ export const updateNickname = createAsyncThunk(
   async (updatedNicknameData, { rejectWithValue }) => {
     try {
       const response = await userApi.updateNickname(updatedNicknameData);
-      console.log("response:", response);
       return response.data;
     } catch (err) {
       if (!err.response) {
@@ -168,6 +167,9 @@ export const userSlice = createSlice({
       })
       .addCase(updateNickname.fulfilled, (state, action) => {
         state.value.myNickname = action.payload.userNickname;
+      })
+      .addCase(updateGitAuth.fulfilled, (state, action) => {
+        state.value.myGitUsername = action.payload.userGitUsername;
       });
   },
 });

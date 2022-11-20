@@ -7,14 +7,14 @@ import editorApi from "../../../../api/editorApi";
 // styled
 const ApiContainer = styled.div`
   border-radius: 0 10px 10px 0;
-  height: 100vh;
+  height: 100%;
 `;
 
 const Api = () => {
   const [uri, setUri] = useState("");
   const [method, setMethod] = useState("");
-  const [request, setRequest] = useState("");
-  const [header, setHeader] = useState("");
+  const [request, setRequest] = useState({});
+  const [header, setHeader] = useState({});
   const [resultActive, setResultActive] = useState(false);
   const [time, setTime] = useState("");
   const [result, setResult] = useState("");
@@ -32,44 +32,33 @@ const Api = () => {
   };
 
   const update = (which, e) => {
-    let jsonVariable = {};
-    let value = e.target.value;
-    value = value.trim().slice(1, -1);
-    const valLIst = value.split(",");
-    valLIst.forEach((li) => {
-      const cut = li.trim();
-      const temp = cut.split(":");
-      const key = temp[0];
-      const value = temp[1];
-      jsonVariable[key] = value;
-    });
+    let jsonVariable = e.target.value;
+    console.log(jsonVariable);
     if (which === "request") {
       setRequest(() => jsonVariable);
     } else {
-      if (!Object.keys(jsonVariable).includes("Content-Type")) {
-        jsonVariable["Content-Type"] = "application/json";
-      }
       setHeader(() => jsonVariable);
     }
-    console.log(request);
-    console.log(header);
   };
 
   const sendApi = () => {
+    const jsonRequest = JSON.parse(request);
+    const jsonHeader = JSON.parse(header);
+    if (jsonHeader["Content-Type"] === undefined) {
+      jsonHeader["Content-Type"] = "application/json";
+    }
     const body = {
       api: uri,
       type: method,
-      request: request,
-      header: header,
+      request: jsonRequest,
+      header: jsonHeader,
     };
-    // console.log(JSON.stringify(body));
+    console.log(body);
     editorApi
       .apiRequest(body)
       .then((res) => {
-        console.log("type", res.data.data, typeof res.data.data);
         setResultActive(() => true);
         setResult(() => JSON.stringify(res.data.data, null, 4));
-        console.log(result);
         setTime(() => res.data.time);
       })
       .catch((err) => console.error(err));
@@ -140,7 +129,7 @@ const Api = () => {
                 onChange={(e) => update("request", e)}
                 cols="25"
                 rows="6"
-                placeholder="{ key: value }"
+                placeholder='{ "key": "value" }'
                 className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5"
               ></textarea>
               <div className="mb-2">Header</div>
@@ -151,12 +140,12 @@ const Api = () => {
                   onChange={(e) => update("header", e)}
                   cols="25"
                   rows="6"
-                  placeholder="{ key: value } // Content-Type, Authorization, etc..."
+                  placeholder='{ "key": "value" } // Content-Type, Authorization, etc...'
                   className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
                 ></textarea>
                 <button
                   onClick={sendApi}
-                  className="h-[26px] w-[45px] rounded-md bg-point_purple text-white"
+                  className="h-[26px] w-[45px] rounded-md bg-point_purple hover:bg-point_purple_-2 text-white"
                 >
                   전송
                 </button>
@@ -165,7 +154,7 @@ const Api = () => {
                 <div className="mt-5">
                   <div className="flex">
                     <div className="mr-4">소요시간 :</div>
-                    <div className="text-point_yellow">{time / 100}</div>
+                    <div className="text-point_yellow">{time / 1000}</div>
                     <div className="ml-1">초</div>
                   </div>
                   <div className="flex mb-5">
