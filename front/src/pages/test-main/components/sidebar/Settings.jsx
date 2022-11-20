@@ -2,7 +2,6 @@ import React, { Fragment, useState } from "react";
 import styled from "styled-components";
 import { Combobox, Transition, Switch } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import userApi from "../../../../api/userApi";
 
 // styled
 const SettingsContainer = styled.div`
@@ -19,26 +18,27 @@ const fonts = [
   { id: 6, name: "Courier" },
 ];
 
-const Settings = ({ verticalSplit, horizontalSplit, com }) => {
+const Settings = ({ setting, saveSetting, setSetting }) => {
   const [query, setQuery] = useState("");
+  const [nowEditorFont, setNowEditorFont] = useState(
+    fonts.filter((font) => font.name === setting.editors.font)[0]
+  );
+  const [nowConsoleFont, setNowConsoleFont] = useState(
+    fonts.filter((font) => font.name === setting.consoles.font)[0]
+  );
 
-  // 에디터 라인
-  // indent: 2, 살릴지 말지 고민해야함
-  // const [editorFontSize, setEditorFontSize] = useState(20);
-  // const [editorFont, setEditorFont] = useState("JetBrains Mono");
-  // const [editorAutoLine, setEditorAutoLine] = useState(true);
-  const [editorSide, setEditorSide] = useState({
-    fontSize: 20,
-    font: fonts[0].name,
-    autoLine: true,
-  });
+  // // 에디터 라인
+  // const [editorSide, setEditorSide] = useState({
+  //   fontSize: setting.editors.fontSize,
+  //   font: setting.editors.font,
+  //   autoLine: true,
+  // });
 
-  // 콘솔 파트
-  const [consoleSide, setConsoleSide] = useState({
-    fontSize: 10,
-    font: "Noto Sans KR",
-    icon: "아이콘그잡채",
-  });
+  // // 콘솔 파트
+  // const [consoleSide, setConsoleSide] = useState({
+  //   fontSize: setting.consoles.fontSize,
+  //   font: setting.consoles.font,
+  // });
 
   const filteredFonts =
     query === ""
@@ -53,52 +53,76 @@ const Settings = ({ verticalSplit, horizontalSplit, com }) => {
   // useState 변경
   const editorChange = (where, e) => {
     if (where === "fontSize") {
-      setEditorSide({ ...editorSide, fontSize: e.target.value });
-      // setEditorFontSize(() => e.target.value);
+      setSetting((prev) => {
+        return {
+          ...prev,
+          editors: {
+            fontSize: e.target.value,
+            font: setting.editors.font,
+            autoLine: setting.editors.autoLine,
+          },
+        };
+      });
+      // setEditorSide({ ...editorSide, fontSize: e.target.value });
     } else if (where === "font") {
-      setEditorSide({ ...editorSide, font: e.name });
-      // setEditorFont(() => e.name);
+      setNowEditorFont(() => fonts.filter((font) => font.name === e.name)[0]);
+      setSetting((prev) => {
+        return {
+          ...prev,
+          editors: {
+            fontSize: setting.editors.fontSize,
+            font: e.name,
+            autoLine: setting.editors.autoLine,
+          },
+        };
+      });
+      // setEditorSide({ ...editorSide, font: e.name });
     } else {
-      setEditorSide({ ...editorSide, autoLine: !editorSide.autoLine });
-      // setEditorAutoLine((prev) => !prev);
+      setSetting((prev) => {
+        return {
+          ...prev,
+          editors: {
+            fontSize: setting.editors.fontSize,
+            font: setting.editors.font,
+            autoLine: setting.editors.autoLine === "on" ? "off" : "on",
+          },
+        };
+      });
+      // setEditorSide({ ...editorSide, autoLine: !editorSide.autoLine });
     }
   };
 
   const consoleChange = (where, e) => {
-    console.log(consoleSide);
+    // console.log(consoleSide);
     if (where === "fontSize") {
-      setConsoleSide({ ...consoleSide, fontSize: e.target.value });
-    } else if (where === "font") {
-      setConsoleSide({ ...consoleSide, font: e.name });
-      console.log(e.name);
+      console.log(e.target.value);
+      setSetting((prev) => {
+        return {
+          ...prev,
+          consoles: {
+            fontSize: e.target.value,
+            font: setting.consoles.font,
+          },
+        };
+      });
+      // setConsoleSide({ ...consoleSide, fontSize: e.target.value });
     } else {
-      setConsoleSide({ ...consoleSide, autoLine: e.target.value });
+      setSetting((prev) => {
+        return {
+          ...prev,
+          consoles: {
+            fontSize: setting.consoles.fontSize,
+            font: e.name,
+          },
+        };
+      });
+      setNowConsoleFont(fonts.filter((font) => font.name === e.name)[0]);
     }
   };
 
-  // 성공
-  const sendSetting = () => {
-    const settingData = {
-      // horizonSplit: horizontalSplit.replace("%", ""),
-      horizonSplit: parseInt(horizontalSplit.replace("%", "")),
-      // verticalSplit: verticalSplit.replace("%", ""),
-      verticalSplit: parseInt(verticalSplit.replace("%", "")),
-      lastTabLeft: [],
-      lastTabRight: [],
-      // lastSideBar: com,
-      lastSideBar: 3,
-      editors: editorSide,
-      consoles: consoleSide,
-    };
-
-    userApi
-      .setPersonalSetting(settingData)
-      .then((res) => {
-        console.log("성공! ", res);
-      })
-      .catch((err) => {
-        console.error("실패! ", err);
-      });
+  // 세팅 저장
+  const trySave = () => {
+    saveSetting();
   };
 
   return (
@@ -126,6 +150,7 @@ const Settings = ({ verticalSplit, horizontalSplit, com }) => {
               type="text"
               placeholder="Editor Font Size"
               onChange={(e) => editorChange("fontSize", e)}
+              value={setting.editors.fontSize}
             />
           </div>
           <div className="pl-1 mt-5">
@@ -134,7 +159,7 @@ const Settings = ({ verticalSplit, horizontalSplit, com }) => {
             </div>
             {/* headless ui combobox */}
             <Combobox
-              defaultValue={fonts[0]}
+              value={nowEditorFont}
               onChange={(e) => editorChange("font", e)}
             >
               <div className="relative mt-1">
@@ -221,30 +246,15 @@ const Settings = ({ verticalSplit, horizontalSplit, com }) => {
               </div>
             </Combobox>
           </div>
-          <div className="pl-1 mt-5">
-            <label
-              className="block text-primary_dark text-sm font-bold mb-2"
-              htmlFor="editorIndent"
-            >
-              에디터 들여쓰기
-            </label>
-            <input
-              className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left appearance-none shadow-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
-              style={{ height: 28, width: 217 }}
-              id="editorIndent"
-              type="text"
-              placeholder="Editor Indent"
-            />
-          </div>
           <div className="pl-1 mt-5 flex items-center">
             <div className="text-primary_dark text-sm font-bold ">
               에디터 자동 줄바꿈
             </div>
             <Switch
-              checked={editorSide.autoLine}
+              checked={setting.editors.autoLine}
               onChange={(e) => editorChange("autoLine", e)}
               className={`${
-                editorSide.autoLine
+                setting.editors.autoLine
                   ? "bg-point_purple"
                   : "bg-component_item_bg_+2_dark"
               }
@@ -254,7 +264,7 @@ const Settings = ({ verticalSplit, horizontalSplit, com }) => {
               <span
                 aria-hidden="true"
                 className={`${
-                  editorSide.autoLine
+                  setting.editors.autoLine
                     ? "translate-x-[20px]"
                     : "translate-x-[0.5px]"
                 }
@@ -276,6 +286,7 @@ const Settings = ({ verticalSplit, horizontalSplit, com }) => {
               type="text"
               placeholder="Console Font Size"
               onChange={(e) => consoleChange("fontSize", e)}
+              value={setting.consoles.fontSize}
             />
           </div>
           <div className="pl-1 mt-5">
@@ -284,7 +295,7 @@ const Settings = ({ verticalSplit, horizontalSplit, com }) => {
             </div>
             {/* headless ui combobox */}
             <Combobox
-              defaultValue={fonts[0]}
+              defaultValue={nowConsoleFont}
               onChange={(e) => consoleChange("font", e)}
             >
               <div className="relative mt-1">
@@ -371,24 +382,9 @@ const Settings = ({ verticalSplit, horizontalSplit, com }) => {
               </div>
             </Combobox>
           </div>
-          <div className="pl-1 mt-5">
-            <label
-              className="block text-primary_dark text-sm font-bold mb-2"
-              htmlFor="consoleIcon"
-            >
-              콘솔 아이콘
-            </label>
-            <input
-              className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left appearance-none shadow-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
-              style={{ height: 28, width: 217 }}
-              id="consoleIcon"
-              type="text"
-              placeholder="Console Icon"
-            />
-          </div>
           <div className="ml-1 my-5">
             <button
-              onClick={sendSetting}
+              onClick={trySave}
               className="h-[26px] w-[60px] rounded-md bg-point_purple hover:bg-point_purple_-2 text-white text-sm font-bold"
             >
               저장하기

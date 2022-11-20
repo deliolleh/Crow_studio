@@ -86,10 +86,10 @@ const Git = (props) => {
       // gitPath: selectedFilePath,
       filePath: "all",
     };
-    console.log(body);
+    // console.log(body);
     try {
       const res = await gitApi.gitCommit(teamSeq, body);
-      console.log(res);
+      // console.log(res);
       setCommitMessage(() => "");
     } catch (err) {
       console.log(err);
@@ -99,7 +99,6 @@ const Git = (props) => {
   const commitAndPush = () => {
     const body = {
       message: commitMessage,
-      // gitPath: selectedFilePath,
       teamSeq: teamSeq,
       filePath: "all",
       branchName: nowBranch,

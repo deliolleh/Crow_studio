@@ -20,16 +20,7 @@ import Api from "./components/sidebar/Api";
 import VariableName from "./components/sidebar/VariableName";
 import Settings from "./components/sidebar/Settings";
 import ConsoleTerminal from "./components/ConsoleTerminal";
-
-const editorOptions = {
-  scrollBeyondLastLine: false,
-  fontSize: "14px",
-  fontFamily: "JetBrains Mono",
-  autoIndent: "advanced",
-  wrappingIndent: "same",
-  automaticLayout: true,
-  wordWrap: true,
-};
+import userApi from "../../api/userApi";
 
 const TestMain = () => {
   const dispatch = useDispatch();
@@ -39,13 +30,38 @@ const TestMain = () => {
     (state) => state.team.value
   );
   const { mySeq } = useSelector((state) => state.user.value);
-  const [showComponent, setShowComponent] = useState("Dir");
+  // const [showComponent, setShowComponent] = useState("Dir");
   const [lintResultList, setLintResultList] = useState([]);
 
   const editorRef = useRef(null); // 에디터 내용
   const editorheightRef = useRef(); // 에디터 높이
   const [editorHeight, setEditorHeight] = useState();
   const [consoleHeight, setConsoleHeight] = useState("");
+
+  const [setting, setSetting] = useState({
+    horizonSplit: 50,
+    lastTab: [],
+    lastSideBar: "Dir",
+    editors: {
+      fontSize: 14,
+      font: "Monospace",
+      autoLine: "on",
+    },
+    consoles: {
+      fontSize: 14,
+      font: "Monospace",
+    },
+  });
+
+  const editorOptions = {
+    scrollBeyondLastLine: false,
+    fontSize: setting.editors.fontSize,
+    fontFamily: setting.editors.font,
+    autoIndent: setting.editors.autoLine === "on" ? "advanced" : "none",
+    wrappingIndent: "same",
+    automaticLayout: true,
+    wordWrap: true,
+  };
 
   const navigate = useNavigate();
 
@@ -61,6 +77,29 @@ const TestMain = () => {
         }
       });
   }, [dispatch, teamSeq, navigate]);
+
+  // 개인 환경 세팅 불러오기
+  useEffect(() => {
+    userApi
+      .getPersonalSetting(teamSeq)
+      .then((res) => {
+        if (res.data.result.includes("SUCCESS")) {
+          setSetting(() => res.data);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [teamSeq]);
+
+  // 개인 환경 세팅 저장
+  const saveSetting = async () => {
+    console.log(JSON.stringify(setting, null, 2));
+    userApi
+      .setPersonalSetting(teamSeq, setting)
+      .then(() => alert("저장되었습니다."))
+      .catch(() => alert("오류가 발생했습니다"));
+  };
 
   // 파일, 폴더 클릭할 때마다 리렌더링, 파일이면 해당 내용 서버에서 받아와 에디터에 출력
   useEffect(() => {
@@ -85,7 +124,10 @@ const TestMain = () => {
 
   // 사이드바 아이콘 눌러서 해당 컴포넌트 보여주기
   const showComponentHandler = (componentName) =>
-    setShowComponent(componentName);
+    // setShowComponent(componentName);
+    setSetting((prev) => {
+      return { ...prev, lastSideBar: componentName };
+    });
 
   // 파일 저장
   const saveFileContentHandler = async () => {
@@ -138,6 +180,11 @@ const TestMain = () => {
   const checkSize = () => {
     // 에디터 높이 변경값 셋
     const tempSize = editorheightRef.current.state.pane1Size;
+    const offsetSize = editorheightRef.current.splitPane.clientHeight;
+    // console.log(editorheightRef.current.splitPane.clientHeight);
+    setSetting((prev) => {
+      return { ...prev, horizonSplit: parseInt((tempSize / offsetSize) * 100) };
+    });
     setEditorHeight(tempSize);
     // console.log(
     //   "editorheightRef.current.state.pane1Size: ",
@@ -152,6 +199,7 @@ const TestMain = () => {
   // 동시 편집 파트로 이동
   const goCodeShare = () => {
     // console.log(editorRef.current.getValue());
+    console.log(selectedFileName);
     navigate("/project/code-share", {
       state: {
         data: editorRef.current.getValue(),
@@ -170,11 +218,11 @@ const TestMain = () => {
           <div className="flex">
             <Sidebar
               clickIcon={showComponentHandler}
-              showComponent={showComponent}
+              showComponent={setting.lastSideBar}
             />
-            {showComponent && (
+            {setting.lastSideBar && (
               <SidebarItems>
-                {showComponent === "Dir" && (
+                {setting.lastSideBar === "Dir" && (
                   <Directory
                     teamSeq={teamSeq}
                     selectedFilePath={selectedFilePath}
@@ -184,33 +232,39 @@ const TestMain = () => {
                     goCodeShare={goCodeShare}
                   />
                 )}
-                {showComponent === "Git" && (
+                {setting.lastSideBar === "Git" && (
                   <Git
                     selectedFilePath={selectedFilePath}
                     teamSeq={teamSeq}
                     mySeq={mySeq}
                   />
                 )}
-                {showComponent === "Team" && <Team />}
-                {showComponent === "Api" && <Api />}
-                {showComponent === "Var" && <VariableName />}
-                {showComponent === "Set" && <Settings />}
+                {setting.lastSideBar === "Team" && <Team />}
+                {setting.lastSideBar === "Api" && <Api />}
+                {setting.lastSideBar === "Var" && <VariableName />}
+                {setting.lastSideBar === "Set" && (
+                  <Settings
+                    setting={setting}
+                    setSetting={setSetting}
+                    saveSetting={saveSetting}
+                  />
+                )}
               </SidebarItems>
             )}
           </div>
           <div
             className="flex flex-col ml-[8px] mr-3 h-full"
             style={
-              showComponent === ""
+              setting.lastSideBar === ""
                 ? { width: "calc(100vw - 105px)" }
                 : { width: "calc(100vw - 400px)" }
             }
           >
             <SplitPane
-              style={{ position: "static" }}
+              style={{ position: "static", height: "auto" }}
               split="horizontal"
               minSize={31}
-              defaultSize="64%"
+              defaultSize={setting.horizonSplit + "%"}
               className="vertical Pane1"
               ref={editorheightRef}
               onDragFinished={checkSize}
@@ -233,6 +287,7 @@ const TestMain = () => {
                 consoleHeight={consoleHeight}
                 lintResultList={lintResultList}
                 setLintResultList={setLintResultList}
+                setting={setting.consoles}
               />
             </SplitPane>
           </div>

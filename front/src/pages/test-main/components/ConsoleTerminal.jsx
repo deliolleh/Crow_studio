@@ -18,6 +18,7 @@ const ConsoleTerminal = (props) => {
     consoleHeight,
     lintResultList,
     setLintResultList,
+    setting,
   } = props;
 
   const changeInputData = (e) => setInputData(e.target.value);
@@ -93,6 +94,10 @@ const ConsoleTerminal = (props) => {
             onChange={inputChangeHandler}
             placeholder="Input here"
             className="resize-none w-full h-full p-[10px] bg-component_item_bg_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
+            style={{
+              fontSize: parseInt(setting.fontSize),
+              fontFamily: setting.font,
+            }}
           ></textarea>
         </div>
         {/* output */}
@@ -103,7 +108,13 @@ const ConsoleTerminal = (props) => {
               Output
             </div>
           </div>
-          <div className="w-full h-full p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white">
+          <div
+            className="w-full h-full p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white"
+            style={{
+              fontSize: parseInt(setting.fontSize),
+              fontFamily: setting.font,
+            }}
+          >
             {outputData}
             {lintResultList.length > 0 &&
               lintResultList.map((lintResult) => <div>{lintResult}</div>)}
