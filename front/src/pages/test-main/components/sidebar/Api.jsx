@@ -33,24 +33,10 @@ const Api = () => {
 
   const update = (which, e) => {
     let jsonVariable = e.target.value;
-    // let jsonVariable = {};
-    // let value = e.target.value;
-    // value = value.trim().slice(1, -1);
-    // const valLIst = value.split(",").trim();
-    // valLIst.forEach((li) => {
-    //   const cut = li.trim();
-    //   const temp = cut.split(":");
-    //   const key = temp[0];
-    //   const value = temp[1];
-    //   jsonVariable[key] = value;
-    // });
     console.log(jsonVariable);
     if (which === "request") {
       setRequest(() => jsonVariable);
     } else {
-      // if (!Object.keys(jsonVariable).includes("Content-Type")) {
-      //   jsonVariable["Content-Type"] = "application/json";
-      // }
       setHeader(() => jsonVariable);
     }
   };
