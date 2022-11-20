@@ -197,7 +197,7 @@ public class ProjectService {
             serviceRes.put("result", SUCCESS);
             return serviceRes;
         } else if (type == 1) {
-            String pjt = createDirService(teamFile, projectName);
+            String pjt = createDirService(teamFile+"/", projectName);
             if (pjt.equals(DUPLICATE)) {
                 serviceRes.put("result", DUPLICATE);
                 return serviceRes;
@@ -218,7 +218,7 @@ public class ProjectService {
                 return serviceRes;
             }
         } else if (type == 3) {
-            String pjt = createDirService(teamFile, projectName);
+            String pjt = createDirService(teamFile+"/", projectName);
             if (pjt.equals(DUPLICATE)) {
                 serviceRes.put("result", DUPLICATE);
                 return serviceRes;
@@ -252,7 +252,7 @@ public class ProjectService {
                 serviceRes.put("result", DUPLICATE);
                 return serviceRes;
             }
-            String pjt1 = createDirService(pjt, projectName);
+            String pjt1 = createDirService(pjt+"/", projectName);
             File file = new File(pjt1 + "/main.py");
 
             // main.py에 저장할 내용
