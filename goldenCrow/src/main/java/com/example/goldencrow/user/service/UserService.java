@@ -503,24 +503,28 @@ public class UserService {
             // 사용자가 팀장인 다인팀이 존재하지 않음, 탈퇴 가능
             // 사용자가 팀장인 단일팀을 서버에서 삭제해야 함
 
-            Map<String, String> deleteProjectRes = projectService.deleteProjectService(teamSeqList);
-            String result = deleteProjectRes.get("result");
+            if (!teamSeqList.isEmpty()) {
+                Map<String, String> deleteProjectRes = projectService.deleteProjectService(teamSeqList);
+                String result = deleteProjectRes.get("result");
 
-            if (!result.equals(SUCCESS)) {
+                if (!result.equals(SUCCESS)) {
+                    serviceRes.put("result", UNKNOWN);
+                    return serviceRes;
+                }
 
-                // 유저 테이블에서 사용자 삭제
-                userRepository.delete(userEntity);
-
-                // DB의 유저 테이블에서 사용자가 삭제됨에 따라,
-                // 멤버 테이블에서 사용자의 모든 멤버 컬럼이 삭제됨
-                // 팀 테이블에서 사용자가 팀장인 모든 팀 컬럼이 삭제됨
-
-                // 위의 과정을 무사히 통과했으므로
-                serviceRes.put("result", SUCCESS);
-
-            } else {
-                serviceRes.put("result", UNKNOWN);
             }
+
+            // 해당 사용자에 관련된 모든 팀 정보가 서버에서 삭제됨
+
+            // 유저 테이블에서 사용자 삭제
+            userRepository.delete(userEntity);
+
+            // DB의 유저 테이블에서 사용자가 삭제됨에 따라,
+            // 멤버 테이블에서 사용자의 모든 멤버 컬럼이 삭제됨
+            // 팀 테이블에서 사용자가 팀장인 모든 팀 컬럼이 삭제됨
+
+            // 위의 과정을 무사히 통과했으므로
+            serviceRes.put("result", SUCCESS);
 
         } catch (Exception e) {
             serviceRes.put("result", UNKNOWN);
