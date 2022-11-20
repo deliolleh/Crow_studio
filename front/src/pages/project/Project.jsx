@@ -22,7 +22,7 @@ import Settings from "./components/sidebar/Settings";
 import ConsoleTerminal from "./components/ConsoleTerminal";
 import userApi from "../../api/userApi";
 
-const TestMain = () => {
+const Project = () => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
   // const { teamGit } = useSelector((state) => state.team.value);
@@ -299,7 +299,7 @@ const TestMain = () => {
   );
 };
 
-export default TestMain;
+export default Project;
 
 const SidebarItems = styled.div`
   width: 292px;
