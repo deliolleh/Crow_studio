@@ -83,9 +83,11 @@ const TeamCreate = () => {
       return;
     }
 
-    console.log(teamName, projectType, teamGit);
-
-    const teamData = { teamName, projectType, teamGit: teamGit ?? "" };
+    const teamData = {
+      teamName,
+      projectType,
+      teamGit: checkGit ? teamGit : null,
+    };
     setErrorMsgs(initialErrorState);
     dispatch(createTeam(teamData))
       .unwrap()
