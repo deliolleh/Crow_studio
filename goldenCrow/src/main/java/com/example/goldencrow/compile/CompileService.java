@@ -214,10 +214,10 @@ public class CompileService {
         // Django, fastapi, flask 프로젝트일 때
         else {
             // 도커파일이 있다면 생성하지 않고 넘어가기
-            String[] dockerfileExist = {"/bin/sh", "-c", "if ", "[ -f ", absolutePath + "/Dockerfile", " ] ; then echo \"yes\"; else echo \"no\"; fi"};
+            String[] dockerfileExist = {"/bin/sh", "-c", "if ", "[ -f ", absolutePath + "/Dockerfile", " ] ; then echo \"dockerfile\"; else echo \"not\"; fi"};
             String fileExistResult = resultStringService(dockerfileExist);
             System.out.println(fileExistResult);
-            if (fileExistResult.equals("no")) {
+            if (fileExistResult.equals("not")) {
                 // 도커파일 추가 로직
                 String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), typeNum);
                 if (!Objects.equals(dockerfile, "SUCCESS")) {
