@@ -174,20 +174,27 @@ const Project = () => {
 
   // 콘솔 높이 초기값 세팅
   useEffect(() => {
-    const tempSize2 = editorheightRef.current.pane2.clientHeight;
+    const tempSize2 = editorheightRef.current.pane2.clientHeight - 1;
     setConsoleHeight(tempSize2);
+    const tempSize = editorheightRef.current.pane1.clientHeight - 34;
+    setEditorHeight(tempSize);
   }, []);
 
   const checkSize = () => {
     // 에디터 높이 변경값 셋
     const tempSize = editorheightRef.current.state.pane1Size;
+    console.log(tempSize);
     const offsetSize = editorheightRef.current.splitPane.clientHeight;
     setSetting((prev) => {
-      return { ...prev, horizonSplit: parseInt((tempSize / offsetSize) * 100) };
+      return {
+        ...prev,
+        horizonSplit: parseInt((tempSize / offsetSize) * 100),
+      };
     });
-    setEditorHeight(tempSize);
+    const tempSize1 = editorheightRef.current.pane1.clientHeight - 34;
+    setEditorHeight(tempSize1);
     // 콘솔 높이 변경값 셋
-    const tempSize2 = editorheightRef.current.pane2.clientHeight;
+    const tempSize2 = editorheightRef.current.pane2.clientHeight - 1;
     setConsoleHeight(tempSize2);
   };
 
