@@ -9,7 +9,6 @@ import { getTeam } from "../../redux/teamSlice";
 
 import fileApi from "../../api/fileApi";
 import editorApi from "../../api/editorApi";
-// import teamApi from "../../api/teamApi";
 
 import Header from "../../components/Header";
 import Sidebar from "./components/sidebar/Sidebar";
