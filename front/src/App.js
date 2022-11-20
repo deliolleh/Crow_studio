@@ -7,6 +7,8 @@ import { getUser } from "./redux/userSlice";
 import ProtectedRoute from "./route/ProtectedRoute";
 import PrivateRoute from "./route/PrivateRoute";
 
+import WithLoading from "./components/WithLoading";
+
 import Intro from "./pages/intro/Intro";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
@@ -22,13 +24,19 @@ import YMonaco3 from "./pages/code-share/YMonaco3";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Intro />,
+    element: (
+      <WithLoading>
+        <Intro />
+      </WithLoading>
+    ),
   },
   {
     path: "/login",
     element: (
       <ProtectedRoute>
-        <Login />
+        <WithLoading>
+          <Login />
+        </WithLoading>
       </ProtectedRoute>
     ),
   },
@@ -36,23 +44,35 @@ const router = createBrowserRouter([
     path: "/signup",
     element: (
       <ProtectedRoute>
-        <Signup />
+        <WithLoading>
+          <Signup />
+        </WithLoading>
       </ProtectedRoute>
     ),
   },
   {
     path: "/main",
-    element: <Main />,
+    element: (
+      <WithLoading>
+        <Main />
+      </WithLoading>
+    ),
   },
   {
     path: "/mypage/:userSeq",
-    element: <Mypage />,
+    element: (
+      <WithLoading>
+        <Mypage />
+      </WithLoading>
+    ),
   },
   {
     path: "/teams",
     element: (
       <PrivateRoute>
-        <Teams />
+        <WithLoading>
+          <Teams />
+        </WithLoading>
       </PrivateRoute>
     ),
   },
@@ -60,7 +80,9 @@ const router = createBrowserRouter([
     path: "/teams/:teamSeq",
     element: (
       <PrivateRoute>
-        <TeamDetail />
+        <WithLoading>
+          <TeamDetail />
+        </WithLoading>
       </PrivateRoute>
     ),
   },
@@ -68,7 +90,9 @@ const router = createBrowserRouter([
     path: "/teams/create",
     element: (
       <PrivateRoute>
-        <TeamCreate />
+        <WithLoading>
+          <TeamCreate />
+        </WithLoading>
       </PrivateRoute>
     ),
   },
@@ -76,21 +100,35 @@ const router = createBrowserRouter([
     path: "/test/main",
     element: (
       <PrivateRoute>
-        <TestMain />
+        <WithLoading>
+          <TestMain />
+        </WithLoading>
       </PrivateRoute>
     ),
   },
   {
     path: "/project/:teamSeq",
-    element: <TestMain />,
+    element: (
+      <WithLoading>
+        <TestMain />
+      </WithLoading>
+    ),
   },
   {
     path: "project/code-share",
-    element: <YMonaco3 />,
+    element: (
+      <WithLoading>
+        <YMonaco3 />
+      </WithLoading>
+    ),
   },
   {
     path: "*",
-    element: <NotFound />,
+    element: (
+      <WithLoading>
+        <NotFound />
+      </WithLoading>
+    ),
   },
 ]);
 
