@@ -2,7 +2,8 @@ import api from "./api";
 
 const editorApi = {
   apiRequest: (requestData) => api.post("/api-test", requestData),
-  lint: (language, codeData) => api.post(`/editors/lint/${language}`, codeData),
+  lint: (language, textCodeData) =>
+    api.post(`/editors/lint/${language}`, textCodeData),
   formatPut: (language, codeData) =>
     api.post(`/editors/format/${language}`, codeData),
   formatGet: (language, fileNum) =>

@@ -40,6 +40,7 @@ const TestMain = () => {
   );
   const { mySeq } = useSelector((state) => state.user.value);
   const [showComponent, setShowComponent] = useState("Dir");
+  const [lintResultList, setLintResultList] = useState([]);
 
   const editorRef = useRef(null); // 에디터 내용
   const editorheightRef = useRef(); // 에디터 높이
@@ -66,7 +67,13 @@ const TestMain = () => {
         }
       }
     })();
-  }, [dispatch, selectedFileName, selectedFileType, selectedFilePath]);
+  }, [
+    dispatch,
+    selectedFileName,
+    selectedFileType,
+    selectedFilePath,
+    lintResultList,
+  ]);
 
   // 사이드바 아이콘 눌러서 해당 컴포넌트 보여주기
   const showComponentHandler = (componentName) =>
@@ -88,15 +95,26 @@ const TestMain = () => {
       const formatTicketData = { name: res1.data.data };
       const res2 = await editorApi.getFormatResult("python", formatTicketData);
       // 3. 파일 저장
-      const saveFileContent = {
+      const fileContentData = {
         filePath: selectedFilePath,
         fileContent: res2.data.data,
       };
-      await fileApi.saveFileContent(teamSeq, saveFileContent);
+      await fileApi.saveFileContent(teamSeq, fileContentData);
+
+      // 린트
+      setLintResultList([]);
+      const textCodeData = { text: fileContentData.fileContent };
+      const res = await editorApi.lint("python", textCodeData);
+      const warnings = res.data.data;
+      const indexes = res.data.index;
+      setLintResultList(
+        warnings.map((warning, i) => `Line ${indexes[i]}: ${warning}`)
+      );
+
       // 4. 파일 내용 가져오기
       const filePathData = { filePath: selectedFilePath };
       const res3 = await fileApi.getFileContent(filePathData);
-      editorRef.current.getModel().setValue(res3.data);
+      editorRef.current.getModel().setValue(res3.data.fileContent);
     } catch (err) {
       console.error(err);
     }
@@ -205,6 +223,8 @@ const TestMain = () => {
                 teamSeq={teamSeq}
                 selectedFilePath={selectedFilePath}
                 consoleHeight={consoleHeight}
+                lintResultList={lintResultList}
+                setLintResultList={setLintResultList}
               />
             </SplitPane>
           </div>
