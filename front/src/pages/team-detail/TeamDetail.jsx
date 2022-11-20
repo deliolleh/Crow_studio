@@ -83,16 +83,18 @@ const TeamDetail = () => {
     dispatch(getTeam(teamSeq))
       .unwrap()
       .then((res) => {
-        setTeam(res);
         console.log("res:", res);
+        setTeam(res);
       })
       .catch((errStatusCode) => {
         console.error("errStatusCode:", errStatusCode);
         if (errStatusCode === 404) {
           navigate("/404", { replace: true });
+        } else if (errStatusCode === 403) {
+          navigate("/403", { replace: true });
         }
       });
-  }, [dispatch, teamSeq]);
+  }, [dispatch, teamSeq, navigate]);
 
   const setTeamNameHandler = (resTeamName) =>
     setTeam((prev) => {
