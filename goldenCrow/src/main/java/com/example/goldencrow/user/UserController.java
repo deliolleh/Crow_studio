@@ -338,18 +338,21 @@ public class UserController {
      * @param jwt         회원가입 및 로그인 시 발급되는 access token
      * @param settingsDto 개인 환경 세팅 정보
      * @return 성패에 따른 result 반환
-     * @status 200, 400, 401, 404
+     * @status 200, 400, 401, 403, 404
      */
-    @PutMapping("/personal")
+    @PutMapping("/personal/{teamSeq}")
     public ResponseEntity<Map<String, String>> personalPost(@RequestHeader("Authorization") String jwt,
+                                                            @PathVariable Long teamSeq,
                                                             @RequestBody SettingsDto settingsDto) {
 
-        Map<String, String> res = userService.personalPostService(jwt, settingsDto);
+        Map<String, String> res = userService.personalPostService(jwt, teamSeq, settingsDto);
         String result = res.get("result");
 
         switch (result) {
             case SUCCESS:
                 return new ResponseEntity<>(res, HttpStatus.OK);
+            case NO_PER:
+                return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
             case NO_SUCH:
                 return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
             default:
@@ -365,10 +368,11 @@ public class UserController {
      * @return 조회 성공 시 개인 환경 세팅 정보 반환, 성패에 따른 result 반환
      * @status 200, 400, 401, 404
      */
-    @GetMapping("/personal")
-    public ResponseEntity<SettingsDto> personalGet(@RequestHeader("Authorization") String jwt) {
+    @GetMapping("/personal/{teamSeq}")
+    public ResponseEntity<SettingsDto> personalGet(@RequestHeader("Authorization") String jwt,
+                                                   @PathVariable Long teamSeq) {
 
-        SettingsDto settingsDtoRes = userService.personalGetService(jwt);
+        SettingsDto settingsDtoRes = userService.personalGetService(jwt, teamSeq);
         String result = settingsDtoRes.getResult();
 
         switch (result) {

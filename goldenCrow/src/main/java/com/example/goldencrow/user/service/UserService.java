@@ -2,6 +2,7 @@ package com.example.goldencrow.user.service;
 
 import com.example.goldencrow.common.CryptoUtil;
 import com.example.goldencrow.file.service.ProjectService;
+import com.example.goldencrow.team.entity.MemberEntity;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.MemberRepository;
 import com.example.goldencrow.team.repository.TeamRepository;
@@ -10,13 +11,17 @@ import com.example.goldencrow.user.UserRepository;
 import com.example.goldencrow.user.dto.MyInfoDto;
 import com.example.goldencrow.user.dto.SettingsDto;
 import com.example.goldencrow.user.dto.UserInfoDto;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.graalvm.compiler.nodes.calc.IntegerDivRemNode;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -542,7 +547,7 @@ public class UserService {
      * @param settingsDto 개인 환경 세팅 정보
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> personalPostService(String jwt, SettingsDto settingsDto) {
+    public Map<String, String> personalPostService(String jwt, Long teamSeq, SettingsDto settingsDto) {
 
         Map<String, String> serviceRes = new HashMap<>();
 
@@ -560,18 +565,30 @@ public class UserService {
 
             UserEntity userEntity = userEntityOptional.get();
 
+            // 입력받은 팀에 사용자가 멤버로 등록되어 있는지 확인
+            Optional<MemberEntity> memberEntityOptional
+                    = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(userEntity.getUserSeq(), teamSeq);
+
+            if (!memberEntityOptional.isPresent()) {
+                // 해당 팀에 속해있지 않음
+                serviceRes.put("result", NO_PER);
+                return serviceRes;
+            }
+
+            MemberEntity memberEntity = memberEntityOptional.get();
+
             // DB에 varchar 형태로 저장하기 위해 JSON을 String꼴로 치환함
             JSONObject jsonObject = new JSONObject(settingsDto);
             String settings = jsonObject.toString();
 
-            // userEntity의 환경 세팅을 갱신하여 기록
-            userEntity.setUserSettings(settings);
-            userRepository.saveAndFlush(userEntity);
+            memberEntity.setSettings(settings);
+            memberRepository.saveAndFlush(memberEntity);
 
             // 위의 과정을 무사히 통과했으므로
             serviceRes.put("result", SUCCESS);
 
         } catch (Exception e) {
+            e.printStackTrace();
             serviceRes.put("result", UNKNOWN);
 
         }
@@ -586,7 +603,7 @@ public class UserService {
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
      * @return 조회 성공 시 개인 환경 세팅 정보 반환, 성패에 따른 result 반환
      */
-    public SettingsDto personalGetService(String jwt) {
+    public SettingsDto personalGetService(String jwt, Long teamSeq) {
 
         try {
 
@@ -602,7 +619,20 @@ public class UserService {
             }
 
             UserEntity userEntity = userEntityOptional.get();
-            String settings = userEntity.getUserSettings();
+
+            // 입력받은 팀에 사용자가 멤버로 등록되어 있는지 확인
+            Optional<MemberEntity> memberEntityOptional
+                    = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(userEntity.getUserSeq(), teamSeq);
+
+            if (!memberEntityOptional.isPresent()) {
+                // 해당 팀에 속해있지 않음
+                SettingsDto settingsDto = new SettingsDto();
+                settingsDto.setResult(NO_PER);
+                return settingsDto;
+            }
+
+            MemberEntity memberEntity = memberEntityOptional.get();
+            String settings = memberEntity.getSettings();
 
             // 내보내기 위한 SettingsDto 생성
             ObjectMapper mapper = new ObjectMapper();
