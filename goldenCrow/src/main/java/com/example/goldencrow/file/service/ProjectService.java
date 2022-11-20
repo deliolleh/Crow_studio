@@ -13,9 +13,6 @@ import java.util.*;
 
 import static com.example.goldencrow.common.Constants.*;
 
-
-import static java.lang.System.out;
-
 /**
  * project 관련 로직을 처리하는 Service
  */
@@ -48,7 +45,6 @@ public class ProjectService {
         String pjt = path + name;
         File pjtDir = new File(pjt);
         if (pjtDir.mkdir()) {
-            out.println("여기에 폴더 만들어요!"+pjt);
             return pjt;
         }
         return DUPLICATE;

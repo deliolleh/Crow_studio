@@ -45,7 +45,6 @@ public class ProjectController {
                                                     @RequestParam int type,
                                                     @RequestBody Map<String, String> req) {
         String pjt = req.get("projectName");
-//        String baseUrl = "/home/ubuntu/crow_data";
 
         Map<String, String> res = projectService.createProjectService(BASE_URL, type, pjt, teamSeq);
         switch (res.get("result")) {
