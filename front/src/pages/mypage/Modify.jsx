@@ -2,10 +2,8 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { updateNickname, updateGitAuth } from "../../redux/userSlice";
-
 import userApi from "../../api/userApi";
-import { logout } from "../../redux/userSlice";
+import { logout, updateNickname, updateGitAuth } from "../../redux/userSlice";
 
 import NicknameForm from "./components/NicknameForm";
 import PasswordForm from "./components/PasswordForm";
@@ -17,7 +15,9 @@ import { IoClose } from "react-icons/io5";
 const Modify = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const myNickname = useSelector((state) => state.user.value.myNickname);
+  const { myNickname, myGitUsername } = useSelector(
+    (state) => state.user.value
+  );
 
   const updateNicknameHandler = (nicknameData) =>
     dispatch(updateNickname(nicknameData)).unwrap().catch(console.error);
@@ -76,7 +76,10 @@ const Modify = () => {
       <hr className="border-primary_-2_dark mb-5" />
       <PasswordForm updatePassword={submitPasswordHandler} />
       <hr className="border-primary_-2_dark mb-5" />
-      <GitForm updateGitAuth={updateGitAuthHandler} />
+      <GitForm
+        initialGitUsername={myGitUsername}
+        updateGitAuth={updateGitAuthHandler}
+      />
       <ResignForm resign={resignHandler} />
     </div>
   );
