@@ -47,23 +47,6 @@ export const updateNickname = createAsyncThunk(
   }
 );
 
-// 회원 탈퇴
-export const resign = createAsyncThunk(
-  "user/resign",
-  async (_, { rejectWithValue, dispatch }) => {
-    try {
-      const response = await userApi.resign();
-      dispatch(logout()); // 탈퇴 후 로그아웃으로 JWT 삭제
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
 // 유저 검색
 export const searchUser = createAsyncThunk(
   "user/searchUser",
@@ -80,7 +63,7 @@ export const searchUser = createAsyncThunk(
   }
 );
 
-//
+// 깃 업데이트
 export const updateGitAuth = createAsyncThunk(
   "user/updateGitAuth",
   async (credentialsData, { rejectWithValue }) => {
