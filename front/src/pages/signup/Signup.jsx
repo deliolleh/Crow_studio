@@ -2,7 +2,8 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import { signup } from "../../redux/userSlice";
+import userApi from "../../api/userApi";
+import { getUser } from "../../redux/userSlice";
 
 import Header from "../../components/Header";
 import SignupTitle from "./SignupTitle";
@@ -12,20 +13,20 @@ const Signup = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const signupHandler = (signupData) => {
-    dispatch(signup(signupData))
-      .unwrap()
-      .then(() => {
-        alert("회원가입 성공");
-        navigate("/");
-      })
-      .catch((errorStatusCode) => {
-        if (errorStatusCode === 409) {
-          alert("이미 존재하는 아이디입니다");
-        } else {
-          alert("비상!!");
-        }
-      });
+  const signupHandler = async (signupData) => {
+    try {
+      const res = await userApi.signup(signupData);
+      localStorage.setItem("access-token", `${res.data.jwt}`);
+      alert("회원가입 성공");
+      dispatch(getUser());
+      navigate("/");
+    } catch (err) {
+      if (err.response.status === 409) {
+        alert("이미 해당 아이디가 존재합니다");
+      } else {
+        alert("비상!!");
+      }
+    }
   };
 
   return (

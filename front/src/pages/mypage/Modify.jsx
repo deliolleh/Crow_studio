@@ -2,9 +2,10 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { updateNickname, resign, updateGitAuth } from "../../redux/userSlice";
+import { updateNickname, updateGitAuth } from "../../redux/userSlice";
 
 import userApi from "../../api/userApi";
+import { logout } from "../../redux/userSlice";
 
 import NicknameForm from "./components/NicknameForm";
 import PasswordForm from "./components/PasswordForm";
@@ -34,32 +35,28 @@ const Modify = () => {
       });
   };
 
-  const resignHandler = () => {
+  const resignHandler = async () => {
     if (!window.confirm("정말로 탈퇴하시겠습니까?")) {
       return;
     }
-    dispatch(resign())
-      .unwrap()
-      .then(() => {
-        alert("회원 탈퇴 완료");
-        navigate("/");
-      })
-      .catch((errorStatusCode) => {
-        if (errorStatusCode === 403) {
-          console.error(errorStatusCode);
-          alert("팀장으로 있는 동안은 탈퇴할 수 없습니다");
-        } else {
-          alert("비상!!");
-        }
-      });
+    try {
+      await userApi.resign();
+      alert("회원 탈퇴를 완료했습니다");
+      dispatch(logout());
+      navigate("/");
+    } catch (err) {
+      if (err.response.status === 403) {
+        alert("팀장으로 있는 동안은 탈퇴할 수 없습니다");
+      } else {
+        alert("비상!!");
+      }
+    }
   };
 
   const updateGitAuthHandler = (credentialsData) => {
     dispatch(updateGitAuth(credentialsData))
       .unwrap()
-      .then((res) => {
-        alert("깃 연결 성공");
-      })
+      .then(() => alert("깃 연결 성공"))
       .catch(console.error);
   };
 

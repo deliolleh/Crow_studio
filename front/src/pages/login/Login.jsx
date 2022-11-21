@@ -2,7 +2,8 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import { login } from "../../redux/userSlice";
+import userApi from "../../api/userApi";
+import { getUser } from "../../redux/userSlice";
 
 import Header from "../../components/Header";
 import LoginTitle from "./LoginTitle";
@@ -12,20 +13,19 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const loginHandler = (loginData) => {
-    dispatch(login(loginData))
-      .unwrap()
-      .then(() => {
-        alert("로그인에 성공했습니다");
-        navigate("/");
-      })
-      .catch((errStatusCode) => {
-        if (errStatusCode === 409) {
-          alert("존재하지 않는 이메일이나 비밀번호입니다");
-        } else {
-          alert("비상!!");
-        }
-      });
+  const loginHandler = async (loginData) => {
+    try {
+      const res = await userApi.login(loginData);
+      localStorage.setItem("access-token", `${res.data.jwt}`);
+      dispatch(getUser());
+      navigate("/");
+    } catch (err) {
+      if (err.response.status === 409) {
+        alert("해당 아이디가 존재하지 않거나 비밀번호가 틀립니다");
+      } else {
+        alert("비상!!");
+      }
+    }
   };
 
   return (

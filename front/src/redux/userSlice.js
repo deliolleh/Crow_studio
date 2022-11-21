@@ -15,42 +15,6 @@ const initialState = {
   },
 };
 
-// 회원가입
-export const signup = createAsyncThunk(
-  "user/signup",
-  async (signupData, { rejectWithValue, dispatch }) => {
-    try {
-      const response = await userApi.signup(signupData);
-      localStorage.setItem("access-token", `${response.data.jwt}`); // 로컬 스토리지에 저장
-      dispatch(getUser()); // 해당 토큰으로 유저 정보 가져옴
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
-// 로그인
-export const login = createAsyncThunk(
-  "user/login",
-  async (loginData, { rejectWithValue, dispatch }) => {
-    try {
-      const response = await userApi.login(loginData);
-      localStorage.setItem("access-token", `${response.data.jwt}`); // 로컬 스토리지에 저장
-      dispatch(getUser()); // 해당 토큰으로 유저 정보 가져옴
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
 // JWT에 해당하는 유저 정보 조희
 export const getUser = createAsyncThunk(
   "user/getUser",
@@ -83,23 +47,6 @@ export const updateNickname = createAsyncThunk(
   }
 );
 
-// 회원 탈퇴
-export const resign = createAsyncThunk(
-  "user/resign",
-  async (_, { rejectWithValue, dispatch }) => {
-    try {
-      const response = await userApi.resign();
-      dispatch(logout()); // 탈퇴 후 로그아웃으로 JWT 삭제
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
 // 유저 검색
 export const searchUser = createAsyncThunk(
   "user/searchUser",
@@ -116,7 +63,7 @@ export const searchUser = createAsyncThunk(
   }
 );
 
-//
+// 깃 업데이트
 export const updateGitAuth = createAsyncThunk(
   "user/updateGitAuth",
   async (credentialsData, { rejectWithValue }) => {
