@@ -1,50 +1,30 @@
 import React, { useState } from "react";
 
-const initialInputState = {
-  gitUsername: "",
-  gitToken: "",
-};
-
-const initialErrorState = {
-  gitUsernameErrMsg: "",
-  gitTokenErrMsg: "",
-};
-
-const GitForm = ({ updateGitAuth }) => {
-  const [inputs, setInputs] = useState(initialInputState);
-  const [errMsg, setErrMsg] = useState(initialErrorState);
-  const { gitUsername, gitToken } = inputs;
-  const { gitUsernameErrMsg, gitTokenErrMsg } = errMsg;
+const GitForm = ({ updateGitAuth, initialGitUsername }) => {
+  const [gitUsername, setGitUsername] = useState(initialGitUsername);
+  const [gitToken, setGitToken] = useState("");
+  const [gitUsernameErrMsg, setGitUsernameErrMsg] = useState("");
+  const [gitTokenErrMsg, setGitTokenErrMsg] = useState("");
 
   const inputChangeHandler = (e) => {
     if (e.target.name === "gitUsername") {
-      setInputs((prev) => {
-        return { ...prev, gitUsername: e.target.value };
-      });
+      setGitUsername(e.target.value);
     } else if (e.target.name === "gitToken") {
-      setInputs((prev) => {
-        return { ...prev, gitToken: e.target.value };
-      });
+      setGitToken(e.target.value);
     }
   };
 
   const submitHandler = (e) => {
     e.preventDefault();
     let isInvalid = false;
-    setErrMsg(initialErrorState);
+    setGitUsernameErrMsg("");
+    setGitTokenErrMsg("");
     if (gitUsername.trim().length === 0) {
-      setErrMsg((prev) => {
-        return { ...prev, gitUsernameErrMsg: "깃 아이디를 입력하세요" };
-      });
+      setGitUsernameErrMsg("깃 아이디를 입력하세요");
       isInvalid = true;
     }
     if (gitToken.trim().length === 0) {
-      setErrMsg((prev) => {
-        return {
-          ...prev,
-          gitTokenErrMsg: "깃 토큰을 입력하세요",
-        };
-      });
+      setGitTokenErrMsg("깃 토큰을 입력하세요");
       isInvalid = true;
     }
     if (isInvalid) {
@@ -54,7 +34,8 @@ const GitForm = ({ updateGitAuth }) => {
       userGitUsername: gitUsername,
       userGitToken: gitToken,
     };
-    setErrMsg(initialErrorState);
+    setGitUsernameErrMsg("");
+    setGitTokenErrMsg("");
     updateGitAuth(credentialsData);
   };
 
