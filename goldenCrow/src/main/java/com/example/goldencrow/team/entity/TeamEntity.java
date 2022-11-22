@@ -33,8 +33,8 @@ public class TeamEntity {
     @Column
     private String teamGit;
 
-    @Column(name = "teamType")
-    private int type;
+    @Column
+    private int teamPort;
 
     /**
      * 빈 TeamEntity 생성자
@@ -47,14 +47,14 @@ public class TeamEntity {
      *
      * @param userEntity 사용자의 UserEntity
      * @param teamName    만들고자 하는 팀의 이름
-     * @param projectType 해당 팀에서 작업할 프로젝트
-     * @param teamGit 해당 팀에 연결될
      */
-    public TeamEntity(UserEntity userEntity, String teamName, int projectType, String teamGit) {
+    public TeamEntity(UserEntity userEntity, String teamName) {
         this.teamLeader = userEntity;
         this.teamName = teamName;
-        this.teamGit = teamGit;
-        this.type= projectType;
+        this.teamPort = 0;
+
+        // teamPort는 도커 파일 생성 이후 등록
+        // teamGit은 프로젝트 생성 시점에 등록
 
     }
 }

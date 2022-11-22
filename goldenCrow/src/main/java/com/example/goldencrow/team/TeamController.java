@@ -85,7 +85,7 @@ public class TeamController {
      * 팀을 생성하는 API
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
-     * @param req "teamName", "projectType", "teamGit"을 key로 가지는 Map<String, String>
+     * @param req "teamName"을 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404, 409
      */
@@ -93,13 +93,11 @@ public class TeamController {
     public ResponseEntity<Map<String, String>> teamCreatePost(@RequestHeader("Authorization") String jwt,
                                                               @RequestBody Map<String, String> req) {
 
-        if (req.containsKey("teamName") && req.containsKey("projectType") && req.containsKey("teamGit")) {
+        if (req.containsKey("teamName")) {
 
             String teamName = req.get("teamName");
-            String projectType = req.get("projectType");
-            String teamGit = req.get("teamGit");
 
-            Map<String, String> res = teamService.teamCreateService(jwt, teamName, projectType, teamGit);
+            Map<String, String> res = teamService.teamCreateService(jwt, teamName);
             String result = res.get("result");
 
             switch (result) {
@@ -184,46 +182,6 @@ public class TeamController {
             String teamGit = req.get("teamGit");
 
             Map<String, String> res = teamService.teamModifyGitService(jwt, teamSeq, teamGit);
-            String result = res.get("result");
-
-            switch (result) {
-                case SUCCESS:
-                    return new ResponseEntity<>(res, HttpStatus.OK);
-                case NO_PER:
-                    return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
-                case NO_SUCH:
-                    return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
-                default:
-                    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
-            }
-
-        } else {
-            Map<String, String> res = new HashMap<>();
-            res.put("result", BAD_REQ);
-            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
-
-        }
-
-    }
-
-    /**
-     * 팀의 프로젝트 타입을 수정하는 API
-     *
-     * @param jwt     회원가입 및 로그인 시 발급되는 access token
-     * @param teamSeq 프로젝트 타입을 바꾸고자 하는 팀의 Seq
-     * @param req     "projectType"을 key로 가지는 Map<String, String>
-     * @return 성공 시 수정된 프로젝트 타입 반환, 성패에 따른 result 반환
-     * @status 200, 400, 401, 403, 404
-     */
-    @PutMapping("/modify/type/{teamSeq}")
-    public ResponseEntity<Map<String, String>> teamModifyTypePut(@RequestHeader("Authorization") String jwt,
-                                                                 @PathVariable Long teamSeq, @RequestBody Map<String, String> req) {
-
-        if (req.containsKey("projectType")) {
-
-            String projectType = req.get("projectType");
-
-            Map<String, String> res = teamService.teamModifyTypeService(jwt, teamSeq, projectType);
             String result = res.get("result");
 
             switch (result) {

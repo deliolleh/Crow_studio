@@ -34,7 +34,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/users/mypage/**")    // 프로필 조회
                 .excludePathPatterns("/api/users/search/**")    // 유저 검색
                 .excludePathPatterns("/api/forum/read")         // 포럼
-                .excludePathPatterns("/api/forum/read/**");     // 포럼
+                .excludePathPatterns("/api/forum/read/**")     // 포럼
+                .excludePathPatterns("/api/editors/format/**")  // 포맷팅
+                .excludePathPatterns("/api/editors/format/read/**") // 포맷팅 결과 조회
+                .excludePathPatterns("api/editors/lint/**")     // 린트
+                .excludePathPatterns("/api/api-test")           // API 테스트
+                .excludePathPatterns("/api/compile/py")         // python 컴파일
+                .excludePathPatterns("/api/compile/py/stop");    // python 컴파일 중지
     }
 
     /**
