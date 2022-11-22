@@ -178,7 +178,7 @@ public class GitController {
      */
     @GetMapping("/{teamSeq}/branches")
     public ResponseEntity<List<String>> branchGet(@PathVariable Long teamSeq,
-                                                      @RequestParam Integer type) {
+                                                      @RequestParam int type) {
         List<String> res = gitService.getBranchService(teamSeq, type);
 
         if (res != null) {
