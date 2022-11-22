@@ -21,8 +21,6 @@ public class TeamDto {
 
     private String teamGit;
 
-    private String projectType;
-
     private List<MemberDto> memberDtoList;
 
     /**
@@ -49,25 +47,6 @@ public class TeamDto {
             this.teamGit = "";
         } else {
             this.teamGit = teamEntity.getTeamGit();
-        }
-
-        switch (teamEntity.getType()) {
-            case (1):
-                this.projectType = "pure Python";
-                break;
-            case (2):
-                this.projectType = "Django";
-                break;
-            case (3):
-                this.projectType = "Flask";
-                break;
-            case (4):
-                this.projectType = "FastAPI";
-                break;
-            default:
-                this.projectType = "none";
-                break;
-
         }
 
         // memberDtoList는 service 단에서 별도 처리 후 삽입
