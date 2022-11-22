@@ -7,7 +7,7 @@ import SplitPane from "react-split-pane";
 
 import { TiArrowRightThick } from "react-icons/ti";
 
-import { getTeam } from "../../redux/teamSlice";
+import { getTeamDetail } from "../../redux/teamSlice";
 
 import fileApi from "../../api/fileApi";
 import editorApi from "../../api/editorApi";
@@ -68,7 +68,7 @@ const Project = () => {
 
   // 초기 팀 정보 가져옴
   useEffect(() => {
-    dispatch(getTeam(teamSeq))
+    dispatch(getTeamDetail(teamSeq))
       .unwrap()
       .then(() => editorRef.current.getModel().setValue(""))
       .catch((errStatusCode) => {

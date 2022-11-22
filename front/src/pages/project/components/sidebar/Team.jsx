@@ -8,7 +8,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { ReactComponent as IcAddTeam } from "../../../../assets/icons/ic_addTeam.svg";
 import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
-import { getTeam } from "../../../../redux/teamSlice";
+import { getTeamDetail } from "../../../../redux/teamSlice";
 
 // dropdown func
 function classNames(...classes) {
@@ -23,7 +23,7 @@ const Team = () => {
   const { teamName, teamLeaderNickname, memberDtoList: members } = team;
 
   useEffect(() => {
-    dispatch(getTeam(teamSeq))
+    dispatch(getTeamDetail(teamSeq))
       .unwrap()
       .then((res) => {
         setTeam(res);
@@ -141,13 +141,17 @@ const Team = () => {
               </span>
             </div>
             <div className="mb-4">
-              <div className="text-primary_dark text-sm font-bold mb-1">팀장</div>
+              <div className="text-primary_dark text-sm font-bold mb-1">
+                팀장
+              </div>
               <div className="flex items-center text-white text-md">
                 <div>{teamLeaderNickname}</div>
               </div>
             </div>
             <div>
-              <div className="text-primary_dark text-sm font-bold mb-1">팀원</div>
+              <div className="text-primary_dark text-sm font-bold mb-1">
+                팀원
+              </div>
               {members?.map((member) => (
                 <div
                   key={`m${member.memberSeq}`}

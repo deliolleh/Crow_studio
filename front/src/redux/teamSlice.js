@@ -14,11 +14,11 @@ const initialState = {
   },
 };
 
-export const getTeam = createAsyncThunk(
-  "team/getTeam",
+export const getTeamDetail = createAsyncThunk(
+  "team/getTeamDetail",
   async (teamSeq, { rejectWithValue }) => {
     try {
-      const response = await teamApi.getTeam(teamSeq);
+      const response = await teamApi.getTeamDetail(teamSeq);
       return response.data;
     } catch (err) {
       if (!err.response) {
@@ -131,7 +131,7 @@ export const teamSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getTeam.fulfilled, (state, action) => {
+    builder.addCase(getTeamDetail.fulfilled, (state, action) => {
       const { teamSeq, teamName, projectType, teamGit } = action.payload;
       state.value.teamSeq = teamSeq;
       state.value.teamName = teamName;

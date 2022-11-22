@@ -2,7 +2,7 @@ import api from "./api";
 
 const teamApi = {
   getTeams: () => api.get("/teams"),
-  getTeam: (teamSeq) => api.get(`/teams/${teamSeq}`),
+  getTeamDetail: (teamSeq) => api.get(`/teams/${teamSeq}`),
   createTeam: (teamData) => api.post("/teams/create", teamData),
   modifyTeamName: (teamSeq, teamName) =>
     api.put(`/teams/modify/name/${teamSeq}`, teamName),
