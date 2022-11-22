@@ -53,18 +53,18 @@ const Header = () => {
           {/* 로고, 아이콘 */}
           <div className="relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
             <div className="flex items-center">
-              <div className="text-point_purple pr-3">
-                <img
-                  className="w-8 rounded-full"
-                  src={require("../assets/images/logo.png")}
-                  alt="logo-img"
-                />
-              </div>
               <Link
                 className="text-xl font-bold leading-relaxed inline-block mr-16 py-2 whitespace-nowrap uppercase text-white"
                 to="/"
               >
-                까마귀공방
+                <div className="flex">
+                  <img
+                    className="w-8 rounded-full mr-2"
+                    src={require("../assets/images/logo.png")}
+                    alt="logo-img"
+                  />
+                  <span className="tracking-wide">까마귀공방</span>
+                </div>
               </Link>
             </div>
             <button

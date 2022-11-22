@@ -28,7 +28,7 @@ const Intro = () => {
               src={require("../../assets/images/logo.png")}
               alt="logo-img"
             />
-            <div className="text-7xl font-bold text-center text-white mt-5">
+            <div className="text-7xl font-bold text-center text-white mt-5 tracking-wider">
               까마귀공방
             </div>
             <div className="text-center text-white flex-col mt-11">
