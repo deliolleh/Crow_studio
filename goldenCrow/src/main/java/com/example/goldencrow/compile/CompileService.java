@@ -232,7 +232,7 @@ public class CompileService {
         }
 
         // 도커 컨테이너 런
-        String[] command = {"docker", "run", "-rm", "-d", "--name", conAndImgName, "-p", port, conAndImgName};
+        String[] command = {"docker", "run", "--rm", "-d", "--name", conAndImgName, "-p", port, conAndImgName};
 //        String container = resultStringService(command);
 
         // 결과 문자열
