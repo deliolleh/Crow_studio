@@ -50,6 +50,8 @@ public class CompileController {
                     return new ResponseEntity<>(res, HttpStatus.OK);
                 case NO_SUCH:
                     return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+                case DUPLICATE:
+                    return new ResponseEntity<>(res, HttpStatus.CONFLICT);
                 default:
                     return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }

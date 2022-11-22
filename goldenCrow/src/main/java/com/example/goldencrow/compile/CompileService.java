@@ -178,6 +178,16 @@ public class CompileService {
             String[] command;
             // 에러가 발생할 경우 에러메세지를 저장할 파일 생성
             File file = new File(BASE_URL + "outfile/" + teamSeq + ".txt");
+            try {
+                if (!file.createNewFile()) {
+                    serviceRes.put("result", DUPLICATE);
+                    return serviceRes;
+                }
+            } catch (IOException e) {
+                serviceRes.put("result", DUPLICATE);
+                return serviceRes;
+            }
+
             String outfilePath = BASE_URL + "outfile/" + teamSeq + ".txt";
             // input이 없는 경우와 있는 경우를 나누어 명령어 생성, '2>' : 해당 명령어 실행 후 나오는 메세지를 파일에 저장
             if (input.isEmpty()) {
