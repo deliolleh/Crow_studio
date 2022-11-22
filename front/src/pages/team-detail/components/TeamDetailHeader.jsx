@@ -33,8 +33,6 @@ const TeamDetailHeader = (props) => {
     }
   };
 
-  const goTeamListHandler = () => navigate("/teams");
-
   const deleteTeamHandler = async () => {
     if (!window.confirm("정말로 팀을 삭제하시겠습니까?")) {
       return;
@@ -74,7 +72,6 @@ const TeamDetailHeader = (props) => {
       )}
       {/* 팀 목록 버튼, 팀 삭제(팀 탈퇴) 버튼 컨테이너 */}
       <div className="flex gap-2">
-        <TeamListButton onClick={goTeamListHandler}>팀 목록</TeamListButton>
         <RedButton onClick={isLeader ? deleteTeamHandler : resignTeamHandler}>
           {isLeader ? "팀 삭제" : "팀 탈퇴"}
         </RedButton>
