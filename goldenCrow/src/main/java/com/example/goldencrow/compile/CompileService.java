@@ -40,6 +40,7 @@ public class CompileService {
      * @return 명령어 수행 성공 시 결과 문자열 반환, 성패에 따른 result 반환
      */
     public String resultStringService(String[] cmd) {
+        System.out.println(Arrays.toString(cmd));
         ProcessBuilder command = new ProcessBuilder(cmd);
         command.redirectErrorStream(true);
         StringBuilder msg = new StringBuilder();
@@ -250,7 +251,9 @@ public class CompileService {
         // 도커 컨테이너 런
         String[] command;
         if (type == 1) {
-            command = new String[]{"docker", "run", "-d", "--name", conAndImgName, "-v", BASE_URL + teamSeq + ":" + BASE_URL + teamSeq, "-p", port + insidePort, conAndImgName};
+            command = new String[]{"/bin/sh", "-c", "docker", "run", "-d", "--name", conAndImgName, "-v",
+                    BASE_URL + teamSeq + ":" + BASE_URL + teamSeq, "-p", port + insidePort, conAndImgName,
+                    ";docker", "logs", conAndImgName};
         } else {
             command = new String[]{"docker", "run", "--rm", "-d", "--name", conAndImgName, "-p", port + insidePort, conAndImgName};
         }
@@ -285,10 +288,10 @@ public class CompileService {
 //            return serviceRes;
 //        }
         if (type == 1) {
-            String[] pythonCmd = {"docker", "logs", conAndImgName};
-            String pythonResponse = resultStringService(pythonCmd);
+//            String[] pythonCmd = {"docker", "logs", conAndImgName};
+//            String pythonResponse = resultStringService(pythonCmd);
             serviceRes.put("result", SUCCESS);
-            serviceRes.put("response", pythonResponse);
+            serviceRes.put("response", response);
         } else if (portNumService(conAndImgName).equals(port)) {
             serviceRes.put("result", SUCCESS);
             serviceRes.put("response", "k7d207.p.ssafy.io:" + port);
