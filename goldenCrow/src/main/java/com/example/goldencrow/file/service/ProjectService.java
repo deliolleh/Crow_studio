@@ -85,6 +85,9 @@ public class ProjectService {
                 if (name.equals("Dockerfile")) {
                     continue;
                 }
+                if (name.equals(".git")) {
+                    continue;
+                }
                 String thisPath = dir.getPath();
                 thisPath = thisPath.replace(BASE_URL, "");
                 Map<Object, Object> children = new HashMap<>();
