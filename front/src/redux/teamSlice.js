@@ -44,21 +44,6 @@ export const delegateLeader = createAsyncThunk(
   }
 );
 
-export const resignTeam = createAsyncThunk(
-  "team/resignTeam",
-  async (teamSeq, { rejectWithValue }) => {
-    try {
-      const response = await teamApi.resignTeam(teamSeq);
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
 export const modifyProjectType = createAsyncThunk(
   "team/modifyProjectType",
   async ({ teamSeq, modifiedData }, { rejectWithValue }) => {

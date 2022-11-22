@@ -51,7 +51,12 @@ const TeamDetailHeader = (props) => {
     if (!window.confirm("정말로 팀에서 탈퇴하시겠습니까?")) {
       return;
     }
-    alert("가지마");
+    try {
+      await teamApi.resignTeam(teamSeq);
+      navigate("/teams");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

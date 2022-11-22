@@ -2,11 +2,7 @@ import React, { useState, useEffect, Fragment } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
-import {
-  getTeamDetail,
-  deleteMember,
-  modifyProjectType,
-} from "../../redux/teamSlice";
+import { getTeamDetail, modifyProjectType } from "../../redux/teamSlice";
 import { searchUser } from "../../redux/userSlice";
 
 import teamApi from "../../api/teamApi";
