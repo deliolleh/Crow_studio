@@ -193,7 +193,7 @@ public class CompileService {
         String conAndImgName = "crowstudio_" + teamName.toLowerCase().replaceAll(" ", "") + "_" + teamSeq;
         // 현재 실행되고 있는 컨테이너, 이미지 삭제, 도커파일 삭제
         pyCompileStopService(teamName, teamSeq);
-        String port = "port";
+        String port = "3500";
         // 절대경로 생성
         String absolutePath;
         // pure Python일 경우 파일명까지, 프로젝트일 경우 프로젝트명까지 절대경로로 선언
@@ -360,11 +360,16 @@ public class CompileService {
      * @return 프로젝트 타입 반환
      */
     public int findProjectTypeService(String filePath) {
+        String[] pathList = filePath.split("/");
+        String projectPath = BASE_URL + pathList[0] + pathList[1];
         List<String> initialList = new ArrayList<>();
-        List<String> fileList = showFilesInDIr(filePath, initialList);
+        List<String> fileList = showFilesInDIr(projectPath, initialList);
+        if (fileList == null) {
+            return 0;
+        }
         // 통상적인 Django에 있는 wsgi.py가 있고 그 안에 from django.core.wsgi 가 있으면 Django 프로젝트
-        if (fileList.contains(BASE_URL + filePath + "wsgi.py")) {
-            Map<String, String> settingFile = fileService.readFileService(BASE_URL + filePath + "wsgi.py");
+        if (fileList.contains(BASE_URL + projectPath + "wsgi.py")) {
+            Map<String, String> settingFile = fileService.readFileService(BASE_URL + projectPath + "wsgi.py");
             String settingContent = settingFile.get("fileContent");
             if (settingContent.contains(DJANGO)) {
                 return 2;
@@ -394,8 +399,9 @@ public class CompileService {
     public List<String> showFilesInDIr(String filePath, List<String> fileList) {
         File dir = new File(filePath);
         File[] files = dir.listFiles();
-
-        assert files != null;
+        if (files == null) {
+            return null;
+        }
         for (File file : files) {
             if (file.isDirectory()) {
                 showFilesInDIr(file.getPath(), fileList);
