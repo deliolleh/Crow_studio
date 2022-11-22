@@ -434,6 +434,7 @@ public class GitService {
             BufferedReader result = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((read = result.readLine()) != null) {
                 msg.append(read).append("\n");
+                System.out.println(read);
             }
 
         } catch (IOException e) {
@@ -451,9 +452,7 @@ public class GitService {
             return serviceRes;
         }
         serviceRes.put("pushMessage",msg.toString());
-        System.out.println("commit message :" + serviceRes.get("commit message"));
-        System.out.println("add message : " + serviceRes.get("addMessage"));
-        System.out.println("push message :" + serviceRes.get("pushMessage"));
+
         serviceRes.put("result", SUCCESS);
         return serviceRes;
     }
