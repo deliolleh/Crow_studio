@@ -252,7 +252,7 @@ public class CompileService {
         String[] command;
         if (type == 1) {
             command = new String[]{"docker", "run", "-d", "--name", conAndImgName, "-v",
-                    BASE_URL + teamSeq + ":" + BASE_URL + teamSeq, "-p", port + insidePort, conAndImgName + ";",
+                    BASE_URL + teamSeq + ":" + BASE_URL + teamSeq, "-p", port + insidePort, conAndImgName + "&&",
                     "docker", "logs", conAndImgName};
         } else {
             command = new String[]{"docker", "run", "--rm", "-d", "--name", conAndImgName, "-p", port + insidePort, conAndImgName};
