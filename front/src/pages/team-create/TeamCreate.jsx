@@ -136,8 +136,8 @@ const TeamCreate = () => {
   return (
     <div className="flex flex-col w-full h-full">
       <Header />
-      <div className="h-screen flex justify-center items-center mb-2">
-        <div className="px-16 py-12 flex flex-col w-fit h-fit justify-center items-center border border-primary_-2_dark rounded-md">
+      <div className="h-full flex flex-wrap justify-center items-center">
+        <div className="mb-2 mx-2 xs:px-16 px-10 py-12 flex flex-col w-fit h-fit justify-center items-center border border-primary_-2_dark rounded-md overflow-auto">
           <div className="text-4xl font-bold text-white pb-2 mb-5">
             팀 생성하기
           </div>
@@ -147,7 +147,7 @@ const TeamCreate = () => {
             className="flex flex-col items-center"
           >
             {/* 팀 이름 */}
-            <div className="w-80 mb-1">
+            <div className="xs:w-80 w-[227.03px] mb-1">
               <label htmlFor="teamName" className="">
                 팀 이름
               </label>
@@ -169,9 +169,9 @@ const TeamCreate = () => {
             </div>
 
             {/* 프로젝트 종류 */}
-            <div className="w-80 mb-7">
+            <div className="xs:w-80 w-auto mb-7">
               {/* headlessui Listbox */}
-              <div className="w-80">
+              <div className="">
                 <Listbox
                   name="projectType"
                   value={selected}
@@ -235,7 +235,7 @@ const TeamCreate = () => {
             </div>
 
             {/* 팀 깃 주소 */}
-            <div className="w-80 mb-4">
+            <div className="xs:w-80 w-[226.03px] mb-4">
               {/* 체크박스 */}
               <input
                 type="checkbox"
@@ -269,7 +269,7 @@ const TeamCreate = () => {
             {/* 팀 생성 버튼 */}
             <button
               type="submit"
-              className="w-80 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition mb-2"
+              className="xs:w-80 w-[226.03px] text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition mb-2"
               onClick={submitHandler}
             >
               팀 생성
@@ -277,7 +277,7 @@ const TeamCreate = () => {
           </form>
           <button
             onClick={goTeamListHandler}
-            className="w-80 px-10 py-2 text-primary_dark bg-component_item_bg_dark border border-primary_-2_dark rounded-md"
+            className="xs:w-80 w-[226.03px] px-10 py-2 text-primary_dark bg-component_item_bg_dark border border-primary_-2_dark rounded-md"
           >
             팀 목록
           </button>

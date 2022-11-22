@@ -129,9 +129,7 @@ const Git = (props) => {
                     value={commitMessage}
                     style={{ resize: "none" }}
                     onChange={changeCommit}
-                    cols="25"
-                    rows="6"
-                    className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
+                    className="w-[253px] h-20 rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
                   ></textarea>
                   <div className="flex justify-end">
                     <button

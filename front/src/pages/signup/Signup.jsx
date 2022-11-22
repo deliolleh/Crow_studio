@@ -32,12 +32,14 @@ const Signup = () => {
   return (
     <div className="flex flex-col w-full h-full">
       <Header />
-      <section className="w-screen h-screen my-7 flex flex-col justify-center overflow-auto">
-        <SignupTitle />
-        <SignupForm signupHandler={signupHandler} />
-        <Link to="/login" className="block w-full text-center">
-          계정이 있으신가요? 로그인하기
-        </Link>
+      <section className="p-4 w-screen h-full flex flex-wrap justify-center items-center">
+        <div className="h-fit flex flex-col">
+          <SignupTitle />
+          <SignupForm signupHandler={signupHandler} />
+          <Link to="/login" className="block w-full text-center">
+            계정이 있으신가요? 로그인하기
+          </Link>
+        </div>
       </section>
     </div>
   );

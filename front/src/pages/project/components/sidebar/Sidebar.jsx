@@ -49,7 +49,7 @@ const Sidebar = ({ clickIcon, showComponent }) => {
   return (
     <React.Fragment>
       <SidebarContainer
-        className="ml-3 mb-3 bg-component_item_bg_dark"
+        className="mb-3 bg-component_item_bg_dark overflow-auto"
         style={
           showComponent === ""
             ? { borderRadius: "10px" }

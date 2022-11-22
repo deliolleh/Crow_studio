@@ -52,7 +52,7 @@ const VariableName = () => {
 
   return (
     <React.Fragment>
-      <VariableNameContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
+      <VariableNameContainer className="mb-3 bg-component_item_bg_dark flex flex-col  overflow-auto">
         <div
           className="flex justify-between items-center"
           style={{ padding: 15 }}

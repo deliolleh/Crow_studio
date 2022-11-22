@@ -8,7 +8,7 @@ const Member = (props) => {
       {/* 프사 */}
       {/* <div className="bg-point_light_yellow w-11 h-11 rounded-full"></div> */}
       {/* 닉네임 */}
-      <div className={"text-sm" + (isLeader ? " text-point_light_yellow" : " text-white")}>
+      <div className={"text-sm break-all" + (isLeader ? " text-point_light_yellow" : " text-white")}>
         {isLeader ? teamLeaderNickname : memberNickname}
       </div>
     </div>

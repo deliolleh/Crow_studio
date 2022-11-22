@@ -131,7 +131,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
 
   return (
     <>
-      <SettingsContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
+      <SettingsContainer className="mb-3 bg-component_item_bg_dark flex flex-col  overflow-auto">
         <div
           className="flex justify-between items-center"
           style={{ padding: 15 }}

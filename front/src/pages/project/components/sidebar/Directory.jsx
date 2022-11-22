@@ -400,7 +400,7 @@ const Directory = (props) => {
         <Item onClick={deleteHandler}>삭제 ⌫</Item>
       </Menu>
 
-      <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
+      <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col  overflow-auto">
         <div className="justify-between items-center" style={{ padding: 15 }}>
           <div className="flex items-center gap-4">
             <div className="text-xl font-bold text-white">Directory</div>

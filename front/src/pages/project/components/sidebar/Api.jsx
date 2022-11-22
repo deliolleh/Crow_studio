@@ -127,10 +127,8 @@ const Api = () => {
               <textarea
                 name="request"
                 onChange={(e) => update("request", e)}
-                cols="25"
-                rows="6"
                 placeholder='{ "key": "value" }'
-                className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5"
+                className="w-[253px] h-32 rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5"
               ></textarea>
               <div className="mb-2">Header</div>
               {/* <KeyValue you="header" getList={getList}/> */}
@@ -138,10 +136,8 @@ const Api = () => {
                 <textarea
                   name="header"
                   onChange={(e) => update("header", e)}
-                  cols="25"
-                  rows="6"
                   placeholder='{ "key": "value" } // Content-Type, Authorization, etc...'
-                  className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
+                  className="w-[253px] h-32 rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
                 ></textarea>
                 <button
                   onClick={sendApi}

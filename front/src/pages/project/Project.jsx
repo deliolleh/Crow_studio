@@ -215,7 +215,7 @@ const Project = () => {
     <React.Fragment>
       <div className="h-full w-full">
         <Header />
-        <div className="flex w-full" style={{ height: "calc(100% - 80px)" }}>
+        <div className="flex mx-3" style={{ height: "calc(100% - 80px)" }}>
           <div className="flex">
             <Sidebar
               clickIcon={showComponentHandler}
@@ -254,7 +254,7 @@ const Project = () => {
             )}
           </div>
           <div
-            className="flex flex-col ml-[8px] mr-3 h-full"
+            className="flex flex-col ml-[8px] h-full"
             style={
               setting.lastSideBar === ""
                 ? { width: "calc(100vw - 105px)" }
