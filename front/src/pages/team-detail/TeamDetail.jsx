@@ -14,6 +14,7 @@ import teamApi from "../../api/teamApi";
 import Header from "../../components/Header";
 import TeamDetailHeader from "./components/TeamDetailHeader";
 
+import Leader from "./components/Leader";
 import Member from "./components/Member";
 
 import Modal from "react-modal";
@@ -146,7 +147,6 @@ const TeamDetail = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
   function openModal() {
     setIsOpen(true);
-    console.log("떴냐 모달?");
   }
   function afterOpenModal() {
     subtitle.style.color = "#fff";
@@ -264,11 +264,7 @@ const TeamDetail = () => {
               <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
                 팀장
               </div>
-              <Member
-                isLeader={true}
-                teamLeaderNickname={teamLeaderNickname}
-                onDelete={deleteMemberHandler}
-              />
+              <Leader teamLeaderNickname={teamLeaderNickname} />
             </div>
 
             {/* 팀원 */}
@@ -280,8 +276,9 @@ const TeamDetail = () => {
                 {members?.map((member) => (
                   <Member
                     key={`m${member.memberSeq}`}
-                    isLeader={false}
-                    member={member}
+                    isLeader={teamLeaderSeq === mySeq}
+                    memberNickname={member.memberNickname}
+                    memberSeq={member.memberSeq}
                     deleteMember={deleteMemberHandler}
                   />
                 ))}
@@ -289,7 +286,6 @@ const TeamDetail = () => {
                   {teamLeaderSeq === mySeq && (
                     <IoAdd
                       className="text-white cursor-pointer"
-                      // onClick={openSearchInputHandler}
                       onClick={openModal}
                     />
                   )}
