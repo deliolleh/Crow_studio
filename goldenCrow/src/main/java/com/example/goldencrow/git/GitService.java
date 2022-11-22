@@ -330,7 +330,6 @@ public class GitService {
         serviceRes.put("addMessage",gitAddCheck.get("addMessage"));
         if (!gitAddCheck.get("result").equals(SUCCESS)) {
             serviceRes.put("result", gitAddCheck.get("result"));
-            System.out.println(gitAddCheck);
             return serviceRes;
         }
 
@@ -350,7 +349,6 @@ public class GitService {
             String forPrint;
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((forPrint = br.readLine()) != null) {
-                System.out.println(forPrint);
                 msg.append(forPrint);
                 msg.append("\n");
             }
@@ -368,7 +366,6 @@ public class GitService {
         // 성공 여부 판단
         serviceRes.put("result", SUCCESS);
 
-        System.out.println(serviceRes.get("commitMessage"));
         return serviceRes;
     }
 
@@ -438,7 +435,7 @@ public class GitService {
             while ((read = result.readLine()) != null) {
                 msg.append(read).append("\n");
             }
-            serviceRes.put("pushMessage",msg.toString());
+
         } catch (IOException e) {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
@@ -453,9 +450,11 @@ public class GitService {
             serviceRes.put("result", UNKNOWN);
             return serviceRes;
         }
-
+        serviceRes.put("pushMessage",msg.toString());
+        System.out.println("commit message :" + serviceRes.get("commit message"));
+        System.out.println("add message : " + serviceRes.get("addMessage"));
+        System.out.println("push message :" + serviceRes.get("pushMessage"));
         serviceRes.put("result", SUCCESS);
-        System.out.println(serviceRes.get("commitMessage")+serviceRes.get("pushMessage"));
         return serviceRes;
     }
 
