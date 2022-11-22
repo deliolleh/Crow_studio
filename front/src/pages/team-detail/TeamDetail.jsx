@@ -4,11 +4,12 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import {
   getTeamDetail,
-  addMember,
   deleteMember,
   modifyProjectType,
 } from "../../redux/teamSlice";
 import { searchUser } from "../../redux/userSlice";
+
+import teamApi from "../../api/teamApi";
 
 import Header from "../../components/Header";
 import TeamDetailHeader from "./components/TeamDetailHeader";
@@ -71,7 +72,6 @@ const TeamDetail = () => {
     teamGit,
   } = team;
 
-  const [isSearch, setIsSearch] = useState(false);
   const [projectTypeInput, setProjectTypeInput] = useState(false);
   const [modifiedProjectType, setModifiedProjectType] = useState(projectType);
 
@@ -97,52 +97,41 @@ const TeamDetail = () => {
       return { ...prev, teamName: resTeamName };
     });
 
-  // const openSearchInputHandler = () => setIsSearch(true);
-  const closeSearchInputHandler = () => setIsSearch(false);
   const searchUserChangeHandler = (e) => setSearchUserName(e.target.value);
 
   const submitSearchUserHandler = (e) => {
     e.preventDefault();
-    const searchData = JSON.stringify({ searchWord: searchUserName });
+    const searchData = { searchWord: searchUserName };
     dispatch(searchUser(searchData))
       .unwrap()
-      .then((res) => {
-        setSearchResults(res);
-        console.log("res:", res);
-      })
+      .then(setSearchResults)
       .catch(console.error);
   };
 
-  const addUserHandler = (addUserSeq, addUserName) => {
+  const addUserHandler = async (addUserSeq, addUserName) => {
     if (!window.confirm(`${addUserName}님을 팀원으로 추가할까요?`)) {
       return;
     }
-    const addMemberData = JSON.stringify({ teamSeq, memberSeq: addUserSeq });
-    dispatch(addMember(addMemberData))
-      .unwrap()
-      .then((res) => {
-        console.log(res);
-        setIsSearch(false);
-        setSearchResults([]);
-        dispatch(getTeamDetail(teamSeq))
-          .unwrap()
-          .then((res) => setTeam(res))
-          .catch(console.error);
-      })
-      .catch((errorStatusCode) => {
-        if (errorStatusCode === 409) {
-          alert("이미 추가된 팀원입니다");
-        } else {
-          alert("비상!!");
-        }
-      });
+    const addMemberData = { teamSeq, memberSeq: addUserSeq };
+    try {
+      await teamApi.addMember(addMemberData);
+      setSearchResults([]);
+      const res = await dispatch(getTeamDetail(teamSeq)).unwrap();
+      setTeam(res);
+    } catch (err) {
+      if (err.response.status === 409) {
+        alert("이미 추가된 팀원입니다");
+      } else {
+        alert("비상!!");
+      }
+    }
   };
 
-  const deleteMemberHandler = (memberNickname, memberSeq) => {
+  const deleteMemberHandler = async (memberNickname, memberSeq) => {
     if (!window.confirm(`${memberNickname}님을 팀에서 삭제하시겠습니까?`)) {
       return;
     }
-    const deleteData = JSON.stringify({ teamSeq, memberSeq });
+    const deleteData = { teamSeq, memberSeq };
     dispatch(deleteMember(deleteData))
       .unwrap()
       .then(() => {
@@ -157,17 +146,13 @@ const TeamDetail = () => {
   // Modal
   let subtitle;
   const [modalIsOpen, setIsOpen] = useState(false);
-
   function openModal() {
     setIsOpen(true);
     console.log("떴냐 모달?");
   }
-
   function afterOpenModal() {
-    // references are now sync'd and can be accessed.
     subtitle.style.color = "#fff";
   }
-
   function closeModal() {
     setIsOpen(false);
   }
@@ -212,6 +197,7 @@ const TeamDetail = () => {
     <React.Fragment>
       <div className="flex flex-col h-full w-full">
         <Header />
+
         {/* Modal */}
         <Modal
           isOpen={modalIsOpen}
@@ -228,7 +214,7 @@ const TeamDetail = () => {
               팀원 추가
             </h2>
             <IoClose
-              className="cursor-pointer text-primary_dark ml-2"
+              className="cursor-pointer text-primary_dark text-xl ml-2"
               onClick={closeModal}
             />
           </div>
@@ -264,6 +250,7 @@ const TeamDetail = () => {
             </div>
           </div>
         </Modal>
+
         {/* team detail */}
         <div className="flex flex-wrap items-center justify-center m-3 mb-6 h-full">
           <div className="p-8 lg:w-4/5 w-fit max-w-[1000px] h-fit flex flex-col justify-center items-center border border-primary_-2_dark rounded-md">
@@ -297,51 +284,16 @@ const TeamDetail = () => {
                     key={`m${member.memberSeq}`}
                     isLeader={false}
                     member={member}
-                    onDelete={deleteMemberHandler}
+                    deleteMember={deleteMemberHandler}
                   />
                 ))}
-
                 <div className="flex flex-col items-center px-2 py-2">
-                  {/* isSearch가 아니면 + 버튼, isSearch이면 유저 검색 입력창 나옴 */}
-                  {!isSearch ? (
-                    teamLeaderSeq === mySeq && (
-                      <IoAdd
-                        className="text-white cursor-pointer"
-                        // onClick={openSearchInputHandler}
-                        onClick={openModal}
-                      />
-                    )
-                  ) : (
-                    <div className="flex gap-1">
-                      <div>유저검색</div>
-                      <form onSubmit={submitSearchUserHandler}>
-                        <input
-                          type="text"
-                          name="searchUser"
-                          id="searchUser"
-                          onChange={searchUserChangeHandler}
-                          value={searchUserName}
-                        />
-                      </form>
-                      <IoClose
-                        className="cursor-pointer text-primary_dark ml-2"
-                        onClick={closeSearchInputHandler}
-                      />
-
-                      <div>
-                        {searchResults?.map((user) => (
-                          <div
-                            key={user.userId}
-                            className="hover:cursor-pointer"
-                            onClick={() =>
-                              addUserHandler(user.userSeq, user.userNickname)
-                            }
-                          >
-                            {user.userNickname}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                  {teamLeaderSeq === mySeq && (
+                    <IoAdd
+                      className="text-white cursor-pointer"
+                      // onClick={openSearchInputHandler}
+                      onClick={openModal}
+                    />
                   )}
                 </div>
               </div>
