@@ -43,6 +43,11 @@ public class CompileController {
             String filePath = req.get("filePath");
             String input = req.get("input");
             int type = compileService.findProjectTypeService(filePath);
+            if (type == 0) {
+                Map<String, String> res = new HashMap<>();
+                res.put("result", BAD_REQ);
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+            }
             Map<String, String> res = compileService.pyCompileService(type, filePath, input);
             String result = res.get("result");
             switch (result) {

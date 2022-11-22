@@ -1,5 +1,6 @@
 package com.example.goldencrow.team;
 
+import com.example.goldencrow.compile.CompileService;
 import com.example.goldencrow.file.service.ProjectService;
 import com.example.goldencrow.git.GitService;
 import com.example.goldencrow.team.dto.MemberDto;
@@ -31,6 +32,7 @@ public class TeamService {
     private final JwtService jwtService;
     private final ProjectService projectService;
     private final GitService gitService;
+    private final CompileService compileService;
 
     /**
      * TeamService 생성자
@@ -43,13 +45,14 @@ public class TeamService {
      * @param gitService       git을 관리하는 service
      */
     public TeamService(UserRepository userRepository, TeamRepository teamRepository, MemberRepository memberRepository,
-                       JwtService jwtService, ProjectService projectService, GitService gitService) {
+                       JwtService jwtService, ProjectService projectService, GitService gitService, CompileService compileService) {
         this.userRepository = userRepository;
         this.teamRepository = teamRepository;
         this.memberRepository = memberRepository;
         this.jwtService = jwtService;
         this.projectService = projectService;
         this.gitService = gitService;
+        this.compileService = compileService;
     }
 
     /**
@@ -258,10 +261,12 @@ public class TeamService {
                         = projectService.createProjectService(BASE_URL, typeNum, teamName, teamSeq);
 
                 if (projectCreateResult.get("result").equals(SUCCESS)) {
-                    // 성공
-                    serviceRes.put("result", SUCCESS);
-                    serviceRes.put("teamSeq", String.valueOf(teamSeq));
-
+                    Map<String, String> containerCreateResult = compileService.containerCreateService(teamName, teamSeq);
+                    if (containerCreateResult.get("result").equals(SUCCESS)) {
+                        // 성공
+                        serviceRes.put("result", SUCCESS);
+                        serviceRes.put("teamSeq", String.valueOf(teamSeq));
+                    }
                 } else {
                     // 모든 경우의 프로젝트 생성 실패
 
