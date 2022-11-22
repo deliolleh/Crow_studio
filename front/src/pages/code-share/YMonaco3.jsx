@@ -1,5 +1,6 @@
 import * as Y from "yjs";
-import { WebsocketProvider } from "y-websocket";
+import { WebrtcProvider } from "y-webrtc";
+// y-websocket => package.json 지울 것
 import { MonacoBinding } from "y-monaco";
 // import * as monaco from "monaco-editor";
 import React, { useEffect, useState } from "react";
@@ -16,41 +17,27 @@ const YMonaco3 = () => {
 
   const navigate = useNavigate();
 
-  const link = () => {
+  useEffect(() => {
     const ydoc = new Y.Doc();
-    const provider = new WebsocketProvider(
-      "wss://demos.yjs.dev",
-      selectedFileName,
-      ydoc
-    );
+    const provider = new WebrtcProvider(selectedFileName, ydoc);
     const ytext = ydoc.getText("monaco");
     console.log("ytext: ", ytext);
 
     const monacoBinding = new MonacoBinding(
       ytext,
-      editorRef.current.getModel(),
+      editorRef?.current.getModel(),
       new Set([editorRef.current]),
       provider.awareness
     );
     window.example = { provider, ydoc, ytext, monacoBinding };
-  };
-
-  useEffect(() => {
-    window.addEventListener("load", link);
-    if (tick < 10) {
-      if (
-        editorRef.current !== null &&
-        !editorRef?.current.getModel().getValue()
-      ) {
-        editorRef.current.getModel().setValue(data);
-      }
-      setTick((prev) => prev + 1);
+    if (
+      editorRef.current !== null &&
+      !editorRef?.current.getModel().getValue()
+    ) {
+      editorRef.current.getModel().setValue(data);
     }
-
-    return () => {
-      window.removeEventListener("load", link);
-    };
-  });
+    setTick((prev) => prev + 1);
+  }, [data, selectedFileName, tick]);
 
   const goBack = () => {
     navigate(-1);
