@@ -10,26 +10,32 @@ import PrivateRoute from "./route/PrivateRoute";
 import Intro from "./pages/intro/Intro";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
-import Main from "./pages/main/Main";
 import Mypage from "./pages/mypage/Mypage";
 import Teams from "./pages/teams/Teams";
 import TeamCreate from "./pages/team-create/TeamCreate";
 import TeamDetail from "./pages/team-detail/TeamDetail";
-import Test from "./pages/test/Test";
-import TestMain from "./pages/test-main/TestMain";
+import Project from "./pages/project/Project";
 import NotFound from "./pages/not-found/NotFound";
+import Forbidden from "./pages/forbidden/Forbidden";
+import WithLoading from "./components/WithLoading";
 import YMonaco3 from "./pages/code-share/YMonaco3";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Intro />,
+    element: (
+      <WithLoading>
+        <Intro />
+      </WithLoading>
+    ),
   },
   {
     path: "/login",
     element: (
       <ProtectedRoute>
-        <Login />
+        <WithLoading>
+          <Login />
+        </WithLoading>
       </ProtectedRoute>
     ),
   },
@@ -37,23 +43,27 @@ const router = createBrowserRouter([
     path: "/signup",
     element: (
       <ProtectedRoute>
-        <Signup />
+        <WithLoading>
+          <Signup />
+        </WithLoading>
       </ProtectedRoute>
     ),
   },
   {
-    path: "/main",
-    element: <Main />,
-  },
-  {
     path: "/mypage/:userSeq",
-    element: <Mypage />,
+    element: (
+      <WithLoading>
+        <Mypage />
+      </WithLoading>
+    ),
   },
   {
     path: "/teams",
     element: (
       <PrivateRoute>
-        <Teams />
+        <WithLoading>
+          <Teams />
+        </WithLoading>
       </PrivateRoute>
     ),
   },
@@ -61,7 +71,9 @@ const router = createBrowserRouter([
     path: "/teams/:teamSeq",
     element: (
       <PrivateRoute>
-        <TeamDetail />
+        <WithLoading>
+          <TeamDetail />
+        </WithLoading>
       </PrivateRoute>
     ),
   },
@@ -69,33 +81,35 @@ const router = createBrowserRouter([
     path: "/teams/create",
     element: (
       <PrivateRoute>
-        <TeamCreate />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/test",
-    element: (
-      <PrivateRoute>
-        <Test />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/test/main",
-    element: (
-      <PrivateRoute>
-        <TestMain />
+        <WithLoading>
+          <TeamCreate />
+        </WithLoading>
       </PrivateRoute>
     ),
   },
   {
     path: "/project/:teamSeq",
-    element: <TestMain />,
+    element: (
+      <WithLoading>
+        <Project />
+      </WithLoading>
+    ),
   },
   {
-    path: "project/code-share",
-    element: <YMonaco3 />,
+    path: "/project/code-share",
+    element: (
+      <WithLoading>
+        <YMonaco3 />
+      </WithLoading>
+    ),
+  },
+  {
+    path: "/403",
+    element: <Forbidden />,
+  },
+  {
+    path: "/404",
+    element: <NotFound />,
   },
   {
     path: "*",

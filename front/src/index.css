@@ -165,3 +165,58 @@ input:-internal-autofill-selected {
   background-color: transparent !important;
   color: fieldtext !important;
 }
+
+/* autofill bg */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-transition: background-color 9999s ease-out;
+  -webkit-text-fill-color: #fff !important;
+}
+
+/* text selection color */
+::-moz-selection {
+  /* Code for Firefox */
+  color: white;
+  background: #a34dc1;
+}
+
+::selection {
+  color: white;
+  background: #a34dc1;
+}
+
+.css-14gcpgt-MuiTreeView-root p {
+  font-family: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto", "Apple SD Gothic Neo",
+    "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu", "Cantarell",
+    "Fira Sans", "Droid Sans", "Helvetica Neue", "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.contexify-crow {
+  --contexify-menu-bgColor: rgba(40, 40, 40, 0.98);
+  --contexify-separator-color: #4c4c4c;
+  --contexify-item-color: #fff;
+  --contexify-activeItem-color: #fff;
+  --contexify-activeItem-bgColor: #786f7b;
+  --contexify-rightSlot-color: #6f6e77;
+  --contexify-activeRightSlot-color: #fff;
+  --contexify-arrow-color: #6f6e77;
+  --contexify-activeArrow-color: #fff;
+}
+
+.contexify-crow-nav {
+  --contexify-menu-bgColor: rgba(40, 40, 40, 0.98);
+  --contexify-separator-color: #4c4c4c;
+  --contexify-item-color: #fff;
+  --contexify-activeItem-color: #fff;
+  --contexify-activeItem-bgColor: #786f7b;
+  --contexify-rightSlot-color: #6f6e77;
+  --contexify-activeRightSlot-color: #fff;
+  --contexify-arrow-color: #6f6e77;
+  --contexify-activeArrow-color: #fff;
+  --contexify-menu-minWidth: 110px;
+}

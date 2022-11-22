@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import userApi from "../../api/userApi";
 
 const Profile = ({ userSeq, mySeq }) => {
+  const navigate = useNavigate();
   const { myNickname, myEmail, myGitUsername } = useSelector(
     (state) => state.user.value
   );
@@ -14,8 +16,13 @@ const Profile = ({ userSeq, mySeq }) => {
     userApi
       .getMypage(userSeq)
       .then((res) => setUserInfo(res.data))
-      .catch(console.error);
-  }, [userSeq, myNickname, myGitUsername]);
+      .catch((err) => {
+        console.error(err);
+        if (err.response.status === 404) {
+          navigate("/404", { replace: true });
+        }
+      });
+  }, [userSeq, myNickname, myGitUsername, navigate]);
 
   return (
     <div
@@ -32,21 +39,15 @@ const Profile = ({ userSeq, mySeq }) => {
 
         {/* 닉네임 */}
         <div className="text-white text-2xl font-bold">
-          {userSeq === mySeq ? myNickname : userNickname}
+          {+userSeq === mySeq ? myNickname : userNickname}
         </div>
 
         {/* 메일 */}
-        <div className="text-sm">{userSeq === mySeq ? myEmail : userId}</div>
+        <div className="text-sm">{+userSeq === mySeq ? myEmail : userId}</div>
 
         {/* 깃 이메일 */}
         <div className="text-primary_-2_dark text-sm mb-6">
-          {userSeq === mySeq
-            ? myGitUsername
-              ? myGitUsername
-              : "깃 연결 없음"
-            : userGitUsername
-            ? userGitUsername
-            : "깃 연결 없음"}
+          {+userSeq === mySeq ? myGitUsername : userGitUsername}
         </div>
 
         {/* 정보 수정 버튼 */}

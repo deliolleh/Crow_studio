@@ -2,12 +2,12 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import userReducer from "./userSlice";
 import teamReducer from "./teamSlice";
-import projectReducer from "./projectSlice";
+import globalReducer from "./globalSlice";
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
     team: teamReducer,
-    project: projectReducer,
+    global: globalReducer,
   },
 });

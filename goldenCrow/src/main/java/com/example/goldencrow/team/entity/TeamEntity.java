@@ -47,11 +47,14 @@ public class TeamEntity {
      *
      * @param userEntity 사용자의 UserEntity
      * @param teamName    만들고자 하는 팀의 이름
-     * @param projectType 해당 팀에서 작업할 프로젝트의 종류
+     * @param projectType 해당 팀에서 작업할 프로젝트
+     * @param teamGit 해당 팀에 연결될
      */
-    public TeamEntity(UserEntity userEntity, String teamName, int projectType) {
+    public TeamEntity(UserEntity userEntity, String teamName, int projectType, String teamGit) {
         this.teamLeader = userEntity;
         this.teamName = teamName;
+        this.teamGit = teamGit;
         this.type= projectType;
+
     }
 }

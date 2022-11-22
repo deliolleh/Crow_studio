@@ -1,5 +1,6 @@
 package com.example.goldencrow.compile;
 
+import com.example.goldencrow.file.dto.FileCreateDto;
 import com.example.goldencrow.file.service.FileService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
@@ -33,7 +34,6 @@ public class CompileService {
      * @return 명령어 수행 성공 시 결과 문자열 반환, 성패에 따른 result 반환
      */
     public String resultStringService(String[] cmd) {
-        System.out.println("명령어 실행 !");
         try {
             StringBuffer sb = new StringBuffer();
             Process p = Runtime.getRuntime().exec(cmd);
@@ -48,7 +48,6 @@ public class CompileService {
             p.waitFor();
             in.close();
             p.destroy();
-            System.out.println(result);
             return result.trim();
         } catch (IOException | InterruptedException e) {
             return e.getMessage();
@@ -110,6 +109,9 @@ public class CompileService {
         } catch (IOException e) {
             return UNKNOWN;
         }
+        FileCreateDto fileCreateDto =
+                new FileCreateDto("Dockerfile", absolutePath + "/Dockerfile", teamSeq);
+        fileService.insertFileService(fileCreateDto);
         return SUCCESS;
     }
 
@@ -185,11 +187,10 @@ public class CompileService {
                         + " 2> " + outfilePath};
             }
             // 결과 문자열
-            System.out.println(Arrays.toString(command));
             String response = resultStringService(command);
             // 에러 메세지 파일에서 읽어오기
-            List<String> messageList = fileService.readFile(outfilePath);
-            String message = messageList.get(1);
+            Map<String, String> messageList = fileService.readFileService(outfilePath);
+            String message = messageList.get("fileContent");
             String pathChangemessage = message;
             if (message.contains(BASE_URL)) {
                 pathChangemessage = message.replaceAll(BASE_URL + teamSeq + "/", "");
@@ -213,16 +214,27 @@ public class CompileService {
         }
         // Django, fastapi, flask 프로젝트일 때
         else {
-            // 도커파일 추가 로직
-            String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), typeNum);
-            if (!Objects.equals(dockerfile, "SUCCESS")) {
-                serviceRes.put("result", dockerfile);
-                return serviceRes;
+            // 도커파일이 있다면 생성하지 않고 넘어가기
+            String[] dockerfileExist = {"/bin/sh", "-c", "[ -f ", absolutePath + "/Dockerfile",
+                    "]", "&& echo \"dockerfile\""};
+            String fileExistResult = resultStringService(dockerfileExist);
+            if (fileExistResult.isEmpty()) {
+                // 도커파일 추가 로직
+                String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), typeNum);
+                if (!Objects.equals(dockerfile, "SUCCESS")) {
+                    serviceRes.put("result", dockerfile);
+                    return serviceRes;
+                }
             }
         }
 
         // 프로젝트명과 teamSeq로 docker container와 image 이름 생성
         String conAndImgName = "crowstudio_" + teamName.toLowerCase() + "_" + teamSeq;
+        // 만약 현재 실행되고있다면, 멈추기
+        String[] stopContainer = {"docker", "stop", conAndImgName};
+        resultStringService(stopContainer);
+        String[] stopImage = {"dockder", "rmi", conAndImgName};
+        resultStringService(stopImage);
         // 도커 이미지 빌드
         String[] image = {"docker", "build", "-t", conAndImgName, absolutePath + "/"};
         String imageBuild = resultStringService(image);
@@ -252,12 +264,12 @@ public class CompileService {
     /**
      * 컴파일 중단을 처리하는 내부로직
      *
-     * @param projectName 컴파일 중단할 프로젝트의 이름
-     * @param teamSeq     컴파일 중단할 프로젝트의 팀 sequence
+     * @param teamName 컴파일 중단할 프로젝트의 팀 이름
+     * @param teamSeq  컴파일 중단할 프로젝트의 팀 sequence
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> pyCompileStopService(String projectName, String teamSeq) {
-        String conAndImgName = "crowstudio_" + projectName.toLowerCase() + "_" + teamSeq;
+    public Map<String, String> pyCompileStopService(String teamName, String teamSeq) {
+        String conAndImgName = "crowstudio_" + teamName.toLowerCase() + "_" + teamSeq;
 
         // 도커 컨테이너 멈추고 삭제
         String[] containerStop = {"docker", "stop", conAndImgName};
@@ -286,8 +298,8 @@ public class CompileService {
         }
 
         // 도커파일 삭제
-        Map<String, String> deletedFile = fileService.deleteFile(
-                BASE_URL + teamSeq + "/" + projectName + "/Dockerfile", 2, Long.parseLong(teamSeq));
+        Map<String, String> deletedFile = fileService.deleteFileService(
+                BASE_URL + teamSeq + "/" + teamName + "/Dockerfile", 2, Long.parseLong(teamSeq));
         if (!deletedFile.get("result").equals(SUCCESS)) {
             serviceRes.put("result", deletedFile.get("result"));
             return serviceRes;

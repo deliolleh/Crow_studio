@@ -83,18 +83,25 @@ const TeamDetail = () => {
     dispatch(getTeam(teamSeq))
       .unwrap()
       .then((res) => {
-        setTeam(res);
         console.log("res:", res);
+        setTeam(res);
       })
-      .catch(console.error);
-  }, [dispatch, teamSeq]);
+      .catch((errStatusCode) => {
+        console.error("errStatusCode:", errStatusCode);
+        if (errStatusCode === 404) {
+          navigate("/404", { replace: true });
+        } else if (errStatusCode === 403) {
+          navigate("/403", { replace: true });
+        }
+      });
+  }, [dispatch, teamSeq, navigate]);
 
   const setTeamNameHandler = (resTeamName) =>
     setTeam((prev) => {
       return { ...prev, teamName: resTeamName };
     });
 
-  const openSearchInputHandler = () => setIsSearch(true);
+  // const openSearchInputHandler = () => setIsSearch(true);
   const closeSearchInputHandler = () => setIsSearch(false);
   const searchUserChangeHandler = (e) => setSearchUserName(e.target.value);
   const submitSearchUserHandler = (e) => {
@@ -221,7 +228,7 @@ const TeamDetail = () => {
               className="text-white font-bold"
               ref={(_subtitle) => (subtitle = _subtitle)}
             >
-              Hello
+              팀원 추가
             </h2>
             <IoClose
               className="cursor-pointer text-primary_dark ml-2"
@@ -287,7 +294,7 @@ const TeamDetail = () => {
               <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
                 팀원
               </div>
-              <div className="flex md:flex-row flex-col items-center">
+              <div className="flex md:flex-row flex-col justify-center items-center">
                 {members?.map((member) => (
                   <Member
                     key={`m${member.memberSeq}`}
@@ -297,7 +304,7 @@ const TeamDetail = () => {
                   />
                 ))}
 
-                <div className="flex flex-col items-center px-2 md:py-2 pb-2">
+                <div className="flex flex-col items-center px-2 py-2">
                   {/* isSearch가 아니면 + 버튼, isSearch이면 유저 검색 입력창 나옴 */}
                   {!isSearch ? (
                     <IoAdd
@@ -342,12 +349,12 @@ const TeamDetail = () => {
             </div>
 
             {/* 팀 깃 주소 */}
-            <div className="flex items-center mb-2 md:w-full w-[285px] h-fit bg-component_item_bg_dark rounded-md">
-              <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
+            <div className="flex mb-2 md:w-full w-[285px] bg-component_item_bg_dark rounded-md">
+              <div className="md:w-48 w-32 min-w-[128px] text-white font-bold bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
                 깃
               </div>
               <div className="flex">
-                <div className="text-white text-sm p-2">
+                <div className="text-white text-sm break-all p-2">
                   {teamGit ? teamGit : "-"}
                 </div>
               </div>
@@ -442,23 +449,6 @@ const TeamDetail = () => {
                         <BsCheckLg className="text-point_light_yellow hover:text-point_yellow" />
                       </button>
                     </div>
-                    // <form onSubmit={submitProjectTypeHandler} className="flex">
-                    //   <select
-                    //     className="w-full text-white mr-1.5 py-1.5 px-3 bg-component_item_bg_+2_dark placeholder:text-gray-300 placeholder:text-sm active:outline-none active:ring-2 active:ring-point_purple focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
-                    //     id="projectType"
-                    //     name="projectType"
-                    //     value={modifiedProjectType}
-                    //     onChange={modifyProjectTypeHandler}
-                    //   >
-                    //     <option value="pure Python">pure Python</option>
-                    //     <option value="Django">Django</option>
-                    //     <option value="Flask">Flask</option>
-                    //     <option value="FastAPI">FastAPI</option>
-                    //   </select>
-                    //   <button onClick={submitProjectTypeHandler}>
-                    //     <BsCheckLg className="text-point_light_yellow hover:text-point_yellow" />
-                    //   </button>
-                    // </form>
                   )}
                 </div>
               </div>

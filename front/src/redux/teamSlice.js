@@ -3,23 +3,16 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import teamApi from "../api/teamApi";
 
 const initialState = {
-  value: {},
+  value: {
+    teamSeq: "",
+    teamName: "",
+    projectType: "",
+    teamGit: "",
+    selectedFileName: "",
+    selectedFileType: "directory",
+    selectedFilePath: "",
+  },
 };
-
-export const getTeams = createAsyncThunk(
-  "team/getTeams",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await teamApi.getTeams();
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
 
 export const getTeam = createAsyncThunk(
   "team/getTeam",
@@ -174,16 +167,27 @@ export const modifyProjectType = createAsyncThunk(
   }
 );
 
-//
-
-//
-
-//
-
 export const teamSlice = createSlice({
   name: "team",
   initialState,
-  reducers: {},
+  reducers: {
+    selectFile: (state, action) => {
+      const { name, type, path } = action.payload;
+      state.value.selectedFileName = name;
+      state.value.selectedFileType = type;
+      state.value.selectedFilePath = path;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(getTeam.fulfilled, (state, action) => {
+      const { teamSeq, teamName, projectType, teamGit } = action.payload;
+      state.value.teamSeq = teamSeq;
+      state.value.teamName = teamName;
+      state.value.projectType = projectType;
+      state.value.teamGit = teamGit;
+    });
+  },
 });
 
+export const { selectFile } = teamSlice.actions;
 export default teamSlice.reducer;

@@ -2,6 +2,7 @@ package com.example.goldencrow.user.service;
 
 import com.example.goldencrow.common.CryptoUtil;
 import com.example.goldencrow.file.service.ProjectService;
+import com.example.goldencrow.team.entity.MemberEntity;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.MemberRepository;
 import com.example.goldencrow.team.repository.TeamRepository;
@@ -503,24 +504,28 @@ public class UserService {
             // 사용자가 팀장인 다인팀이 존재하지 않음, 탈퇴 가능
             // 사용자가 팀장인 단일팀을 서버에서 삭제해야 함
 
-            Map<String, String> deleteProjectRes = projectService.deleteProject(teamSeqList);
-            String result = deleteProjectRes.get("result");
+            if (!teamSeqList.isEmpty()) {
+                Map<String, String> deleteProjectRes = projectService.deleteProjectService(teamSeqList);
+                String result = deleteProjectRes.get("result");
 
-            if (!result.equals(SUCCESS)) {
+                if (!result.equals(SUCCESS)) {
+                    serviceRes.put("result", UNKNOWN);
+                    return serviceRes;
+                }
 
-                // 유저 테이블에서 사용자 삭제
-                userRepository.delete(userEntity);
-
-                // DB의 유저 테이블에서 사용자가 삭제됨에 따라,
-                // 멤버 테이블에서 사용자의 모든 멤버 컬럼이 삭제됨
-                // 팀 테이블에서 사용자가 팀장인 모든 팀 컬럼이 삭제됨
-
-                // 위의 과정을 무사히 통과했으므로
-                serviceRes.put("result", SUCCESS);
-
-            } else {
-                serviceRes.put("result", UNKNOWN);
             }
+
+            // 해당 사용자에 관련된 모든 팀 정보가 서버에서 삭제됨
+
+            // 유저 테이블에서 사용자 삭제
+            userRepository.delete(userEntity);
+
+            // DB의 유저 테이블에서 사용자가 삭제됨에 따라,
+            // 멤버 테이블에서 사용자의 모든 멤버 컬럼이 삭제됨
+            // 팀 테이블에서 사용자가 팀장인 모든 팀 컬럼이 삭제됨
+
+            // 위의 과정을 무사히 통과했으므로
+            serviceRes.put("result", SUCCESS);
 
         } catch (Exception e) {
             serviceRes.put("result", UNKNOWN);
@@ -538,7 +543,7 @@ public class UserService {
      * @param settingsDto 개인 환경 세팅 정보
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> personalPostService(String jwt, SettingsDto settingsDto) {
+    public Map<String, String> personalPostService(String jwt, Long teamSeq, SettingsDto settingsDto) {
 
         Map<String, String> serviceRes = new HashMap<>();
 
@@ -556,18 +561,30 @@ public class UserService {
 
             UserEntity userEntity = userEntityOptional.get();
 
+            // 입력받은 팀에 사용자가 멤버로 등록되어 있는지 확인
+            Optional<MemberEntity> memberEntityOptional
+                    = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(userEntity.getUserSeq(), teamSeq);
+
+            if (!memberEntityOptional.isPresent()) {
+                // 해당 팀에 속해있지 않음
+                serviceRes.put("result", NO_PER);
+                return serviceRes;
+            }
+
+            MemberEntity memberEntity = memberEntityOptional.get();
+
             // DB에 varchar 형태로 저장하기 위해 JSON을 String꼴로 치환함
             JSONObject jsonObject = new JSONObject(settingsDto);
             String settings = jsonObject.toString();
 
-            // userEntity의 환경 세팅을 갱신하여 기록
-            userEntity.setUserSettings(settings);
-            userRepository.saveAndFlush(userEntity);
+            memberEntity.setSettings(settings);
+            memberRepository.saveAndFlush(memberEntity);
 
             // 위의 과정을 무사히 통과했으므로
             serviceRes.put("result", SUCCESS);
 
         } catch (Exception e) {
+            e.printStackTrace();
             serviceRes.put("result", UNKNOWN);
 
         }
@@ -582,7 +599,7 @@ public class UserService {
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
      * @return 조회 성공 시 개인 환경 세팅 정보 반환, 성패에 따른 result 반환
      */
-    public SettingsDto personalGetService(String jwt) {
+    public SettingsDto personalGetService(String jwt, Long teamSeq) {
 
         try {
 
@@ -598,7 +615,27 @@ public class UserService {
             }
 
             UserEntity userEntity = userEntityOptional.get();
-            String settings = userEntity.getUserSettings();
+
+            // 입력받은 팀에 사용자가 멤버로 등록되어 있는지 확인
+            Optional<MemberEntity> memberEntityOptional
+                    = memberRepository.findByUser_UserSeqAndTeam_TeamSeq(userEntity.getUserSeq(), teamSeq);
+
+            if (!memberEntityOptional.isPresent()) {
+                // 해당 팀에 속해있지 않음
+                SettingsDto settingsDto = new SettingsDto();
+                settingsDto.setResult(NO_PER);
+                return settingsDto;
+            }
+
+            MemberEntity memberEntity = memberEntityOptional.get();
+            String settings = memberEntity.getSettings();
+
+            if(settings.isEmpty()){
+                // 만약 기존에 저장되어 있는 내용이 없으므로
+                SettingsDto settingsDto = new SettingsDto();
+                settingsDto.setResult("NO_VALUE");
+                return settingsDto;
+            }
 
             // 내보내기 위한 SettingsDto 생성
             ObjectMapper mapper = new ObjectMapper();
