@@ -688,27 +688,4 @@ public class GitService {
         }
         return serviceRes;
     }
-    public String gitTest(){
-        String url = BASE_URL + "232/abc/goldenCrow";
-        ProcessBuilder p = new ProcessBuilder("python3","abc.py");
-        p.directory(new File(url));
-        p.redirectErrorStream(true);
-        StringBuilder sb = new StringBuilder();
-        try {
-            Process pr = p.start();
-            BufferedReader br = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-            String read;
-            while ((read = br.readLine()) != null) {
-                sb.append(read);
-                sb.append("\n");
-            }
-            pr.waitFor();
-        } catch (IOException e) {
-            return e.getMessage();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return e.getMessage();
-        }
-        return sb.toString();
-    }
 }

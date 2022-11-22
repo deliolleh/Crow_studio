@@ -218,9 +218,4 @@ public class GitController {
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
     }
-
-    @GetMapping("/")
-    public ResponseEntity<String> gitPushTest() {
-        return new ResponseEntity<>(gitService.gitTest(),HttpStatus.OK);
-    }
 }
