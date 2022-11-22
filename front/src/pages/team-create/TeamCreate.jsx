@@ -94,7 +94,6 @@ const TeamCreate = () => {
     teamApi
       .createTeam(teamData)
       .then(() => {
-        alert("팀 생성 완료");
         navigate("/teams", { replace: true });
       })
       .catch((errorStatusCode) => {
