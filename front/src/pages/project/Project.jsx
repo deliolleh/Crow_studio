@@ -180,6 +180,25 @@ const Project = () => {
     setEditorHeight(tempSize);
   }, []);
 
+  // 브라우저 사이즈 변경할 때 에디터와 콘솔 높이 변경
+  const handleResize = () => {
+    // 에디터 높이 변경값 셋
+    const tempSize1 = editorheightRef.current.pane1.clientHeight - 34;
+    setEditorHeight(tempSize1);
+    // 콘솔 높이 변경값 셋
+    const tempSize2 = editorheightRef.current.pane2.clientHeight - 0.5;
+    setConsoleHeight(tempSize2);
+  };
+
+  // 브라우저 사이즈 변경 감지
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => {
+      // 메모리 누수 방지?
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   const checkSize = () => {
     // 에디터 높이 변경값 셋
     const tempSize = editorheightRef.current.state.pane1Size;
