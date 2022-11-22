@@ -2,18 +2,19 @@ import React from "react";
 import { IoClose } from "react-icons/io5";
 
 const Member = (props) => {
-  const { isLeader, member, teamLeaderNickname, onDelete } = props;
+  const { isLeader, memberNickname, memberSeq, deleteMember } = props;
 
-  const deleteHandler = () => onDelete(member.memberNickname, member.memberSeq);
+  const clickHandler = () => deleteMember(memberNickname, memberSeq);
 
   return (
     <div className="flex flex-col items-center p-2">
       <div className="text-white text-sm flex items-center">
-        {isLeader ? teamLeaderNickname : member.memberNickname}
-        {!isLeader && (
+        {memberNickname}
+
+        {isLeader && (
           <IoClose
-            className="cursor-pointer text-point_pink ml-2"
-            onClick={deleteHandler}
+            className="cursor-pointer text-point_pink -bold ml-1"
+            onClick={clickHandler}
           />
         )}
       </div>

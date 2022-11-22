@@ -23,7 +23,6 @@ const Header = () => {
 
   const logoutHandler = () => {
     dispatch(logout());
-    alert("로그아웃 성공");
     navigate("/", { replace: true });
   };
 
