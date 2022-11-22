@@ -102,7 +102,7 @@ public class CompileService {
         if (type == 1) {
             if (input.isEmpty()) {
                 content = "FROM python:3.10\n" +
-                        "CMD [ \"python3\", \"" + absolutePath + "]\n" +
+                        "CMD [\"python3\", \"" + absolutePath + "\"]\n" +
                         "EXPOSE 3000";
             }
             else {
@@ -111,7 +111,7 @@ public class CompileService {
                         "CMD [\"/bin/sh\", \"-c\", \"echo\", " + inputString +
                         " \"|\", \"python3\", \"" + absolutePath +
 //                    "\", \"2>\"" + outfilePath +
-                        "]\n" +
+                        "\"]\n" +
                         "EXPOSE 3000";
             }
         } else if (type == 2) {
