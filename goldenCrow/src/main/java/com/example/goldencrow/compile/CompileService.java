@@ -361,7 +361,7 @@ public class CompileService {
      */
     public int findProjectTypeService(String filePath) {
         String[] pathList = filePath.split("/");
-        String projectPath = BASE_URL + pathList[0] + pathList[1];
+        String projectPath = BASE_URL + pathList[0] + "/" + pathList[1];
         List<String> initialList = new ArrayList<>();
         List<String> fileList = showFilesInDIr(projectPath, initialList);
         if (fileList == null) {
