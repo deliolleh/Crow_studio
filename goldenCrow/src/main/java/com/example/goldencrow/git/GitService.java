@@ -434,7 +434,6 @@ public class GitService {
             BufferedReader result = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((read = result.readLine()) != null) {
                 msg.append(read).append("\n");
-                System.out.println("push message"+read);
             }
             p.waitFor();
         } catch (IOException e) {
