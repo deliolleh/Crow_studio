@@ -128,10 +128,10 @@ public class EditorService {
                 File file = new File(PATH + "lint.py");
                 FileOutputStream lfw = new FileOutputStream(file);
                 PrintWriter writer = new PrintWriter(lfw);
+                // missing-module-docstring, missing-final-newline 오류는 잡지 않도록 조정
+                writer.println("# pylint: disable=C0114, C0304");
                 // temp.py에 code를 입력
                 writer.print(code);
-                // Missing module docstring 오류는 잡지 않도록 조정
-                writer.print(" # pylint: disable=C0114");
 
                 // FileWriter 닫기
                 writer.flush();
