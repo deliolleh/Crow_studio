@@ -18,25 +18,29 @@ const YMonaco3 = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const ydoc = new Y.Doc();
-    const provider = new WebrtcProvider(selectedFileName, ydoc);
-    const ytext = ydoc.getText("monaco");
-    console.log("ytext: ", ytext);
+    if (editorRef.current !== null) {
+      const ydoc = new Y.Doc();
+      const provider = new WebrtcProvider(selectedFileName, ydoc);
+      const ytext = ydoc.getText("monaco");
+      console.log("ytext: ", ytext);
 
-    const monacoBinding = new MonacoBinding(
-      ytext,
-      editorRef?.current.getModel(),
-      new Set([editorRef.current]),
-      provider.awareness
-    );
-    window.example = { provider, ydoc, ytext, monacoBinding };
-    if (
-      editorRef.current !== null &&
-      !editorRef?.current.getModel().getValue()
-    ) {
-      editorRef.current.getModel().setValue(data);
+      const monacoBinding = new MonacoBinding(
+        ytext,
+        editorRef?.current.getModel(),
+        new Set([editorRef.current]),
+        provider.awareness
+      );
+
+      provider.on("sync", (isSynced) => {
+        if (isSynced && ytext.length === 0) {
+          ytext.insert(0, data);
+        }
+      });
+
+      window.example = { provider, ydoc, ytext, monacoBinding };
+    } else {
+      setTick((prev) => prev + 1);
     }
-    setTick((prev) => prev + 1);
   }, [data, selectedFileName, tick]);
 
   const goBack = () => {
