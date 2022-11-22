@@ -288,7 +288,7 @@ public class CompileService {
 //            return serviceRes;
 //        }
         if (type == 1) {
-            String[] pythonCmd = {"docker", "logs", conAndImgName};
+            String[] pythonCmd = {"docker", "logs", "-f", conAndImgName};
             String pythonResponse = resultStringService(pythonCmd);
             System.out.println(pythonResponse);
             serviceRes.put("result", SUCCESS);
