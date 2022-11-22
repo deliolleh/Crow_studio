@@ -130,6 +130,8 @@ public class EditorService {
                 PrintWriter writer = new PrintWriter(lfw);
                 // temp.py에 code를 입력
                 writer.print(code);
+                // Missing module docstring 오류는 잡지 않도록 조정
+                writer.print(" # pylint: disable=C0114");
 
                 // FileWriter 닫기
                 writer.flush();
