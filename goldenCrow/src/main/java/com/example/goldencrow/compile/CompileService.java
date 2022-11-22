@@ -229,7 +229,7 @@ public class CompileService {
         }
 
         // 프로젝트명과 teamSeq로 docker container와 image 이름 생성
-        String conAndImgName = "crowstudio_" + teamName.toLowerCase() + "_" + teamSeq;
+        String conAndImgName = "crowstudio_" + teamName.toLowerCase().replaceAll(" ", "") + "_" + teamSeq;
         // 만약 현재 실행되고있다면, 멈추기
         String[] stopContainer = {"docker", "stop", conAndImgName};
         resultStringService(stopContainer);
@@ -269,7 +269,7 @@ public class CompileService {
      * @return 성패에 따른 result 반환
      */
     public Map<String, String> pyCompileStopService(String teamName, String teamSeq) {
-        String conAndImgName = "crowstudio_" + teamName.toLowerCase() + "_" + teamSeq;
+        String conAndImgName = "crowstudio_" + teamName.toLowerCase().replaceAll(" ", "") + "_" + teamSeq;
 
         // 도커 컨테이너 멈추고 삭제
         String[] containerStop = {"docker", "stop", conAndImgName};
@@ -304,6 +304,33 @@ public class CompileService {
             serviceRes.put("result", deletedFile.get("result"));
             return serviceRes;
         }
+        serviceRes.put("result", SUCCESS);
+        return serviceRes;
+    }
+
+    /**
+     * 팀 생성 시 자동으로 최초 컨테이너를 생성시켜 포트를 할당하는 내부 로직
+     * @param teamName  생성된 팀의 이름
+     * @param teamSeq   생성된 팀의 Sequence
+     * @return 생성된 컨테이너의 포트 번호, 성패에 따른 result 반환
+     */
+    public Map<String, String> containerCreateService(String teamName, Long teamSeq) {
+        Map<String, String> serviceRes = new HashMap<>();
+        String conAndImgName = "crowstudio_" + teamName.toLowerCase().replaceAll(" ", "") + "_" + teamSeq;
+        // python docker images로 초기 컨테이너 생성 및 포트 할당
+        String[] cmd = {"docker", "run", "-d", "--name", conAndImgName, "-P", "python"};
+        String container = resultStringService(cmd);
+        // 포트번호 가져오기
+        String portString = portNumService(container);
+        if (portString.equals(NO_SUCH)) {
+            serviceRes.put("result", WRONG);
+            return serviceRes;
+        }
+        // \n 전까지의 문자열에서 : 뒤에 있는 숫자만 가져오기
+        String[] portList = portString.split("\n");
+        String[] containerPort = portList[0].split(":");
+        // 서버 URL 생성
+        serviceRes.put("port", containerPort[1]);
         serviceRes.put("result", SUCCESS);
         return serviceRes;
     }
