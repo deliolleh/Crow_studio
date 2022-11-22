@@ -193,7 +193,7 @@ public class CompileService {
         String conAndImgName = "crowstudio_" + teamName.toLowerCase().replaceAll(" ", "") + "_" + teamSeq;
         // 현재 실행되고 있는 컨테이너, 이미지 삭제, 도커파일 삭제
         pyCompileStopService(teamName, teamSeq);
-        String port = "port";
+        String port = "3500";
         // 절대경로 생성
         String absolutePath;
         // pure Python일 경우 파일명까지, 프로젝트일 경우 프로젝트명까지 절대경로로 선언
