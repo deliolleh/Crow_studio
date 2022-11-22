@@ -42,9 +42,7 @@ public class CompileController {
         if (req.containsKey("filePath") && req.containsKey("input")) {
             String filePath = req.get("filePath");
             String input = req.get("input");
-            String[] pathList = filePath.split("/");
-            String projectPath = BASE_URL + pathList[0] + pathList[1];
-            int type = compileService.findProjectTypeService(projectPath);
+            int type = compileService.findProjectTypeService(filePath);
             if (type == 0) {
                 System.out.println("파일이 없어서 null이야 그래서 0이라서 BAD");
                 Map<String, String> res = new HashMap<>();
