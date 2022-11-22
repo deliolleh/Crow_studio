@@ -16,7 +16,6 @@ const Teams = () => {
   const clickTeamHandler = (teamSeq) => navigate(`/teams/${teamSeq}`);
 
   useEffect(() => {
-    // 본인이 속한 팀들 가져옴
     teamApi
       .getTeams()
       .then((res) => setMyTeams(res.data))

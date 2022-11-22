@@ -1,10 +1,9 @@
 import React, { useState, Fragment } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
-import { createTeam } from "../../redux/teamSlice";
+import teamApi from "../../api/teamApi";
 
 import Header from "../../components/Header";
 
@@ -27,7 +26,6 @@ const pjtType = [
 ];
 
 const TeamCreate = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [inputs, setInputs] = useState(initialInputState);
   const [errorMsgs, setErrorMsgs] = useState(initialErrorState);
@@ -93,8 +91,8 @@ const TeamCreate = () => {
       teamGit: checkGit ? teamGit : null,
     };
     setErrorMsgs(initialErrorState);
-    dispatch(createTeam(teamData))
-      .unwrap()
+    teamApi
+      .createTeam(teamData)
       .then(() => {
         alert("팀 생성 완료");
         navigate("/teams", { replace: true });

@@ -1,45 +1,51 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { modifyTeamName, deleteTeam } from "../../../redux/teamSlice";
+import teamApi from "../../../api/teamApi";
 
 import TeamName from "./TeamName";
-import TeamNameModifyInput from "./TeamNameModifyInput";
+import TeamNameUpdateInput from "./TeamNameUpdateInput";
 import TeamListButton from "./TeamListButton";
 import RedButton from "./RedButton";
 
 const TeamDetailHeader = (props) => {
   const { teamName, isLeader, teamSeq, setTeamName } = props;
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [isModify, setIsModify] = useState(false);
+  const [showTeamNameUpdate, setShowTeamNameUpdate] = useState(false);
 
-  const openModifyHandler = () => setIsModify(true);
-  const closeModifyHandler = () => setIsModify(false);
-  const submitTeamNameModifyHandler = (modifiedTeamName) => {
-    dispatch(modifyTeamName({ teamName: modifiedTeamName, teamSeq }))
-      .unwrap()
-      .then((resTeamName) => {
-        setTeamName(resTeamName);
-        setIsModify(false);
-      })
-      .catch(console.error);
+  const openTeamNameUpdateHandler = () => setShowTeamNameUpdate(true);
+  const closeTeamNameUpdateHandler = () => setShowTeamNameUpdate(false);
+
+  const submitTeamNameUpdateHandler = async (updatedTeamName) => {
+    try {
+      const teamNameData = { teamName: updatedTeamName };
+      await teamApi.updateTeamName(teamSeq, teamNameData);
+      setTeamName(updatedTeamName);
+      setShowTeamNameUpdate(false);
+    } catch (err) {
+      console.error(err);
+      const errStatusCode = err.response.status;
+      if (errStatusCode === 409) {
+        alert("이미 같은 팀 이름이 존재합니다");
+      } else {
+        alert("비상!!");
+      }
+    }
   };
 
   const goTeamListHandler = () => navigate("/teams");
 
-  const deleteTeamHandler = () => {
+  const deleteTeamHandler = async () => {
     if (!window.confirm("정말로 팀을 삭제하시겠습니까?")) {
       return;
     }
-    dispatch(deleteTeam(teamSeq))
-      .unwrap()
-      .then(() => {
-        alert("성공적으로 삭제되었습니다");
-        navigate("/teams");
-      })
-      .catch(console.error);
+    try {
+      await teamApi.deleteTeam(teamSeq);
+      alert("팀이 성공적으로 삭제되었습니다");
+      navigate("/teams");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const resignTeamHandler = () => {
@@ -51,17 +57,17 @@ const TeamDetailHeader = (props) => {
 
   return (
     <div className="flex justify-between items-center w-full mb-5">
-      {/* isModify가 아니면 팀 이름, isModify이면 팀 이름 변경 input 나옴 */}
-      {!isModify ? (
-        <TeamName onOpenModify={openModifyHandler}>{teamName}</TeamName>
+      {!showTeamNameUpdate ? (
+        <TeamName openTeamNameUpdate={openTeamNameUpdateHandler}>
+          {teamName}
+        </TeamName>
       ) : (
-        <TeamNameModifyInput
-          originTeamName={teamName}
-          onSubmitModify={submitTeamNameModifyHandler}
-          onCloseModify={closeModifyHandler}
+        <TeamNameUpdateInput
+          initialTeamName={teamName}
+          submitTeamNameUpdate={submitTeamNameUpdateHandler}
+          closeTeamNameUpdate={closeTeamNameUpdateHandler}
         />
       )}
-
       {/* 팀 목록 버튼, 팀 삭제(팀 탈퇴) 버튼 컨테이너 */}
       <div className="flex gap-2">
         <TeamListButton onClick={goTeamListHandler}>팀 목록</TeamListButton>

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
-  getTeam,
+  getTeamDetail,
   addMember,
   deleteMember,
   modifyProjectType,
@@ -80,14 +80,10 @@ const TeamDetail = () => {
   const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
-    dispatch(getTeam(teamSeq))
+    dispatch(getTeamDetail(teamSeq))
       .unwrap()
-      .then((res) => {
-        console.log("res:", res);
-        setTeam(res);
-      })
+      .then(setTeam)
       .catch((errStatusCode) => {
-        console.error("errStatusCode:", errStatusCode);
         if (errStatusCode === 404) {
           navigate("/404", { replace: true });
         } else if (errStatusCode === 403) {
@@ -127,7 +123,7 @@ const TeamDetail = () => {
         console.log(res);
         setIsSearch(false);
         setSearchResults([]);
-        dispatch(getTeam(teamSeq))
+        dispatch(getTeamDetail(teamSeq))
           .unwrap()
           .then((res) => setTeam(res))
           .catch(console.error);
@@ -149,7 +145,7 @@ const TeamDetail = () => {
     dispatch(deleteMember(deleteData))
       .unwrap()
       .then(() => {
-        dispatch(getTeam(teamSeq))
+        dispatch(getTeamDetail(teamSeq))
           .unwrap()
           .then((res) => setTeam(res))
           .catch(console.error);
@@ -200,7 +196,7 @@ const TeamDetail = () => {
       .then((res) => {
         console.log(res);
         setProjectTypeInput(false);
-        dispatch(getTeam(teamSeq))
+        dispatch(getTeamDetail(teamSeq))
           .unwrap()
           .then((res) => {
             setTeam(res);
