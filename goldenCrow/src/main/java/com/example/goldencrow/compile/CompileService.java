@@ -51,6 +51,7 @@ public class CompileService {
             BufferedReader result = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((read = result.readLine()) != null) {
                 msg.append(read).append("\n");
+                System.out.println(read);
             }
             p.waitFor();
         } catch (IOException e) {
@@ -289,6 +290,7 @@ public class CompileService {
         if (type == 1) {
             String[] pythonCmd = {"docker", "logs", conAndImgName};
             String pythonResponse = resultStringService(pythonCmd);
+            System.out.println(pythonResponse);
             serviceRes.put("result", SUCCESS);
             serviceRes.put("response", pythonResponse);
         } else if (portNumService(conAndImgName).equals(port)) {
