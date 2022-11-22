@@ -43,15 +43,18 @@ const Header = () => {
       <Menu id={MENU_ID} className="contexify-crow-nav">
         {isLoggedIn && (
           <React.Fragment>
-            <Item onClick={() => navigate(`/mypage/${mySeq}`)}>내 정보</Item>
+            <Item onClick={() => navigate(`/teams`)}>나의 팀 목록</Item>
+            <Item onClick={() => navigate(`/mypage/${mySeq}`)}>
+              회원정보 수정
+            </Item>
             <Item onClick={logoutHandler}>로그아웃</Item>
           </React.Fragment>
         )}
       </Menu>
-      <nav className="flex flex-wrap items-center justify-between px-2 py-1 bg-component_item_bg_dark m-3 rounded-lg">
-        <div className="w-screen lg:flex-row flex-col relative px-4 flex justify-between">
+      <nav className="flex flex-wrap items-center justify-center px-2 py-1 bg-component_item_bg_dark m-3 rounded-lg">
+        <div className="w-3/4 lg:flex-row flex-col relative px-4 flex justify-between">
           {/* 로고, 아이콘 */}
-          <div className="relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
+          <div className="w-3/4 relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
             <div className="flex items-center">
               <Link
                 className="text-xl font-bold leading-relaxed inline-block mr-16 py-2 whitespace-nowrap uppercase text-white"
@@ -67,17 +70,17 @@ const Header = () => {
                 </div>
               </Link>
             </div>
-            <button
+            {/* <button
               className="text-white cursor-pointer text-xl leading-none py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
               type="button"
               onClick={navbarOpenHandler}
             >
               <i className="fas fa-bars"></i>
-            </button>
+            </button> */}
           </div>
 
           {/* 링크 모음 */}
-          <div
+          {/* <div
             className={`lg:flex flex-grow items-center lg:justify-start justify-end ${
               navbarOpen ? "flex" : "hidden"
             }`}
@@ -109,7 +112,7 @@ const Header = () => {
                 </Link>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* 프로필 */}
           <div className="lg:flex flex lg:static absolute right-14 lg:item-center mt-2.5">

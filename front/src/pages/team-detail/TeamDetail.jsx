@@ -9,9 +9,9 @@ import teamApi from "../../api/teamApi";
 
 import Header from "../../components/Header";
 import TeamDetailHeader from "./components/TeamDetailHeader";
-
 import Leader from "./components/Leader";
 import Member from "./components/Member";
+import TeamListButton from "./components/TeamListButton";
 
 import Modal from "react-modal";
 
@@ -151,6 +151,7 @@ const TeamDetail = () => {
     setIsOpen(false);
   }
 
+  const goTeamListHandler = () => navigate("/teams");
   const goProjectHandler = () => navigate(`/project/${teamSeq}`);
 
   // modify project listbox
@@ -248,6 +249,9 @@ const TeamDetail = () => {
         {/* team detail */}
         <div className="flex flex-wrap items-center justify-center m-3 mb-6 h-full">
           <div className="p-8 lg:w-4/5 w-fit max-w-[1000px] h-fit flex flex-col justify-center items-center border border-primary_-2_dark rounded-md">
+            <div className="text-4xl font-bold text-white pb-2 mb-5 w-full">
+              팀 상세 정보
+            </div>
             <TeamDetailHeader
               teamName={teamName}
               isLeader={teamLeaderSeq === mySeq}
@@ -395,13 +399,19 @@ const TeamDetail = () => {
               </div>
             </div>
 
-            {/* 프로젝트 이동 버튼 */}
-            <button
-              onClick={goProjectHandler}
-              className="w-72 h-12 text-lg font-bold bg-point_light_yellow text-component_dark hover:bg-point_yellow rounded-md transition"
-            >
-              프로젝트로 이동
-            </button>
+            <div className="w-full flex justify-end gap-4">
+              <TeamListButton onClick={goTeamListHandler}>
+                팀 목록
+              </TeamListButton>
+
+              {/* 프로젝트 이동 버튼 */}
+              <button
+                onClick={goProjectHandler}
+                className="w-40 h-12 text-lg font-bold bg-point_light_yellow text-component_dark hover:bg-point_yellow rounded-md transition"
+              >
+                프로젝트로 이동
+              </button>
+            </div>
           </div>
         </div>
       </div>
