@@ -43,6 +43,7 @@ public class CompileController {
             String filePath = req.get("filePath");
             String input = req.get("input");
             int type = compileService.findProjectTypeService(filePath);
+            System.out.println(type);
             if (type == 0) {
                 System.out.println("파일이 없어서 null이야 그래서 0이라서 BAD");
                 Map<String, String> res = new HashMap<>();
