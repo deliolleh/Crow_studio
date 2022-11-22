@@ -2,6 +2,7 @@ package com.example.goldencrow.compile;
 
 import com.example.goldencrow.file.dto.FileCreateDto;
 import com.example.goldencrow.file.service.FileService;
+import com.example.goldencrow.file.service.ProjectService;
 import com.example.goldencrow.team.entity.TeamEntity;
 import com.example.goldencrow.team.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,14 @@ import static com.example.goldencrow.common.Constants.*;
  */
 @Service
 public class CompileService {
+    private String FLASK = "import Flask";
+    private String FASTAPI = "import FastAPI";
+    private String DJANGO = "from django.core.wsgi";
 
     @Autowired
     private FileService fileService;
+    @Autowired
+    private ProjectService projectService;
 
     @Autowired
     private TeamRepository teamRepository;
@@ -141,40 +147,22 @@ public class CompileService {
      * @param input    pure python 파일일 때 input값 (없으면 빈 문자열)
      * @return 컴파일 성공 시 컴파일 결과 반환, 성패에 따른 result 반환
      */
-    public Map<String, Object> pyCompileService(String type, String filePath, String input) {
-        Map<String, Object> serviceRes = new HashMap<>();
-        int typeNum;
-        switch (type) {
-            case "pure Python":
-                typeNum = 1;
-                break;
-            case "Django":
-                typeNum = 2;
-                break;
-            case "Flask":
-                typeNum = 3;
-                break;
-            case "FastAPI":
-                typeNum = 4;
-                break;
-            default:
-                serviceRes.put("result", WRONG);
-                return serviceRes;
-        }
+    public Map<String, String> pyCompileService(int type, String filePath, String input) {
+        Map<String, String> serviceRes = new HashMap<>();
         String[] pathList = filePath.split("/");
         String teamSeq = pathList[0];
         String teamName = pathList[1];
         // 절대경로 생성
         String absolutePath;
         // pure Python일 경우 파일명까지, 프로젝트일 경우 프로젝트명까지 절대경로로 선언
-        if (typeNum == 1) {
+        if (type == 1) {
             absolutePath = BASE_URL + filePath;
         } else {
             absolutePath = BASE_URL + teamSeq + "/" + teamName;
         }
 
         // 1 : pure python, 2 : django, 3 : flask, 4 : fastapi
-        if (typeNum == 1) {
+        if (type == 1) {
             String[] command;
             // 에러가 발생할 경우 에러메세지를 저장할 파일 생성
             File file = new File(BASE_URL + "outfile/" + teamSeq + ".txt");
@@ -230,7 +218,7 @@ public class CompileService {
             String fileExistResult = resultStringService(dockerfileExist);
             if (fileExistResult.isEmpty()) {
                 // 도커파일 추가 로직
-                String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), typeNum);
+                String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), type);
                 if (!Objects.equals(dockerfile, "SUCCESS")) {
                     serviceRes.put("result", dockerfile);
                     return serviceRes;
@@ -253,7 +241,7 @@ public class CompileService {
             return serviceRes;
         }
         // 도커 런
-        String[] command = {"docker", "run", "--rm", "-d", "--name", conAndImgName, "-P", conAndImgName};
+        String[] command = {"docker", "run", "-d", "--name", conAndImgName, "-P", conAndImgName};
         String container = resultStringService(command);
         // 포트번호 가져오기
         String portString = portNumService(container);
@@ -320,8 +308,9 @@ public class CompileService {
 
     /**
      * 팀 생성 시 자동으로 최초 컨테이너를 생성시켜 포트를 할당하는 내부 로직
-     * @param teamName  생성된 팀의 이름
-     * @param teamSeq   생성된 팀의 Sequence
+     *
+     * @param teamName 생성된 팀의 이름
+     * @param teamSeq  생성된 팀의 Sequence
      * @return 생성된 컨테이너의 포트 번호, 성패에 따른 result 반환
      */
     public Map<String, String> containerCreateService(String teamName, Long teamSeq) {
@@ -343,5 +332,58 @@ public class CompileService {
         serviceRes.put("port", containerPort[1]);
         serviceRes.put("result", SUCCESS);
         return serviceRes;
+    }
+
+    /**
+     * 프로젝트 타입 구분하는 내부 로직
+     *
+     * @param filePath 구분할 프로젝트 경로
+     * @return 프로젝트 타입 반환
+     */
+    public int findProjectTypeService(String filePath) {
+        List<String> initialList = new ArrayList<>();
+        List<String> fileList = showFilesInDIr(filePath, initialList);
+        // 통상적인 Django에 있는 wsgi.py가 있고 그 안에 from django.core.wsgi 가 있으면 Django 프로젝트
+        if (fileList.contains(BASE_URL + filePath + "wsgi.py")) {
+            Map<String, String> settingFile = fileService.readFileService(BASE_URL + filePath + "wsgi.py");
+            String settingContent = settingFile.get("fileContent");
+            if (settingContent.contains(DJANGO)) {
+                return 2;
+            }
+        }
+        for (String file : fileList) {
+            Map<String, String> fileContentRes = fileService.readFileService(file);
+            String fileContent = fileContentRes.get("fileContent");
+            if (fileContent.contains(FASTAPI)) {
+                return 4;
+            } else if (fileContent.contains(FLASK)) {
+                return 3;
+            } else if (fileContent.contains(DJANGO)) {
+                return 2;
+            }
+        }
+        return 1;
+    }
+
+    /**
+     * 프로젝트에 있는 모든 파일을 리스트로 반환하는 내부 로직
+     *
+     * @param filePath 파일 조회할 프로젝트 경로
+     * @param fileList 현재 파일 리스트
+     * @return 파일 리스트 반환
+     */
+    public List<String> showFilesInDIr(String filePath, List<String> fileList) {
+        File dir = new File(filePath);
+        File[] files = dir.listFiles();
+
+        assert files != null;
+        for (File file : files) {
+            if (file.isDirectory()) {
+                showFilesInDIr(file.getPath(), fileList);
+            } else {
+                fileList.add(file.getPath());
+            }
+        }
+        return fileList;
     }
 }
