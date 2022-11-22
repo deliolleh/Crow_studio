@@ -397,6 +397,7 @@ public class CompileService {
      * @return 파일 리스트 반환
      */
     public List<String> showFilesInDIr(String filePath, List<String> fileList) {
+        System.out.println(filePath);
         File dir = new File(filePath);
         File[] files = dir.listFiles();
         if (files == null) {
