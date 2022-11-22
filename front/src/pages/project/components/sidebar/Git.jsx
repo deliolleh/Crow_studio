@@ -31,7 +31,7 @@ const Git = (props) => {
       // console.log("local: ", res.data);
       setLocalBranch(() => res.data);
     });
-  }, [callBell]);
+  }, [callBell, selectedFilePath, teamSeq]);
 
   const changeCommit = (e) => {
     setCommitMessage(() => e.target.value);
@@ -83,13 +83,10 @@ const Git = (props) => {
   const justCommit = async () => {
     const body = {
       message: commitMessage,
-      // gitPath: selectedFilePath,
       filePath: "all",
     };
-    // console.log(body);
     try {
-      const res = await gitApi.gitCommit(teamSeq, body);
-      // console.log(res);
+      await gitApi.gitCommit(teamSeq, body);
       setCommitMessage(() => "");
     } catch (err) {
       console.log(err);

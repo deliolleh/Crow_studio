@@ -209,7 +209,6 @@ const Project = () => {
       target: "_blank",
       rel: "noopener noreferrer",
     });
-    window.location.reload();
   };
 
   return (
