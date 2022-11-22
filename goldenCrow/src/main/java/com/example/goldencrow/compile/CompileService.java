@@ -40,10 +40,6 @@ public class CompileService {
      * @return 명령어 수행 성공 시 결과 문자열 반환, 성패에 따른 result 반환
      */
     public String resultStringService(String[] cmd) {
-//        try {
-//            ProcessBuilder p = new ProcessBuilder(cmd);
-//            p.directory(new File(url));
-//            p.redirectErrorStream(true);
         ProcessBuilder command = new ProcessBuilder(cmd);
         command.redirectErrorStream(true);
         StringBuilder msg = new StringBuilder();
@@ -267,7 +263,7 @@ public class CompileService {
         if (type == 1) {
             serviceRes.put("result", SUCCESS);
             serviceRes.put("response", response);
-        } else if (portNumService(response).equals(port)) {
+        } else if (portNumService(conAndImgName).equals(port)) {
             serviceRes.put("result", SUCCESS);
             serviceRes.put("response", "k7d207.p.ssafy.io:" + port);
             return serviceRes;
