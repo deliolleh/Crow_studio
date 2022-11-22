@@ -104,8 +104,7 @@ public class CompileService {
                 content = "FROM python:3.10\n" +
                         "CMD [\"python3\", \"" + absolutePath + "\"]\n" +
                         "EXPOSE 3000";
-            }
-            else {
+            } else {
                 String inputString = "\"" + input + "\"";
                 content = "FROM python:3.10\n" +
                         "CMD [\"/bin/sh\", \"-c\", \"echo\", " + inputString +
@@ -250,8 +249,8 @@ public class CompileService {
 
         // 도커 컨테이너 런
         String[] command;
-        if (type == 1){
-            command = new String[]{"docker", "run", "-d", "--name", conAndImgName, "-v", BASE_URL + teamSeq, "-p", port + insidePort, conAndImgName};
+        if (type == 1) {
+            command = new String[]{"docker", "run", "-d", "--name", conAndImgName, "-v", BASE_URL + teamSeq + ":" + BASE_URL + teamSeq, "-p", port + insidePort, conAndImgName};
         } else {
             command = new String[]{"docker", "run", "--rm", "-d", "--name", conAndImgName, "-p", port + insidePort, conAndImgName};
         }
