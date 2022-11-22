@@ -44,6 +44,7 @@ public class CompileController {
             String input = req.get("input");
             int type = compileService.findProjectTypeService(filePath);
             if (type == 0) {
+                System.out.println("파일이 없어서 null이야 그래서 0이라서 BAD");
                 Map<String, String> res = new HashMap<>();
                 res.put("result", BAD_REQ);
                 return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
