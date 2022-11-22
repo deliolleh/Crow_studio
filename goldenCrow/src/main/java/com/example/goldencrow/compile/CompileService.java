@@ -249,7 +249,13 @@ public class CompileService {
         }
 
         // 도커 컨테이너 런
-        String[] command = {"docker", "run", "--rm", "-d", "--name", conAndImgName, "-p", port + insidePort, conAndImgName};
+        String[] command;
+        if (type == 1){
+            command = new String[]{"docker", "run", "-d", "--name", conAndImgName, "-v", BASE_URL + teamSeq, "-p", port + insidePort, conAndImgName};
+        } else {
+            command = new String[]{"docker", "run", "--rm", "-d", "--name", conAndImgName, "-p", port + insidePort, conAndImgName};
+        }
+
 //        String container = resultStringService(command);
 
         // 결과 문자열
@@ -280,8 +286,10 @@ public class CompileService {
 //            return serviceRes;
 //        }
         if (type == 1) {
+            String[] pythonCmd = {"docker", "logs", conAndImgName};
+            String pythonResponse = resultStringService(pythonCmd);
             serviceRes.put("result", SUCCESS);
-            serviceRes.put("response", response);
+            serviceRes.put("response", pythonResponse);
         } else if (portNumService(conAndImgName).equals(port)) {
             serviceRes.put("result", SUCCESS);
             serviceRes.put("response", "k7d207.p.ssafy.io:" + port);
