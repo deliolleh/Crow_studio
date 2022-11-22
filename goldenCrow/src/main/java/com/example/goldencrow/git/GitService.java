@@ -448,7 +448,7 @@ public class GitService {
      * @param type    조회하려는 branch의 종류 (1 : local branch, 2 : remote branch)
      * @return branch 목록을 List<String>으로 반환, 없거나 오류가 날 경우 null
      */
-    public List<String> getBranchService(Long teamSeq, Integer type) {
+    public List<String> getBranchService(Long teamSeq, int type) {
         List<String> branches = new ArrayList<>();
         ProcessBuilder command = new ProcessBuilder();
 

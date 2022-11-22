@@ -13,8 +13,9 @@ const userApi = {
   searchUser: (searchUserData) => api.post("/users/search", searchUserData), // 유저 검색
   updateGitAuth: (credentialsData) =>
     api.put("/users/edit/git", credentialsData), // 깃 토큰 변경
-  getPersonalSetting: () => api.get("/users/personal"),
-  setPersonalSetting: (settingData) => api.put("/users/personal", settingData),
+  getPersonalSetting: (teamSeq) => api.get(`/users/personal/${teamSeq}`),
+  setPersonalSetting: (teamSeq, settingData) =>
+    api.put(`/users/personal/${teamSeq}`, settingData),
 };
 
 export default userApi;
