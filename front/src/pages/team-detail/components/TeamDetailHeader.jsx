@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { modifyTeamName, deleteTeam } from "../../../redux/teamSlice";
+import teamApi from "../../../api/teamApi";
 
 import TeamName from "./TeamName";
 import TeamNameModifyInput from "./TeamNameModifyInput";
@@ -11,35 +10,36 @@ import RedButton from "./RedButton";
 
 const TeamDetailHeader = (props) => {
   const { teamName, isLeader, teamSeq, setTeamName } = props;
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isModify, setIsModify] = useState(false);
 
   const openModifyHandler = () => setIsModify(true);
   const closeModifyHandler = () => setIsModify(false);
-  const submitTeamNameModifyHandler = (modifiedTeamName) => {
-    dispatch(modifyTeamName({ teamName: modifiedTeamName, teamSeq }))
-      .unwrap()
-      .then((resTeamName) => {
-        setTeamName(resTeamName);
-        setIsModify(false);
-      })
-      .catch(console.error);
+
+  const submitTeamNameModifyHandler = async (modifiedTeamName) => {
+    try {
+      const res = await teamApi.modifyTeamName(teamSeq, modifiedTeamName);
+      console.log("res:", res);
+      setTeamName(res);
+      setIsModify(false);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const goTeamListHandler = () => navigate("/teams");
 
-  const deleteTeamHandler = () => {
+  const deleteTeamHandler = async () => {
     if (!window.confirm("정말로 팀을 삭제하시겠습니까?")) {
       return;
     }
-    dispatch(deleteTeam(teamSeq))
-      .unwrap()
-      .then(() => {
-        alert("성공적으로 삭제되었습니다");
-        navigate("/teams");
-      })
-      .catch(console.error);
+    try {
+      await teamApi.deleteTeam(teamSeq);
+      alert("팀이 성공적으로 삭제되었습니다");
+      navigate("/teams");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const resignTeamHandler = () => {

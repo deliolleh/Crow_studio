@@ -29,54 +29,6 @@ export const getTeam = createAsyncThunk(
   }
 );
 
-export const createTeam = createAsyncThunk(
-  "team/createTeam",
-  async (teamData, { rejectWithValue }) => {
-    try {
-      const response = await teamApi.createTeam(teamData);
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
-export const modifyTeamName = createAsyncThunk(
-  "team/modifyTeamName",
-  async ({ teamSeq, teamName }, { rejectWithValue }) => {
-    try {
-      const response = await teamApi.modifyTeamName(
-        teamSeq,
-        JSON.stringify({ teamName })
-      );
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
-export const deleteTeam = createAsyncThunk(
-  "team/deleteTeam",
-  async (teamSeq, { rejectWithValue }) => {
-    try {
-      const response = await teamApi.deleteTeam(teamSeq);
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
 export const getMembers = createAsyncThunk(
   "team/getMembers",
   async (teamSeq, { rejectWithValue }) => {
