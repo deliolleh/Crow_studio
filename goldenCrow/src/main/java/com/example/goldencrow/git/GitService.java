@@ -423,6 +423,7 @@ public class GitService {
 
         // Git Push 명령어
         ProcessBuilder command = new ProcessBuilder("git", "push", "origin", branchName);
+        command.redirectErrorStream(true);
         // 명령어를 수행할 프로젝트 경로 설정
         command.directory(new File(gitPath));
         // 명령어 수행 후 결과값을 저장하기 위한 StringBuilder
@@ -434,7 +435,6 @@ public class GitService {
             BufferedReader result = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((read = result.readLine()) != null) {
                 msg.append(read).append("\n");
-                System.out.println("push message"+read);
             }
             p.waitFor();
         } catch (IOException e) {
@@ -688,5 +688,4 @@ public class GitService {
         }
         return serviceRes;
     }
-
 }

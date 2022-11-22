@@ -85,6 +85,9 @@ public class ProjectService {
                 if (name.equals("Dockerfile")) {
                     continue;
                 }
+                if (name.equals(".git")) {
+                    continue;
+                }
                 String thisPath = dir.getPath();
                 thisPath = thisPath.replace(BASE_URL, "");
                 Map<Object, Object> children = new HashMap<>();
@@ -169,9 +172,14 @@ public class ProjectService {
             ProcessBuilder djangoStarter = new ProcessBuilder();
             djangoStarter.command("django-admin", "startproject", projectName);
             djangoStarter.directory(new File(teamFile));
-
+            StringBuilder sb = new StringBuilder();
             try {
+                String read;
                 Process p = djangoStarter.start();
+                BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                while ((read = br.readLine()) != null) {
+                    sb.append(read);
+                }
                 p.waitFor();
             } catch (IOException e) {
                 serviceRes.put("result", UNKNOWN);
@@ -179,6 +187,13 @@ public class ProjectService {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 serviceRes.put("result", UNKNOWN);
+                return serviceRes;
+            }
+
+            String message = sb.toString();
+
+            if (message.contains("CommandError")) {
+                serviceRes.put("result",WRONG);
                 return serviceRes;
             }
 
