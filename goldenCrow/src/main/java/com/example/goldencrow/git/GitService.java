@@ -322,6 +322,7 @@ public class GitService {
         String gitAddCheck = gitAddService(gitPath, filePath);
         if (!gitAddCheck.equals(SUCCESS)) {
             serviceRes.put("result", gitAddCheck);
+            System.out.println(gitAddCheck);
             return serviceRes;
         }
 
@@ -341,6 +342,7 @@ public class GitService {
             String forPrint;
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((forPrint = br.readLine()) != null) {
+                System.out.println(forPrint);
                 msg.append(forPrint);
                 msg.append("\n");
             }
@@ -423,6 +425,7 @@ public class GitService {
             BufferedReader result = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((read = result.readLine()) != null) {
                 msg.append(read).append("\n");
+                System.out.println(read);
             }
         } catch (IOException e) {
             serviceRes.put("result", NO_SUCH);
