@@ -119,7 +119,7 @@ public class CompileService {
                     "WORKDIR " + absolutePath + "\n" +
                     "COPY . .\n" +
                     "RUN pip3 install Flask\n" +
-                    "EXPOSE 3000\n" +
+                    "EXPOSE 5000\n" +
                     "CMD [ \"python3\" , \"main.py\", \"run\", \"--host=0.0.0.0\"]";
         } else if (type == 4) {
             content = "FROM python:3.10\n" +
@@ -129,7 +129,7 @@ public class CompileService {
                     "RUN pip3 install uvicorn[standard]\n" +
                     "RUN pip3 install fastapi\n" +
                     "COPY . .\n" +
-                    "EXPOSE 3000\n" +
+                    "EXPOSE 8000\n" +
                     "CMD [\"uvicorn\", \"" + projectName + ".main:app" + "\", \"--host\", \"0.0.0.0\"]";
         }
 
@@ -228,9 +228,21 @@ public class CompileService {
             serviceRes.put("result", UNKNOWN);
             return serviceRes;
         }
+        String insidePort;
+        switch (type) {
+            case 3:
+                insidePort = ":5000";
+                break;
+            case 4:
+                insidePort = ":8000";
+                break;
+            default:
+                insidePort = ":3000";
+                break;
+        }
 
         // 도커 컨테이너 런
-        String[] command = {"docker", "run", "--rm", "-d", "--name", conAndImgName, "-p", port+":3000", conAndImgName};
+        String[] command = {"docker", "run", "--rm", "-d", "--name", conAndImgName, "-p", port + insidePort, conAndImgName};
 //        String container = resultStringService(command);
 
         // 결과 문자열
