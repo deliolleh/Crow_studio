@@ -15,10 +15,12 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import FolderIcon from "@mui/icons-material/Folder";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import DescriptionIcon from "@mui/icons-material/Description";
+import SaveIcon from "@mui/icons-material/Save";
 import { IoLogoPython } from "react-icons/io5";
 import { BsPencilFill } from "react-icons/bs";
 import { TiArrowRightThick } from "react-icons/ti";
 
+import { ReactComponent as IcCodeShare } from "../../../../assets/icons/ic_code_share.svg";
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
 // import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
@@ -400,16 +402,16 @@ const Directory = (props) => {
         <Item onClick={deleteHandler}>삭제 ⌫</Item>
       </Menu>
 
-      <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col  overflow-auto">
+      <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto">
         <div className="justify-between items-center" style={{ padding: 15 }}>
           <div className="flex items-center gap-4">
             <div className="text-xl font-bold text-white">Directory</div>
             <div className="mt-1 flex items-center">
-              <IcSpan>
-                <IcNewFile alt="IcNewFile" onClick={createFileHandler} />
+              <IcSpan onClick={createFileHandler}>
+                <IcNewFile alt="IcNewFile" />
               </IcSpan>
-              <IcSpan>
-                <IcNewDir alt="IcNewDir" onClick={createDirectoryHandler} />
+              <IcSpan onClick={createDirectoryHandler}>
+                <IcNewDir className="mt-0.5" alt="IcNewDir" />
               </IcSpan>
               {/* <IcSpan>
               <BsPencilFill
@@ -422,10 +424,9 @@ const Directory = (props) => {
                 ⌫
               </div>
             </IcSpan> */}
-              <IcSpan>
-                <div className="text-xs" onClick={saveHandler}>
-                  💾
-                </div>
+              <IcSpan onClick={saveHandler}>
+                {/* <div className="text-xs">💾</div> */}
+                <SaveIcon sx={{ fontSize: 20 }} />
               </IcSpan>
               <IcSpan
                 style={
@@ -433,8 +434,10 @@ const Directory = (props) => {
                     ? {}
                     : { pointerEvents: "none", opacity: 0.3 }
                 }
+                onClick={goCodeShare}
               >
-                <div onClick={goCodeShare}>👥</div>
+                {/* <div>👥</div> */}
+                <IcCodeShare className="h-[16px]" />
               </IcSpan>
             </div>
           </div>
@@ -477,9 +480,15 @@ const DirectoryContainer = styled.div`
   height: 100%;
 `;
 
+// padding: 0.5rem;
 const IcSpan = styled.span`
-  padding: 0.5rem;
+  width: 34px;
+  height: 32px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #bbbbbb;
 
   &:hover {
     background-color: #d9d9d9;
