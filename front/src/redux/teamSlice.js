@@ -29,21 +29,6 @@ export const getTeamDetail = createAsyncThunk(
   }
 );
 
-export const getMembers = createAsyncThunk(
-  "team/getMembers",
-  async (teamSeq, { rejectWithValue }) => {
-    try {
-      const response = await teamApi.getMembers(teamSeq);
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
 export const addMember = createAsyncThunk(
   "team/addMember",
   async (addData, { rejectWithValue }) => {
