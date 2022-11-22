@@ -292,6 +292,7 @@ public class CompileService {
             System.out.println(pythonResponse);
             serviceRes.put("result", SUCCESS);
             serviceRes.put("response", pythonResponse);
+            return serviceRes;
         } else if (portNumService(conAndImgName).equals(port)) {
             serviceRes.put("result", SUCCESS);
             serviceRes.put("response", "k7d207.p.ssafy.io:" + port);
@@ -304,9 +305,9 @@ public class CompileService {
 
         // 서버 URL 생성
 //        String response = "k7d207.p.ssafy.io:" + port;
-        serviceRes.put("result", SUCCESS);
-        serviceRes.put("response", response);
-        return serviceRes;
+//        serviceRes.put("result", SUCCESS);
+//        serviceRes.put("response", response);
+
     }
 
     /**
