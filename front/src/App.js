@@ -17,25 +17,18 @@ import TeamDetail from "./pages/team-detail/TeamDetail";
 import Project from "./pages/project/Project";
 import NotFound from "./pages/not-found/NotFound";
 import Forbidden from "./pages/forbidden/Forbidden";
-import WithLoading from "./components/WithLoading";
 import YMonaco3 from "./pages/code-share/YMonaco3";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <WithLoading>
-        <Intro />
-      </WithLoading>
-    ),
+    element: <Intro />,
   },
   {
     path: "/login",
     element: (
       <ProtectedRoute>
-        <WithLoading>
-          <Login />
-        </WithLoading>
+        <Login />
       </ProtectedRoute>
     ),
   },
@@ -43,27 +36,19 @@ const router = createBrowserRouter([
     path: "/signup",
     element: (
       <ProtectedRoute>
-        <WithLoading>
-          <Signup />
-        </WithLoading>
+        <Signup />
       </ProtectedRoute>
     ),
   },
   {
     path: "/mypage/:userSeq",
-    element: (
-      <WithLoading>
-        <Mypage />
-      </WithLoading>
-    ),
+    element: <Mypage />,
   },
   {
     path: "/teams",
     element: (
       <PrivateRoute>
-        <WithLoading>
-          <Teams />
-        </WithLoading>
+        <Teams />
       </PrivateRoute>
     ),
   },
@@ -71,9 +56,7 @@ const router = createBrowserRouter([
     path: "/teams/:teamSeq",
     element: (
       <PrivateRoute>
-        <WithLoading>
-          <TeamDetail />
-        </WithLoading>
+        <TeamDetail />
       </PrivateRoute>
     ),
   },
@@ -81,27 +64,17 @@ const router = createBrowserRouter([
     path: "/teams/create",
     element: (
       <PrivateRoute>
-        <WithLoading>
-          <TeamCreate />
-        </WithLoading>
+        <TeamCreate />
       </PrivateRoute>
     ),
   },
   {
     path: "/project/:teamSeq",
-    element: (
-      <WithLoading>
-        <Project />
-      </WithLoading>
-    ),
+    element: <Project />,
   },
   {
     path: "/project/code-share",
-    element: (
-      <WithLoading>
-        <YMonaco3 />
-      </WithLoading>
-    ),
+    element: <YMonaco3 />,
   },
   {
     path: "/403",
