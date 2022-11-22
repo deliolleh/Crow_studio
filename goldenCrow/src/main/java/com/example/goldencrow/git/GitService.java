@@ -423,6 +423,7 @@ public class GitService {
 
         // Git Push 명령어
         ProcessBuilder command = new ProcessBuilder("git", "push", "origin", branchName);
+        command.redirectErrorStream(true);
         // 명령어를 수행할 프로젝트 경로 설정
         command.directory(new File(gitPath));
         // 명령어 수행 후 결과값을 저장하기 위한 StringBuilder
