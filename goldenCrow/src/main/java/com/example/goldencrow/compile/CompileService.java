@@ -100,13 +100,20 @@ public class CompileService {
 
         // 1: pure Python, 2 : Django, 3 : Flask, 4 : FastAPI
         if (type == 1) {
-            String inputString = "\"" + input + "\"";
-            content = "FROM python:3.10\n" +
-                    "CMD [\"/bin/sh\", \"-c\", \"echo\", " + inputString +
-                    "\"|\", \"python3\", \"" + absolutePath +
+            if (input.isEmpty()) {
+                content = "FROM python:3.10\n" +
+                        "CMD [ \"python3\", \"" + absolutePath + "]\n" +
+                        "EXPOSE 3000";
+            }
+            else {
+                String inputString = "\"" + input + "\"";
+                content = "FROM python:3.10\n" +
+                        "CMD [\"/bin/sh\", \"-c\", \"echo\", " + inputString +
+                        " \"|\", \"python3\", \"" + absolutePath +
 //                    "\", \"2>\"" + outfilePath +
-                    "]\n" +
-                    "EXPOSE 3000";
+                        "]\n" +
+                        "EXPOSE 3000";
+            }
         } else if (type == 2) {
             content = "FROM python:3.10\n" +
                     "RUN pip3 install django\n" +
