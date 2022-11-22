@@ -429,16 +429,20 @@ public class GitService {
         StringBuilder msg = new StringBuilder();
         // 명령어 수행 로직
         try {
-            String read = null;
+            String read;
             Process p = command.start();
             BufferedReader result = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((read = result.readLine()) != null) {
                 msg.append(read).append("\n");
                 System.out.println("push message"+read);
             }
-
+            p.waitFor();
         } catch (IOException e) {
             serviceRes.put("result", NO_SUCH);
+            return serviceRes;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            serviceRes.put("result",UNKNOWN);
             return serviceRes;
         }
 
