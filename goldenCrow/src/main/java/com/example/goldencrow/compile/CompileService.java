@@ -166,12 +166,14 @@ public class CompileService {
 
         // 명령어 실행 로직 수행
         String result = resultStringService(command);
+        System.out.println(result);
         if (result.startsWith("Error: No such container")) {
             return NO_SUCH;
         }
         // \n 전까지의 문자열에서 : 뒤에 있는 숫자만 가져오기
         String[] portList = result.split("\n");
         String[] containerPort = portList[0].split(":");
+        System.out.println(Arrays.toString(containerPort));
         // 서버 URL 생성
         return containerPort[1];
     }
