@@ -100,6 +100,7 @@ const TeamDetail = () => {
   // const openSearchInputHandler = () => setIsSearch(true);
   const closeSearchInputHandler = () => setIsSearch(false);
   const searchUserChangeHandler = (e) => setSearchUserName(e.target.value);
+
   const submitSearchUserHandler = (e) => {
     e.preventDefault();
     const searchData = JSON.stringify({ searchWord: searchUserName });
@@ -303,11 +304,13 @@ const TeamDetail = () => {
                 <div className="flex flex-col items-center px-2 py-2">
                   {/* isSearch가 아니면 + 버튼, isSearch이면 유저 검색 입력창 나옴 */}
                   {!isSearch ? (
-                    <IoAdd
-                      className="text-white cursor-pointer"
-                      // onClick={openSearchInputHandler}
-                      onClick={openModal}
-                    />
+                    teamLeaderSeq === mySeq && (
+                      <IoAdd
+                        className="text-white cursor-pointer"
+                        // onClick={openSearchInputHandler}
+                        onClick={openModal}
+                      />
+                    )
                   ) : (
                     <div className="flex gap-1">
                       <div>유저검색</div>
