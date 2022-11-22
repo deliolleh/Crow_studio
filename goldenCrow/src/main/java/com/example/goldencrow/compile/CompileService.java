@@ -51,7 +51,6 @@ public class CompileService {
             BufferedReader result = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((read = result.readLine()) != null) {
                 msg.append(read).append("\n");
-                System.out.println(read);
             }
             p.waitFor();
         } catch (IOException e) {
