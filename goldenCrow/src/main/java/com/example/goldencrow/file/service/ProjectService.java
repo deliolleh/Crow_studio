@@ -191,7 +191,7 @@ public class ProjectService {
             }
 
             String message = sb.toString();
-            System.out.println(message);
+
             if (message.contains("CommandError")) {
                 serviceRes.put("result",WRONG);
                 return serviceRes;
