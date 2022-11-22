@@ -123,7 +123,7 @@ public class CompileService {
                     "WORKDIR " + absolutePath + "\n" +
                     "COPY . .\n" +
                     "RUN pip3 install Flask\n" +
-                    "EXPOSE 5000\n" +
+                    "EXPOSE 3000\n" +
                     "CMD [ \"python3\" , \"main.py\", \"run\", \"--host=0.0.0.0\"]";
         } else if (type == 4) {
             content = "FROM python:3.10\n" +
@@ -133,7 +133,7 @@ public class CompileService {
                     "RUN pip3 install uvicorn[standard]\n" +
                     "RUN pip3 install fastapi\n" +
                     "COPY . .\n" +
-                    "EXPOSE 8000\n" +
+                    "EXPOSE 3000\n" +
                     "CMD [\"uvicorn\", \"" + projectName + ".main:app" + "\", \"--host\", \"0.0.0.0\"]";
         }
 
@@ -232,7 +232,7 @@ public class CompileService {
         }
 
         // 도커 컨테이너 런
-        String[] command = {"docker", "run", "--rm", "-d", "--name", conAndImgName, "-p", port, conAndImgName};
+        String[] command = {"docker", "run", "--rm", "-d", "--name", conAndImgName, "-p", port+":3000", conAndImgName};
 //        String container = resultStringService(command);
 
         // 결과 문자열
@@ -265,7 +265,7 @@ public class CompileService {
         if (type == 1) {
             serviceRes.put("result", SUCCESS);
             serviceRes.put("response", response);
-        } else if (portNumService(conAndImgName).equals(port)) {
+        } else if (portNumService(response).equals(port)) {
             serviceRes.put("result", SUCCESS);
             serviceRes.put("response", "k7d207.p.ssafy.io:" + port);
             return serviceRes;
