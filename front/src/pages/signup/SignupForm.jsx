@@ -107,7 +107,7 @@ const SignupForm = ({ signupHandler }) => {
     <form
       method="post"
       onSubmit={submitSignupHandler}
-      className="flex flex-col items-center overflow-auto"
+      className="flex flex-col items-center"
     >
       {/* 이메일 */}
       <EmailForm

@@ -31,12 +31,14 @@ const Login = () => {
   return (
     <div className="flex flex-col w-full h-full">
       <Header />
-      <section className="w-screen h-screen flex flex-col justify-center overflow-auto">
-        <LoginTitle />
-        <LoginForm onLogin={loginHandler} />
-        <Link to="/signup" className="block w-full text-center">
-          회원가입
-        </Link>
+      <section className="p-4 w-screen h-full flex flex-wrap justify-center items-center">
+        <div className="h-fit flex flex-col">
+          <LoginTitle />
+          <LoginForm onLogin={loginHandler} />
+          <Link to="/signup" className="block w-full text-center">
+            회원가입
+          </Link>
+        </div>
       </section>
     </div>
   );
