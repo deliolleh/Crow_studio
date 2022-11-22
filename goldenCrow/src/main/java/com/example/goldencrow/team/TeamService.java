@@ -32,7 +32,7 @@ public class TeamService {
     private final JwtService jwtService;
     private final ProjectService projectService;
     private final GitService gitService;
-    private final CompileService compileService;
+
 
     /**
      * TeamService 생성자
@@ -45,14 +45,13 @@ public class TeamService {
      * @param gitService       git을 관리하는 service
      */
     public TeamService(UserRepository userRepository, TeamRepository teamRepository, MemberRepository memberRepository,
-                       JwtService jwtService, ProjectService projectService, GitService gitService, CompileService compileService) {
+                       JwtService jwtService, ProjectService projectService, GitService gitService) {
         this.userRepository = userRepository;
         this.teamRepository = teamRepository;
         this.memberRepository = memberRepository;
         this.jwtService = jwtService;
         this.projectService = projectService;
         this.gitService = gitService;
-        this.compileService = compileService;
     }
 
     /**
@@ -261,12 +260,10 @@ public class TeamService {
                         = projectService.createProjectService(BASE_URL, typeNum, teamName, teamSeq);
 
                 if (projectCreateResult.get("result").equals(SUCCESS)) {
-                    Map<String, String> containerCreateResult = compileService.containerCreateService(teamName, teamSeq);
-                    if (containerCreateResult.get("result").equals(SUCCESS)) {
-                        // 성공
-                        serviceRes.put("result", SUCCESS);
-                        serviceRes.put("teamSeq", String.valueOf(teamSeq));
-                    }
+                    // 성공
+                    serviceRes.put("result", SUCCESS);
+                    serviceRes.put("teamSeq", String.valueOf(teamSeq));
+
                 } else {
                     // 모든 경우의 프로젝트 생성 실패
 
