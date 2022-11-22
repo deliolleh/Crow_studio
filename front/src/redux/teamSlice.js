@@ -29,36 +29,6 @@ export const getTeamDetail = createAsyncThunk(
   }
 );
 
-// export const addMember = createAsyncThunk(
-//   "team/addMember",
-//   async (addData, { rejectWithValue }) => {
-//     try {
-//       const response = await teamApi.addMember(addData);
-//       return response.data;
-//     } catch (err) {
-//       if (!err.response) {
-//         throw err;
-//       }
-//       return rejectWithValue(err.response.status);
-//     }
-//   }
-// );
-
-export const deleteMember = createAsyncThunk(
-  "team/deleteMember",
-  async (deleteData, { rejectWithValue }) => {
-    try {
-      const response = await teamApi.deleteMember(deleteData);
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
 export const delegateLeader = createAsyncThunk(
   "team/delegateLeader",
   async (delegateData, { rejectWithValue }) => {

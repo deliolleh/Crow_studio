@@ -131,16 +131,14 @@ const TeamDetail = () => {
     if (!window.confirm(`${memberNickname}님을 팀에서 삭제하시겠습니까?`)) {
       return;
     }
-    const deleteData = { teamSeq, memberSeq };
-    dispatch(deleteMember(deleteData))
-      .unwrap()
-      .then(() => {
-        dispatch(getTeamDetail(teamSeq))
-          .unwrap()
-          .then((res) => setTeam(res))
-          .catch(console.error);
-      })
-      .catch(console.error);
+    const deleteMemberData = { teamSeq, memberSeq };
+    try {
+      await teamApi.deleteMember(deleteMemberData);
+      const res = await dispatch(getTeamDetail(teamSeq)).unwrap();
+      setTeam(res);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // Modal
