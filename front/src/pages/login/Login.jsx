@@ -19,13 +19,13 @@ const Login = () => {
       const res = await userApi.login(loginData);
       localStorage.setItem("access-token", `${res.data.jwt}`);
       dispatch(getUser());
-      toast.success("로그인에 성공했습니다");
+      toast.success("로그인 성공");
       navigate("/");
     } catch (err) {
       if (err.response.status === 409) {
-        alert("해당 아이디가 존재하지 않거나 비밀번호가 틀립니다");
+        toast.warning("해당 아이디가 존재하지 않거나 비밀번호가 틀립니다");
       } else {
-        alert("비상!!");
+        toast.error("Error");
       }
     }
   };
