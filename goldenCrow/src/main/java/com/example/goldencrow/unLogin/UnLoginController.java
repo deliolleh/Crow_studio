@@ -27,7 +27,7 @@ public class UnLoginController {
 
     @PostMapping("/compile")
     public ResponseEntity<Map<String, String>> unloginCompilePost(HttpServletRequest request, @RequestBody Map<String, String> req) {
-        String sessionId = request.getRequestedSessionId();
+        String sessionId = request.getSession().getId();
         if (req.containsKey("fileContent") && req.containsKey("input")) {
             String fileContent = req.get("fileContent");
             String input = req.get("input");
