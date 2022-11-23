@@ -124,7 +124,7 @@ const Git = (props) => {
             <div className="text-primary_dark text-sm font-bold">
               <div>
                 <div className="w-fit mb-5">
-                  <div className="mb-2">Commit/Push</div>
+                  <div className="text-xl mb-2">Commit/Push</div>
                   <textarea
                     value={commitMessage}
                     style={{ resize: "none" }}
@@ -134,21 +134,23 @@ const Git = (props) => {
                   <div className="flex justify-end">
                     <button
                       onClick={justCommit}
-                      className="h-[26px] w-[70px] rounded-md bg-point_purple hover:bg-point_purple_-2 text-white mr-2"
+                      className="h-[26px] w-[70px] rounded-md bg-point_purple hover:bg-point_purple_-2 text-white mr-2 transition"
                     >
                       Commit
                     </button>
                     <button
                       onClick={commitAndPush}
-                      className="h-[26px] w-[110px] rounded-md bg-point_purple hover:bg-point_purple_-2 text-white"
+                      className="h-[26px] w-[110px] rounded-md bg-point_purple hover:bg-point_purple_-2 text-white transition"
                     >
-                      Commit&Push
+                      Commit & Push
                     </button>
                   </div>
                 </div>
                 <hr className="bg-component_+2_dark border-0 m-0 h-[1px] min-h-[1px] w-[253px] mb-5" />
                 <details open className="mb-5 w-fit">
-                  <summary className="font-bold mb-2">새로운 브랜치</summary>
+                  <summary className="font-bold mb-2 text-xl cursor-pointer">
+                    새로운 브랜치
+                  </summary>
                   <div className="flex">
                     <input
                       type="text"
@@ -158,7 +160,7 @@ const Git = (props) => {
                     />
                     <button
                       onClick={newBranch}
-                      className="h-[26px] w-[45px] rounded-md bg-point_purple hover:bg-point_purple_-2 text-white ml-2"
+                      className="h-[26px] w-[45px] rounded-md bg-point_purple hover:bg-point_purple_-2 text-white ml-2 transition"
                     >
                       생성
                     </button>
@@ -166,55 +168,67 @@ const Git = (props) => {
                 </details>
                 <hr className="bg-component_+2_dark border-0 m-0 h-[1px] min-h-[1px] w-[253px] mb-5" />
                 <details open className="mb-5 w-fit">
-                  <summary className="mb-2">Local Branch</summary>
-                  {localBranch.map((branch, index) => {
-                    return (
-                      <div
-                        key={"local " + index}
-                        onClick={(e) => changeBranch(e)}
-                        className="flex items-center w-[233px] h-[26px] rounded-md hover:bg-point_purple_op20"
-                      >
-                        <BsCircleFill
-                          size={"0.5rem"}
-                          className={
-                            "text-point_purple ml-4 mr-3" +
-                            (branch.includes("*") === true
-                              ? ""
-                              : " text-transparent")
-                          }
-                        />
-                        <div className="text-white font-normal">
-                          {branch.includes("*") === true
-                            ? branch.replace("*", "")
-                            : branch}
+                  <summary className="mb-2 text-xl cursor-pointer">
+                    Local Branch
+                  </summary>
+                  {localBranch.length === 0 && (
+                    <div className="text-white">로컬 브랜치 없음</div>
+                  )}
+                  {localBranch.length > 0 &&
+                    localBranch.map((branch, index) => {
+                      return (
+                        <div
+                          key={"local " + index}
+                          onClick={(e) => changeBranch(e)}
+                          className="flex items-center w-[233px] h-[26px] rounded-md hover:bg-point_purple_op20"
+                        >
+                          <BsCircleFill
+                            size={"0.5rem"}
+                            className={
+                              "text-point_purple ml-4 mr-3" +
+                              (branch.includes("*") === true
+                                ? ""
+                                : " text-transparent")
+                            }
+                          />
+                          <div className="text-white font-normal">
+                            {branch.includes("*") === true
+                              ? branch.replace("*", "")
+                              : branch}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
                 </details>
                 <hr className="bg-component_+2_dark border-0 m-0 h-[1px] min-h-[1px] w-[253px] mb-5" />
                 <details className="mb-5 w-fit">
-                  <summary className="mb-2">Repo Branch</summary>
-                  {repoBranch.map((branch, index) => {
-                    return (
-                      <div
-                        key={"repo " + index}
-                        onClick={(e) => changeBranch(e)}
-                        className="flex items-center w-[233px] h-[26px] rounded-md hover:bg-point_purple_op20 overflow-x-auto"
-                      >
-                        <BsCircleFill
-                          size={"0.5rem"}
-                          className={
-                            "text-point_purple  ml-4 mr-3" +
-                            (branch.includes("*") === true
-                              ? ""
-                              : " text-transparent")
-                          }
-                        />
-                        <div className="text-white font-normal">{branch}</div>
-                      </div>
-                    );
-                  })}
+                  <summary className="mb-2 text-xl cursor-pointer">
+                    Repo Branch
+                  </summary>
+                  {repoBranch.length === 0 && (
+                    <div className="text-white">레포 브랜치 없음</div>
+                  )}
+                  {repoBranch.length > 0 &&
+                    repoBranch.map((branch, index) => {
+                      return (
+                        <div
+                          key={"repo " + index}
+                          onClick={(e) => changeBranch(e)}
+                          className="flex items-center w-[233px] h-[26px] rounded-md hover:bg-point_purple_op20 overflow-x-auto"
+                        >
+                          <BsCircleFill
+                            size={"0.5rem"}
+                            className={
+                              "text-point_purple  ml-4 mr-3" +
+                              (branch.includes("*") === true
+                                ? ""
+                                : " text-transparent")
+                            }
+                          />
+                          <div className="text-white font-normal">{branch}</div>
+                        </div>
+                      );
+                    })}
                 </details>
               </div>
             </div>
