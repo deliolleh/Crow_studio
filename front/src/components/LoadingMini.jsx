@@ -19,6 +19,7 @@ const LoadingMini = () => {
       <div
         data-aos="fade-in"
         className="w-full h-full flex flex-col justify-center items-center bg-component_item_bg_+2_dark"
+        style={{ fontFamily: "Pretendard Variable" }}
       >
         <div className="ml-6">
           <Lottie options={defaultOptions} height={200} width={400} />

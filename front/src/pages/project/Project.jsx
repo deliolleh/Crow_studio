@@ -300,7 +300,8 @@ const Project = () => {
             <SplitPane
               style={{ position: "static", height: "auto" }}
               split="horizontal"
-              minSize={31}
+              minSize={30}
+              maxSize={-30}
               defaultSize={setting.horizonSplit + "%"}
               className="vertical Pane1"
               ref={editorheightRef}
