@@ -53,10 +53,13 @@ public class ProjectController {
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
         pjtPath = pjtPath.replace(BASE_URL,"");
-        String rootPath = files[0].getPath();
-        String rootName = files[0].getName();
-        rootPath = rootPath.replace(BASE_URL, "");
-        res = projectService.readDirectoryService(pjtPath, rootName, res);
+        for (File rootFile : files) {
+            if (rootFile.getName().equals("DockerFile")) {
+                continue;
+            }
+            String rootPath = rootFile.getPath().replace(BASE_URL, "");
+            res = projectService.readDirectoryService(rootPath,rootFile.getName(),res);
+        }
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 }
