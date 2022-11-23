@@ -265,8 +265,8 @@ public class ProjectService {
                 serviceRes.put("result", DUPLICATE);
                 return serviceRes;
             }
-            String pjt1 = createDirService(pjt+"/", projectName);
-            File file = new File(pjt1 + "/main.py");
+
+            File file = new File(pjt + "/main.py");
 
             // main.py에 저장할 내용
             String content = "from fastapi import FastAPI\n" +
