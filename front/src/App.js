@@ -3,6 +3,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 import { getUser } from "./redux/userSlice";
 
@@ -95,6 +97,8 @@ const router = createBrowserRouter([
 function App() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.user.value.isLoggedIn);
+
+  AOS.init();
 
   useEffect(() => {
     const accessToken = localStorage.getItem("access-token");

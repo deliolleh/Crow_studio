@@ -33,7 +33,10 @@ const Signup = () => {
   return (
     <div className="flex flex-col w-full h-full">
       <Header />
-      <section className="p-4 w-screen h-full flex flex-wrap justify-center items-center">
+      <section
+        data-aos="fade-in"
+        className="p-4 w-screen h-full flex flex-wrap justify-center items-center"
+      >
         <div className="h-fit flex flex-col">
           <SignupTitle />
           <SignupForm signupHandler={signupHandler} />
