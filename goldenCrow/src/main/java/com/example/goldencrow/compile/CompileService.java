@@ -109,7 +109,7 @@ public class CompileService {
             } else {
                 String inputString = "\"" + input + "\"";
                 content = "FROM python:3.10\n" +
-                        "CMD [\"/bin/sh\", \"-c\", \"echo\", " + inputString +
+                        "CMD [\"echo\", " + inputString +
                         " \"|\", \"python3\", \"" + absolutePath +
                         "\"]\n" +
                         "EXPOSE 3000";
@@ -263,7 +263,7 @@ public class CompileService {
         if (type == 1) {
             String[] pythonCmd = {"docker", "logs", "-f", conAndImgName};
             String pythonResponse = resultStringService(pythonCmd);
-            String pathUpdateRes = pythonResponse.replace(BASE_URL, "")
+            String pathUpdateRes = pythonResponse.replace(BASE_URL, "");
             System.out.println(pythonResponse);
             serviceRes.put("result", SUCCESS);
             serviceRes.put("response", pathUpdateRes);
