@@ -38,8 +38,8 @@ public class FileService {
      */
     public Map<String, String> createFileService(Long teamSeq, int type, FileCreateRequestDto fileCreateRequestDto) {
         Map<String, String> serviceRes = new HashMap<>();
-        String filePath = fileCreateRequestDto.getFilePath();
-        File checkFile = new File(BASE_URL + filePath);
+        String filePath = BASE_URL+ fileCreateRequestDto.getFilePath();
+        File checkFile = new File(filePath);
 
         if (!checkFile.isDirectory()) {
             Optional<FileEntity> baseFile = fileRepository.findFileEntityByTeamSeqAndFilePath(teamSeq,filePath);
