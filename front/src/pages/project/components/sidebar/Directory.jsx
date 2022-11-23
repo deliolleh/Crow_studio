@@ -8,6 +8,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { styled as muiStyled } from "@mui/material/styles";
 import PropTypes from "prop-types";
+import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
@@ -119,21 +120,36 @@ const Directory = (props) => {
 
   // 디렉터리 생성
   const createDirectoryHandler = async () => {
-    const newDirectoryName = prompt("생성할 폴더 이름을 입력하세요");
-    if (newDirectoryName.trim().length === 0) {
+    // const newDirectoryName = prompt("생성할 폴더 이름을 입력하세요");
+    // if (newDirectoryName.trim().length === 0) {
+    const newDirectoryName = await MySwal.fire({
+      title: "생성할 폴더 이름을 입력하세요",
+      input: "text",
+      showCancelButton: true,
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
+      background: "#3C3C3C",
+      inputValidator: (value) => {
+        if (!value) {
+          return '변경할 이름을 입력해주세요!'
+        }
+      }
+    });
+    if (newDirectoryName.value.length === 0) {
       return;
     }
-    if (newDirectoryName.trim().includes(".")) {
-      alert("폴더 이름에 .을 넣을 수 없습니다");
+    if (newDirectoryName.value.includes(".")) {
+      toast.error("폴더 이름에 .을 넣을 수 없습니다");
       return;
     }
     const fileInfoData = {
-      fileTitle: newDirectoryName,
+      fileTitle: newDirectoryName.value,
       filePath: selectedFilePath,
     };
     try {
       await fileApi.createFile(teamSeq, TYPE_DIRECTORY, fileInfoData);
       const res = await projectApi.getAllFiles(teamSeq);
+      console.log(res.data)
       setFilesDirectories(res.data);
     } catch (err) {
       console.error(err);
@@ -142,16 +158,30 @@ const Directory = (props) => {
 
   // 파일 생성
   const createFileHandler = async () => {
-    const newFileName = prompt("생성할 파일 이름(확장자까지)을 입력하세요");
-    if (newFileName.trim().length === 0) {
+    // const newFileName = prompt("생성할 파일 이름(확장자까지)을 입력하세요");
+    // if (newFileName.trim().length === 0) {
+    const newFileName = await MySwal.fire({
+      title: "생성할 파일 이름(확장자까지)을 입력하세요",
+      input: "text",
+      showCancelButton: true,
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
+      background: "#3C3C3C",
+      inputValidator: (value) => {
+        if (!value) {
+          return '변경할 이름을 입력해주세요!'
+        }
+      }
+    });
+    if (newFileName.value.length === 0) {
       return;
     }
-    if (!newFileName.trim().includes(".")) {
-      alert("확장자까지 유효하게 입력해야 합니다");
+    if (!newFileName.value.includes(".")) {
+      toast.error("확장자까지 유효하게 입력해야 합니다");
       return;
     }
     const fileInfoData = {
-      fileTitle: newFileName,
+      fileTitle: newFileName.value,
       filePath: selectedFilePath,
     };
     try {
