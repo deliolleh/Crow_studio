@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 import teamApi from "../../../api/teamApi";
 
@@ -12,6 +14,7 @@ const TeamDetailHeader = (props) => {
   const { teamName, isLeader, teamSeq, setTeamName } = props;
   const navigate = useNavigate();
   const [showTeamNameUpdate, setShowTeamNameUpdate] = useState(false);
+  const MySwal = withReactContent(Swal);
 
   const openTeamNameUpdateHandler = () => setShowTeamNameUpdate(true);
   const closeTeamNameUpdateHandler = () => setShowTeamNameUpdate(false);
@@ -34,15 +37,16 @@ const TeamDetailHeader = (props) => {
   };
 
   const deleteTeamHandler = async () => {
-    //
-    //
-    //
-    if (!window.confirm("정말로 팀을 삭제하시겠습니까?")) {
+    const res = await MySwal.fire({
+      title: "정말로 팀을 삭제하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
+      background: "#3C3C3C",
+    });
+    if (!res.isConfirmed) {
       return;
     }
-    //
-    //
-    //
     try {
       await teamApi.deleteTeam(teamSeq);
       navigate("/teams");
@@ -53,15 +57,16 @@ const TeamDetailHeader = (props) => {
   };
 
   const resignTeamHandler = async () => {
-    //
-    //
-    //
-    if (!window.confirm("정말로 팀에서 탈퇴하시겠습니까?")) {
+    const res = await MySwal.fire({
+      title: "정말로 팀에서 탈퇴하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
+      background: "#3C3C3C",
+    });
+    if (!res.isConfirmed) {
       return;
     }
-    //
-    //
-    //
     try {
       await teamApi.resignTeam(teamSeq);
       navigate("/teams");
