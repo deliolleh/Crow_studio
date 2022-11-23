@@ -81,11 +81,14 @@ public class CompileService {
 //        String teamSeq = pathList[4];
         String teamSeqPath = pathList[0] + "/" + pathList[1] + "/" + pathList[2] + "/"
                 + pathList[3] + "/" + pathList[4];
+        String mainFileName = pathList[lastIdx];
         StringBuilder filePathBuilder = new StringBuilder();
         for (int i = 5; i <= lastIdx; i++) {
             filePathBuilder.append(pathList[i]).append("/");
         }
         String filePath = filePathBuilder.substring(0, filePathBuilder.length() - 1);
+
+        String fastapiMainPath = absolutePath.replace(mainFileName, "");
 
         String content = "";
 
@@ -119,14 +122,14 @@ public class CompileService {
                     "CMD [ \"python3\" , \"" + filePath + "\", \"run\", \"--host=0.0.0.0\"]";
         } else if (type == 4) {
             content = "FROM python:3.10\n" +
-                    "WORKDIR " + teamSeqPath + "\n" +
+                    "WORKDIR " + fastapiMainPath + "\n" +
                     "RUN python3 -m venv venv\n" +
                     "RUN . ./venv/bin/activate\n" +
                     "RUN pip3 install uvicorn[standard]\n" +
                     "RUN pip3 install fastapi\n" +
                     "COPY . .\n" +
                     "EXPOSE 8000\n" +
-                    "CMD [\"uvicorn\", \"" + filePath.substring(0, filePath.length() - 3) +
+                    "CMD [\"uvicorn\", \"" + mainFileName +
                     ":app" + "\", \"--host\", \"0.0.0.0\"]";
         }
 
