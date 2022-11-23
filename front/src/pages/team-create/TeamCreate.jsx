@@ -25,6 +25,8 @@ const pjtType = [
   { name: "FastAPI" },
 ];
 
+// const teamNameRegEx = /^[a-zA-Z0-9]{1,9}/g;
+
 const TeamCreate = () => {
   const navigate = useNavigate();
   const [inputs, setInputs] = useState(initialInputState);
@@ -63,6 +65,16 @@ const TeamCreate = () => {
       });
       isInvalid = true;
     }
+    // console.log("teamNameRegEx.test(teamName):", teamNameRegEx.test(teamName));
+    // if (teamNameRegEx.test(teamName)) {
+    //   setErrorMsgs((prev) => {
+    //     return {
+    //       ...prev,
+    //       teamNameErrMsg: "팀 이름은 영문대소문자, 숫자 1~9 글자입니다",
+    //     };
+    //   });
+    //   isInvalid = true;
+    // }
     if (
       teamName.trim() === "400" ||
       teamName.trim() === "403" ||
@@ -84,6 +96,10 @@ const TeamCreate = () => {
     if (isInvalid) {
       return;
     }
+
+    // console.log("돌파");
+    // console.log("isInvalid:", isInvalid);
+    // console.log("teamName:", teamName);
 
     const teamData = {
       teamName,
