@@ -318,18 +318,39 @@ const Project = () => {
                     {selectedFilePath?.split("/").slice(1).join("/")}
                   </div>
                 </div>
-                <Editor
-                  style={{
-                    overflow: "auto",
-                  }}
-                  height={editorHeight}
-                  theme="vs-dark"
-                  defaultLanguage="python"
-                  onMount={(editor) => {
-                    editorRef.current = editor;
-                  }}
-                  options={editorOptions}
-                />
+                {selectedFileType.length > 0 ? (
+                  <Editor
+                    style={{
+                      overflow: "auto",
+                    }}
+                    height={editorHeight}
+                    theme="vs-dark"
+                    defaultLanguage="python"
+                    onMount={(editor) => {
+                      editorRef.current = editor;
+                    }}
+                    options={editorOptions}
+                  />
+                ) : (
+                  <div
+                    className="h-fit flex flex-col justify-center items-center bg-component_-2_dark rounded-[10px]"
+                    style={{ height: editorHeight }}
+                  >
+                    <img
+                      className="w-[100px] rounded-full"
+                      src={require("../../assets/images/logo.png")}
+                      alt="logo-img"
+                    />
+                    <div className="text-2xl font-bold text-center mt-5 tracking-wider">
+                      까마귀공방
+                    </div>
+                    <div className="text-center flex-col mt-5">
+                      <div className="text-xl">무언가 굉장하고 엄청난</div>
+                      <div className="text-xl">웹IDE계의 이단아가 등장했다</div>
+                      <div className="text-xl">파일을 열어달라 지금 당장!!</div>
+                    </div>
+                  </div>
+                )}
               </div>
               <ConsoleTerminal
                 teamSeq={teamSeq}
