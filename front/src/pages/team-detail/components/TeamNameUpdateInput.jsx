@@ -25,7 +25,7 @@ const TeamNameUpdateInput = (props) => {
         />
       </form>
       <IoClose
-        className="cursor-pointer text-point_pink text-xl"
+        className="cursor-pointer text-point_pink text-xl hover:text-point_red transition"
         onClick={closeTeamNameUpdate}
       />
     </div>

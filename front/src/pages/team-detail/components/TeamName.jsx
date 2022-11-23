@@ -9,7 +9,7 @@ const TeamName = (props) => {
       {children}
       {isLeader && (
         <BsPencilFill
-          className="ml-3 mr-5 text-sm text-point_yellow_+2 cursor-pointer"
+          className="ml-3 mr-5 text-sm text-point_yellow_+2 cursor-pointer hover:text-point_yellow transition"
           onClick={openTeamNameUpdate}
         />
       )}
