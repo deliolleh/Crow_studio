@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 import compileApi from "../../../api/compileApi";
-import api from "../../../api/api";
 
 import { startLoading, endLoading } from "../../../redux/globalSlice";
 
@@ -28,6 +27,11 @@ const ConsoleTerminal = (props) => {
     setLintResultList,
     setting,
   } = props;
+
+  // // 파일 저장하면 Output 싹 비우기
+  // useEffect(() => {
+  //   setOutputData("");
+  // }, [lintResultList]);
 
   const changeInputData = (e) => setInputData(e.target.value);
 
