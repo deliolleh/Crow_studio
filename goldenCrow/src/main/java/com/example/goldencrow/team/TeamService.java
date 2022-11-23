@@ -249,7 +249,9 @@ public class TeamService {
 
             // 사용자를 팀장으로 하는 팀 생성
             TeamEntity teamEntity = new TeamEntity(userEntity, teamName, teamGit, typeNum);
+            teamRepository.saveAndFlush(teamEntity);
             Long teamSeq = teamEntity.getTeamSeq();
+            System.out.println("말좀해봐뭐가문제야:"+teamEntity);
 
             // 팀의 프로젝트에 대한 컨테이너 생성
             Map<String, String> containerRes = compileService.containerCreateService(teamName, teamSeq);
@@ -259,8 +261,12 @@ public class TeamService {
 
             }
 
+            System.out.println("컨테이너 생성 성공");
+
             // git clone을 받아오는지, 새로 생성하는지 판별
             if (teamGit == null) {
+
+                System.out.println("깃정보가 비었음이 확인됨");
 
                 // git 정보가 비어있는 상태이므로 클론을 받아오지 않고, 프로젝트를 생성함
                 Map<String, String> projectCreateRes
@@ -271,8 +277,16 @@ public class TeamService {
                     serviceRes.put("result", SUCCESS);
                     serviceRes.put("teamSeq", String.valueOf(teamSeq));
 
+                    System.out.println("생성이 성공함");
+
                 } else {
                     // 모든 경우의 프로젝트 생성 실패
+                    System.out.println("여기서?터졋나?");
+
+                    // 미리 만들어두었던 팀을 삭제
+                    // 팀 삭제와 함께 멤버도 자동으로 삭제됨
+                    teamRepository.delete(teamEntity);
+
                     return projectCreateRes;
 
                 }
@@ -288,23 +302,35 @@ public class TeamService {
                     serviceRes.put("teamSeq", String.valueOf(teamSeq));
 
                 } else {
+
+                    // 미리 만들어두었던 팀을 삭제
+                    // 팀 삭제와 함께 멤버도 자동으로 삭제됨
+                    teamRepository.delete(teamEntity);
+
                     return gitCloneRes;
 
                 }
 
             }
 
+            System.out.println("포트저장시작");
+
             teamEntity.setTeamPort(containerRes.get("port"));
             teamRepository.saveAndFlush(teamEntity);
+
+            System.out.println("포트저장완료");
 
             // 만들어진 팀에 사용자를 멤버로 DB에 기록
             MemberEntity memberEntity = new MemberEntity(userEntity, teamEntity);
             memberRepository.saveAndFlush(memberEntity);
 
+            System.out.println("멤버등록성공");
+
             serviceRes.put("result", SUCCESS);
             serviceRes.put("teamSeq", String.valueOf(teamSeq));
 
         } catch (Exception e) {
+            System.out.println("언노운");
             serviceRes.put("result", UNKNOWN);
 
         }
