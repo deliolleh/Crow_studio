@@ -152,13 +152,12 @@ public class ProjectService {
     /**
      * 프로젝트 생성 내부 로직
      *
-     * @param path        프로젝트 생성할 경로
      * @param type        생성할 프로젝트의 종류 (1: pure Python, 2: Django, 3: Flask, 4: FastAPI)
      * @param projectName 생성할 프로젝트의 이름
      * @param teamSeq     생성할 프로젝트의 팀 Sequence
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> createProjectService(String path, int type, String projectName, Long teamSeq) {
+    public Map<String, String> createProjectService(int type, String projectName, Long teamSeq) {
         Map<String, String> serviceRes = new HashMap<>();
         String teamFile = createDirService(BASE_URL,String.valueOf(teamSeq));
 

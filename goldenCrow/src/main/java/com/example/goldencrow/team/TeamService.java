@@ -2,6 +2,7 @@ package com.example.goldencrow.team;
 
 import com.example.goldencrow.compile.CompileService;
 import com.example.goldencrow.file.service.ProjectService;
+import com.example.goldencrow.git.GitService;
 import com.example.goldencrow.team.dto.MemberDto;
 import com.example.goldencrow.team.dto.TeamDto;
 import com.example.goldencrow.team.dto.UserInfoListDto;
@@ -31,6 +32,7 @@ public class TeamService {
     private final JwtService jwtService;
     private final ProjectService projectService;
     private final CompileService compileService;
+    private final GitService gitService;
 
 
     /**
@@ -41,15 +43,19 @@ public class TeamService {
      * @param memberRepository Member table에 접속하는 repository
      * @param jwtService       jwt를 관리하는 service
      * @param projectService   project를 관리하는 service
+     * @param compileService   compile을 관리하는 service
+     * @param gitService       git을 관리하는 service
      */
     public TeamService(UserRepository userRepository, TeamRepository teamRepository, MemberRepository memberRepository,
-                       JwtService jwtService, ProjectService projectService, CompileService compileService) {
+                       JwtService jwtService, ProjectService projectService, CompileService compileService,
+                       GitService gitService) {
         this.userRepository = userRepository;
         this.teamRepository = teamRepository;
         this.memberRepository = memberRepository;
         this.jwtService = jwtService;
         this.projectService = projectService;
         this.compileService = compileService;
+        this.gitService = gitService;
     }
 
     /**
@@ -190,11 +196,33 @@ public class TeamService {
      *
      * @param jwt         회원가입 및 로그인 시 발급되는 access token
      * @param teamName    만들고자 하는 팀의 이름
+     * @param projectType 해당 팀에서 작업할 프로젝트의 종류
+     * @param teamGit     git clone을 받아 프로젝트를 초기화할 경우, clone 받을 프로젝트의 git 주소
      * @return 팀 생성 성공 시 TeamSeq 반환, 성패에 따른 result 반환
      */
-    public Map<String, String> teamCreateService(String jwt, String teamName) {
+    public Map<String, String> teamCreateService(String jwt, String teamName, String projectType, String teamGit) {
 
         Map<String, String> serviceRes = new HashMap<>();
+
+        // String으로 입력받은 projectType을 내부 로직용으로 int로 치환
+        int typeNum;
+        switch (projectType) {
+            case "pure Python":
+                typeNum = 1;
+                break;
+            case "Django":
+                typeNum = 2;
+                break;
+            case "Flask":
+                typeNum = 3;
+                break;
+            case "FastAPI":
+                typeNum = 4;
+                break;
+            default:
+                serviceRes.put("result", WRONG);
+                return serviceRes;
+        }
 
         try {
 
@@ -219,36 +247,62 @@ public class TeamService {
                 return serviceRes;
             }
 
-            // 사용자를 팀장으로 하는 팀 생성, DB에 기록
-            TeamEntity teamEntity = new TeamEntity(userEntity, teamName);
-            teamRepository.saveAndFlush(teamEntity);
+            // 사용자를 팀장으로 하는 팀 생성
+            TeamEntity teamEntity = new TeamEntity(userEntity, teamName, teamGit, typeNum);
             Long teamSeq = teamEntity.getTeamSeq();
+
+            // 팀의 프로젝트에 대한 컨테이너 생성
+            Map<String, String> containerRes = compileService.containerCreateService(teamName, teamSeq);
+            if (!containerRes.get("result").equals(SUCCESS)) {
+                // 생성에 실패함
+                return containerRes;
+
+            }
+
+            // git clone을 받아오는지, 새로 생성하는지 판별
+            if (teamGit == null) {
+
+                // git 정보가 비어있는 상태이므로 클론을 받아오지 않고, 프로젝트를 생성함
+                Map<String, String> projectCreateRes
+                        = projectService.createProjectService(typeNum, teamName, teamSeq);
+
+                if (projectCreateRes.get("result").equals(SUCCESS)) {
+                    // 성공
+                    serviceRes.put("result", SUCCESS);
+                    serviceRes.put("teamSeq", String.valueOf(teamSeq));
+
+                } else {
+                    // 모든 경우의 프로젝트 생성 실패
+                    return projectCreateRes;
+
+                }
+
+            } else {
+
+                // 쓰여진 주소에서 정보를 받아와 프로젝트를 구축함
+                Map<String, String> gitCloneRes = gitService.gitCloneService(teamGit, teamSeq, teamName);
+
+                if (gitCloneRes.get("result").equals(SUCCESS)) {
+                    // 성공
+                    serviceRes.put("result", SUCCESS);
+                    serviceRes.put("teamSeq", String.valueOf(teamSeq));
+
+                } else {
+                    return gitCloneRes;
+
+                }
+
+            }
+
+            teamEntity.setTeamPort(containerRes.get("port"));
+            teamRepository.saveAndFlush(teamEntity);
 
             // 만들어진 팀에 사용자를 멤버로 DB에 기록
             MemberEntity memberEntity = new MemberEntity(userEntity, teamEntity);
             memberRepository.saveAndFlush(memberEntity);
 
-            // 팀 시퀀스를 이름으로 하는 디렉토리 생성
-            if(projectService.createDirService(BASE_URL, String.valueOf(teamSeq)).equals(DUPLICATE)){
-                // 입력한 경로에 이미 해당하는 이름의 디렉토리가 있으므로, 디렉토리를 다시 만들 수 없음
-                // 팀 생성이 반려됨
-                serviceRes.put("result", DUPLICATE);
-                return serviceRes;
-            }
-
-            // 팀의 프로젝트에 대한 컨테이너 생성
-            Map<String, String> containerRes = compileService.containerCreateService(teamName, teamSeq);
-            String containerResult = containerRes.get("result");
-            if(!containerResult.equals(SUCCESS)) {
-                // 생성에 실패함
-                serviceRes.put("result", containerResult);
-                return serviceRes;
-            } else {
-                teamEntity.setTeamPort(containerRes.get("port"));
-                teamRepository.saveAndFlush(teamEntity);
-                serviceRes.put("result", SUCCESS);
-                serviceRes.put("teamSeq", String.valueOf(teamSeq));
-            }
+            serviceRes.put("result", SUCCESS);
+            serviceRes.put("teamSeq", String.valueOf(teamSeq));
 
         } catch (Exception e) {
             serviceRes.put("result", UNKNOWN);
