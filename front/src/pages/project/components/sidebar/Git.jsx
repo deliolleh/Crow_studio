@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { toast } from "react-toastify";
 import gitApi from "../../../../api/gitApi";
 import { BsCircleFill } from "react-icons/bs";
 import { toast } from "react-toastify";

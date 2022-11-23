@@ -1,5 +1,7 @@
 import React, { Fragment, useState } from "react";
 import styled from "styled-components";
+import { toast } from "react-toastify";
+
 import { Combobox, Transition, Switch } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
@@ -127,6 +129,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
   // 세팅 저장
   const trySave = () => {
     saveSetting();
+    toast.success("세팅이 저장되었습니다");
   };
 
   return (

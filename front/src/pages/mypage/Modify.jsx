@@ -29,7 +29,8 @@ const Modify = () => {
       .updatePassword(passwordData)
       .then(toast.success("비밀번호를 성공적으로 변경했습니다"))
       .catch((errorStatusCode) => {
-        if (errorStatusCode === 409) {
+        console.log(errorStatusCode);
+        if (errorStatusCode.response.status === 409) {
           toast.warning("현재 비밀번호가 틀립니다");
         } else {
           toast.error("Error");
