@@ -23,7 +23,7 @@ import static com.example.goldencrow.common.Constants.*;
 public class CompileService {
     private String FLASK = "import Flask";
     private String FASTAPI = "import FastAPI";
-    private String DJANGO = "from django.core.wsgi";
+    private String DJANGO = "os.environ.setdefault('DJANGO_SETTINGS_MODULE'";
 
     @Autowired
     private FileService fileService;
@@ -65,7 +65,7 @@ public class CompileService {
     /**
      * 각 프로젝트 종류에 따라 도커파일을 생성하는 내부 로직
      *
-     * @param absolutePath 도커파일을 생성하려는 절대 경로
+     * @param absolutePath 도커파일을 생성하려는 절대 경로 (/home/ubuntu/crow_data/teamSeq/teamName/main.py)
      * @param teamSeq      도커파일을 생성하려는 프로젝트의 팀 sequence
      * @param type         프로젝트의 타입 번호 (1: pure python, 2: django, 3: flask, 4: fastapi)
      * @return 성패에 따른 result 반환
@@ -77,9 +77,16 @@ public class CompileService {
             return NO_SUCH;
         }
         String[] pathList = absolutePath.split("/");
-        String projectName = pathList[5];
-        String projectPath = pathList[0] + "/" + pathList[1] + "/" + pathList[2] + "/"
-                + pathList[3] + "/" + pathList[4] + "/" + pathList[5];
+        int lastIdx = pathList.length - 1;
+//        String teamSeq = pathList[4];
+        String teamSeqPath = pathList[0] + "/" + pathList[1] + "/" + pathList[2] + "/"
+                + pathList[3] + "/" + pathList[4];
+        StringBuilder filePathBuilder = new StringBuilder();
+        for (int i = 5; i <= lastIdx; i++) {
+            filePathBuilder.append(pathList[i]).append("/");
+        }
+        String filePath = filePathBuilder.substring(0, filePathBuilder.length() - 1);
+
         String content = "";
 
         // 1: pure Python, 2 : Django, 3 : Flask, 4 : FastAPI
@@ -99,31 +106,32 @@ public class CompileService {
         } else if (type == 2) {
             content = "FROM python:3.10\n" +
                     "RUN pip3 install django\n" +
-                    "WORKDIR " + absolutePath + "\n" +
+                    "WORKDIR " + teamSeqPath + "\n" +
                     "COPY . .\n" +
-                    "CMD [\"python3\", \"manage.py\", \"runserver\", \"0.0.0.0:3000\"]\n" +
+                    "CMD [\"python3\", \"" + filePath + "\", \"runserver\", \"0.0.0.0:3000\"]\n" +
                     "EXPOSE 3000";
         } else if (type == 3) {
             content = "FROM python:3.10\n" +
-                    "WORKDIR " + absolutePath + "\n" +
+                    "WORKDIR " + teamSeqPath + "\n" +
                     "COPY . .\n" +
                     "RUN pip3 install Flask\n" +
                     "EXPOSE 5000\n" +
-                    "CMD [ \"python3\" , \"main.py\", \"run\", \"--host=0.0.0.0\"]";
+                    "CMD [ \"python3\" , \"" + filePath + "\", \"run\", \"--host=0.0.0.0\"]";
         } else if (type == 4) {
             content = "FROM python:3.10\n" +
-                    "WORKDIR " + absolutePath + "\n" +
+                    "WORKDIR " + teamSeqPath + "\n" +
                     "RUN python3 -m venv venv\n" +
                     "RUN . ./venv/bin/activate\n" +
                     "RUN pip3 install uvicorn[standard]\n" +
                     "RUN pip3 install fastapi\n" +
                     "COPY . .\n" +
                     "EXPOSE 8000\n" +
-                    "CMD [\"uvicorn\", \"" + projectName + ".main:app" + "\", \"--host\", \"0.0.0.0\"]";
+                    "CMD [\"uvicorn\", \"" + filePath.substring(0, filePath.length() - 3) +
+                    ":app" + "\", \"--host\", \"0.0.0.0\"]";
         }
 
         // Dockerfile 생성
-        File file = new File(projectPath + "/Dockerfile");
+        File file = new File(teamSeqPath + "/Dockerfile");
 
         // Dockerfile에 content 저장
         try (FileWriter overWriteFile = new FileWriter(file, false)) {
@@ -134,7 +142,7 @@ public class CompileService {
         // DB에 저장
         FileCreateDto fileCreateDto;
         fileCreateDto =
-                new FileCreateDto("Dockerfile", projectPath + "/Dockerfile", teamSeq);
+                new FileCreateDto("Dockerfile", teamSeqPath + "/Dockerfile", teamSeq);
         fileService.insertFileService(fileCreateDto);
         return SUCCESS;
     }
@@ -167,15 +175,16 @@ public class CompileService {
      * 프로젝트 혹은 파일을 컴파일하는 내부 로직
      *
      * @param type     프로젝트의 타입 (1: pure Python, 2: Django, 3: Flask, 4: FastAPI)
-     * @param filePath 컴파일을 수행할 프로젝트 혹은 파일의 경로
+     * @param filePath 컴파일을 수행할 프로젝트 혹은 파일의 절대경로 (/home/ubuntu/crow_data/teamSeq/teamName/main.py)
      * @param input    pure python 파일일 때 input값 (없으면 빈 문자열)
      * @return 컴파일 성공 시 컴파일 결과 반환, 성패에 따른 result 반환
      */
     public Map<String, String> pyCompileService(int type, String filePath, String input) {
         Map<String, String> serviceRes = new HashMap<>();
         String[] pathList = filePath.split("/");
-        String teamSeq = pathList[0];
-        String teamName = pathList[1];
+        int lastIdx = pathList.length - 1;
+        String teamSeq = pathList[4];
+        String teamName = pathList[5];
         // 프로젝트명과 teamSeq로 docker container와 image 이름 생성
         String conAndImgName = "crowstudio_" + teamName.toLowerCase().replaceAll(" ", "") + "_" + teamSeq;
         // 현재 실행되고 있는 컨테이너, 이미지 삭제, 도커파일 삭제
@@ -190,18 +199,18 @@ public class CompileService {
         }
         String port = teamEntity.get().getTeamPort();
         // 절대경로 생성
-        String absolutePath;
+//        String absolutePath;
         // pure Python일 경우 파일명까지, 프로젝트일 경우 프로젝트명까지 절대경로로 선언
-        if (type == 1) {
-            absolutePath = BASE_URL + filePath;
-        } else {
-            absolutePath = BASE_URL + teamSeq + "/" + teamName;
-        }
+//        if (type == 1) {
+//            absolutePath = filePath;
+//        } else {
+//            absolutePath = BASE_URL + teamSeq;
+//        }
 
-        String projectPath = BASE_URL + teamSeq + "/" + teamName;
+        String projectPath = BASE_URL + teamSeq;
 
         // 도커 파일 생성
-        String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), type, input);
+        String dockerfile = createDockerfile(filePath, Long.valueOf(teamSeq), type, input);
         if (!Objects.equals(dockerfile, "SUCCESS")) {
             serviceRes.put("result", dockerfile);
             return serviceRes;
@@ -231,7 +240,7 @@ public class CompileService {
         String[] command;
         if (type == 1) {
             command = new String[]{"docker", "run", "-d", "--name", conAndImgName, "-v",
-                    BASE_URL + teamSeq + ":" + BASE_URL + teamSeq, "-p", port + insidePort, conAndImgName};
+                    projectPath + ":" + projectPath, "-p", port + insidePort, conAndImgName};
         } else {
             command = new String[]{"docker", "run", "-d", "--name", conAndImgName, "-p", port + insidePort, conAndImgName};
         }
@@ -285,7 +294,7 @@ public class CompileService {
         // 컨테이너 삭제
         String[] containerRm = {"docker", "rm", conAndImgName};
         String removedCon = resultStringService(containerRm);
-        System.out.println("컨테이너 삭제"+removedCon);
+        System.out.println("컨테이너 삭제" + removedCon);
         // 컨테이너가 없는 경우
 //        if (removedCon.equals("No such container")) {
 //            serviceRes.put("result", NO_SUCH);
@@ -298,7 +307,7 @@ public class CompileService {
         // 도커 이미지 삭제
         String[] imageRm = {"docker", "rmi", conAndImgName};
         String rmImg = resultStringService(imageRm);
-        System.out.println("이미지 삭제"+rmImg);
+        System.out.println("이미지 삭제" + rmImg);
         // 이미지가 없는 경우
 //        if (rmImg.contains("No such image")) {
 //            serviceRes.put("result", NO_SUCH);
@@ -310,7 +319,7 @@ public class CompileService {
 
         // 도커파일 삭제
         Map<String, String> deletedFile = fileService.deleteFileService(
-                BASE_URL + teamSeq + "/" + teamName + "/Dockerfile", 2, Long.parseLong(teamSeq));
+                BASE_URL + teamSeq + "/Dockerfile", 2, Long.parseLong(teamSeq));
         if (!deletedFile.get("result").equals(SUCCESS)) {
             serviceRes.put("result", deletedFile.get("result"));
             return serviceRes;
@@ -329,7 +338,7 @@ public class CompileService {
     public Map<String, String> containerCreateService(String teamName, Long teamSeq) {
         Map<String, String> serviceRes = new HashMap<>();
         String conAndImgName = "crowstudio_" + teamName.toLowerCase().replaceAll(" ", "") + "_" + teamSeq;
-        // python docker images로 초기 컨테이너 생성 및 포트 할당
+        // python docker image로 초기 컨테이너 생성 및 포트 할당
         String[] cmd = {"docker", "run", "-d", "--name", conAndImgName, "-p", "3000", "initialpython"};
         String result = resultStringService(cmd);
         System.out.println(result);
@@ -343,12 +352,6 @@ public class CompileService {
             serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
-        // \n 전까지의 문자열에서 : 뒤에 있는 숫자만 가져오기
-//        String[] portList = result.split("\n");
-//        String[] containerPort = portList[0].split(":");
-//        System.out.println(Arrays.toString(containerPort));
-//
-//        serviceRes.put("port", containerPort[1]);
         serviceRes.put("port", portString);
         serviceRes.put("result", SUCCESS);
         return serviceRes;
@@ -357,37 +360,49 @@ public class CompileService {
     /**
      * 프로젝트 타입 구분하는 내부 로직
      *
-     * @param filePath 구분할 프로젝트 경로
+     * @param filePath 구분할 프로젝트 경로 (teamSeq/teamName/...)
      * @return 프로젝트 타입 반환
      */
-    public int findProjectTypeService(String filePath) {
+    public Map<String, String> findProjectTypeService(String filePath) {
+        Map<String, String> serviceRes = new HashMap<>();
         String[] pathList = filePath.split("/");
-        String projectPath = BASE_URL + pathList[0] + "/" + pathList[1];
+        String projectPath = BASE_URL + pathList[0] + "/" + pathList[1] + "/";
         List<String> initialList = new ArrayList<>();
         List<String> fileList = showFilesInDIr(projectPath, initialList);
         if (fileList == null) {
-            return 0;
+            serviceRes.put("type", "0");
+            return serviceRes;
         }
-        // 통상적인 Django에 있는 wsgi.py가 있고 그 안에 from django.core.wsgi 가 있으면 Django 프로젝트
-        if (fileList.contains(BASE_URL + projectPath + "wsgi.py")) {
-            Map<String, String> settingFile = fileService.readFileService(BASE_URL + projectPath + "wsgi.py");
+        // 통상적인 Django에 있는 manage.py가 있고 그 안에 특정 코드가 있으면 Django 프로젝트
+        if (fileList.contains(BASE_URL + projectPath + "manage.py")) {
+            Map<String, String> settingFile = fileService.readFileService(BASE_URL + projectPath + "manage.py");
             String settingContent = settingFile.get("fileContent");
             if (settingContent.contains(DJANGO)) {
-                return 2;
+                serviceRes.put("type", "2");
+                serviceRes.put("path", BASE_URL + projectPath + "manage.py");
+                return serviceRes;
             }
         }
         for (String file : fileList) {
             Map<String, String> fileContentRes = fileService.readFileService(file);
             String fileContent = fileContentRes.get("fileContent");
             if (fileContent.contains(FASTAPI)) {
-                return 4;
+                serviceRes.put("type", "4");
+                serviceRes.put("path", file);
+                return serviceRes;
             } else if (fileContent.contains(FLASK)) {
-                return 3;
+                serviceRes.put("type", "3");
+                serviceRes.put("path", file);
+                return serviceRes;
             } else if (fileContent.contains(DJANGO)) {
-                return 2;
+                serviceRes.put("type", "2");
+                serviceRes.put("path", file);
+                return serviceRes;
             }
         }
-        return 1;
+        serviceRes.put("type", "1");
+        serviceRes.put("path", filePath);
+        return serviceRes;
     }
 
     /**

@@ -42,7 +42,9 @@ public class CompileController {
         if (req.containsKey("filePath") && req.containsKey("input")) {
             String filePath = req.get("filePath");
             String input = req.get("input");
-            int type = compileService.findProjectTypeService(filePath);
+            Map<String, String> typeRes = compileService.findProjectTypeService(filePath);
+            int type = Integer.parseInt(typeRes.get("type"));
+            String mainPath = typeRes.get("path");
             System.out.println(type);
             if (type == 0) {
                 System.out.println("파일이 없어서 null이야 그래서 0이라서 BAD");
@@ -50,7 +52,7 @@ public class CompileController {
                 res.put("result", BAD_REQ);
                 return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }
-            Map<String, String> res = compileService.pyCompileService(type, filePath, input);
+            Map<String, String> res = compileService.pyCompileService(type, mainPath, input);
             String result = res.get("result");
             switch (result) {
                 case SUCCESS:
