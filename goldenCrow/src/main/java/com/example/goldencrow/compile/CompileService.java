@@ -60,23 +60,6 @@ public class CompileService {
             return UNKNOWN;
         }
         return msg.toString();
-//            StringBuffer sb = new StringBuffer();
-//            Process p = Runtime.getRuntime().exec(cmd);
-//            BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//            String result = "";
-//            String cl;
-//            while ((cl = in.readLine()) != null) {
-//                sb.append(cl);
-//                sb.append("\n");
-//            }
-//            result = sb.toString();
-//            p.waitFor();
-//            in.close();
-//            p.destroy();
-//            return result.trim();
-//        } catch (IOException | InterruptedException e) {
-//            return e.getMessage();
-//        }
     }
 
     /**
@@ -87,7 +70,7 @@ public class CompileService {
      * @param type         프로젝트의 타입 번호 (1: pure python, 2: django, 3: flask, 4: fastapi)
      * @return 성패에 따른 result 반환
      */
-    public String createDockerfile(String absolutePath, Long teamSeq, int type, String input, String outfilePath) {
+    public String createDockerfile(String absolutePath, Long teamSeq, int type, String input) {
         // teamSeq가 DB에 존재하는지 체크
         Optional<TeamEntity> existTeam = teamRepository.findByTeamSeq(teamSeq);
         if (!existTeam.isPresent()) {
@@ -110,7 +93,6 @@ public class CompileService {
                 content = "FROM python:3.10\n" +
                         "CMD [\"/bin/sh\", \"-c\", \"echo\", " + inputString +
                         " \"|\", \"python3\", \"" + absolutePath +
-//                    "\", \"2>\"" + outfilePath +
                         "\"]\n" +
                         "EXPOSE 3000";
             }
@@ -198,7 +180,12 @@ public class CompileService {
         String conAndImgName = "crowstudio_" + teamName.toLowerCase().replaceAll(" ", "") + "_" + teamSeq;
         // 현재 실행되고 있는 컨테이너, 이미지 삭제, 도커파일 삭제
         pyCompileStopService(teamName, teamSeq);
-        String port = "3500";
+        Optional<TeamEntity> teamEntity = teamRepository.findTeamPortByTeamSeq(Long.valueOf(teamSeq));
+        if (!teamEntity.isPresent()) {
+            serviceRes.put("result", NO_SUCH);
+            return serviceRes;
+        }
+        String port = teamEntity.get().getTeamPort();
         // 절대경로 생성
         String absolutePath;
         // pure Python일 경우 파일명까지, 프로젝트일 경우 프로젝트명까지 절대경로로 선언
@@ -208,21 +195,10 @@ public class CompileService {
             absolutePath = BASE_URL + teamSeq + "/" + teamName;
         }
 
-        String outfilePath = BASE_URL + "outfile/" + teamSeq + ".txt";
         String projectPath = BASE_URL + teamSeq + "/" + teamName;
-        // 에러가 발생할 경우 에러메세지를 저장할 파일 생성
-//        File file = new File(outfilePath);
-//        try {
-//            if (!file.createNewFile()) {
-//                serviceRes.put("result", DUPLICATE);
-//                return serviceRes;
-//            }
-//        } catch (IOException e) {
-//            serviceRes.put("result", DUPLICATE);
-//            return serviceRes;
-//        }
+
         // 도커 파일 생성
-        String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), type, input, outfilePath);
+        String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), type, input);
         if (!Objects.equals(dockerfile, "SUCCESS")) {
             serviceRes.put("result", dockerfile);
             return serviceRes;
@@ -257,35 +233,9 @@ public class CompileService {
             command = new String[]{"docker", "run", "--rm", "-d", "--name", conAndImgName, "-p", port + insidePort, conAndImgName};
         }
 
-//        String container = resultStringService(command);
-
         // 결과 문자열
         String response = resultStringService(command);
 
-//        // 에러 메세지 파일에서 읽어오기
-//        Map<String, String> messageList = fileService.readFileService(outfilePath);
-//        String message = messageList.get("fileContent");
-//        String pathChangemessage = message;
-//        if (message.contains(BASE_URL)) {
-//            pathChangemessage = message.replaceAll(BASE_URL + teamSeq + "/", "");
-//        }
-//        Path path = Paths.get(outfilePath);
-//        try {
-//            Files.deleteIfExists(path);
-//        } catch (IOException ioe) {
-//            serviceRes.put("result", UNKNOWN);
-//            return serviceRes;
-//        }
-//        // 파일 경로가 틀린 경우
-//        if (pathChangemessage.contains("Errno 2")) {
-//            serviceRes.put("result", NO_SUCH);
-//            return serviceRes;
-//        } else {
-//            serviceRes.put("result", SUCCESS);
-//            serviceRes.put("message", pathChangemessage);
-//            serviceRes.put("response", response);
-//            return serviceRes;
-//        }
         if (type == 1) {
             String[] pythonCmd = {"docker", "logs", "-f", conAndImgName};
             String pythonResponse = resultStringService(pythonCmd);
@@ -303,11 +253,6 @@ public class CompileService {
             return serviceRes;
         }
 
-        // 서버 URL 생성
-//        String response = "k7d207.p.ssafy.io:" + port;
-//        serviceRes.put("result", SUCCESS);
-//        serviceRes.put("response", response);
-
     }
 
     /**
@@ -320,7 +265,7 @@ public class CompileService {
     public Map<String, String> pyCompileStopService(String teamName, String teamSeq) {
         String conAndImgName = "crowstudio_" + teamName.toLowerCase().replaceAll(" ", "") + "_" + teamSeq;
 
-        // 도커 컨테이너 멈추고 삭제
+        // 도커 컨테이너 멈추기
         String[] containerStop = {"docker", "stop", conAndImgName};
         Map<String, String> serviceRes = new HashMap<>();
         String stopedCon = resultStringService(containerStop);
@@ -333,7 +278,17 @@ public class CompileService {
             return serviceRes;
         }
 
-        // 컨테이너
+        // 컨테이너 삭제
+        String[] containerRm = {"docker", "rm", conAndImgName};
+        String removedCon = resultStringService(containerRm);
+        // 컨테이너가 없는 경우
+        if (removedCon.equals("No such container")) {
+            serviceRes.put("result", NO_SUCH);
+            return serviceRes;
+        } else if (!removedCon.equals(conAndImgName)) {
+            serviceRes.put("result", UNKNOWN);
+            return serviceRes;
+        }
 
         // 도커 이미지 삭제
         String[] imageRm = {"docker", "rmi", conAndImgName};
@@ -370,15 +325,24 @@ public class CompileService {
         Map<String, String> serviceRes = new HashMap<>();
         String conAndImgName = "crowstudio_" + teamName.toLowerCase().replaceAll(" ", "") + "_" + teamSeq;
         // python docker images로 초기 컨테이너 생성 및 포트 할당
-        String[] cmd = {"docker", "run", "-d", "--name", conAndImgName, "-P", "python"};
-        String container = resultStringService(cmd);
+        String[] cmd = {"docker", "run", "-d", "--name", conAndImgName, "-p", "3000", "initialpython", "&&", "docker", "port", conAndImgName};
+        String result = resultStringService(cmd);
         // 포트번호 가져오기
-        String portString = portNumService(conAndImgName);
-        if (portString.equals(NO_SUCH)) {
-            serviceRes.put("result", WRONG);
+//        String portString = portNumService(conAndImgName);
+//        if (portString.equals(NO_SUCH)) {
+//            serviceRes.put("result", WRONG);
+//            return serviceRes;
+//        }
+        if (result.startsWith("Error: No such container")) {
+            serviceRes.put("result", NO_SUCH);
             return serviceRes;
         }
-        serviceRes.put("port", portString);
+        // \n 전까지의 문자열에서 : 뒤에 있는 숫자만 가져오기
+        String[] portList = result.split("\n");
+        String[] containerPort = portList[0].split(":");
+        System.out.println(Arrays.toString(containerPort));
+
+        serviceRes.put("port", containerPort[1]);
         serviceRes.put("result", SUCCESS);
         return serviceRes;
     }
