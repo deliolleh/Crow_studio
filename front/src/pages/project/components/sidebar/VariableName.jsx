@@ -3,7 +3,6 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import editorApi from "../../../../api/editorApi";
-import { toast } from "react-toastify";
 
 // styled
 const VariableNameContainer = styled.div`
@@ -34,7 +33,7 @@ const VariableName = () => {
           data-aos="fade-in"
           className="mt-1 ml-[15px] text-xl text-white cursor-pointer hover:text-point_yellow transition"
           onClick={() => {
-            clickHandler(li)
+            clickHandler(li);
             toast.success("해당 변수명을 복사했습니다");
           }}
         >
