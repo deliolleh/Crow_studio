@@ -1,13 +1,21 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 import compileApi from "../../../api/compileApi";
+import api from "../../../api/api";
+
+import { startLoading, endLoading } from "../../../redux/globalSlice";
 
 import { BsPlayFill } from "react-icons/bs";
 import { BsStopFill } from "react-icons/bs";
 import { TbTerminal } from "react-icons/tb";
 
+import LoadingMini from "../../../components/LoadingMini";
+
 const ConsoleTerminal = (props) => {
+  const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.global.value.isLoading);
   const { teamName, projectType } = useSelector((state) => state.team.value);
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
@@ -24,6 +32,7 @@ const ConsoleTerminal = (props) => {
   const changeInputData = (e) => setInputData(e.target.value);
 
   const startCompileHandler = async () => {
+    dispatch(startLoading());
     setLintResultList([]);
     const compileData = {
       type: projectType,
@@ -33,18 +42,22 @@ const ConsoleTerminal = (props) => {
     try {
       const res = await compileApi.getCompileResult(compileData);
       setOutputData(res.data.response);
+      dispatch(endLoading());
     } catch (err) {
-      console.error(err);
+      dispatch(endLoading());
+      toast.error("컴파일 오류");
     }
   };
 
   const stopCompileHandler = async () => {
+    dispatch(endLoading());
     setLintResultList([]);
     const teamData = { teamSeq, teamName };
     try {
       await compileApi.stopCompile(teamData);
     } catch (err) {
-      console.error(err);
+      dispatch(endLoading());
+      toast.error("컴파일 오류");
     }
   };
 
@@ -68,7 +81,9 @@ const ConsoleTerminal = (props) => {
           {/* btns */}
           <BsPlayFill
             onClick={startCompileHandler}
-            className="mr-[10px] cursor-pointer hover:text-point_purple hover:scale-110 transition"
+            className={`mr-[10px] cursor-pointer hover:text-point_purple hover:scale-110 transition ${
+              isLoading && "animate-pulse"
+            }`}
             size="27"
           />
           <BsStopFill
@@ -109,16 +124,26 @@ const ConsoleTerminal = (props) => {
             </div>
           </div>
           <div
-            className="w-full h-full p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white  overflow-auto"
+            className={`w-full h-full p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white overflow-auto ${
+              isLoading && "flex items-center justify-center"
+            }`}
             style={{
               fontSize: parseInt(setting.fontSize),
               fontFamily: setting.font,
             }}
           >
-            {outputData}
-            {lintResultList.length > 0 &&
+            {isLoading && (
+              <div>
+                <LoadingMini />
+              </div>
+            )}
+            {!isLoading && outputData}
+            {!isLoading &&
+              lintResultList.length > 0 &&
               lintResultList.map((lintResult, i) => (
-                <div key={i}>{lintResult}</div>
+                <div className="cursor-pointer" key={i}>
+                  {lintResult}
+                </div>
               ))}
           </div>
         </div>

@@ -115,30 +115,12 @@ const TeamCreate = () => {
       teamGit: checkGit ? teamGit : null,
     };
     setErrorMsgs(initialErrorState);
-    api.interceptors.request.use(
-      (config) => {
-        dispatch(startLoading());
-        return config;
-      },
-      (err) => {
-        dispatch(endLoading());
-        return Promise.reject(err);
-      }
-    );
+    dispatch(startLoading());
     teamApi
       .createTeam(teamData)
       .then(() => {
         navigate("/teams", { replace: true });
-        api.interceptors.response.use(
-          (config) => {
-            dispatch(endLoading());
-            return config;
-          },
-          (err) => {
-            dispatch(endLoading());
-            return Promise.reject(err);
-          }
-        );
+        dispatch(endLoading());
         toast.success("팀 생성 완료");
       })
       .catch((errorStatusCode) => {
