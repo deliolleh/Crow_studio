@@ -103,7 +103,7 @@ const Api = () => {
         <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
         <div style={{ padding: 15 }}>
           <div className="pl-1">
-            <div className="text-primary_dark text-sm font-bold">
+            <div className="text-primary_dark text-xl font-bold">
               <div className="mb-2">URI</div>
               {/* <input
                 type="text"
@@ -141,7 +141,7 @@ const Api = () => {
                 ></textarea>
                 <button
                   onClick={sendApi}
-                  className="h-[26px] w-[45px] rounded-md bg-point_purple hover:bg-point_purple_-2 text-white"
+                  className="h-[26px] w-[45px] rounded-md bg-point_purple hover:bg-point_purple_-2 text-white text-sm transition"
                 >
                   전송
                 </button>

@@ -1,19 +1,19 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { Menu, Transition } from "@headlessui/react";
+// import { Menu, Transition } from "@headlessui/react";
 
 // import svg
 import { ReactComponent as IcAddTeam } from "../../../../assets/icons/ic_addTeam.svg";
-import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
+// import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
 import { getTeamDetail } from "../../../../redux/teamSlice";
 
 // dropdown func
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+// function classNames(...classes) {
+//   return classes.filter(Boolean).join(" ");
+// }
 
 const Team = () => {
   const dispatch = useDispatch();
