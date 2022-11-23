@@ -8,6 +8,8 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { styled as muiStyled } from "@mui/material/styles";
 import PropTypes from "prop-types";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 // icons
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -71,6 +73,7 @@ const getFileName = (filePath) => {
 //
 
 const Directory = (props) => {
+  const MySwal = withReactContent(Swal)
   const dispatch = useDispatch();
   const {
     teamSeq,
@@ -165,6 +168,20 @@ const Directory = (props) => {
     console.log("e:", e);
     const oldFileName = selectedFilePath.split("/").slice(-1)[0];
     const newName = prompt("변경할 이름 입력", oldFileName);
+    // const newName = Swal.fire({
+    //   title: "파일 이름 변경",
+    //   input: "text",
+    //   inputValue: oldFileName,
+    //   showCancelButton: true,
+    //   confirmButtonText: "네",
+    //   cancelButtonText: "아니오",
+    //   background: "#3C3C3C",
+    //   inputValidator: (value) => {
+    //     if (!value) {
+    //       return '변경할 이름을 입력해주세요!'
+    //     }
+    //   }
+    // });
     if (newName === oldFileName) {
       return;
     } else if (!newName) {
@@ -186,7 +203,14 @@ const Directory = (props) => {
 
   // 삭제
   const deleteHandler = async () => {
-    if (!window.confirm(`${selectedFileName}을(를) 삭제하시겠습니까?`)) {
+    if (MySwal.fire({
+      title: `${selectedFileName}을(를) 삭제하시겠습니까?`,
+      showCancelButton: true,
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
+      background: "#3C3C3C",
+    })) {
+    // if (!window.confirm(`${selectedFileName}을(를) 삭제하시겠습니까?`)) {
       return;
     }
     const filePathData = { filePath: selectedFilePath };
