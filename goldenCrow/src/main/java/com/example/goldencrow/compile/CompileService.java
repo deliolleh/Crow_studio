@@ -60,23 +60,6 @@ public class CompileService {
             return UNKNOWN;
         }
         return msg.toString();
-//            StringBuffer sb = new StringBuffer();
-//            Process p = Runtime.getRuntime().exec(cmd);
-//            BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//            String result = "";
-//            String cl;
-//            while ((cl = in.readLine()) != null) {
-//                sb.append(cl);
-//                sb.append("\n");
-//            }
-//            result = sb.toString();
-//            p.waitFor();
-//            in.close();
-//            p.destroy();
-//            return result.trim();
-//        } catch (IOException | InterruptedException e) {
-//            return e.getMessage();
-//        }
     }
 
     /**
@@ -197,7 +180,12 @@ public class CompileService {
         String conAndImgName = "crowstudio_" + teamName.toLowerCase().replaceAll(" ", "") + "_" + teamSeq;
         // 현재 실행되고 있는 컨테이너, 이미지 삭제, 도커파일 삭제
         pyCompileStopService(teamName, teamSeq);
-        String port = "3500";
+        Optional<TeamEntity> teamEntity = teamRepository.findTeamPortByTeamSeq(Long.valueOf(teamSeq));
+        if (!teamEntity.isPresent()) {
+            serviceRes.put("result", NO_SUCH);
+            return serviceRes;
+        }
+        String port = teamEntity.get().getTeamPort();
         // 절대경로 생성
         String absolutePath;
         // pure Python일 경우 파일명까지, 프로젝트일 경우 프로젝트명까지 절대경로로 선언
@@ -264,11 +252,6 @@ public class CompileService {
             serviceRes.put("response", response);
             return serviceRes;
         }
-
-        // 서버 URL 생성
-//        String response = "k7d207.p.ssafy.io:" + port;
-//        serviceRes.put("result", SUCCESS);
-//        serviceRes.put("response", response);
 
     }
 
