@@ -248,13 +248,14 @@ public class CompileService {
         }
 
         // 도커 컨테이너 런
-        String[] command;
-        if (type == 1) {
-            command = new String[]{"docker", "run", "-d", "--name", conAndImgName, "-v",
+        String[] command = new String[]{"docker", "run", "-d", "--name", conAndImgName, "-v",
                     projectPath + ":" + projectPath, "-p", port + insidePort, conAndImgName};
-        } else {
-            command = new String[]{"docker", "run", "-d", "--name", conAndImgName, "-p", port + insidePort, conAndImgName};
-        }
+//        if (type == 1) {
+//            command = new String[]{"docker", "run", "-d", "--name", conAndImgName, "-v",
+//                    projectPath + ":" + projectPath, "-p", port + insidePort, conAndImgName};
+//        } else {
+//            command = new String[]{"docker", "run", "-d", "--name", conAndImgName, "-p", port + insidePort, conAndImgName};
+//        }
 
         // 결과 문자열
         String response = resultStringService(command);
