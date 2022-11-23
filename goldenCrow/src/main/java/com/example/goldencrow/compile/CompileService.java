@@ -327,6 +327,7 @@ public class CompileService {
         // python docker images로 초기 컨테이너 생성 및 포트 할당
         String[] cmd = {"docker", "run", "-d", "--name", conAndImgName, "-p", "3000", "initialpython", "&&", "docker", "port", conAndImgName};
         String result = resultStringService(cmd);
+        System.out.println(result);
         // 포트번호 가져오기
 //        String portString = portNumService(conAndImgName);
 //        if (portString.equals(NO_SUCH)) {
