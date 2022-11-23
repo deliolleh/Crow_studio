@@ -22,6 +22,7 @@ import VariableName from "./components/sidebar/VariableName";
 import Settings from "./components/sidebar/Settings";
 import ConsoleTerminal from "./components/ConsoleTerminal";
 import userApi from "../../api/userApi";
+import { toast } from "react-toastify";
 
 const Project = () => {
   const dispatch = useDispatch();
@@ -106,7 +107,8 @@ const Project = () => {
   // 파일, 폴더 클릭할 때마다 리렌더링, 파일이면 해당 내용 서버에서 받아와 에디터에 출력
   useEffect(() => {
     (async () => {
-      if (selectedFileType !== "directory") {
+      // if (selectedFileType.length > 0 && selectedFileType !== "directory") {
+      if (selectedFileType.length > 0 && selectedFileType !== "folder") {
         try {
           const filePathData = { filePath: selectedFilePath };
           const res = await fileApi.getFileContent(filePathData);
@@ -133,7 +135,8 @@ const Project = () => {
 
   // 파일 저장
   const saveFileContentHandler = async () => {
-    if (selectedFileType === "directory") {
+    // if (selectedFileType === "directory") {
+    if (selectedFileType === "folder") {
       return;
     }
     try {
@@ -167,8 +170,9 @@ const Project = () => {
       const filePathData = { filePath: selectedFilePath };
       const res3 = await fileApi.getFileContent(filePathData);
       editorRef.current.getModel().setValue(res3.data.fileContent);
+      toast.success("파일 저장 성공");
     } catch (err) {
-      console.error(err);
+      toast.error("파일 저장 실패");
     }
   };
 
