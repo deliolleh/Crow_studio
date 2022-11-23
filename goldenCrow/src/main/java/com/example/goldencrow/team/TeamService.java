@@ -1,5 +1,6 @@
 package com.example.goldencrow.team;
 
+import com.example.goldencrow.compile.CompileService;
 import com.example.goldencrow.file.service.ProjectService;
 import com.example.goldencrow.team.dto.MemberDto;
 import com.example.goldencrow.team.dto.TeamDto;
@@ -29,6 +30,7 @@ public class TeamService {
 
     private final JwtService jwtService;
     private final ProjectService projectService;
+    private final CompileService compileService;
 
 
     /**
@@ -41,12 +43,13 @@ public class TeamService {
      * @param projectService   project를 관리하는 service
      */
     public TeamService(UserRepository userRepository, TeamRepository teamRepository, MemberRepository memberRepository,
-                       JwtService jwtService, ProjectService projectService) {
+                       JwtService jwtService, ProjectService projectService, CompileService compileService) {
         this.userRepository = userRepository;
         this.teamRepository = teamRepository;
         this.memberRepository = memberRepository;
         this.jwtService = jwtService;
         this.projectService = projectService;
+        this.compileService = compileService;
     }
 
     /**
@@ -233,9 +236,19 @@ public class TeamService {
                 return serviceRes;
             }
 
-            // 여기까지 무사히 수행했으므로
-            serviceRes.put("result", SUCCESS);
-            serviceRes.put("teamSeq", String.valueOf(teamSeq));
+            // 팀의 프로젝트에 대한 컨테이너 생성
+            Map<String, String> containerRes = compileService.containerCreateService(teamName, teamSeq);
+            String containerResult = containerRes.get("result");
+            if(!containerResult.equals(SUCCESS)) {
+                // 생성에 실패함
+                serviceRes.put("result", containerResult);
+                return serviceRes;
+            } else {
+                teamEntity.setTeamPort(containerRes.get("port"));
+                teamRepository.saveAndFlush(teamEntity);
+                serviceRes.put("result", SUCCESS);
+                serviceRes.put("teamSeq", String.valueOf(teamSeq));
+            }
 
         } catch (Exception e) {
             serviceRes.put("result", UNKNOWN);

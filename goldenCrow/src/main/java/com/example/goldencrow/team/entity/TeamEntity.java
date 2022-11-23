@@ -34,7 +34,7 @@ public class TeamEntity {
     private String teamGit;
 
     @Column
-    private int teamPort;
+    private String teamPort;
 
     /**
      * 빈 TeamEntity 생성자
@@ -51,7 +51,7 @@ public class TeamEntity {
     public TeamEntity(UserEntity userEntity, String teamName) {
         this.teamLeader = userEntity;
         this.teamName = teamName;
-        this.teamPort = 0;
+        this.teamPort = String.valueOf(0);
 
         // teamPort는 도커 파일 생성 이후 등록
         // teamGit은 프로젝트 생성 시점에 등록
