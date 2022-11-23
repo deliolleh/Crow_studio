@@ -132,7 +132,6 @@ const TeamCreate = () => {
 
   const listboxChangeHandler = (e) => {
     setSelected(e);
-    console.log(e);
     inputChangeHandler(e);
   };
 
@@ -193,7 +192,6 @@ const TeamCreate = () => {
                 <Listbox
                   name="projectType"
                   value={selected}
-                  // onChange={setSelected}
                   onChange={listboxChangeHandler}
                 >
                   <div className="relative mt-1">
