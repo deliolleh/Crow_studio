@@ -150,6 +150,7 @@ const ConsoleTerminal = (props) => {
             style={{
               fontSize: parseInt(setting.fontSize),
               fontFamily: setting.font,
+              whiteSpace: "pre-wrap",
             }}
           >
             {isLoading && (

@@ -93,17 +93,20 @@ const Project = () => {
         if (res.data.result.includes("SUCCESS")) {
           setSetting(() => res.data);
         } else {
-          saveSetting();
+          userApi.setPersonalSetting(teamSeq, setting);
         }
       })
       .catch((err) => {
         console.error(err);
       });
-  }, [teamSeq]);
+  }, []);
 
   // 개인 환경 세팅 저장
   const saveSetting = async () => {
-    userApi.setPersonalSetting(teamSeq, setting);
+    userApi
+      .setPersonalSetting(teamSeq, setting)
+      .then(() => toast.success("저장되었습니다"))
+      .catch(() => toast.error("오류가 발생했습니다"));
   };
 
   // 파일, 폴더 클릭할 때마다 리렌더링, 파일이면 해당 내용 서버에서 받아와 에디터에 출력
@@ -216,7 +219,6 @@ const Project = () => {
   const checkSize = () => {
     // 에디터 높이 변경값 셋
     const tempSize = editorheightRef.current.state.pane1Size;
-    console.log(tempSize);
     const offsetSize = editorheightRef.current.splitPane.clientHeight;
     setSetting((prev) => {
       return {
@@ -238,6 +240,7 @@ const Project = () => {
       state: {
         data: editorRef.current.getValue(),
         selectedFileName,
+        options: setting.editors,
       },
       target: "_blank",
       rel: "noopener noreferrer",
@@ -254,8 +257,9 @@ const Project = () => {
             <Sidebar
               clickIcon={showComponentHandler}
               showComponent={setting.lastSideBar}
+              goCodeShare={goCodeShare}
             />
-            {setting.lastSideBar && (
+            {setting.lastSideBar && setting.lastSideBar !== "Share" && (
               <SidebarItems>
                 {setting.lastSideBar === "Dir" && (
                   <Directory
