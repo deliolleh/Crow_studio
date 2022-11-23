@@ -37,10 +37,11 @@ public class UnLoginService {
         // 임시 파일 생성
         File file = new File(filePath);
 
-        // Dockerfile에 content 저장
+        // 임시파일에 content 저장
         try (FileWriter overWriteFile = new FileWriter(file, false)) {
             overWriteFile.write(fileContent);
         } catch (IOException e) {
+            System.out.println("파일 내용 저장 에서 터짐");
             serviceRes.put("result", UNKNOWN);
             return serviceRes;
         }
@@ -66,6 +67,7 @@ public class UnLoginService {
         try (FileWriter overWriteFile = new FileWriter(dockerFile, false)) {
             overWriteFile.write(content);
         } catch (IOException e) {
+            System.out.println("도커파일 생성에서 터짐");
             serviceRes.put("result", UNKNOWN);
             return serviceRes;
         }
