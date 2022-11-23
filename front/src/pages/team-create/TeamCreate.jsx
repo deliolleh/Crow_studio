@@ -127,10 +127,13 @@ const TeamCreate = () => {
         dispatch(endLoading());
         if (errorStatusCode === 409) {
           toast.warning("이미 해당 이름으로 생성된 팀이 있습니다");
-        } else if (errorStatusCode === 404) {
+        } else if (errorStatusCode.response.status === 404) {
           toast.warning("해당 깃 주소가 유효하지 않습니다");
+        } else if (errorStatusCode.response.status === 403) {
+          toast.warning("깃 계정과 연결되어있지 않습니다");
         } else {
           toast.error("Error");
+          console.log(errorStatusCode);
         }
       });
   };

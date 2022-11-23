@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import SelectMethod from "./ApiMethod";
 import editorApi from "../../../../api/editorApi";
+import { toast } from "react-toastify";
 
 // styled
 const ApiContainer = styled.div`
@@ -61,7 +62,10 @@ const Api = () => {
         setResult(() => JSON.stringify(res.data.data, null, 4));
         setTime(() => res.data.time);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        toast.error("Error");
+      });
   };
 
   // 따로 컴포넌트를 받아서 거기서 데이터 가져올 때 작동시켜라고 했던 함수
@@ -118,7 +122,7 @@ const Api = () => {
                 value={uri}
                 placeholder="address"
                 ref={textareaRef}
-                className="h-[28px] w-[217px] rounded-md bg-component_item_bg_+2_dark px-4 py-1 text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5 overflow-y-hidden resize-none"
+                className="h-[28px] w-[217px] rounded-md bg-component_item_bg_+2_dark px-4 py-1 text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-4 overflow-y-hidden resize-none"
               />
               <div className="mb-2">Method</div>
               <SelectMethod onMethodChange={onMethodChange} />
@@ -128,7 +132,7 @@ const Api = () => {
                 name="request"
                 onChange={(e) => update("request", e)}
                 placeholder='{ "key": "value" }'
-                className="w-[253px] h-32 rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-5"
+                className="w-[253px] h-20 rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-4"
               ></textarea>
               <div className="mb-2">Header</div>
               {/* <KeyValue you="header" getList={getList}/> */}
@@ -137,7 +141,7 @@ const Api = () => {
                   name="header"
                   onChange={(e) => update("header", e)}
                   placeholder='{ "key": "value" } // Content-Type, Authorization, etc...'
-                  className="w-[253px] h-32 rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
+                  className="w-[253px] h-20 rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-xs focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark mb-2"
                 ></textarea>
                 <button
                   onClick={sendApi}

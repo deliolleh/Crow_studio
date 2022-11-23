@@ -39,9 +39,9 @@ const Team = () => {
         >
           <div className="text-xl font-bold text-white my-1">Team</div>
           <div className="mt-1 flex items-center">
-            <IcSpan>
+            {/* <IcSpan>
               <IcAddTeam className="h-[15px]" alt="IcAddTeam" />
-            </IcSpan>
+            </IcSpan> */}
             {/* 드롭다운 */}
             {/* <Menu as="div" className="relative">
               <Menu.Button>

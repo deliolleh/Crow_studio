@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import editorApi from "../../../../api/editorApi";
+import { toast } from "react-toastify";
 
 // styled
 const VariableNameContainer = styled.div`
@@ -32,7 +33,10 @@ const VariableName = () => {
           key={`${index}`}
           data-aos="fade-in"
           className="mt-1 ml-[15px] text-xl text-white cursor-pointer hover:text-point_yellow transition"
-          onClick={() => clickHandler(li)}
+          onClick={() => {
+            clickHandler(li)
+            toast.success("해당 변수명을 복사했습니다");
+          }}
         >
           {li}
         </div>
@@ -52,7 +56,10 @@ const VariableName = () => {
         setResultActive(() => true);
         setResult(() => res.data.data);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        toast.error("Error");
+      });
   };
 
   return (
