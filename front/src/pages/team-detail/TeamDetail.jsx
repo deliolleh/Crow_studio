@@ -315,10 +315,12 @@ const TeamDetail = () => {
                   {!projectTypeInput && (
                     <div className="flex items-center">
                       <span>{projectType}</span>
-                      <BsPencilFill
-                        className="ml-3 text-sm text-point_yellow_+2 cursor-pointer"
-                        onClick={() => setProjectTypeInput(true)}
-                      />
+                      {teamLeaderSeq === mySeq && (
+                        <BsPencilFill
+                          className="ml-3 text-sm text-point_yellow_+2 cursor-pointer"
+                          onClick={() => setProjectTypeInput(true)}
+                        />
+                      )}
                     </div>
                   )}
                   {projectTypeInput && (
