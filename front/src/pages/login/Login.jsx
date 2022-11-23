@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 import userApi from "../../api/userApi";
 import { getUser } from "../../redux/userSlice";
@@ -18,6 +19,7 @@ const Login = () => {
       const res = await userApi.login(loginData);
       localStorage.setItem("access-token", `${res.data.jwt}`);
       dispatch(getUser());
+      toast.success("로그인에 성공했습니다");
       navigate("/");
     } catch (err) {
       if (err.response.status === 409) {

@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { getUser } from "./redux/userSlice";
 
@@ -104,6 +106,18 @@ function App() {
   return (
     <React.Fragment>
       <RouterProvider router={router} />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={700}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover={false}
+        theme="dark"
+      />
     </React.Fragment>
   );
 }
