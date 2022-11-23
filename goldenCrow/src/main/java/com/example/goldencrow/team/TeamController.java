@@ -85,7 +85,7 @@ public class TeamController {
      * 팀을 생성하는 API
      *
      * @param jwt 회원가입 및 로그인 시 발급되는 access token
-     * @param req "teamName"을 key로 가지는 Map<String, String>
+     * @param req "teamName", "projectType", "teamGit"을 key로 가지는 Map<String, String>
      * @return 성패에 따른 result 반환
      * @status 200, 400, 401, 404, 409
      */
@@ -93,11 +93,13 @@ public class TeamController {
     public ResponseEntity<Map<String, String>> teamCreatePost(@RequestHeader("Authorization") String jwt,
                                                               @RequestBody Map<String, String> req) {
 
-        if (req.containsKey("teamName")) {
+        if (req.containsKey("teamName") && req.containsKey("projectType") && req.containsKey("teamGit")) {
 
             String teamName = req.get("teamName");
+            String projectType = req.get("projectType");
+            String teamGit = req.get("teamGit");
 
-            Map<String, String> res = teamService.teamCreateService(jwt, teamName);
+            Map<String, String> res = teamService.teamCreateService(jwt, teamName, projectType, teamGit);
             String result = res.get("result");
 
             switch (result) {
