@@ -44,7 +44,7 @@ import projectApi from "../../../../api/projectApi";
 import { selectFile } from "../../../../redux/teamSlice";
 import fileApi from "../../../../api/fileApi";
 
-const TYPE_DIRECTORY = "1";
+const TYPE_FOLDER = "1";
 const TYPE_FILE = "2";
 
 const MENU_ID = "menu-id";
@@ -56,7 +56,8 @@ const getFileType = (filePath) => {
     case "py":
       return "python";
     case null:
-      return "directory";
+      // return "directory";
+      return "folder";
     default:
       return null;
   }
@@ -91,9 +92,9 @@ const Directory = (props) => {
     id: MENU_ID,
   });
 
-  const handleItemClick = ({ event, props, triggerEvent, data }) => {
-    console.log(event, props, triggerEvent, data);
-  };
+  // const handleItemClick = ({ event, props, triggerEvent, data }) => {
+  //   console.log(event, props, triggerEvent, data);
+  // };
 
   const displayMenu = (e) => {
     show({
@@ -102,6 +103,7 @@ const Directory = (props) => {
     return e;
   };
 
+  // 디렉터리 받기
   useEffect(() => {
     projectApi
       .getAllFiles(teamSeq)
@@ -116,13 +118,20 @@ const Directory = (props) => {
           dispatch(selectFile(payloadData));
         }
       })
-      .catch(console.error);
+      .catch(() => toast.error("디렉터리 로드 실패"));
+    return () => {
+      const resetPayloadData = {
+        type: "",
+        name: "",
+        path: "",
+      };
+      dispatch(selectFile(resetPayloadData));
+    };
   }, [dispatch, teamSeq]);
 
   // 디렉터리 생성
   const createDirectoryHandler = async () => {
     // const newDirectoryName = prompt("생성할 폴더 이름을 입력하세요");
-    // if (newDirectoryName.trim().length === 0) {
     const newDirectoryName = await MySwal.fire({
       title: "생성할 폴더 이름을 입력하세요",
       input: "text",
@@ -130,17 +139,16 @@ const Directory = (props) => {
       confirmButtonText: "네",
       cancelButtonText: "아니오",
       background: "#3C3C3C",
-      inputValidator: (value) => {
-        if (!value) {
-          return "변경할 이름을 입력해주세요!";
-        }
-      },
     });
+    if (!newDirectoryName.isConfirmed) {
+      return;
+    }
     if (newDirectoryName.value.length === 0) {
+      toast.warning("폴더 이름을 입력해야합니다");
       return;
     }
     if (newDirectoryName.value.includes(".")) {
-      toast.error("폴더 이름에 .을 넣을 수 없습니다");
+      toast.warning("폴더 이름에 .을 넣을 수 없습니다");
       return;
     }
     const fileInfoData = {
@@ -148,19 +156,18 @@ const Directory = (props) => {
       filePath: selectedFilePath,
     };
     try {
-      await fileApi.createFile(teamSeq, TYPE_DIRECTORY, fileInfoData);
+      await fileApi.createFile(teamSeq, TYPE_FOLDER, fileInfoData);
       const res = await projectApi.getAllFiles(teamSeq);
-      console.log(res.data);
       setFilesDirectories(res.data);
+      toast.success("폴더 생성 성공");
     } catch (err) {
-      console.error(err);
+      toast.error("폴더 생성 실패");
     }
   };
 
   // 파일 생성
   const createFileHandler = async () => {
     // const newFileName = prompt("생성할 파일 이름(확장자까지)을 입력하세요");
-    // if (newFileName.trim().length === 0) {
     const newFileName = await MySwal.fire({
       title: "생성할 파일 이름(확장자까지)을 입력하세요",
       input: "text",
@@ -168,17 +175,16 @@ const Directory = (props) => {
       confirmButtonText: "네",
       cancelButtonText: "아니오",
       background: "#3C3C3C",
-      inputValidator: (value) => {
-        if (!value) {
-          return "변경할 이름을 입력해주세요!";
-        }
-      },
     });
+    if (!newFileName.isConfirmed) {
+      return;
+    }
     if (newFileName.value.length === 0) {
+      toast.warning("파일 이름을 입력해야합니다");
       return;
     }
     if (!newFileName.value.includes(".")) {
-      toast.error("확장자까지 유효하게 입력해야 합니다");
+      toast.warning("확장자까지 유효하게 입력해야 합니다");
       return;
     }
     const fileInfoData = {
@@ -189,30 +195,32 @@ const Directory = (props) => {
       await fileApi.createFile(teamSeq, TYPE_FILE, fileInfoData);
       const res = await projectApi.getAllFiles(teamSeq);
       setFilesDirectories(res.data);
+      toast.success("파일 생성 성공");
     } catch (err) {
-      console.error(err);
+      toast.error("파일 생성 실패");
     }
   };
 
   // 이름 변경
-  const renameHandler = async (e) => {
-    console.log("e:", e);
+  const renameHandler = async () => {
     const oldFileName = selectedFilePath.split("/").slice(-1)[0];
-    const newName = prompt("변경할 이름 입력", oldFileName);
-    // const newName = Swal.fire({
-    //   title: "파일 이름 변경",
-    //   input: "text",
-    //   inputValue: oldFileName,
-    //   showCancelButton: true,
-    //   confirmButtonText: "네",
-    //   cancelButtonText: "아니오",
-    //   background: "#3C3C3C",
-    //   inputValidator: (value) => {
-    //     if (!value) {
-    //       return '변경할 이름을 입력해주세요!'
-    //     }
-    //   }
-    // });
+    // const newName = prompt("변경할 이름 입력", oldFileName);
+    const newName = await Swal.fire({
+      title: "이름 변경",
+      input: "text",
+      inputValue: oldFileName,
+      showCancelButton: true,
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
+      background: "#3C3C3C",
+    });
+    if (!newName.isConfirmed) {
+      return;
+    }
+    if (newName.value.length === 0) {
+      toast.warning("변경할 이름을 입력해야합니다");
+      return;
+    }
     if (newName === oldFileName) {
       return;
     } else if (!newName) {
@@ -221,14 +229,15 @@ const Directory = (props) => {
     const renameData = {
       filePath: selectedFilePath,
       oldFileName,
-      fileTitle: newName,
+      fileTitle: newName.value,
     };
     try {
       await fileApi.renameFile(teamSeq, renameData);
       const res = await projectApi.getAllFiles(teamSeq);
       setFilesDirectories(res.data);
+      toast.success("이름 변경 성공");
     } catch (err) {
-      console.error(err);
+      toast.error("이름 변경 실패");
     }
   };
 
@@ -248,13 +257,15 @@ const Directory = (props) => {
     try {
       await fileApi.deleteFile(
         teamSeq,
-        selectedFileType === "directory" ? TYPE_DIRECTORY : TYPE_FILE,
+        selectedFileType === "directory" ? TYPE_FOLDER : TYPE_FILE,
         filePathData
       );
       const res = await projectApi.getAllFiles(teamSeq);
       setFilesDirectories(res.data);
+      toast.success("파일 삭제 성공");
     } catch (err) {
       console.error(err);
+      toast.error("파일 삭제 실패");
     }
   };
 
