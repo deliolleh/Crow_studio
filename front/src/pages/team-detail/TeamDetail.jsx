@@ -262,7 +262,10 @@ const TeamDetail = () => {
         </Modal>
 
         {/* team detail */}
-        <div className="flex flex-wrap items-center justify-center m-3 mb-6 h-full">
+        <div
+          data-aos="fade-in"
+          className="flex flex-wrap items-center justify-center m-3 mb-6 h-full"
+        >
           <div className="p-8 lg:w-4/5 w-fit max-w-[1000px] h-fit flex flex-col justify-center items-center border border-primary_-2_dark rounded-md">
             <div className="text-4xl font-bold text-white pb-2 mb-5 w-full">
               팀 상세 정보
