@@ -21,7 +21,7 @@ import TeamDetail from "./pages/team-detail/TeamDetail";
 import Project from "./pages/project/Project";
 import NotFound from "./pages/not-found/NotFound";
 import Forbidden from "./pages/forbidden/Forbidden";
-import YMonaco3 from "./pages/code-share/YMonaco3";
+import YMonaco from "./pages/code-share/YMonaco";
 
 const router = createBrowserRouter([
   {
@@ -78,7 +78,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/project/code-share",
-    element: <YMonaco3 />,
+    element: <YMonaco />,
   },
   {
     path: "/403",

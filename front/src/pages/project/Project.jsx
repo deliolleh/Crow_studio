@@ -88,6 +88,8 @@ const Project = () => {
       .then((res) => {
         if (res.data.result.includes("SUCCESS")) {
           setSetting(() => res.data);
+        } else {
+          saveSetting();
         }
       })
       .catch((err) => {
@@ -97,10 +99,7 @@ const Project = () => {
 
   // 개인 환경 세팅 저장
   const saveSetting = async () => {
-    userApi
-      .setPersonalSetting(teamSeq, setting)
-      .then(() => alert("저장되었습니다."))
-      .catch(() => alert("오류가 발생했습니다"));
+    userApi.setPersonalSetting(teamSeq, setting);
   };
 
   // 파일, 폴더 클릭할 때마다 리렌더링, 파일이면 해당 내용 서버에서 받아와 에디터에 출력
@@ -111,6 +110,10 @@ const Project = () => {
           const filePathData = { filePath: selectedFilePath };
           const res = await fileApi.getFileContent(filePathData);
           editorRef.current.getModel().setValue(res.data.fileContent);
+          setSetting((prev) => {
+            return { ...prev, lastTab: [filePathData] };
+          });
+          saveSetting();
         } catch (err) {
           console.error(err);
         }
@@ -125,11 +128,12 @@ const Project = () => {
   ]);
 
   // 사이드바 아이콘 눌러서 해당 컴포넌트 보여주기
-  const showComponentHandler = (componentName) =>
-    // setShowComponent(componentName);
+  const showComponentHandler = (componentName) => {
     setSetting((prev) => {
       return { ...prev, lastSideBar: componentName };
     });
+    saveSetting();
+  };
 
   // 파일 저장
   const saveFileContentHandler = async () => {
@@ -219,7 +223,7 @@ const Project = () => {
 
   // 동시 편집 파트로 이동
   const goCodeShare = () => {
-    userApi.setPersonalSetting(teamSeq, setting);
+    saveSetting();
     navigate("/project/code-share", {
       state: {
         data: editorRef.current.getValue(),
@@ -228,6 +232,7 @@ const Project = () => {
       target: "_blank",
       rel: "noopener noreferrer",
     });
+    window.location.reload();
   };
 
   return (
