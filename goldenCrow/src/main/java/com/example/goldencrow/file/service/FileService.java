@@ -44,6 +44,7 @@ public class FileService {
         if (!checkFile.isDirectory()) {
             Optional<FileEntity> baseFile = fileRepository.findFileEntityByTeamSeqAndFilePath(teamSeq,filePath);
             if (!baseFile.isPresent()) {
+                System.out.println("여긴가?");
                 serviceRes.put("result",NO_SUCH);
                 return serviceRes;
             }
