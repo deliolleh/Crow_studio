@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import compileApi from "../../../api/compileApi";
@@ -14,10 +15,12 @@ import LoadingMini from "../../../components/LoadingMini";
 
 const ConsoleTerminal = (props) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const isLoading = useSelector((state) => state.global.value.isLoading);
   const { teamName, projectType } = useSelector((state) => state.team.value);
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
+  const [finalOutputDataList, setFinalOutputDataList] = useState([]);
 
   const {
     teamSeq,
@@ -28,16 +31,15 @@ const ConsoleTerminal = (props) => {
     setting,
   } = props;
 
-  // // 파일 저장하면 Output 싹 비우기
-  // useEffect(() => {
-  //   setOutputData("");
-  // }, [lintResultList]);
+  useEffect(() => {
+    setFinalOutputDataList(lintResultList);
+  }, [lintResultList]);
 
   const changeInputData = (e) => setInputData(e.target.value);
 
   const startCompileHandler = async () => {
     dispatch(startLoading());
-    setLintResultList([]);
+    // setLintResultList([]);
     const compileData = {
       type: projectType,
       filePath: selectedFilePath,
@@ -45,7 +47,8 @@ const ConsoleTerminal = (props) => {
     };
     try {
       const res = await compileApi.getCompileResult(compileData);
-      setOutputData(res.data.response);
+      // setOutputData(res.data.response);
+      setFinalOutputDataList([res.data.response]);
       dispatch(endLoading());
     } catch (err) {
       dispatch(endLoading());
@@ -55,10 +58,11 @@ const ConsoleTerminal = (props) => {
 
   const stopCompileHandler = async () => {
     dispatch(endLoading());
-    setLintResultList([]);
+    // setLintResultList([]);
     const teamData = { teamSeq, teamName };
     try {
       await compileApi.stopCompile(teamData);
+      setFinalOutputDataList([]);
     } catch (err) {
       dispatch(endLoading());
       toast.error("컴파일 오류");
@@ -69,6 +73,12 @@ const ConsoleTerminal = (props) => {
 
   const consoleHeightReal = consoleHeight - 8;
   const boxHeight = consoleHeight - 88;
+
+  const toGoogleHandler = (searchQuery) => {
+    navigate("/redirect", {
+      state: { url: `https://www.google.com/search?q=${searchQuery}` },
+    });
+  };
 
   return (
     <div
@@ -141,12 +151,22 @@ const ConsoleTerminal = (props) => {
                 <LoadingMini />
               </div>
             )}
-            {!isLoading && outputData}
+            {/* {!isLoading && lintResultList.length === 0 && outputData}
             {!isLoading &&
               lintResultList.length > 0 &&
               lintResultList.map((lintResult, i) => (
                 <div className="cursor-pointer" key={i}>
                   {lintResult}
+                </div>
+              ))} */}
+            {!isLoading &&
+              finalOutputDataList.map((el, i) => (
+                <div
+                  key={i}
+                  className="cursor-pointer hover:text-point_purple transition"
+                  onClick={() => toGoogleHandler(el)}
+                >
+                  {el}
                 </div>
               ))}
           </div>
