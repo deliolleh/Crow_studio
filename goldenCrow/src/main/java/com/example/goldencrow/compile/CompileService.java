@@ -87,7 +87,7 @@ public class CompileService {
      * @param type         프로젝트의 타입 번호 (1: pure python, 2: django, 3: flask, 4: fastapi)
      * @return 성패에 따른 result 반환
      */
-    public String createDockerfile(String absolutePath, Long teamSeq, int type, String input, String outfilePath) {
+    public String createDockerfile(String absolutePath, Long teamSeq, int type, String input) {
         // teamSeq가 DB에 존재하는지 체크
         Optional<TeamEntity> existTeam = teamRepository.findByTeamSeq(teamSeq);
         if (!existTeam.isPresent()) {
@@ -110,7 +110,6 @@ public class CompileService {
                 content = "FROM python:3.10\n" +
                         "CMD [\"/bin/sh\", \"-c\", \"echo\", " + inputString +
                         " \"|\", \"python3\", \"" + absolutePath +
-//                    "\", \"2>\"" + outfilePath +
                         "\"]\n" +
                         "EXPOSE 3000";
             }
@@ -208,21 +207,10 @@ public class CompileService {
             absolutePath = BASE_URL + teamSeq + "/" + teamName;
         }
 
-        String outfilePath = BASE_URL + "outfile/" + teamSeq + ".txt";
         String projectPath = BASE_URL + teamSeq + "/" + teamName;
-        // 에러가 발생할 경우 에러메세지를 저장할 파일 생성
-//        File file = new File(outfilePath);
-//        try {
-//            if (!file.createNewFile()) {
-//                serviceRes.put("result", DUPLICATE);
-//                return serviceRes;
-//            }
-//        } catch (IOException e) {
-//            serviceRes.put("result", DUPLICATE);
-//            return serviceRes;
-//        }
+
         // 도커 파일 생성
-        String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), type, input, outfilePath);
+        String dockerfile = createDockerfile(absolutePath, Long.valueOf(teamSeq), type, input);
         if (!Objects.equals(dockerfile, "SUCCESS")) {
             serviceRes.put("result", dockerfile);
             return serviceRes;
@@ -257,35 +245,9 @@ public class CompileService {
             command = new String[]{"docker", "run", "--rm", "-d", "--name", conAndImgName, "-p", port + insidePort, conAndImgName};
         }
 
-//        String container = resultStringService(command);
-
         // 결과 문자열
         String response = resultStringService(command);
 
-//        // 에러 메세지 파일에서 읽어오기
-//        Map<String, String> messageList = fileService.readFileService(outfilePath);
-//        String message = messageList.get("fileContent");
-//        String pathChangemessage = message;
-//        if (message.contains(BASE_URL)) {
-//            pathChangemessage = message.replaceAll(BASE_URL + teamSeq + "/", "");
-//        }
-//        Path path = Paths.get(outfilePath);
-//        try {
-//            Files.deleteIfExists(path);
-//        } catch (IOException ioe) {
-//            serviceRes.put("result", UNKNOWN);
-//            return serviceRes;
-//        }
-//        // 파일 경로가 틀린 경우
-//        if (pathChangemessage.contains("Errno 2")) {
-//            serviceRes.put("result", NO_SUCH);
-//            return serviceRes;
-//        } else {
-//            serviceRes.put("result", SUCCESS);
-//            serviceRes.put("message", pathChangemessage);
-//            serviceRes.put("response", response);
-//            return serviceRes;
-//        }
         if (type == 1) {
             String[] pythonCmd = {"docker", "logs", "-f", conAndImgName};
             String pythonResponse = resultStringService(pythonCmd);
