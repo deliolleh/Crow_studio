@@ -153,13 +153,10 @@ const ConsoleTerminal = (props) => {
             }}
           >
             {isLoading && (
-              <div>
+              <div className="flex justify-center items-center overflow-x-hidden h-full">
                 <LoadingMini />
               </div>
             )}
-            <div>
-              <LoadingMini />
-            </div>
             {/* {!isLoading && lintResultList.length === 0 && outputData}
             {!isLoading &&
               lintResultList.length > 0 &&
