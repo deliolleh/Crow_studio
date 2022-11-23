@@ -263,9 +263,10 @@ public class CompileService {
         if (type == 1) {
             String[] pythonCmd = {"docker", "logs", "-f", conAndImgName};
             String pythonResponse = resultStringService(pythonCmd);
+            String pathUpdateRes = pythonResponse.replace(BASE_URL, "")
             System.out.println(pythonResponse);
             serviceRes.put("result", SUCCESS);
-            serviceRes.put("response", pythonResponse);
+            serviceRes.put("response", pathUpdateRes);
             return serviceRes;
         } else if (portNumService(conAndImgName).equals(port)) {
             serviceRes.put("result", SUCCESS);
