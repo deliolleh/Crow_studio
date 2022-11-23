@@ -149,16 +149,7 @@ const Project = () => {
     try {
       // 1. 파일 포맷 요청
       const beforeFormatData = { text: editorRef.current.getValue() };
-      api.interceptors.request.use(
-        (config) => {
-          dispatch(startLoading());
-          return config;
-        },
-        (err) => {
-          dispatch(endLoading());
-          return Promise.reject(err);
-        }
-      );
+      dispatch(startLoading());
       const res1 = await editorApi.sendFormatRequest(
         "python",
         beforeFormatData
@@ -186,17 +177,8 @@ const Project = () => {
       // 4. 파일 내용 가져오기
       const filePathData = { filePath: selectedFilePath };
       const res3 = await fileApi.getFileContent(filePathData);
-      api.interceptors.response.use(
-        (config) => {
-          dispatch(endLoading());
-          return config;
-        },
-        (err) => {
-          dispatch(endLoading());
-          return Promise.reject(err);
-        }
-      );
       editorRef.current.getModel().setValue(res3.data.fileContent);
+      dispatch(endLoading());
       toast.success("파일 저장 성공");
     } catch (err) {
       dispatch(endLoading());
