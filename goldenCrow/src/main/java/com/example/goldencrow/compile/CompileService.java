@@ -380,15 +380,24 @@ public class CompileService {
         Map<String, String> serviceRes = new HashMap<>();
         String conAndImgName = "crowstudio_" + teamName.toLowerCase().replaceAll(" ", "") + "_" + teamSeq;
         // python docker images로 초기 컨테이너 생성 및 포트 할당
-        String[] cmd = {"docker", "run", "-d", "--name", conAndImgName, "-P", "python"};
-        String container = resultStringService(cmd);
+        String[] cmd = {"/bin/sh", "-c", "docker", "run", "-d", "--name", conAndImgName, "-p 3000", "initialpython", "&&", "docker", "port", conAndImgName};
+        String result = resultStringService(cmd);
         // 포트번호 가져오기
         String portString = portNumService(conAndImgName);
         if (portString.equals(NO_SUCH)) {
             serviceRes.put("result", WRONG);
             return serviceRes;
         }
-        serviceRes.put("port", portString);
+        if (result.startsWith("Error: No such container")) {
+            serviceRes.put("result", NO_SUCH);
+            return serviceRes;
+        }
+        // \n 전까지의 문자열에서 : 뒤에 있는 숫자만 가져오기
+        String[] portList = result.split("\n");
+        String[] containerPort = portList[0].split(":");
+        System.out.println(Arrays.toString(containerPort));
+
+        serviceRes.put("port", containerPort[1]);
         serviceRes.put("result", SUCCESS);
         return serviceRes;
     }
