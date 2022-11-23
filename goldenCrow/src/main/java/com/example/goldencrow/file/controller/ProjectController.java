@@ -32,32 +32,6 @@ public class ProjectController {
     }
 
     /**
-     * 프로젝트 생성 API
-     *
-     * @param teamSeq 프로젝트를 생성할 팀의 Sequence
-     * @param type    생성할 프로젝트의 종류 (1: pure Python, 2: Django, 3: Flask, 4: FastAPI)
-     * @param req     "projectName"을 key로 가지는 Map<String, String>
-     * @return
-     * @status
-     */
-    @PostMapping("/{teamSeq}")
-    public ResponseEntity<Map<String, String>> teamProjectCreate(@PathVariable Long teamSeq,
-                                                    @RequestParam int type,
-                                                    @RequestBody Map<String, String> req) {
-        String pjt = req.get("projectName");
-
-        Map<String, String> res = projectService.createProjectService(BASE_URL, type, pjt, teamSeq);
-        switch (res.get("result")) {
-            case SUCCESS:
-                return new ResponseEntity<>(res, HttpStatus.OK);
-            case DUPLICATE:
-                return new ResponseEntity<>(res, HttpStatus.CONFLICT);
-            default:
-                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    /**
      * 프로젝트 디렉토리 조회 API
      *
      * @param teamSeq 조회하려는 프로젝트의 팀 Sequence
