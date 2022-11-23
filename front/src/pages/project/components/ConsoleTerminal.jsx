@@ -68,11 +68,11 @@ const ConsoleTerminal = (props) => {
           {/* btns */}
           <BsPlayFill
             onClick={startCompileHandler}
-            className="mr-[10px] cursor-pointer hover:text-point_purple"
+            className="mr-[10px] cursor-pointer hover:text-point_purple hover:scale-110 transition"
             size="27"
           />
           <BsStopFill
-            className="cursor-pointer hover:text-point_purple"
+            className="cursor-pointer hover:text-point_purple hover:scale-110 transition"
             size="27"
             onClick={stopCompileHandler}
           />

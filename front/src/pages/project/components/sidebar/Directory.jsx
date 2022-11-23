@@ -13,12 +13,12 @@ import PropTypes from "prop-types";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import FolderIcon from "@mui/icons-material/Folder";
-import FolderOpenIcon from "@mui/icons-material/FolderOpen";
+// import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import DescriptionIcon from "@mui/icons-material/Description";
 import SaveIcon from "@mui/icons-material/Save";
 import { IoLogoPython } from "react-icons/io5";
 import { BsPencilFill } from "react-icons/bs";
-import { TiArrowRightThick } from "react-icons/ti";
+// import { TiArrowRightThick } from "react-icons/ti";
 
 import { ReactComponent as IcCodeShare } from "../../../../assets/icons/ic_code_share.svg";
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
@@ -28,8 +28,8 @@ import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.
 import {
   Menu,
   Item,
-  Separator,
-  Submenu,
+  // Separator,
+  // Submenu,
   useContextMenu,
 } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
