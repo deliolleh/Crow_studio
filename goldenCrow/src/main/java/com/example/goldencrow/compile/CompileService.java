@@ -76,8 +76,9 @@ public class CompileService {
         if (!existTeam.isPresent()) {
             return NO_SUCH;
         }
-        System.out.println("createDockerfile에서 absolutePath" + absolutePath);
+        System.out.println("createDockerfile에서 absolutePath : " + absolutePath);
         String[] pathList = absolutePath.split("/");
+        System.out.println(Arrays.toString(pathList));
         int lastIdx = pathList.length - 1;
 //        String teamSeq = pathList[4];
         String teamSeqPath = pathList[0] + "/" + pathList[1] + "/" + pathList[2] + "/"
