@@ -108,7 +108,7 @@ function App() {
       <RouterProvider router={router} />
       <ToastContainer
         position="bottom-right"
-        autoClose={400}
+        autoClose={700}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -117,6 +117,7 @@ function App() {
         draggable
         pauseOnHover={false}
         theme="dark"
+        className="rounded-[10px] text-[16px]"
       />
     </React.Fragment>
   );

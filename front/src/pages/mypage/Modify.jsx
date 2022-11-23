@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import userApi from "../../api/userApi";
 import { logout, updateNickname, updateGitAuth } from "../../redux/userSlice";
@@ -25,12 +26,12 @@ const Modify = () => {
   const submitPasswordHandler = (passwordData) => {
     userApi
       .updatePassword(passwordData)
-      .then(alert("비밀번호를 성공적으로 변경했습니다"))
+      .then(toast.success("비밀번호를 성공적으로 변경했습니다"))
       .catch((errorStatusCode) => {
         if (errorStatusCode === 409) {
-          alert("현재 비밀번호가 틀립니다");
+          toast.warning("현재 비밀번호가 틀립니다");
         } else {
-          alert("비상!!");
+          toast.error("Error");
         }
       });
   };
@@ -41,14 +42,14 @@ const Modify = () => {
     }
     try {
       await userApi.resign();
-      alert("회원 탈퇴를 완료했습니다");
+      toast.success("회원 탈퇴를 완료했습니다");
       dispatch(logout());
       navigate("/");
     } catch (err) {
       if (err.response.status === 403) {
-        alert("팀장으로 있는 동안은 탈퇴할 수 없습니다");
+        toast.warning("팀장으로 있는 동안은 탈퇴할 수 없습니다");
       } else {
-        alert("비상!!");
+        toast.error("Error");
       }
     }
   };
@@ -56,7 +57,7 @@ const Modify = () => {
   const updateGitAuthHandler = (credentialsData) => {
     dispatch(updateGitAuth(credentialsData))
       .unwrap()
-      .then(() => alert("깃 연결 성공"))
+      .then(() => toast.success("깃 연결 성공"))
       .catch(console.error);
   };
 

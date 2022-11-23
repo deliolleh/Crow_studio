@@ -56,7 +56,7 @@ const Header = () => {
       <nav className="flex flex-wrap items-center justify-center px-2 py-1 bg-component_item_bg_dark m-3 rounded-lg">
         <div className="w-full flex relative px-12 justify-between">
           {/* 로고, 아이콘 */}
-          <div className="w-3/4 relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
+          <div className="relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
             <div className="flex items-center">
               <Link
                 className="text-xl font-bold leading-relaxed inline-block mr-16 py-2 whitespace-nowrap uppercase text-white"
@@ -125,9 +125,9 @@ const Header = () => {
                 </div>
               )}
               {!isLoggedIn && (
-                <div className="flex items-center gap-4">
+                <div className="flex justify-end items-center">
                   <div
-                    className="hover:text-white"
+                    className="hover:text-white mr-2"
                     onClick={() => navigate("/login")}
                   >
                     로그인

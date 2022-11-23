@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import Header from "../../components/Header";
+import { ToastContainer, toast } from 'react-toastify';
 
 const Intro = () => {
   const navigate = useNavigate();
@@ -42,6 +43,7 @@ const Intro = () => {
             >
               팀 생성하기
             </button>
+            <button onClick={() => toast("토스트테스트")}>토스트테스트</button>
           </div>
         </div>
       </div>
