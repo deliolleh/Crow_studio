@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import styled from "styled-components";
 // import { Menu, Transition } from "@headlessui/react";
 
@@ -25,11 +26,8 @@ const Team = () => {
   useEffect(() => {
     dispatch(getTeamDetail(teamSeq))
       .unwrap()
-      .then((res) => {
-        setTeam(res);
-        console.log("res:", res);
-      })
-      .catch(console.error);
+      .then(setTeam)
+      .catch(() => toast.error("팀 불러오기 실패"));
   }, [dispatch, teamSeq]);
 
   return (

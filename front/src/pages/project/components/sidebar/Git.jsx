@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import gitApi from "../../../../api/gitApi";
 import { BsCircleFill } from "react-icons/bs";
+import { toast } from "react-toastify";
 
 // styled
 const GitContainer = styled.div`
@@ -24,18 +25,14 @@ const Git = (props) => {
       gitPath: selectedFilePath,
     };
     gitApi.gitBranch(teamSeq, 2, body).then((res) => {
-      // console.log("repo: ", res.data);
       setRepoBranch(() => res.data);
     });
     gitApi.gitBranch(teamSeq, 1, body).then((res) => {
-      // console.log("local: ", res.data);
       setLocalBranch(() => res.data);
     });
   }, [callBell, selectedFilePath, teamSeq]);
 
-  const changeCommit = (e) => {
-    setCommitMessage(() => e.target.value);
-  };
+  const changeCommit = (e) => setCommitMessage(() => e.target.value);
 
   const changeBranch = (event) => {
     const ChangingBranch = event.target.textContent;
@@ -43,40 +40,32 @@ const Git = (props) => {
       "origin/",
       ""
     );
-    // console.log("click: ", pureBranch);
     const gitData = {
       branchName: pureBranch,
     };
-    // console.log(gitData);
     gitApi
       .gitSwitch(teamSeq, 1, gitData)
       .then(() => {
-        console.log("깃 스위치에 성공했습니다");
         setCallBell((prev) => prev + 1);
         setNowBranch(() => pureBranch);
+        toast.success("깃 스위치 성공");
       })
-      .catch((err) => console.error(err));
+      .catch(() => toast.error("깃 스위치 실패"));
   };
 
-  const onChangeName = (e) => {
-    setNewBranchName(e.target.value);
-  };
+  const onChangeName = (e) => setNewBranchName(e.target.value);
 
   const newBranch = () => {
-    console.log("new branch: ", newBranchName);
     const gitData = {
       branchName: newBranchName,
     };
     gitApi
       .gitSwitch(teamSeq, 2, gitData)
       .then(() => {
-        console.log("새로운 브랜치를 생성했습니다.");
         setCallBell((prev) => prev + 1);
+        toast.success("신규 브랜치 생성 완료");
       })
-      .catch((err) => {
-        console.error(err);
-        alert("잘못된 이름입니다.");
-      });
+      .catch(() => toast.error("잘못된 이름입니다"));
     setNewBranchName("");
   };
 
@@ -88,8 +77,9 @@ const Git = (props) => {
     try {
       await gitApi.gitCommit(teamSeq, body);
       setCommitMessage(() => "");
+      toast.success("커밋 성공");
     } catch (err) {
-      console.log(err);
+      toast.error("커밋 실패");
     }
   };
 
@@ -102,11 +92,11 @@ const Git = (props) => {
     };
     gitApi
       .gitPush(mySeq, body)
-      .then((res) => {
-        console.log(res.data);
+      .then(() => {
         setCommitMessage("");
+        toast.success("커밋&푸시 성공");
       })
-      .catch((err) => console.error(err));
+      .catch(() => toast.error("커밋&푸시 실패"));
   };
 
   return (
