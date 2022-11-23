@@ -2,6 +2,8 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 import userApi from "../../api/userApi";
 import { logout, updateNickname, updateGitAuth } from "../../redux/userSlice";
@@ -19,6 +21,7 @@ const Modify = () => {
   const { myNickname, myGitUsername } = useSelector(
     (state) => state.user.value
   );
+  const MySwal = withReactContent(Swal)
 
   const updateNicknameHandler = (nicknameData) =>
     dispatch(updateNickname(nicknameData)).unwrap().catch(console.error);
@@ -37,7 +40,14 @@ const Modify = () => {
   };
 
   const resignHandler = async () => {
-    if (!window.confirm("정말로 탈퇴하시겠습니까?")) {
+    if (MySwal.fire({
+      title: "정말로 탈퇴하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
+      background: "#3C3C3C",
+    })) {
+    // if (!window.confirm("정말로 탈퇴하시겠습니까?")) {
       return;
     }
     try {

@@ -285,3 +285,67 @@ input:-webkit-autofill:active {
     "Fira Sans", "Droid Sans", "Helvetica Neue", "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 }
+
+/* sweet alert 2 */
+.swal2-container.swal2-center.swal2-backdrop-show {
+  background: rgba(0,0,0,.7);
+}
+.swal2-modal {
+  padding: 40px 40px 38px;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.swal2-title {
+  font-size: 18px;
+  color: white;
+  font-weight: 400;
+  width: 100%;
+}
+
+.swal2-input {
+  border-radius: 10px;
+  background-color: #797979;
+  color: white;
+  /* box-shadow: rgb(212 168 227 / 0.5);; */
+}
+
+.swal2-input:focus {
+  border: 2px solid #D4A8E3;
+  box-shadow: none;
+}
+
+.swal2-actions {
+  margin-top: 10px;
+}
+
+.swal2-styled.swal2-styled {
+  font-size: 14px;
+  /* padding: 8px 12px 8px 12px; */
+  padding: 0;
+  width: 70px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+}
+
+.swal2-styled.swal2-confirm {
+  background-color: #D4A8E3;
+}
+
+.swal2-styled.swal2-confirm:hover {
+  background-color: #A34DC1;
+  box-shadow: none;
+}
+.swal2-styled.swal2-confirm:focus {
+  box-shadow: none;
+}
+
+.swal2-styled.swal2-cancel {
+  background-color: #797979;
+}
+
+.swal2-styled.swal2-cancel:hover {
+  background-color: #626262;
+  box-shadow: none;
+}
