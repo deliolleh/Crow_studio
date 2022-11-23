@@ -4,6 +4,7 @@ import ReactTooltip from "react-tooltip";
 
 // svg
 import { ReactComponent as IcDirectory } from "../../../../assets/icons/ic_dir.svg";
+import { ReactComponent as IcEdit } from "../../../../assets/icons/ic_edit.svg";
 import { ReactComponent as IcGit } from "../../../../assets/icons/ic_git.svg";
 import { ReactComponent as IcTeam } from "../../../../assets/icons/ic_team.svg";
 import { ReactComponent as IcApi } from "../../../../assets/icons/ic_api.svg";
@@ -81,9 +82,10 @@ const Sidebar = ({ clickIcon, showComponent, goCodeShare }) => {
               className={`flex flex-col items-center py-0.5`}
               ref={classRef}
               onClick={() => goCodeShare()}
+              data-tip="동시 편집"
             >
               <IcSpan>
-                <IcSettings alt="settings" />
+                <IcEdit alt="settings" />
               </IcSpan>
             </ListHover>
 
