@@ -233,6 +233,10 @@ public class TeamService {
                 return serviceRes;
             }
 
+            // 여기까지 무사히 수행했으므로
+            serviceRes.put("result", SUCCESS);
+            serviceRes.put("teamSeq", String.valueOf(teamSeq));
+
         } catch (Exception e) {
             serviceRes.put("result", UNKNOWN);
 
