@@ -157,6 +157,9 @@ const ConsoleTerminal = (props) => {
                 <LoadingMini />
               </div>
             )}
+            <div>
+              <LoadingMini />
+            </div>
             {/* {!isLoading && lintResultList.length === 0 && outputData}
             {!isLoading &&
               lintResultList.length > 0 &&
