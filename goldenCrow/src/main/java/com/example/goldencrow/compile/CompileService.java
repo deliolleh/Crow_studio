@@ -80,10 +80,13 @@ public class CompileService {
         String[] pathList = absolutePath.split("/");
         System.out.println(Arrays.toString(pathList));
         int lastIdx = pathList.length - 1;
+        System.out.println("lastIdx" + lastIdx);
 //        String teamSeq = pathList[4];
         String teamSeqPath = pathList[0] + "/" + pathList[1] + "/" + pathList[2] + "/"
                 + pathList[3] + "/" + pathList[4];
+        System.out.println("teamSeqPath" + teamSeqPath);
         String mainFileName = pathList[lastIdx].split(".")[0];
+        System.out.println("mainFileName" + mainFileName);
         StringBuilder filePathBuilder = new StringBuilder();
         for (int i = 5; i <= lastIdx; i++) {
             filePathBuilder.append(pathList[i]).append("/");
