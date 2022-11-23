@@ -35,6 +35,8 @@ public class UnLoginController {
             switch (res.get("result")) {
                 case SUCCESS:
                     return new ResponseEntity<>(res, HttpStatus.OK);
+                case DUPLICATE:
+                    return new ResponseEntity<>(res, HttpStatus.CONFLICT);
                 default:
                     return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }

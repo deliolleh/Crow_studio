@@ -2,6 +2,7 @@ package com.example.goldencrow.unLogin;
 
 import com.example.goldencrow.compile.CompileService;
 import com.example.goldencrow.file.service.FileService;
+import com.example.goldencrow.file.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,9 @@ public class UnLoginService {
     private FileService fileService;
 
     @Autowired
+    private ProjectService projectService;
+
+    @Autowired
     private UnLoginRepository unLoginRepository;
 
     public String getSessionId() {
@@ -30,10 +34,19 @@ public class UnLoginService {
     }
 
     public Map<String, String> unloginCompileService(String sessionId, String fileContent, String input) {
+        Map<String, String> serviceRes = new HashMap<>();
         System.out.println("sessionId : " + sessionId);
         String SESSION_PATH = "/home/ubuntu/crow_data/UnLoginUser/" + sessionId;
+
+        // 세션 디렉토리 생성
+        String dirCreated = projectService.createDirService(BASE_URL+"UnLoginUser/", sessionId);
+        if (dirCreated.equals(DUPLICATE)) {
+            serviceRes.put("result", DUPLICATE);
+            return serviceRes;
+        }
+
         String filePath = SESSION_PATH + "/" + sessionId + ".py";
-        Map<String, String> serviceRes = new HashMap<>();
+
         // 파일 내용 임시 저장 (/home/ubuntu/crow_data/UnLoginUser/{sessionId}/{sessionId}.py)
         // 임시 파일 생성
         File file = new File(filePath);
