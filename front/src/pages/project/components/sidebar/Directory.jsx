@@ -74,7 +74,7 @@ const getFileName = (filePath) => {
 //
 
 const Directory = (props) => {
-  const MySwal = withReactContent(Swal)
+  const MySwal = withReactContent(Swal);
   const dispatch = useDispatch();
   const {
     teamSeq,
@@ -113,7 +113,10 @@ const Directory = (props) => {
           name: res.data.name,
           path: res.data.id,
         };
-        dispatch(selectFile(payloadData));
+        console.log("res.data.type:", res.data.type);
+        if (res.data.type !== "folder") {
+          dispatch(selectFile(payloadData));
+        }
       })
       .catch(console.error);
   }, [dispatch, teamSeq]);

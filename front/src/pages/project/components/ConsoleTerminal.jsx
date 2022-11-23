@@ -117,7 +117,9 @@ const ConsoleTerminal = (props) => {
           >
             {outputData}
             {lintResultList.length > 0 &&
-              lintResultList.map((lintResult) => <div>{lintResult}</div>)}
+              lintResultList.map((lintResult, i) => (
+                <div key={i}>{lintResult}</div>
+              ))}
           </div>
         </div>
       </div>

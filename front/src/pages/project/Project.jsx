@@ -70,7 +70,7 @@ const Project = () => {
   useEffect(() => {
     dispatch(getTeamDetail(teamSeq))
       .unwrap()
-      .then(() => editorRef.current.getModel().setValue(""))
+      .then(() => editorRef.current?.getModel().setValue(""))
       .catch((errStatusCode) => {
         console.error("errStatusCode:", errStatusCode);
         if (errStatusCode === 404) {
