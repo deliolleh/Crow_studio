@@ -84,6 +84,7 @@ const Directory = (props) => {
     selectedFileType,
     saveFileContent,
     isLoading,
+    editorRef,
     goCodeShare,
   } = props;
 
@@ -258,11 +259,18 @@ const Directory = (props) => {
     try {
       await fileApi.deleteFile(
         teamSeq,
-        selectedFileType === "directory" ? TYPE_FOLDER : TYPE_FILE,
+        selectedFileType === "folder" ? TYPE_FOLDER : TYPE_FILE,
         filePathData
       );
       const res = await projectApi.getAllFiles(teamSeq);
       setFilesDirectories(res.data);
+      const resetPayloadData = {
+        type: "",
+        name: "",
+        path: "",
+      };
+      dispatch(selectFile(resetPayloadData));
+      editorRef.current.getModel().setValue("");
       toast.success("파일 삭제 성공");
     } catch (err) {
       console.error(err);

@@ -265,6 +265,7 @@ const Project = () => {
                     selectedFileType={selectedFileType}
                     saveFileContent={saveFileContentHandler}
                     isLoading={isLoading}
+                    editorRef={editorRef}
                     goCodeShare={goCodeShare}
                   />
                 )}
