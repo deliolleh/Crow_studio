@@ -50,7 +50,7 @@ const Teams = () => {
             </div>
             {/* 팀 생성 버튼 */}
             <button
-              className="md:px-3 ml-4 px-2 py-1 md:text-sm text-[13px] font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow rounded-md transition"
+              className="md:px-3 ml-4 px-2 py-1 md:text-sm text-[13px] font-bold bg-point_purple text-component_dark hover:bg-point_purple_-2 hover:text-white rounded-md transition"
               onClick={createTeamHandler}
             >
               새로운 팀 생성

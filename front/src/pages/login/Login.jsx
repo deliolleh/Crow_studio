@@ -40,7 +40,10 @@ const Login = () => {
         <div className="h-fit flex flex-col">
           <LoginTitle />
           <LoginForm onLogin={loginHandler} />
-          <Link to="/signup" className="block w-full text-center">
+          <Link
+            to="/signup"
+            className="block w-full text-center hover:text-white transition"
+          >
             회원가입
           </Link>
         </div>
