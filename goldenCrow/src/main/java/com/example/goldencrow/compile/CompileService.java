@@ -78,7 +78,7 @@ public class CompileService {
         }
         System.out.println("createDockerfile에서 absolutePath : " + absolutePath);
         String[] pathList = absolutePath.split("/");
-        System.out.println(As.toString(pathList));
+        System.out.println(Arrays.toString(pathList));
         int lastIdx = pathList.length - 1;
         System.out.println("lastIdx" + lastIdx);
 //        String teamSeq = pathList[4];
