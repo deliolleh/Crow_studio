@@ -42,7 +42,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/compile/py")         // python 컴파일
                 .excludePathPatterns("/api/compile/py/stop")    // python 컴파일 중지
                 .excludePathPatterns("/api/variable")           // 변수명 추천
-                .excludePathPatterns("/api/unlogin");            // 비로그인 사용자 세션 처리
+                .excludePathPatterns("/api/unlogin")            // 비로그인 사용자 세션 처리
+                .excludePathPatterns("/api/unlogin/compile");
     }
 
     /**
