@@ -2,6 +2,7 @@ import React, { useState, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { toast } from "react-toastify";
 
 import teamApi from "../../api/teamApi";
 
@@ -111,14 +112,15 @@ const TeamCreate = () => {
       .createTeam(teamData)
       .then(() => {
         navigate("/teams", { replace: true });
+        toast.success("팀 생성 완료");
       })
       .catch((errorStatusCode) => {
         if (errorStatusCode === 409) {
-          alert("이미 해당 이름으로 생성된 팀이 있습니다");
+          toast.warning("이미 해당 이름으로 생성된 팀이 있습니다");
         } else if (errorStatusCode === 404) {
-          alert("해당 깃 주소가 유효하지 않습니다");
+          toast.warning("해당 깃 주소가 유효하지 않습니다");
         } else {
-          alert("비상!!");
+          toast.error("Error");
         }
       });
   };
