@@ -179,7 +179,10 @@ public class CompileService {
         // 프로젝트명과 teamSeq로 docker container와 image 이름 생성
         String conAndImgName = "crowstudio_" + teamName.toLowerCase().replaceAll(" ", "") + "_" + teamSeq;
         // 현재 실행되고 있는 컨테이너, 이미지 삭제, 도커파일 삭제
-        pyCompileStopService(teamName, teamSeq);
+        Map<String, String> stopped = pyCompileStopService(teamName, teamSeq);
+        if (stopped.get("result").equals(SUCCESS)) {
+            System.out.println("삭제 성공");
+        }
         Optional<TeamEntity> teamEntity = teamRepository.findTeamPortByTeamSeq(Long.valueOf(teamSeq));
         if (!teamEntity.isPresent()) {
             serviceRes.put("result", NO_SUCH);
@@ -269,41 +272,41 @@ public class CompileService {
         String[] containerStop = {"docker", "stop", conAndImgName};
         Map<String, String> serviceRes = new HashMap<>();
         String stopedCon = resultStringService(containerStop);
-        System.out.println(stopedCon);
+        System.out.println("컨테이너 중지" + stopedCon);
         // 컨테이너가 없는 경우
-        if (stopedCon.equals("No such container")) {
-            serviceRes.put("result", NO_SUCH);
-            return serviceRes;
-        } else if (!stopedCon.equals(conAndImgName)) {
-            serviceRes.put("result", UNKNOWN);
-            return serviceRes;
-        }
+//        if (stopedCon.equals("No such container")) {
+//            serviceRes.put("result", NO_SUCH);
+//            return serviceRes;
+//        } else if (!stopedCon.equals(conAndImgName)) {
+//            serviceRes.put("result", UNKNOWN);
+//            return serviceRes;
+//        }
 
         // 컨테이너 삭제
         String[] containerRm = {"docker", "rm", conAndImgName};
         String removedCon = resultStringService(containerRm);
-        System.out.println(removedCon);
+        System.out.println("컨테이너 삭제"+removedCon);
         // 컨테이너가 없는 경우
-        if (removedCon.equals("No such container")) {
-            serviceRes.put("result", NO_SUCH);
-            return serviceRes;
-        } else if (!removedCon.equals(conAndImgName)) {
-            serviceRes.put("result", UNKNOWN);
-            return serviceRes;
-        }
+//        if (removedCon.equals("No such container")) {
+//            serviceRes.put("result", NO_SUCH);
+//            return serviceRes;
+//        } else if (!removedCon.equals(conAndImgName)) {
+//            serviceRes.put("result", UNKNOWN);
+//            return serviceRes;
+//        }
 
         // 도커 이미지 삭제
         String[] imageRm = {"docker", "rmi", conAndImgName};
         String rmImg = resultStringService(imageRm);
-        System.out.println(rmImg);
+        System.out.println("이미지 삭제"+rmImg);
         // 이미지가 없는 경우
-        if (rmImg.contains("No such image")) {
-            serviceRes.put("result", NO_SUCH);
-            return serviceRes;
-        } else if (rmImg.startsWith("Error")) {
-            serviceRes.put("result", UNKNOWN);
-            return serviceRes;
-        }
+//        if (rmImg.contains("No such image")) {
+//            serviceRes.put("result", NO_SUCH);
+//            return serviceRes;
+//        } else if (rmImg.startsWith("Error")) {
+//            serviceRes.put("result", UNKNOWN);
+//            return serviceRes;
+//        }
 
         // 도커파일 삭제
         Map<String, String> deletedFile = fileService.deleteFileService(
