@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 @RestController
 @RequestMapping(value = "/api/unlogin")
 public class UnLoginController {
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<String> getSessionId(HttpServletRequest request) {
         HttpSession session = request.getSession(true);
 
