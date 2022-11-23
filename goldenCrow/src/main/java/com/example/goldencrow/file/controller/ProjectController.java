@@ -56,7 +56,7 @@ public class ProjectController {
         String rootPath = files[0].getPath();
         String rootName = files[0].getName();
         rootPath = rootPath.replace(BASE_URL, "");
-        res = projectService.readDirectoryService(rootPath, rootName, res);
+        res = projectService.readDirectoryService(pjtPath, rootName, res);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 }
