@@ -81,14 +81,14 @@ public class CompileService {
 //        String teamSeq = pathList[4];
         String teamSeqPath = pathList[0] + "/" + pathList[1] + "/" + pathList[2] + "/"
                 + pathList[3] + "/" + pathList[4];
-        String mainFileName = pathList[lastIdx];
+        String mainFileName = pathList[lastIdx].split(".")[0];
         StringBuilder filePathBuilder = new StringBuilder();
         for (int i = 5; i <= lastIdx; i++) {
             filePathBuilder.append(pathList[i]).append("/");
         }
         String filePath = filePathBuilder.substring(0, filePathBuilder.length() - 1);
 
-        String fastapiMainPath = absolutePath.replace(mainFileName, "");
+        String fastapiMainPath = absolutePath.replace(mainFileName + ".py", "");
 
         String content = "";
 
