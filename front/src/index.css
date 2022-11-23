@@ -206,6 +206,7 @@ input:-webkit-autofill:active {
   --contexify-activeRightSlot-color: #fff;
   --contexify-arrow-color: #6f6e77;
   --contexify-activeArrow-color: #fff;
+  --contexify-menu-minWidth: 120px;
 }
 
 .contexify-crow-nav {
@@ -288,7 +289,7 @@ input:-webkit-autofill:active {
 
 /* sweet alert 2 */
 .swal2-container.swal2-center.swal2-backdrop-show {
-  background: rgba(0,0,0,.7);
+  background: rgba(0, 0, 0, 0.7);
 }
 .swal2-modal {
   padding: 40px 40px 38px;
@@ -311,7 +312,7 @@ input:-webkit-autofill:active {
 }
 
 .swal2-input:focus {
-  border: 2px solid #D4A8E3;
+  border: 2px solid #d4a8e3;
   box-shadow: none;
 }
 
@@ -330,11 +331,11 @@ input:-webkit-autofill:active {
 }
 
 .swal2-styled.swal2-confirm {
-  background-color: #D4A8E3;
+  background-color: #d4a8e3;
 }
 
 .swal2-styled.swal2-confirm:hover {
-  background-color: #A34DC1;
+  background-color: #a34dc1;
   box-shadow: none;
 }
 .swal2-styled.swal2-confirm:focus {

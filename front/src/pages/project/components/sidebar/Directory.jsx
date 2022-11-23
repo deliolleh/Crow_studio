@@ -107,13 +107,11 @@ const Directory = (props) => {
       .getAllFiles(teamSeq)
       .then((res) => {
         setFilesDirectories(res.data);
-        console.log("res:", res);
         const payloadData = {
           type: res.data.type,
           name: res.data.name,
           path: res.data.id,
         };
-        console.log("res.data.type:", res.data.type);
         if (res.data.type !== "folder") {
           dispatch(selectFile(payloadData));
         }
@@ -134,9 +132,9 @@ const Directory = (props) => {
       background: "#3C3C3C",
       inputValidator: (value) => {
         if (!value) {
-          return '변경할 이름을 입력해주세요!'
+          return "변경할 이름을 입력해주세요!";
         }
-      }
+      },
     });
     if (newDirectoryName.value.length === 0) {
       return;
@@ -152,7 +150,7 @@ const Directory = (props) => {
     try {
       await fileApi.createFile(teamSeq, TYPE_DIRECTORY, fileInfoData);
       const res = await projectApi.getAllFiles(teamSeq);
-      console.log(res.data)
+      console.log(res.data);
       setFilesDirectories(res.data);
     } catch (err) {
       console.error(err);
@@ -172,9 +170,9 @@ const Directory = (props) => {
       background: "#3C3C3C",
       inputValidator: (value) => {
         if (!value) {
-          return '변경할 이름을 입력해주세요!'
+          return "변경할 이름을 입력해주세요!";
         }
-      }
+      },
     });
     if (newFileName.value.length === 0) {
       return;
@@ -263,23 +261,8 @@ const Directory = (props) => {
   // 저장
   const saveHandler = () => saveFileContent();
 
-  // // 트리 생성
-  // const renderTree = (nodes) => (
-  //   <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
-  //     {Array.isArray(nodes.children)
-  //       ? nodes.children.map((node) => renderTree(node))
-  //       : null}
-  //   </TreeItem>
-  // );
-
   // 노드 선택
   const nodeSelectHandler = (e, nodeIds) => {
-    // e.target.click();
-    // e.preventDefault();
-    console.log("e:", e);
-    console.log("nodeIds:", nodeIds);
-    // displayMenu(e);
-    // treeItemContextMenuHandler(e);
     const payloadData = {
       type: getFileType(nodeIds),
       name: getFileName(nodeIds),
@@ -320,24 +303,22 @@ const Directory = (props) => {
       paddingLeft: theme.spacing(0),
       fontWeight: theme.typography.fontWeightMedium,
 
-      "&.Mui-expanded": {
-        fontWeight: theme.typography.fontWeightRegular,
-      },
-      // "&:hover": {
-      //   backgroundColor: theme.palette.action.hover,
+      // "&.Mui-expanded": {
+      //   backgroundColor: "#786f7b",
+      //   color: "white",
+      //   // fontWeight: theme.typography.fontWeightRegular,
       // },
       "&:hover": {
+        backgroundColor: "white",
+        color: "#D4A8E3",
+      },
+      "&.Mui-selected": {
         backgroundColor: "#786f7b",
         color: "white",
-      },
-      // "&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused": {
-      //   backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
-      //   color: "var(--tree-view-color)",
-      // },
-      "&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused": {
-        backgroundColor: "transparent",
-        color: "#D4A8E3",
         fontWeight: "bold",
+      },
+      "&.Mui-selected:hover": {
+        backgroundColor: "#D4A8E3",
       },
       [`& .${treeItemClasses.label}`]: {
         fontWeight: "inherit",
@@ -407,7 +388,6 @@ const Directory = (props) => {
   // const treeItemClickHandler = (e) => console.log(e);
   const treeItemContextMenuHandler = (e, nodeIds) => {
     e.preventDefault();
-    console.log("e:", e);
     displayMenu(e);
   };
 
