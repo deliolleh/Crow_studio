@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import teamApi from "../../../api/teamApi";
 
 import TeamName from "./TeamName";
 import TeamNameUpdateInput from "./TeamNameUpdateInput";
-import TeamListButton from "./TeamListButton";
 import RedButton from "./RedButton";
 
 const TeamDetailHeader = (props) => {
@@ -22,45 +22,62 @@ const TeamDetailHeader = (props) => {
       await teamApi.updateTeamName(teamSeq, teamNameData);
       setTeamName(updatedTeamName);
       setShowTeamNameUpdate(false);
+      toast.success("팀 이름 변경 성공");
     } catch (err) {
-      console.error(err);
       const errStatusCode = err.response.status;
       if (errStatusCode === 409) {
-        alert("이미 같은 팀 이름이 존재합니다");
+        toast.warning("이미 같은 팀 이름이 존재합니다");
       } else {
-        alert("비상!!");
+        toast.error("Error");
       }
     }
   };
 
   const deleteTeamHandler = async () => {
+    //
+    //
+    //
     if (!window.confirm("정말로 팀을 삭제하시겠습니까?")) {
       return;
     }
+    //
+    //
+    //
     try {
       await teamApi.deleteTeam(teamSeq);
       navigate("/teams");
+      toast.success("팀 삭제 성공");
     } catch (err) {
-      console.error(err);
+      toast.error("Error");
     }
   };
 
   const resignTeamHandler = async () => {
+    //
+    //
+    //
     if (!window.confirm("정말로 팀에서 탈퇴하시겠습니까?")) {
       return;
     }
+    //
+    //
+    //
     try {
       await teamApi.resignTeam(teamSeq);
       navigate("/teams");
+      toast.success("팀 탈퇴 성공");
     } catch (err) {
-      console.error(err);
+      toast.error("Error");
     }
   };
 
   return (
     <div className="flex justify-between items-center w-full mb-5">
       {!showTeamNameUpdate ? (
-        <TeamName openTeamNameUpdate={openTeamNameUpdateHandler}>
+        <TeamName
+          openTeamNameUpdate={openTeamNameUpdateHandler}
+          isLeader={isLeader}
+        >
           {teamName}
         </TeamName>
       ) : (
