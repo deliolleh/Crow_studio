@@ -154,7 +154,7 @@ const TeamDetail = () => {
       background: "#3C3C3C",
     });
     if (!res.isConfirmed) {
-    // if (!window.confirm(`${memberNickname}님을 팀에서 삭제하시겠습니까?`)) {
+      // if (!window.confirm(`${memberNickname}님을 팀에서 삭제하시겠습니까?`)) {
       return;
     }
     //
@@ -355,12 +355,12 @@ const TeamDetail = () => {
                   {!projectTypeInput && (
                     <div className="flex items-center">
                       <span>{projectType}</span>
-                      {teamLeaderSeq === mySeq && (
+                      {/* {teamLeaderSeq === mySeq && (
                         <BsPencilFill
                           className="ml-3 text-sm text-point_yellow_+2 cursor-pointer hover:text-point_yellow hover:scale-125 transition"
                           onClick={() => setProjectTypeInput(true)}
                         />
-                      )}
+                      )} */}
                     </div>
                   )}
                   {projectTypeInput && (
