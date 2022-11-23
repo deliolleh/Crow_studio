@@ -67,7 +67,7 @@ const Modify = () => {
     >
       <div className="flex mb-5 justify-between items-center">
         <div className="text-white text-xl font-bold">회원정보 수정</div>
-        <IoClose className="text-white text-xl font-bold cursor-pointer mt-1" />
+        {/* <IoClose className="text-white text-xl font-bold cursor-pointer mt-1" /> */}
       </div>
       <NicknameForm
         updateNickname={updateNicknameHandler}

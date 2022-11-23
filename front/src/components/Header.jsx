@@ -52,7 +52,7 @@ const Header = () => {
         )}
       </Menu>
       <nav className="flex flex-wrap items-center justify-center px-2 py-1 bg-component_item_bg_dark m-3 rounded-lg">
-        <div className="w-3/4 lg:flex-row flex-col relative px-4 flex justify-between">
+        <div className="w-full flex relative px-12 justify-between">
           {/* 로고, 아이콘 */}
           <div className="w-3/4 relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
             <div className="flex items-center">
@@ -60,7 +60,7 @@ const Header = () => {
                 className="text-xl font-bold leading-relaxed inline-block mr-16 py-2 whitespace-nowrap uppercase text-white"
                 to="/"
               >
-                <div className="flex">
+                <div className="flex w-fit">
                   <img
                     className="w-8 rounded-full mr-2"
                     src={require("../assets/images/logo.png")}
@@ -115,7 +115,7 @@ const Header = () => {
           </div> */}
 
           {/* 프로필 */}
-          <div className="lg:flex flex lg:static absolute right-14 lg:item-center mt-2.5">
+          <div className="flex item-center mt-2.5">
             <div className="cursor-pointer mt-[3px]">
               {isLoggedIn && (
                 <div className="hover:text-white" onClick={clickProfileHandler}>

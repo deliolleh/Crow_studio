@@ -165,10 +165,11 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
             <Combobox
               value={nowEditorFont}
               onChange={(e) => editorChange("font", e)}
+              className="mb-5"
             >
               <div className="relative mt-1">
                 <div
-                  className="flex justify-between items-center rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left shadow-sm hover:bg-point_purple_op20 active:outline-none active:ring-2 active:ring-point_purple"
+                  className="relative flex justify-between items-center rounded-md bg-component_item_bg_+2_dark px-1.5 py-2 text-xs font-medium text-white text-left shadow-sm hover:bg-point_purple_op20 active:outline-none active:ring-2 active:ring-point_purple"
                   style={{ height: 26, width: 217 }}
                 >
                   <Combobox.Input
@@ -192,7 +193,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
                   afterLeave={() => setQuery("")}
                 >
                   <Combobox.Options
-                    className="absolute left-0 z-10 mt-0.5 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    className="absolute z-10 mt-0.5 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                     style={{ height: 130, width: 217 }}
                   >
                     {filteredFonts.length === 0 && query !== "" ? (
@@ -297,10 +298,11 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
             <Combobox
               defaultValue={nowConsoleFont}
               onChange={(e) => consoleChange("font", e)}
+              className="mb-5"
             >
               <div className="relative mt-1">
                 <div
-                  className="flex justify-between items-center rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left shadow-sm hover:bg-point_purple_op20 active:outline-none active:ring-2 active:ring-point_purple"
+                  className="relative flex justify-between items-center rounded-md bg-component_item_bg_+2_dark px-1.5 py-2 text-xs font-medium text-white text-left shadow-sm hover:bg-point_purple_op20 active:outline-none active:ring-2 active:ring-point_purple"
                   style={{ height: 26, width: 217 }}
                 >
                   <Combobox.Input
@@ -324,7 +326,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
                   afterLeave={() => setQuery("")}
                 >
                   <Combobox.Options
-                    className="absolute left-0 z-10 mt-0.5 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    className="absolute z-10 mt-0.5 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                     style={{ height: 130, width: 217 }}
                   >
                     {filteredFonts.length === 0 && query !== "" ? (

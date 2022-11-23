@@ -45,16 +45,17 @@ const Profile = ({ isMe, userSeq }) => {
         <div className="text-sm">{isMe ? myEmail : userId}</div>
 
         {/* 깃 이메일 */}
-        <div className="text-primary_-2_dark text-sm mb-6">
+        <div className="text-primary_-2_dark text-sm mb-6 flex">
+          <div className="mr-2">깃 계정:</div>
           {isMe && (myGitUsername || "깃 이메일 연결되지 않음")}
         </div>
 
         {/* 정보 수정 버튼 */}
-        {isMe && (
+        {/* {isMe && (
           <button className="sm:w-[169px] w-auto h-[36px] p-2 text-sm font-bold text-primary_dark hover:text-black bg-component_item_bg_dark border hover:bg-point_light_yellow border-primary_-2_dark hover:border-white rounded-md">
             내 정보 수정하기
           </button>
-        )}
+        )} */}
       </div>
     </div>
   );
