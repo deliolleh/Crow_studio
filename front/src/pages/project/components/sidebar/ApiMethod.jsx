@@ -46,7 +46,7 @@ const SelectMethod = ({ onMethodChange }) => {
       >
         <div className="relative mt-1">
           <div
-            className="relative flex justify-between items-center rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left shadow-sm hover:bg-point_purple_op20 active:outline-none active:ring-2 active:ring-point_purple"
+            className="relative flex justify-between items-center rounded-md bg-component_item_bg_+2_dark px-1.5 py-2 text-xs font-medium text-white text-left shadow-sm hover:bg-point_purple_op20 active:outline-none active:ring-2 active:ring-point_purple"
             style={{ height: 26, width: 217 }}
           >
             <Combobox.Input
