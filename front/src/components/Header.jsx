@@ -127,7 +127,7 @@ const Header = () => {
               {!isLoggedIn && (
                 <div className="flex justify-end items-center">
                   <div
-                    className="hover:text-white mr-2"
+                    className="hover:text-white mr-4"
                     onClick={() => navigate("/login")}
                   >
                     로그인

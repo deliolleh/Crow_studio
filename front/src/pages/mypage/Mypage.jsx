@@ -18,7 +18,10 @@ const Mypage = () => {
   return (
     <div className="flex flex-col h-full w-full">
       <Header />
-      <section className="flex md:flex-row flex-col h-full justify-center items-center m-3 mb-6 overflow-auto">
+      <section
+        data-aos="fade-in"
+        className="flex md:flex-row flex-col h-full justify-center items-center m-3 mb-6 overflow-auto"
+      >
         {/* 프로필 */}
         <Profile isMe={isMe} userSeq={userSeq} mySeq={mySeq} />
         {/* 회원정보수정 */}
