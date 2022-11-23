@@ -75,6 +75,10 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/project",
+    element: <Project />,
+  },
+  {
     path: "/project/:teamSeq",
     element: <Project />,
   },

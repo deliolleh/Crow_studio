@@ -360,13 +360,13 @@ const TeamDetail = () => {
                   {!projectTypeInput && (
                     <div className="flex items-center">
                       <span>{projectType}</span>
-                      {teamLeaderSeq === mySeq && (
+                      {/* {teamLeaderSeq === mySeq && (
                         <BsPencilFill
                           className="ml-3 text-sm text-point_yellow_+2 cursor-pointer hover:text-point_yellow hover:scale-125 transition"
                           onClick={() => setProjectTypeInput(true)}
                           data-tip="프로젝트 타입 변경"
                         />
-                      )}
+                      )} */}
                     </div>
                   )}
                   {projectTypeInput && (

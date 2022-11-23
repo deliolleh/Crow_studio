@@ -182,7 +182,7 @@ const TeamCreate = () => {
                 {/* 팀 이름 */}
                 <div className="xs:w-80 w-[227.03px] mb-1">
                   <label htmlFor="teamName" className="">
-                    팀 이름
+                    팀 이름 (영문, 숫자)
                   </label>
                   <input
                     type="teamName"
