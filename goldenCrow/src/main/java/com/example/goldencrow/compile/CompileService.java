@@ -110,9 +110,8 @@ public class CompileService {
                 String inputString = "\"" + input + "\"";
                 content = "FROM python:3.10\n" +
                         "CMD /bin/sh \n" +
-                        "CMD [\"echo\", " + inputString +
-                        " \"|\", \"python3\", \"" + absolutePath +
-                        "\"]\n" +
+                        "CMD echo " + inputString +
+                        " | python3 " + absolutePath + "\n" +
                         "EXPOSE 3000";
             }
         } else if (type == 2) {
