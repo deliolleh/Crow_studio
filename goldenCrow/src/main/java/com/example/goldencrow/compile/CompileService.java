@@ -320,7 +320,7 @@ public class CompileService {
     public Map<String, String> pyCompileStopService(String teamName, String teamSeq) {
         String conAndImgName = "crowstudio_" + teamName.toLowerCase().replaceAll(" ", "") + "_" + teamSeq;
 
-        // 도커 컨테이너 멈추고 삭제
+        // 도커 컨테이너 멈추기
         String[] containerStop = {"docker", "stop", conAndImgName};
         Map<String, String> serviceRes = new HashMap<>();
         String stopedCon = resultStringService(containerStop);
@@ -333,7 +333,17 @@ public class CompileService {
             return serviceRes;
         }
 
-        // 컨테이너
+        // 컨테이너 삭제
+        String[] containerRm = {"docker", "rm", conAndImgName};
+        String removedCon = resultStringService(containerRm);
+        // 컨테이너가 없는 경우
+        if (removedCon.equals("No such container")) {
+            serviceRes.put("result", NO_SUCH);
+            return serviceRes;
+        } else if (!removedCon.equals(conAndImgName)) {
+            serviceRes.put("result", UNKNOWN);
+            return serviceRes;
+        }
 
         // 도커 이미지 삭제
         String[] imageRm = {"docker", "rmi", conAndImgName};
