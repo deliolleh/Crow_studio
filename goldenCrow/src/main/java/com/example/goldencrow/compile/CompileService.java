@@ -85,7 +85,10 @@ public class CompileService {
         String teamSeqPath = pathList[0] + "/" + pathList[1] + "/" + pathList[2] + "/"
                 + pathList[3] + "/" + pathList[4];
         System.out.println("teamSeqPath" + teamSeqPath);
-        String mainFileName = pathList[lastIdx].split(".")[0];
+        System.out.println(pathList[lastIdx]);
+        String[] mainFileNameList = pathList[lastIdx].split(".");
+        System.out.println("mainFileNameList " + Arrays.toString(mainFileNameList));
+        String mainFileName = mainFileNameList[0];
         System.out.println("mainFileName" + mainFileName);
         StringBuilder filePathBuilder = new StringBuilder();
         for (int i = 5; i <= lastIdx; i++) {
