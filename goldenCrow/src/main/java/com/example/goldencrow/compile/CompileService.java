@@ -413,7 +413,7 @@ public class CompileService {
             }
         }
         serviceRes.put("type", "1");
-        serviceRes.put("path", filePath);
+        serviceRes.put("path", BASE_URL + filePath);
         return serviceRes;
     }
 
