@@ -162,7 +162,6 @@ public class FileService {
         } else {
             try {
                 Files.delete(path);
-                System.out.println("실제 파일 삭제에서 터짐");
             } catch (NoSuchFileException e) {
                 return NO_SUCH;
             } catch (IOException ioe) {
