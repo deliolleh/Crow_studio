@@ -464,10 +464,10 @@ const Directory = (props) => {
           <div className="flex items-center gap-4">
             <div className="text-xl font-bold text-white">Directory</div>
             <div className="mt-1 flex items-center">
-              <IcSpan onClick={createFileHandler}>
+              <IcSpan onClick={createFileHandler} data-tip="새 파일">
                 <IcNewFile alt="IcNewFile" />
               </IcSpan>
-              <IcSpan onClick={createDirectoryHandler}>
+              <IcSpan onClick={createDirectoryHandler} data-tip="새 폴더">
                 <IcNewDir className="mt-0.5" alt="IcNewDir" />
               </IcSpan>
               {/* <IcSpan>
@@ -481,7 +481,7 @@ const Directory = (props) => {
                 ⌫
               </div>
             </IcSpan> */}
-              <IcSpan onClick={saveHandler}>
+              <IcSpan onClick={saveHandler} data-tip="파일 저장">
                 <SaveIcon
                   className={isLoading && `animate-spin`}
                   sx={{ fontSize: 20 }}
@@ -494,6 +494,7 @@ const Directory = (props) => {
                     : { pointerEvents: "none", opacity: 0.3 }
                 }
                 onClick={goCodeShare}
+                data-tip="동시 편집"
               >
                 <IcCodeShare className="h-[16px]" />
               </IcSpan> */}

@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import ReactTooltip from "react-tooltip";
 
 import { getTeamDetail, modifyProjectType } from "../../redux/teamSlice";
 import { searchUser } from "../../redux/userSlice";
@@ -154,7 +155,7 @@ const TeamDetail = () => {
       background: "#3C3C3C",
     });
     if (!res.isConfirmed) {
-    // if (!window.confirm(`${memberNickname}님을 팀에서 삭제하시겠습니까?`)) {
+      // if (!window.confirm(`${memberNickname}님을 팀에서 삭제하시겠습니까?`)) {
       return;
     }
     //
@@ -324,10 +325,14 @@ const TeamDetail = () => {
                 ))}
                 <div className="flex flex-col items-center px-2 py-2">
                   {teamLeaderSeq === mySeq && (
-                    <IoAdd
-                      className="text-white cursor-pointer text-lg hover:text-point_yellow hover:scale-125 transition"
-                      onClick={openModal}
-                    />
+                    <div>
+                      <IoAdd
+                        className="text-white cursor-pointer text-lg hover:text-point_yellow hover:scale-125 transition"
+                        onClick={openModal}
+                        data-tip="팀원 추가"
+                      />
+                      <ReactTooltip place="right" />
+                    </div>
                   )}
                 </div>
               </div>
@@ -359,6 +364,7 @@ const TeamDetail = () => {
                         <BsPencilFill
                           className="ml-3 text-sm text-point_yellow_+2 cursor-pointer hover:text-point_yellow hover:scale-125 transition"
                           onClick={() => setProjectTypeInput(true)}
+                          data-tip="프로젝트 타입 변경"
                         />
                       )}
                     </div>
