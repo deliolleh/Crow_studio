@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 import styled from "styled-components";
+
 import editorApi from "../../../../api/editorApi";
 
 // styled
@@ -17,17 +19,20 @@ const VariableName = () => {
     setVariable(() => e.target.value);
   };
 
+  const clickHandler = (li) => {
+    navigator.clipboard.writeText(li);
+    toast.success("클립보드에 복사 완료");
+  };
+
   const rendering = () => {
     let show = [];
     result.map((li, index) =>
       show.push(
         <div
           key={`${index}`}
-          className="mt-1 ml-[15px] font-medium text-white"
-          onClick={() => navigator.clipboard.writeText(li)}
-          style={{
-            cursor: "pointer",
-          }}
+          data-aos="fade-in"
+          className="mt-1 ml-[15px] text-xl text-white cursor-pointer hover:text-point_yellow transition"
+          onClick={() => clickHandler(li)}
         >
           {li}
         </div>
@@ -78,7 +83,7 @@ const VariableName = () => {
                 />
                 <button
                   onClick={sendWord}
-                  className="ml-2 w-[45px] h-[26px] bg-point_purple hover:bg-point_purple_-2 rounded-md text-white text-sm"
+                  className="ml-2 w-[45px] h-[26px] bg-point_purple hover:bg-point_purple_-2 rounded-md text-white text-sm transition"
                 >
                   추천
                 </button>
