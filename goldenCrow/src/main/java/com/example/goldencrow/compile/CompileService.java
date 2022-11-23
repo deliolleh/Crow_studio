@@ -230,7 +230,7 @@ public class CompileService {
             command = new String[]{"docker", "run", "-d", "--name", conAndImgName, "-v",
                     BASE_URL + teamSeq + ":" + BASE_URL + teamSeq, "-p", port + insidePort, conAndImgName};
         } else {
-            command = new String[]{"docker", "run", "--rm", "-d", "--name", conAndImgName, "-p", port + insidePort, conAndImgName};
+            command = new String[]{"docker", "run", "-d", "--name", conAndImgName, "-p", port + insidePort, conAndImgName};
         }
 
         // 결과 문자열
@@ -269,6 +269,7 @@ public class CompileService {
         String[] containerStop = {"docker", "stop", conAndImgName};
         Map<String, String> serviceRes = new HashMap<>();
         String stopedCon = resultStringService(containerStop);
+        System.out.println(stopedCon);
         // 컨테이너가 없는 경우
         if (stopedCon.equals("No such container")) {
             serviceRes.put("result", NO_SUCH);
@@ -281,6 +282,7 @@ public class CompileService {
         // 컨테이너 삭제
         String[] containerRm = {"docker", "rm", conAndImgName};
         String removedCon = resultStringService(containerRm);
+        System.out.println(removedCon);
         // 컨테이너가 없는 경우
         if (removedCon.equals("No such container")) {
             serviceRes.put("result", NO_SUCH);
@@ -293,7 +295,7 @@ public class CompileService {
         // 도커 이미지 삭제
         String[] imageRm = {"docker", "rmi", conAndImgName};
         String rmImg = resultStringService(imageRm);
-
+        System.out.println(rmImg);
         // 이미지가 없는 경우
         if (rmImg.contains("No such image")) {
             serviceRes.put("result", NO_SUCH);
