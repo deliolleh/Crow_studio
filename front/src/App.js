@@ -22,6 +22,7 @@ import Project from "./pages/project/Project";
 import NotFound from "./pages/not-found/NotFound";
 import Forbidden from "./pages/forbidden/Forbidden";
 import YMonaco from "./pages/code-share/YMonaco";
+import Redirect from "./pages/redirect/Redirect";
 
 const router = createBrowserRouter([
   {
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
   {
     path: "/project/code-share",
     element: <YMonaco />,
+  },
+  {
+    path: "/redirect",
+    element: <Redirect />,
   },
   {
     path: "/403",
