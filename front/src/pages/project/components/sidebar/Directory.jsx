@@ -203,14 +203,14 @@ const Directory = (props) => {
 
   // 삭제
   const deleteHandler = async () => {
-    if (MySwal.fire({
+    const res = await MySwal.fire({
       title: `${selectedFileName}을(를) 삭제하시겠습니까?`,
       showCancelButton: true,
       confirmButtonText: "네",
       cancelButtonText: "아니오",
       background: "#3C3C3C",
-    })) {
-    // if (!window.confirm(`${selectedFileName}을(를) 삭제하시겠습니까?`)) {
+    });
+    if (!res.isConfirmed) {
       return;
     }
     const filePathData = { filePath: selectedFilePath };

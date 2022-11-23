@@ -2,6 +2,8 @@ import React, { useState, useEffect, Fragment } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 import { getTeamDetail, modifyProjectType } from "../../redux/teamSlice";
 import { searchUser } from "../../redux/userSlice";
@@ -54,6 +56,7 @@ const pjtType = [
 ];
 
 const TeamDetail = () => {
+  const MySwal = withReactContent(Swal);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -110,7 +113,14 @@ const TeamDetail = () => {
     //
     //
     //
-    if (!window.confirm(`${addUserName}님을 팀원으로 추가할까요?`)) {
+    const res = await MySwal.fire({
+      title: `${addUserName}님을 팀원으로 추가할까요?`,
+      showCancelButton: true,
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
+      background: "#3C3C3C",
+    });
+    if (!res.isConfirmed) {
       return;
     }
     //
@@ -136,7 +146,15 @@ const TeamDetail = () => {
     //
     //
     //
-    if (!window.confirm(`${memberNickname}님을 팀에서 삭제하시겠습니까?`)) {
+    const res = await MySwal.fire({
+      title: `${memberNickname}님을 팀에서 삭제하시겠습니까?`,
+      showCancelButton: true,
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
+      background: "#3C3C3C",
+    });
+    if (!res.isConfirmed) {
+    // if (!window.confirm(`${memberNickname}님을 팀에서 삭제하시겠습니까?`)) {
       return;
     }
     //
