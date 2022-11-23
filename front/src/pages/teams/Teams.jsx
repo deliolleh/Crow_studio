@@ -41,8 +41,11 @@ const Teams = () => {
                 {myNickname}
               </span>
               {/* 제목 */}
-              <span className="text-white text-sm md:font-bold">
-                님의 팀 목록 ({myTeams.length})
+              <span className="text-white text-sm md:font-bold mr-1">
+                님의 팀
+              </span>
+              <span class="bg-point_purple_op20 text-white text-xs font-semibold mr-2 px-1.5 py-0.5 rounded">
+                {myTeams.length}
               </span>
             </div>
             {/* 팀 생성 버튼 */}
