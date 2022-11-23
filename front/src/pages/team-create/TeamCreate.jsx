@@ -152,7 +152,10 @@ const TeamCreate = () => {
     <div className="flex flex-col w-full h-full">
       <Header />
       <div className="h-full flex flex-wrap justify-center items-center">
-        <div className="mb-2 mx-2 xs:px-16 px-10 py-12 flex flex-col w-fit h-fit justify-center items-center border border-primary_-2_dark rounded-md overflow-auto">
+        <div
+          data-aos="fade-in"
+          className="mb-2 mx-2 xs:px-16 px-10 py-12 flex flex-col w-fit h-fit justify-center items-center border border-primary_-2_dark rounded-md overflow-auto"
+        >
           <div className="text-4xl font-bold text-white pb-2 mb-5">
             팀 생성하기
           </div>
@@ -292,7 +295,7 @@ const TeamCreate = () => {
           </form>
           <button
             onClick={goTeamListHandler}
-            className="xs:w-80 w-[226.03px] px-10 py-2 text-primary_dark bg-component_item_bg_dark border border-primary_-2_dark rounded-md"
+            className="xs:w-80 w-[226.03px] px-10 py-2 text-primary_dark bg-component_item_bg_dark border border-primary_-2_dark hover:bg-component_item_bg_+2_dark hover:text-white rounded-md transition"
           >
             팀 목록
           </button>

@@ -22,7 +22,10 @@ const Intro = () => {
     <React.Fragment>
       <div className="flex flex-col h-screen">
         <Header />
-        <div className="flex flex-wrap h-full p-4 justify-center justify-items-center items-center">
+        <div
+          data-aos="fade-in"
+          className="flex flex-wrap h-full p-4 justify-center justify-items-center items-center"
+        >
           <div className="h-fit flex flex-col items-center">
             <img
               className="w-20 rounded-full"
