@@ -8,9 +8,11 @@ import SplitPane from "react-split-pane";
 import { TiArrowRightThick } from "react-icons/ti";
 
 import { getTeamDetail } from "../../redux/teamSlice";
+import { startLoading, endLoading } from "../../redux/globalSlice";
 
 import fileApi from "../../api/fileApi";
 import editorApi from "../../api/editorApi";
+import api from "../../api/api";
 
 import Header from "../../components/Header";
 import Sidebar from "./components/sidebar/Sidebar";
@@ -32,6 +34,7 @@ const Project = () => {
     (state) => state.team.value
   );
   const { mySeq } = useSelector((state) => state.user.value);
+  const isLoading = useSelector((state) => state.global.value.isLoading);
   // const [showComponent, setShowComponent] = useState("Dir");
   const [lintResultList, setLintResultList] = useState([]);
 
@@ -146,6 +149,16 @@ const Project = () => {
     try {
       // 1. 파일 포맷 요청
       const beforeFormatData = { text: editorRef.current.getValue() };
+      api.interceptors.request.use(
+        (config) => {
+          dispatch(startLoading());
+          return config;
+        },
+        (err) => {
+          dispatch(endLoading());
+          return Promise.reject(err);
+        }
+      );
       const res1 = await editorApi.sendFormatRequest(
         "python",
         beforeFormatData
@@ -173,9 +186,20 @@ const Project = () => {
       // 4. 파일 내용 가져오기
       const filePathData = { filePath: selectedFilePath };
       const res3 = await fileApi.getFileContent(filePathData);
+      api.interceptors.response.use(
+        (config) => {
+          dispatch(endLoading());
+          return config;
+        },
+        (err) => {
+          dispatch(endLoading());
+          return Promise.reject(err);
+        }
+      );
       editorRef.current.getModel().setValue(res3.data.fileContent);
       toast.success("파일 저장 성공");
     } catch (err) {
+      dispatch(endLoading());
       toast.error("파일 저장 실패");
     }
   };
@@ -258,6 +282,7 @@ const Project = () => {
                     selectedFileName={selectedFileName}
                     selectedFileType={selectedFileType}
                     saveFileContent={saveFileContentHandler}
+                    isLoading={isLoading}
                     goCodeShare={goCodeShare}
                   />
                 )}
