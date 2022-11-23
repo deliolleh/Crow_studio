@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import { getTeamDetail, modifyProjectType } from "../../redux/teamSlice";
 import { searchUser } from "../../redux/userSlice";
@@ -106,35 +107,49 @@ const TeamDetail = () => {
   };
 
   const addUserHandler = async (addUserSeq, addUserName) => {
+    //
+    //
+    //
     if (!window.confirm(`${addUserName}님을 팀원으로 추가할까요?`)) {
       return;
     }
+    //
+    //
+    //
     const addMemberData = { teamSeq, memberSeq: addUserSeq };
     try {
       await teamApi.addMember(addMemberData);
       setSearchResults([]);
       const res = await dispatch(getTeamDetail(teamSeq)).unwrap();
       setTeam(res);
+      toast.success("팀원 추가 성공");
     } catch (err) {
       if (err.response.status === 409) {
-        alert("이미 추가된 팀원입니다");
+        toast.warning("이미 추가된 팀원입니다");
       } else {
-        alert("비상!!");
+        toast.error("Error");
       }
     }
   };
 
   const deleteMemberHandler = async (memberNickname, memberSeq) => {
+    //
+    //
+    //
     if (!window.confirm(`${memberNickname}님을 팀에서 삭제하시겠습니까?`)) {
       return;
     }
+    //
+    //
+    //
     const deleteMemberData = { teamSeq, memberSeq };
     try {
       await teamApi.deleteMember(deleteMemberData);
       const res = await dispatch(getTeamDetail(teamSeq)).unwrap();
       setTeam(res);
+      toast.success("팀원 삭제 성공");
     } catch (err) {
-      console.error(err);
+      toast.error("Error");
     }
   };
 
