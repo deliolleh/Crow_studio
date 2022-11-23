@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
@@ -15,14 +16,15 @@ const Header = () => {
   const { isLoggedIn, mySeq, myNickname } = useSelector(
     (state) => state.user.value
   );
-  const [navbarOpen, setNavbarOpen] = useState(false);
+  // const [navbarOpen, setNavbarOpen] = useState(false);
 
-  const navbarOpenHandler = () => setNavbarOpen((prev) => !prev);
+  // const navbarOpenHandler = () => setNavbarOpen((prev) => !prev);
 
   const clickProfileHandler = (e) => displayMenu(e);
 
   const logoutHandler = () => {
     dispatch(logout());
+    toast.success("로그아웃 성공");
     navigate("/", { replace: true });
   };
 
