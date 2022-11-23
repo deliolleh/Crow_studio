@@ -72,6 +72,7 @@ public class UnLoginService {
 
         // 컨테이너명
         String conAndImgName = "unlogin_" + sessionId.toLowerCase();
+        System.out.println("unlogin conAndImgName: " + conAndImgName);
         String[] imgCmd = {"docker", "build", "-t", conAndImgName, SESSION_PATH + "/"};
         // docker image build
         String imageBuild = compileService.resultStringService(imgCmd);
