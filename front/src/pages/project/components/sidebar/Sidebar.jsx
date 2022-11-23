@@ -9,10 +9,11 @@ import { ReactComponent as IcApi } from "../../../../assets/icons/ic_api.svg";
 import { ReactComponent as IcVar } from "../../../../assets/icons/ic_var.svg";
 import { ReactComponent as IcSettings } from "../../../../assets/icons/ic_set.svg";
 
-const Sidebar = ({ clickIcon, showComponent }) => {
+const Sidebar = ({ clickIcon, showComponent, goCodeShare }) => {
   const classRef = useRef(null);
   const activeIconDir = showComponent === "Dir" ? " activeIcon" : "";
   const activeIconGit = showComponent === "Git" ? " activeIcon" : "";
+  const activeIconShare = (showComponent = "Share" ? "activeIcon" : "");
   const activeIconTeam = showComponent === "Team" ? " activeIcon" : "";
   const activeIconApi = showComponent === "Api" ? " activeIcon" : "";
   const activeIconVar = showComponent === "Var" ? " activeIcon" : "";
@@ -41,6 +42,10 @@ const Sidebar = ({ clickIcon, showComponent }) => {
       case "Set":
         isActive || showComponent === "Set" ? clickIcon("") : clickIcon("Set");
         break;
+      case "Share":
+        isActive || showComponent === "Share"
+          ? clickIcon("")
+          : clickIcon("Share");
       default:
         break;
     }
@@ -66,6 +71,17 @@ const Sidebar = ({ clickIcon, showComponent }) => {
             >
               <IcSpan>
                 <IcDirectory alt="directory" />
+              </IcSpan>
+            </ListHover>
+
+            {/* CodeShare */}
+            <ListHover
+              className={`flex flex-col items-center py-0.5`}
+              ref={classRef}
+              onClick={() => goCodeShare()}
+            >
+              <IcSpan>
+                <IcSettings alt="settings" />
               </IcSpan>
             </ListHover>
 

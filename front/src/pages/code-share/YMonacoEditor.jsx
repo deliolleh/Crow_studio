@@ -2,36 +2,19 @@ import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import { MonacoBinding } from "y-monaco";
 // import * as monaco from "monaco-editor";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import { useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { margin } from "@mui/system";
 
-const YMonaco = () => {
+const YMonacoEditor = (props) => {
   const editorRef = useRef(null);
-  const location = useLocation();
-  const selectedFileName = location.state.selectedFileName;
-  const data = location.state.data;
-  const options = location.state.options;
-
-  const editorOptions = {
-    scrollBeyondLastLine: false,
-    fontSize: options.fontSize,
-    fontFamily: options.font,
-    autoIndent: "advanced",
-    wrappingIndent: "same",
-    automaticLayout: true,
-    wordWrap: options.autoLine,
-  };
-
-  const navigate = useNavigate();
+  const { teamSeq, option } = props;
 
   const link = () => {
     const ydoc = new Y.Doc();
     const provider = new WebsocketProvider(
       "wss://demos.yjs.dev",
-      selectedFileName,
+      teamSeq,
       ydoc
     );
     const ytext = ydoc.getText("monaco");
@@ -53,7 +36,7 @@ const YMonaco = () => {
         const ydoc = new Y.Doc();
         const provider = new WebsocketProvider(
           "wss://demos.yjs.dev",
-          selectedFileName,
+          teamSeq,
           ydoc
         );
         provider.destroy();
@@ -61,26 +44,8 @@ const YMonaco = () => {
     };
   });
 
-  useEffect(() => {
-    if (
-      editorRef.current !== null &&
-      !editorRef?.current.getModel().getValue()
-    ) {
-      editorRef.current.getModel().setValue(data);
-    }
-  }, []);
-
-  const goBack = () => {
-    navigate(-1);
-  };
-
   return (
     <React.Fragment>
-      <div style={{ margin: "0.25em 1em" }}>
-        <span onClick={goBack} style={{ cursor: "pointer" }}>
-          돌아가기
-        </span>
-      </div>
       <Editor
         style={{ overflow: "auto" }}
         height="100%"
@@ -89,10 +54,10 @@ const YMonaco = () => {
         onMount={(editor) => {
           editorRef.current = editor;
         }}
-        options={editorOptions}
+        options={option}
       />
     </React.Fragment>
   );
 };
 
-export default YMonaco;
+export default YMonacoEditor;

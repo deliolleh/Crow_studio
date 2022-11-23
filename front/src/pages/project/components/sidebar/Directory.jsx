@@ -487,7 +487,7 @@ const Directory = (props) => {
                   sx={{ fontSize: 20 }}
                 />
               </IcSpan>
-              <IcSpan
+              {/* <IcSpan
                 style={
                   selectedFilePath.includes(".py")
                     ? {}
@@ -495,9 +495,8 @@ const Directory = (props) => {
                 }
                 onClick={goCodeShare}
               >
-                {/* <div>👥</div> */}
                 <IcCodeShare className="h-[16px]" />
-              </IcSpan>
+              </IcSpan> */}
             </div>
           </div>
         </div>
