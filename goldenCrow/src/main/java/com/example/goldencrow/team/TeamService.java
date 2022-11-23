@@ -249,6 +249,7 @@ public class TeamService {
 
             // 사용자를 팀장으로 하는 팀 생성
             TeamEntity teamEntity = new TeamEntity(userEntity, teamName, teamGit, typeNum);
+            teamRepository.saveAndFlush(teamEntity);
             Long teamSeq = teamEntity.getTeamSeq();
 
             // 팀의 프로젝트에 대한 컨테이너 생성
@@ -273,6 +274,11 @@ public class TeamService {
 
                 } else {
                     // 모든 경우의 프로젝트 생성 실패
+
+                    // 미리 만들어두었던 팀을 삭제
+                    // 팀 삭제와 함께 멤버도 자동으로 삭제됨
+                    teamRepository.delete(teamEntity);
+
                     return projectCreateRes;
 
                 }
@@ -288,6 +294,11 @@ public class TeamService {
                     serviceRes.put("teamSeq", String.valueOf(teamSeq));
 
                 } else {
+
+                    // 미리 만들어두었던 팀을 삭제
+                    // 팀 삭제와 함께 멤버도 자동으로 삭제됨
+                    teamRepository.delete(teamEntity);
+
                     return gitCloneRes;
 
                 }
