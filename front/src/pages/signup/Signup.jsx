@@ -40,7 +40,10 @@ const Signup = () => {
         <div className="h-fit flex flex-col">
           <SignupTitle />
           <SignupForm signupHandler={signupHandler} />
-          <Link to="/login" className="block w-full text-center">
+          <Link
+            to="/login"
+            className="block w-full text-center hover:text-white transition"
+          >
             계정이 있으신가요? 로그인하기
           </Link>
         </div>

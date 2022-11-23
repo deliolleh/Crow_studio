@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -127,13 +127,13 @@ const Header = () => {
               {!isLoggedIn && (
                 <div className="flex justify-end items-center">
                   <div
-                    className="hover:text-white mr-4"
+                    className="hover:text-white mr-4 transition"
                     onClick={() => navigate("/login")}
                   >
                     로그인
                   </div>
                   <div
-                    className="hover:text-white"
+                    className="hover:text-white transition"
                     onClick={() => navigate("/signup")}
                   >
                     회원가입

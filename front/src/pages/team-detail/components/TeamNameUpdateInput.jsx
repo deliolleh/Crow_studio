@@ -13,7 +13,7 @@ const TeamNameUpdateInput = (props) => {
   };
 
   return (
-    <div className="flex items-center mr-2">
+    <div data-aos="fade-in" className="flex items-center mr-2">
       <form onSubmit={submitHandler}>
         <input
           type="text"

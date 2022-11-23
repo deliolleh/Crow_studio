@@ -318,7 +318,7 @@ const TeamDetail = () => {
             {/* 팀 깃 주소 */}
             <div className="flex mb-2 md:w-full w-[285px] bg-component_item_bg_dark rounded-md">
               <div className="md:w-48 w-32 min-w-[128px] text-white font-bold bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
-                깃
+                깃 주소
               </div>
               <div className="flex">
                 <div className="text-white text-sm break-all p-2">
@@ -431,7 +431,7 @@ const TeamDetail = () => {
               {/* 프로젝트 이동 버튼 */}
               <button
                 onClick={goProjectHandler}
-                className="w-40 h-12 text-lg font-bold bg-point_light_yellow text-component_dark hover:bg-point_yellow rounded-md transition"
+                className="w-40 h-12 text-lg font-bold bg-point_purple text-component_dark hover:bg-point_purple_-2 hover:text-white rounded-md transition"
               >
                 프로젝트로 이동
               </button>
