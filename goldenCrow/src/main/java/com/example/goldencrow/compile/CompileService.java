@@ -333,6 +333,8 @@ public class CompileService {
             return serviceRes;
         }
 
+        // 컨테이너
+
         // 도커 이미지 삭제
         String[] imageRm = {"docker", "rmi", conAndImgName};
         String rmImg = resultStringService(imageRm);
@@ -371,7 +373,7 @@ public class CompileService {
         String[] cmd = {"docker", "run", "-d", "--name", conAndImgName, "-P", "python"};
         String container = resultStringService(cmd);
         // 포트번호 가져오기
-        String portString = portNumService(container);
+        String portString = portNumService(conAndImgName);
         if (portString.equals(NO_SUCH)) {
             serviceRes.put("result", WRONG);
             return serviceRes;

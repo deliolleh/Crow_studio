@@ -59,6 +59,7 @@ public class TeamEntity {
         this.projectType = projectType;
 
         // teamPort는 도커 파일 생성 이후 등록
+        // teamGit은 프로젝트 생성 시점에 등록
 
     }
 }
