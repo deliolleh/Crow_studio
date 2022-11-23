@@ -52,7 +52,7 @@ public class ProjectController {
             res.put("result", BAD_REQ);
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
-
+        pjtPath = pjtPath.replace(BASE_URL,"");
         String rootPath = files[0].getPath();
         String rootName = files[0].getName();
         rootPath = rootPath.replace(BASE_URL, "");
