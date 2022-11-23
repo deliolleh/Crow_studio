@@ -14,8 +14,8 @@ const TeamListItem = ({ team, clickTeam }) => {
 
   return (
     <div
+      className="md:w-full w-[285px] flex items-center bg-component_item_bg_dark hover:cursor-pointer hover:scale-105 rounded-md transition"
       onClick={clickTeamListItemHandler}
-      className="md:w-full w-[285px] flex items-center bg-component_item_bg_dark hover:cursor-pointer rounded-md"
     >
       <div className="md:w-48 w-32 text-white font-bold break-all bg-point_purple_op20 h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
         {teamName}

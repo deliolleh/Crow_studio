@@ -13,7 +13,7 @@ const Member = (props) => {
 
         {isLeader && (
           <IoClose
-            className="cursor-pointer text-point_pink -bold ml-1"
+            className="cursor-pointer text-point_pink hover:text-point_red transition"
             onClick={clickHandler}
           />
         )}

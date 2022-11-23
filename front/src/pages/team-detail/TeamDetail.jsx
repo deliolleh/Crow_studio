@@ -300,7 +300,7 @@ const TeamDetail = () => {
                 <div className="flex flex-col items-center px-2 py-2">
                   {teamLeaderSeq === mySeq && (
                     <IoAdd
-                      className="text-white cursor-pointer"
+                      className="text-white cursor-pointer text-lg hover:text-point_yellow transition"
                       onClick={openModal}
                     />
                   )}
@@ -332,7 +332,7 @@ const TeamDetail = () => {
                       <span>{projectType}</span>
                       {teamLeaderSeq === mySeq && (
                         <BsPencilFill
-                          className="ml-3 text-sm text-point_yellow_+2 cursor-pointer"
+                          className="ml-3 text-sm text-point_yellow_+2 cursor-pointer hover:text-point_yellow transition"
                           onClick={() => setProjectTypeInput(true)}
                         />
                       )}
