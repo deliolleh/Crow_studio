@@ -75,9 +75,15 @@ const ConsoleTerminal = (props) => {
   const boxHeight = consoleHeight - 88;
 
   const toGoogleHandler = (searchQuery) => {
-    navigate("/redirect", {
-      state: { url: `https://www.google.com/search?q=${searchQuery}` },
-    });
+    if (searchQuery.includes("k7d207.p.ssafy.io")) {
+      navigate("/redirect/server", {
+        state: { url: `http://${searchQuery}` },
+      });
+    } else {
+      navigate("/redirect", {
+        state: { url: `https://www.google.com/search?q=${searchQuery}` },
+      });
+    }
   };
 
   return (
