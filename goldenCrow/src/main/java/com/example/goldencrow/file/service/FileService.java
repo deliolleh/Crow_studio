@@ -42,7 +42,7 @@ public class FileService {
         File checkFile = new File(BASE_URL + filePath);
 
         if (!checkFile.isDirectory()) {
-            Optional<FileEntity> baseFile = fileRepository.findFileEntityByTeamSeqAndFilePath(teamSeq,filePath);
+            Optional<FileEntity> baseFile = fileRepository.findFileEntityByTeamSeqAndFilePath(teamSeq,BASE_URL + filePath);
             if (!baseFile.isPresent()) {
                 System.out.println("여긴가?");
                 System.out.println(filePath);
