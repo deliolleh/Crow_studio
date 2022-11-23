@@ -38,16 +38,14 @@ const Modify = () => {
   };
 
   const resignHandler = async () => {
-    if (
-      MySwal.fire({
-        title: "정말로 탈퇴하시겠습니까?",
-        showCancelButton: true,
-        confirmButtonText: "네",
-        cancelButtonText: "아니오",
-        background: "#3C3C3C",
-      })
-    ) {
-      // if (!window.confirm("정말로 탈퇴하시겠습니까?")) {
+    const res = await MySwal.fire({
+      title: "정말로 탈퇴하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
+      background: "#3C3C3C",
+    });
+    if (res.isConfirmed) {
       return;
     }
     try {
@@ -78,7 +76,6 @@ const Modify = () => {
     >
       <div className="flex mb-5 justify-between items-center">
         <div className="text-white text-xl font-bold">회원정보 수정</div>
-        {/* <IoClose className="text-white text-xl font-bold cursor-pointer mt-1" /> */}
       </div>
       <NicknameForm
         updateNickname={updateNicknameHandler}
