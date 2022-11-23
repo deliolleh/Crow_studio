@@ -105,11 +105,13 @@ const ConsoleTerminal = (props) => {
               isLoading && "animate-pulse"
             }`}
             size="27"
+            data-tip="코드 실행"
           />
           <BsStopFill
             className="cursor-pointer hover:text-point_purple hover:scale-110 transition"
             size="27"
             onClick={stopCompileHandler}
+            data-tip="코드 실행 멈춤"
           />
         </div>
       </div>
@@ -170,7 +172,7 @@ const ConsoleTerminal = (props) => {
               finalOutputDataList.map((el, i) => (
                 <div
                   key={i}
-                  className="cursor-pointer hover:text-point_purple transition"
+                  className="cursor-pointer hover:text-point_purple transition break-all"
                   onClick={() => toGoogleHandler(el)}
                 >
                   {el}
