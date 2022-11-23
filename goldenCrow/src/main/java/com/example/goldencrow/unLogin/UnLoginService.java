@@ -30,6 +30,7 @@ public class UnLoginService {
     }
 
     public Map<String, String> unloginCompileService(String sessionId, String fileContent, String input) {
+        System.out.println("sessionId : " + sessionId);
         String SESSION_PATH = "/home/ubuntu/crow_data/UnLoginUser/" + sessionId;
         String filePath = SESSION_PATH + "/" + sessionId + ".py";
         Map<String, String> serviceRes = new HashMap<>();
