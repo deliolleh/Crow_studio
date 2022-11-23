@@ -45,6 +45,7 @@ public class ProjectService {
         String pjt = path + name;
         File pjtDir = new File(pjt);
         if (pjtDir.mkdir()) {
+
             return pjt;
         }
         return DUPLICATE;
@@ -255,8 +256,7 @@ public class ProjectService {
                 serviceRes.put("result", UNKNOWN);
                 return serviceRes;
             }
-            String pjtPath = pjt + "/" + projectName;
-            saveFilesInDIrService(pjtPath, teamSeq);
+            saveFilesInDIrService(pjt, teamSeq);
             serviceRes.put("result", SUCCESS);
             return serviceRes;
         } else if (type == 4) {
@@ -283,8 +283,8 @@ public class ProjectService {
                 serviceRes.put("result", UNKNOWN);
                 return serviceRes;
             }
-            String pjtPath = pjt + "/" + projectName;
-            saveFilesInDIrService(pjtPath, teamSeq);
+
+            saveFilesInDIrService(pjt, teamSeq);
             serviceRes.put("result", SUCCESS);
             return serviceRes;
         }
