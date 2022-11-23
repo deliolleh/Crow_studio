@@ -40,7 +40,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns("api/editors/lint/**")     // 린트
                 .excludePathPatterns("/api/api-test")           // API 테스트
                 .excludePathPatterns("/api/compile/py")         // python 컴파일
-                .excludePathPatterns("/api/compile/py/stop");    // python 컴파일 중지
+                .excludePathPatterns("/api/compile/py/stop")    // python 컴파일 중지
+                .excludePathPatterns("/api/variable");           // 변수명 추천
     }
 
     /**
