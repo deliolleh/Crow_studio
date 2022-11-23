@@ -325,7 +325,7 @@ public class CompileService {
         Map<String, String> serviceRes = new HashMap<>();
         String conAndImgName = "crowstudio_" + teamName.toLowerCase().replaceAll(" ", "") + "_" + teamSeq;
         // python docker images로 초기 컨테이너 생성 및 포트 할당
-        String[] cmd = {"docker", "run", "-d", "--name", conAndImgName, "-p", "3000", "initialpython", "&&", "docker", "port", conAndImgName};
+        String[] cmd = {"/bin/sh", "-c", "docker", "run", "-d", "--name", conAndImgName, "-p", "3000", "initialpython", "&&", "docker", "port", conAndImgName};
         String result = resultStringService(cmd);
         System.out.println(result);
         // 포트번호 가져오기
