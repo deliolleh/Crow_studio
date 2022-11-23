@@ -83,6 +83,7 @@ const Directory = (props) => {
     selectedFileName,
     selectedFileType,
     saveFileContent,
+    isLoading,
     goCodeShare,
   } = props;
 
@@ -473,8 +474,10 @@ const Directory = (props) => {
               </div>
             </IcSpan> */}
               <IcSpan onClick={saveHandler}>
-                {/* <div className="text-xs">💾</div> */}
-                <SaveIcon sx={{ fontSize: 20 }} />
+                <SaveIcon
+                  className={isLoading && `animate-spin`}
+                  sx={{ fontSize: 20 }}
+                />
               </IcSpan>
               <IcSpan
                 style={
