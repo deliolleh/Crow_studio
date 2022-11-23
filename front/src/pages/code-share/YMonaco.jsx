@@ -22,7 +22,6 @@ const YMonaco = () => {
       ydoc
     );
     const ytext = ydoc.getText("monaco");
-    console.log("ytext: ", ytext);
 
     const monacoBinding = new MonacoBinding(
       ytext,
@@ -57,7 +56,7 @@ const YMonaco = () => {
     <React.Fragment>
       <Editor
         style={{ overflow: "auto" }}
-        height="calc(100vh - 31px)"
+        height="80%"
         theme="vs-dark"
         defaultLanguage="python"
         onMount={(editor) => {
