@@ -31,7 +31,7 @@ public class SocketController {
         Map<String, String> resMap = new HashMap<>();
         resMap.put("user",user);
         resMap.put("filePath", filePath);
-        JSONObject res = new JSONObject();
+        JSONObject res = new JSONObject(resMap);
         return res;
     }
 }
