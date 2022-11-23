@@ -42,6 +42,7 @@ public class CompileController {
         if (req.containsKey("filePath") && req.containsKey("input")) {
             String filePath = req.get("filePath");
             String input = req.get("input");
+            System.out.println("여기는 compilercontroller 들어오는 filePath : " +filePath);
             Map<String, String> typeRes = compileService.findProjectTypeService(filePath);
             int type = Integer.parseInt(typeRes.get("type"));
             String mainPath = typeRes.get("path");
