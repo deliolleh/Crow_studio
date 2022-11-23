@@ -44,7 +44,7 @@ const Teams = () => {
               <span className="text-white text-sm md:font-bold mr-1">
                 님의 팀
               </span>
-              <span class="bg-point_purple_op20 text-white text-xs font-semibold mr-2 px-1.5 py-0.5 rounded">
+              <span className="bg-point_purple_op20 text-white text-xs font-semibold mr-2 px-1.5 py-0.5 rounded">
                 {myTeams.length}
               </span>
             </div>

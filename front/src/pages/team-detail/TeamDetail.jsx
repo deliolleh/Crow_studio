@@ -289,7 +289,7 @@ const TeamDetail = () => {
             <div className="flex mb-2 md:w-full w-[285px] bg-component_item_bg_dark rounded-md">
               <div className="md:w-48 w-32 bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
                 <span className="text-white font-bold">팀원</span>
-                <span class="text-point_light_yellow text-xs font-semibold mr-2 px-1.5 py-0.5 rounded">
+                <span className="text-point_light_yellow text-xs font-semibold mr-2 px-1.5 py-0.5 rounded">
                   {members?.length}
                 </span>
               </div>

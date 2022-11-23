@@ -13,15 +13,13 @@ import PasswordForm from "./components/PasswordForm";
 import ResignForm from "./components/ResignForm";
 import GitForm from "./components/GitForm";
 
-import { IoClose } from "react-icons/io5";
-
 const Modify = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { myNickname, myGitUsername } = useSelector(
     (state) => state.user.value
   );
-  const MySwal = withReactContent(Swal)
+  const MySwal = withReactContent(Swal);
 
   const updateNicknameHandler = (nicknameData) =>
     dispatch(updateNickname(nicknameData)).unwrap().catch(console.error);
@@ -40,14 +38,16 @@ const Modify = () => {
   };
 
   const resignHandler = async () => {
-    if (MySwal.fire({
-      title: "정말로 탈퇴하시겠습니까?",
-      showCancelButton: true,
-      confirmButtonText: "네",
-      cancelButtonText: "아니오",
-      background: "#3C3C3C",
-    })) {
-    // if (!window.confirm("정말로 탈퇴하시겠습니까?")) {
+    if (
+      MySwal.fire({
+        title: "정말로 탈퇴하시겠습니까?",
+        showCancelButton: true,
+        confirmButtonText: "네",
+        cancelButtonText: "아니오",
+        background: "#3C3C3C",
+      })
+    ) {
+      // if (!window.confirm("정말로 탈퇴하시겠습니까?")) {
       return;
     }
     try {
