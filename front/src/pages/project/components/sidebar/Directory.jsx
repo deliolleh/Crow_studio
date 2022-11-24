@@ -176,7 +176,7 @@ const Directory = (props) => {
       showCancelButton: true,
       confirmButtonText: "네",
       cancelButtonText: "아니오",
-      background: "#3C3C3C",
+      // background: "#3C3C3C",
     });
     if (!newFileName.isConfirmed) {
       return;
