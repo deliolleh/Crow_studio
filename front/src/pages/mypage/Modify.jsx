@@ -46,7 +46,7 @@ const Modify = () => {
       cancelButtonText: "아니오",
       background: "#3C3C3C",
     });
-    if (res.isConfirmed) {
+    if (!res.isConfirmed) {
       return;
     }
     try {
