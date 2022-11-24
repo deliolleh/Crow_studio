@@ -39,7 +39,7 @@ public class UnLoginService {
         String SESSION_PATH = "/home/ubuntu/crow_data/UnLoginUser/" + sessionId;
 
         // 세션 디렉토리 생성
-        String dirCreated = projectService.createDirService(BASE_URL+"UnLoginUser/", sessionId);
+        String dirCreated = projectService.createDirService(BASE_URL + "UnLoginUser/", sessionId);
         if (dirCreated.equals(DUPLICATE)) {
             serviceRes.put("result", DUPLICATE);
             return serviceRes;
@@ -103,7 +103,7 @@ public class UnLoginService {
         // 출력값 반환
         String[] pythonCmd = {"docker", "logs", "-f", conAndImgName};
         String pythonResponse = compileService.resultStringService(pythonCmd);
-        String pathUpdateRes = pythonResponse.replace("UnLoginUser", "");
+        String pathUpdateRes = pythonResponse.replace(BASE_URL + "UnLoginUser", "");
         System.out.println(pythonResponse);
         serviceRes.put("result", SUCCESS);
         serviceRes.put("response", pathUpdateRes);
