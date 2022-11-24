@@ -359,3 +359,12 @@ input:-webkit-autofill:active {
   background-color: #626262 !important;
   box-shadow: none !important;
 }
+
+/* mini loading font */
+.mini-loading div {
+  font-family: "Pretendard Variable", Pretendard, -apple-system,
+  BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto", "Apple SD Gothic Neo",
+  "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu", "Cantarell",
+  "Fira Sans", "Droid Sans", "Helvetica Neue", "Apple Color Emoji",
+  "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
