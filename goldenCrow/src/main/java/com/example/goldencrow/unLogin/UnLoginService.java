@@ -103,7 +103,7 @@ public class UnLoginService {
         // 출력값 반환
         String[] pythonCmd = {"docker", "logs", "-f", conAndImgName};
         String pythonResponse = compileService.resultStringService(pythonCmd);
-        String pathUpdateRes = pythonResponse.replace(BASE_URL, "");
+        String pathUpdateRes = pythonResponse.replace("UnLoginUser", "");
         System.out.println(pythonResponse);
         serviceRes.put("result", SUCCESS);
         serviceRes.put("response", pathUpdateRes);
