@@ -103,6 +103,9 @@ const TeamDetail = () => {
 
   const submitSearchUserHandler = (e) => {
     e.preventDefault();
+    if (searchUserName.trim().length === 0) {
+      return;
+    }
     const searchData = { searchWord: searchUserName };
     dispatch(searchUser(searchData))
       .unwrap()
@@ -314,6 +317,11 @@ const TeamDetail = () => {
               </div>
 
               <div className="flex md:flex-row flex-col justify-center items-center">
+                {members?.length === 0 && (
+                  <div className="text-sm flex items-center py-2 pl-2">
+                    팀원을 추가
+                  </div>
+                )}
                 {members?.map((member) => (
                   <Member
                     key={`m${member.memberSeq}`}
