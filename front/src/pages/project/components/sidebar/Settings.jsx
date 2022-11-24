@@ -145,7 +145,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
         <div className="" style={{ padding: 15 }}>
           <div className="pl-1">
             <label
-              className="block text-primary_dark text-sm font-bold mb-2"
+              className="block text-primary_dark text-xl font-bold mb-2"
               htmlFor="editorFontSize"
             >
               에디터 폰트 크기
@@ -161,7 +161,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
             />
           </div>
           <div className="pl-1 mt-5">
-            <div className="text-primary_dark text-sm font-bold ">
+            <div className="text-primary_dark text-xl font-bold mb-2">
               에디터 폰트
             </div>
             {/* headless ui combobox */}
@@ -255,7 +255,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
             </Combobox>
           </div>
           <div className="pl-1 mt-5 flex items-center">
-            <div className="text-primary_dark text-sm font-bold ">
+            <div className="text-primary_dark text-xl font-bold ">
               에디터 자동 줄바꿈
             </div>
             <Switch
@@ -264,7 +264,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
               className={`${
                 checkSwitch ? "bg-point_purple" : "bg-component_item_bg_+2_dark"
               }
-                relative inline-flex h-[26px] w-[46px] ml-[68px] text-right shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+                relative inline-flex h-[26px] w-[46px] ml-[25px] text-right shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
             >
               <span className="sr-only">Use setting</span>
               <span
@@ -278,7 +278,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
           </div>
           <div className="pl-1 mt-5">
             <label
-              className="block text-primary_dark text-sm font-bold mb-2"
+              className="block text-primary_dark text-xl font-bold mb-2"
               htmlFor="consoleFontSize"
             >
               콘솔 폰트 크기
@@ -294,7 +294,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
             />
           </div>
           <div className="pl-1 mt-5">
-            <div className="text-primary_dark text-sm font-bold ">
+            <div className="text-primary_dark text-xl font-bold mb-2">
               콘솔 폰트
             </div>
             {/* headless ui combobox */}
