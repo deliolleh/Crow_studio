@@ -1,19 +1,20 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import styled from "styled-components";
-import { Menu, Transition } from "@headlessui/react";
+// import { Menu, Transition } from "@headlessui/react";
 
 // import svg
 import { ReactComponent as IcAddTeam } from "../../../../assets/icons/ic_addTeam.svg";
-import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
+// import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
-import { getTeam } from "../../../../redux/teamSlice";
+import { getTeamDetail } from "../../../../redux/teamSlice";
 
 // dropdown func
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+// function classNames(...classes) {
+//   return classes.filter(Boolean).join(" ");
+// }
 
 const Team = () => {
   const dispatch = useDispatch();
@@ -23,27 +24,24 @@ const Team = () => {
   const { teamName, teamLeaderNickname, memberDtoList: members } = team;
 
   useEffect(() => {
-    dispatch(getTeam(teamSeq))
+    dispatch(getTeamDetail(teamSeq))
       .unwrap()
-      .then((res) => {
-        setTeam(res);
-        console.log("res:", res);
-      })
-      .catch(console.error);
+      .then(setTeam)
+      .catch(() => toast.error("팀 불러오기 실패"));
   }, [dispatch, teamSeq]);
 
   return (
     <React.Fragment>
-      <TeamContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
+      <TeamContainer className="mb-3 bg-component_item_bg_dark flex flex-col  overflow-auto">
         <div
           className="flex justify-between items-center"
           style={{ padding: 15 }}
         >
-          <div className="text-xl font-bold text-white my-1">Teams</div>
+          <div className="text-xl font-bold text-white my-1">Team</div>
           <div className="mt-1 flex items-center">
-            <IcSpan>
+            {/* <IcSpan>
               <IcAddTeam className="h-[15px]" alt="IcAddTeam" />
-            </IcSpan>
+            </IcSpan> */}
             {/* 드롭다운 */}
             {/* <Menu as="div" className="relative">
               <Menu.Button>
@@ -134,28 +132,33 @@ const Team = () => {
           <div className="pl-1">
             <div className="mb-4">
               <span
-                className="text-point_light_yellow text-md font-bold cursor-pointer"
+                className="text-point_light_yellow text-2xl font-bold hover:text-point_yellow cursor-pointer mr-2 transition"
                 onClick={() => navigate(`/teams/${teamSeq}`)}
               >
                 {teamName}
               </span>
+              <span>팀</span>
             </div>
             <div className="mb-4">
-              <div className="text-primary_dark text-sm font-bold mb-1">팀장</div>
-              <div className="flex items-center text-white text-md">
+              <div className="text-primary_dark text-lg mb-1">팀장</div>
+              <div className="flex items-center text-white text-2xl font-bold">
                 <div>{teamLeaderNickname}</div>
               </div>
             </div>
             <div>
-              <div className="text-primary_dark text-sm font-bold mb-1">팀원</div>
-              {members?.map((member) => (
-                <div
-                  key={`m${member.memberSeq}`}
-                  className="text-white text-md"
-                >
-                  {member.memberNickname}
-                </div>
-              ))}
+              <div className="text-primary_dark text-lg mb-1">팀원</div>
+              {members?.length === 0 && (
+                <div className="text-white">팀원이 존재하지 않습니다</div>
+              )}
+              {members?.length > 0 &&
+                members?.map((member) => (
+                  <div
+                    key={`m${member.memberSeq}`}
+                    className="text-white text-2xl font-bold"
+                  >
+                    {member.memberNickname}
+                  </div>
+                ))}
             </div>
           </div>
         </div>

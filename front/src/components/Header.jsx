@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
@@ -15,15 +16,15 @@ const Header = () => {
   const { isLoggedIn, mySeq, myNickname } = useSelector(
     (state) => state.user.value
   );
-  const [navbarOpen, setNavbarOpen] = useState(false);
+  // const [navbarOpen, setNavbarOpen] = useState(false);
 
-  const navbarOpenHandler = () => setNavbarOpen((prev) => !prev);
+  // const navbarOpenHandler = () => setNavbarOpen((prev) => !prev);
 
   const clickProfileHandler = (e) => displayMenu(e);
 
   const logoutHandler = () => {
     dispatch(logout());
-    alert("로그아웃 성공");
+    toast.success("로그아웃 성공");
     navigate("/", { replace: true });
   };
 
@@ -44,41 +45,44 @@ const Header = () => {
       <Menu id={MENU_ID} className="contexify-crow-nav">
         {isLoggedIn && (
           <React.Fragment>
-            <Item onClick={() => navigate(`/mypage/${mySeq}`)}>내 정보</Item>
+            <Item onClick={() => navigate(`/teams`)}>나의 팀 목록</Item>
+            <Item onClick={() => navigate(`/mypage/${mySeq}`)}>
+              회원정보 수정
+            </Item>
             <Item onClick={logoutHandler}>로그아웃</Item>
           </React.Fragment>
         )}
       </Menu>
-      <nav className="flex flex-wrap items-center justify-between px-2 py-1 bg-component_item_bg_dark m-3 rounded-lg">
-        <div className="w-screen lg:flex-row flex-col relative px-4 flex justify-between">
+      <nav className="flex flex-wrap items-center justify-center px-2 py-1 bg-component_item_bg_dark m-3 rounded-lg">
+        <div className="w-full flex relative px-12 justify-between">
           {/* 로고, 아이콘 */}
           <div className="relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
             <div className="flex items-center">
-              <div className="text-point_purple pr-3">
-                <img
-                  className="w-8 rounded-full"
-                  src={require("../assets/images/logo.png")}
-                  alt="logo-img"
-                />
-              </div>
               <Link
                 className="text-xl font-bold leading-relaxed inline-block mr-16 py-2 whitespace-nowrap uppercase text-white"
                 to="/"
               >
-                까마귀공방
+                <div className="flex w-fit">
+                  <img
+                    className="w-8 rounded-full mr-2"
+                    src={require("../assets/images/logo.png")}
+                    alt="logo-img"
+                  />
+                  <span className="tracking-wide">까마귀공방</span>
+                </div>
               </Link>
             </div>
-            <button
+            {/* <button
               className="text-white cursor-pointer text-xl leading-none py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
               type="button"
               onClick={navbarOpenHandler}
             >
               <i className="fas fa-bars"></i>
-            </button>
+            </button> */}
           </div>
 
           {/* 링크 모음 */}
-          <div
+          {/* <div
             className={`lg:flex flex-grow items-center lg:justify-start justify-end ${
               navbarOpen ? "flex" : "hidden"
             }`}
@@ -110,10 +114,10 @@ const Header = () => {
                 </Link>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* 프로필 */}
-          <div className="lg:flex flex lg:static absolute right-14 lg:item-center mt-2.5">
+          <div className="flex item-center mt-2.5">
             <div className="cursor-pointer mt-[3px]">
               {isLoggedIn && (
                 <div className="hover:text-white" onClick={clickProfileHandler}>
@@ -121,15 +125,15 @@ const Header = () => {
                 </div>
               )}
               {!isLoggedIn && (
-                <div className="flex items-center gap-4">
+                <div className="flex justify-end items-center">
                   <div
-                    className="hover:text-white"
+                    className="hover:text-white mr-4 transition"
                     onClick={() => navigate("/login")}
                   >
                     로그인
                   </div>
                   <div
-                    className="hover:text-white"
+                    className="hover:text-white transition"
                     onClick={() => navigate("/signup")}
                   >
                     회원가입

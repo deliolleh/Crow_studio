@@ -1,19 +1,21 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import ReactTooltip from "react-tooltip";
 
-import {
-  getTeam,
-  addMember,
-  deleteMember,
-  modifyProjectType,
-} from "../../redux/teamSlice";
+import { getTeamDetail, modifyProjectType } from "../../redux/teamSlice";
 import { searchUser } from "../../redux/userSlice";
+
+import teamApi from "../../api/teamApi";
 
 import Header from "../../components/Header";
 import TeamDetailHeader from "./components/TeamDetailHeader";
-
+import Leader from "./components/Leader";
 import Member from "./components/Member";
+import TeamListButton from "./components/TeamListButton";
 
 import Modal from "react-modal";
 
@@ -55,6 +57,7 @@ const pjtType = [
 ];
 
 const TeamDetail = () => {
+  const MySwal = withReactContent(Swal);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -71,7 +74,6 @@ const TeamDetail = () => {
     teamGit,
   } = team;
 
-  const [isSearch, setIsSearch] = useState(false);
   const [projectTypeInput, setProjectTypeInput] = useState(false);
   const [modifiedProjectType, setModifiedProjectType] = useState(projectType);
 
@@ -80,14 +82,10 @@ const TeamDetail = () => {
   const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
-    dispatch(getTeam(teamSeq))
+    dispatch(getTeamDetail(teamSeq))
       .unwrap()
-      .then((res) => {
-        console.log("res:", res);
-        setTeam(res);
-      })
+      .then(setTeam)
       .catch((errStatusCode) => {
-        console.error("errStatusCode:", errStatusCode);
         if (errStatusCode === 404) {
           navigate("/404", { replace: true });
         } else if (errStatusCode === 403) {
@@ -101,80 +99,96 @@ const TeamDetail = () => {
       return { ...prev, teamName: resTeamName };
     });
 
-  // const openSearchInputHandler = () => setIsSearch(true);
-  const closeSearchInputHandler = () => setIsSearch(false);
   const searchUserChangeHandler = (e) => setSearchUserName(e.target.value);
+
   const submitSearchUserHandler = (e) => {
     e.preventDefault();
-    const searchData = JSON.stringify({ searchWord: searchUserName });
+    if (searchUserName.trim().length === 0) {
+      return;
+    }
+    const searchData = { searchWord: searchUserName };
     dispatch(searchUser(searchData))
       .unwrap()
-      .then((res) => {
-        setSearchResults(res);
-        console.log("res:", res);
-      })
+      .then(setSearchResults)
       .catch(console.error);
   };
 
-  const addUserHandler = (addUserSeq, addUserName) => {
-    if (!window.confirm(`${addUserName}님을 팀원으로 추가할까요?`)) {
+  const addUserHandler = async (addUserSeq, addUserName) => {
+    //
+    //
+    //
+    const res = await MySwal.fire({
+      title: `${addUserName}님을 팀원으로 추가할까요?`,
+      showCancelButton: true,
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
+      background: "#3C3C3C",
+    });
+    if (!res.isConfirmed) {
       return;
     }
-    const addMemberData = JSON.stringify({ teamSeq, memberSeq: addUserSeq });
-    dispatch(addMember(addMemberData))
-      .unwrap()
-      .then((res) => {
-        console.log(res);
-        setIsSearch(false);
-        setSearchResults([]);
-        dispatch(getTeam(teamSeq))
-          .unwrap()
-          .then((res) => setTeam(res))
-          .catch(console.error);
-      })
-      .catch((errorStatusCode) => {
-        if (errorStatusCode === 409) {
-          alert("이미 추가된 팀원입니다");
-        } else {
-          alert("비상!!");
-        }
-      });
+    //
+    //
+    //
+    const addMemberData = { teamSeq, memberSeq: addUserSeq };
+    try {
+      await teamApi.addMember(addMemberData);
+      setSearchResults([]);
+      const res = await dispatch(getTeamDetail(teamSeq)).unwrap();
+      setTeam(res);
+      toast.success("팀원 추가 성공");
+    } catch (err) {
+      if (err.response.status === 409) {
+        toast.warning("이미 추가된 팀원입니다");
+      } else {
+        toast.error("Error");
+      }
+    }
   };
 
-  const deleteMemberHandler = (memberNickname, memberSeq) => {
-    if (!window.confirm(`${memberNickname}님을 팀에서 삭제하시겠습니까?`)) {
+  const deleteMemberHandler = async (memberNickname, memberSeq) => {
+    //
+    //
+    //
+    const res = await MySwal.fire({
+      title: `${memberNickname}님을 팀에서 삭제하시겠습니까?`,
+      showCancelButton: true,
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
+      background: "#3C3C3C",
+    });
+    if (!res.isConfirmed) {
+      // if (!window.confirm(`${memberNickname}님을 팀에서 삭제하시겠습니까?`)) {
       return;
     }
-    const deleteData = JSON.stringify({ teamSeq, memberSeq });
-    dispatch(deleteMember(deleteData))
-      .unwrap()
-      .then(() => {
-        dispatch(getTeam(teamSeq))
-          .unwrap()
-          .then((res) => setTeam(res))
-          .catch(console.error);
-      })
-      .catch(console.error);
+    //
+    //
+    //
+    const deleteMemberData = { teamSeq, memberSeq };
+    try {
+      await teamApi.deleteMember(deleteMemberData);
+      const res = await dispatch(getTeamDetail(teamSeq)).unwrap();
+      setTeam(res);
+      toast.success("팀원 삭제 성공");
+    } catch (err) {
+      toast.error("Error");
+    }
   };
 
   // Modal
   let subtitle;
   const [modalIsOpen, setIsOpen] = useState(false);
-
   function openModal() {
     setIsOpen(true);
-    console.log("떴냐 모달?");
   }
-
   function afterOpenModal() {
-    // references are now sync'd and can be accessed.
     subtitle.style.color = "#fff";
   }
-
   function closeModal() {
     setIsOpen(false);
   }
 
+  const goTeamListHandler = () => navigate("/teams");
   const goProjectHandler = () => navigate(`/project/${teamSeq}`);
 
   // modify project listbox
@@ -200,7 +214,7 @@ const TeamDetail = () => {
       .then((res) => {
         console.log(res);
         setProjectTypeInput(false);
-        dispatch(getTeam(teamSeq))
+        dispatch(getTeamDetail(teamSeq))
           .unwrap()
           .then((res) => {
             setTeam(res);
@@ -215,6 +229,7 @@ const TeamDetail = () => {
     <React.Fragment>
       <div className="flex flex-col h-full w-full">
         <Header />
+
         {/* Modal */}
         <Modal
           isOpen={modalIsOpen}
@@ -231,7 +246,7 @@ const TeamDetail = () => {
               팀원 추가
             </h2>
             <IoClose
-              className="cursor-pointer text-primary_dark ml-2"
+              className="cursor-pointer text-primary_dark text-xl ml-2"
               onClick={closeModal}
             />
           </div>
@@ -267,9 +282,16 @@ const TeamDetail = () => {
             </div>
           </div>
         </Modal>
+
         {/* team detail */}
-        <div className="flex items-center justify-center m-3 mb-6 h-screen overflow-auto">
+        <div
+          data-aos="fade-in"
+          className="flex flex-wrap items-center justify-center m-3 mb-6 h-full"
+        >
           <div className="p-8 lg:w-4/5 w-fit max-w-[1000px] h-fit flex flex-col justify-center items-center border border-primary_-2_dark rounded-md">
+            <div className="text-4xl font-bold text-white pb-2 mb-5 w-full">
+              팀 상세 정보
+            </div>
             <TeamDetailHeader
               teamName={teamName}
               isLeader={teamLeaderSeq === mySeq}
@@ -282,66 +304,42 @@ const TeamDetail = () => {
               <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
                 팀장
               </div>
-              <Member
-                isLeader={true}
-                teamLeaderNickname={teamLeaderNickname}
-                onDelete={deleteMemberHandler}
-              />
+              <Leader teamLeaderNickname={teamLeaderNickname} />
             </div>
 
             {/* 팀원 */}
             <div className="flex mb-2 md:w-full w-[285px] bg-component_item_bg_dark rounded-md">
-              <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
-                팀원
+              <div className="md:w-48 w-32 bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
+                <span className="text-white font-bold">팀원</span>
+                <span className="text-point_light_yellow text-xs font-semibold mr-2 px-1.5 py-0.5 rounded">
+                  {members?.length}
+                </span>
               </div>
+
               <div className="flex md:flex-row flex-col justify-center items-center">
+                {members?.length === 0 && (
+                  <div className="text-sm flex items-center py-2 pl-2">
+                    팀원을 추가
+                  </div>
+                )}
                 {members?.map((member) => (
                   <Member
                     key={`m${member.memberSeq}`}
-                    isLeader={false}
-                    member={member}
-                    onDelete={deleteMemberHandler}
+                    isLeader={teamLeaderSeq === mySeq}
+                    memberNickname={member.memberNickname}
+                    memberSeq={member.memberSeq}
+                    deleteMember={deleteMemberHandler}
                   />
                 ))}
-
                 <div className="flex flex-col items-center px-2 py-2">
-                  {/* isSearch가 아니면 + 버튼, isSearch이면 유저 검색 입력창 나옴 */}
-                  {!isSearch ? (
-                    <IoAdd
-                      className="text-white cursor-pointer"
-                      // onClick={openSearchInputHandler}
-                      onClick={openModal}
-                    />
-                  ) : (
-                    <div className="flex gap-1">
-                      <div>유저검색</div>
-                      <form onSubmit={submitSearchUserHandler}>
-                        <input
-                          type="text"
-                          name="searchUser"
-                          id="searchUser"
-                          onChange={searchUserChangeHandler}
-                          value={searchUserName}
-                        />
-                      </form>
-                      <IoClose
-                        className="cursor-pointer text-primary_dark ml-2"
-                        onClick={closeSearchInputHandler}
+                  {teamLeaderSeq === mySeq && (
+                    <div>
+                      <IoAdd
+                        className="text-white cursor-pointer text-lg hover:text-point_yellow hover:scale-125 transition"
+                        onClick={openModal}
+                        data-tip="팀원 추가"
                       />
-
-                      <div>
-                        {searchResults?.map((user) => (
-                          <div
-                            key={user.userId}
-                            className="hover:cursor-pointer"
-                            onClick={() =>
-                              addUserHandler(user.userSeq, user.userNickname)
-                            }
-                          >
-                            {user.userNickname}
-                          </div>
-                        ))}
-                      </div>
+                      <ReactTooltip place="right" />
                     </div>
                   )}
                 </div>
@@ -351,7 +349,7 @@ const TeamDetail = () => {
             {/* 팀 깃 주소 */}
             <div className="flex mb-2 md:w-full w-[285px] bg-component_item_bg_dark rounded-md">
               <div className="md:w-48 w-32 min-w-[128px] text-white font-bold bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
-                깃
+                깃 주소
               </div>
               <div className="flex">
                 <div className="text-white text-sm break-all p-2">
@@ -370,10 +368,13 @@ const TeamDetail = () => {
                   {!projectTypeInput && (
                     <div className="flex items-center">
                       <span>{projectType}</span>
-                      <BsPencilFill
-                        className="ml-3 text-sm text-point_yellow_+2 cursor-pointer"
-                        onClick={() => setProjectTypeInput(true)}
-                      />
+                      {/* {teamLeaderSeq === mySeq && (
+                        <BsPencilFill
+                          className="ml-3 text-sm text-point_yellow_+2 cursor-pointer hover:text-point_yellow hover:scale-125 transition"
+                          onClick={() => setProjectTypeInput(true)}
+                          data-tip="프로젝트 타입 변경"
+                        />
+                      )} */}
                     </div>
                   )}
                   {projectTypeInput && (
@@ -454,13 +455,19 @@ const TeamDetail = () => {
               </div>
             </div>
 
-            {/* 프로젝트 이동 버튼 */}
-            <button
-              onClick={goProjectHandler}
-              className="w-72 h-12 text-lg font-bold bg-point_light_yellow text-component_dark hover:bg-point_yellow rounded-md transition"
-            >
-              프로젝트로 이동
-            </button>
+            <div className="w-full flex justify-end gap-4">
+              <TeamListButton onClick={goTeamListHandler}>
+                팀 목록
+              </TeamListButton>
+
+              {/* 프로젝트 이동 버튼 */}
+              <button
+                onClick={goProjectHandler}
+                className="w-40 h-12 text-lg font-bold bg-point_purple text-component_dark hover:bg-point_purple_-2 hover:text-white rounded-md transition"
+              >
+                프로젝트로 이동
+              </button>
+            </div>
           </div>
         </div>
       </div>

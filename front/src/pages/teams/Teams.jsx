@@ -16,7 +16,6 @@ const Teams = () => {
   const clickTeamHandler = (teamSeq) => navigate(`/teams/${teamSeq}`);
 
   useEffect(() => {
-    // 본인이 속한 팀들 가져옴
     teamApi
       .getTeams()
       .then((res) => setMyTeams(res.data))
@@ -26,8 +25,14 @@ const Teams = () => {
   return (
     <div className="flex flex-col h-full w-full">
       <Header />
-      <div className="m-3 mb-6 flex h-screen items-center justify-center overflow-auto">
-        <div className="px-8 py-8 lg:w-4/5 w-fit max-w-[1000px] h-fit flex flex-col justify-center border border-primary_-2_dark rounded-md">
+      <div
+        data-aos="fade-in"
+        className="m-3 mb-6 h-full flex flex-wrap justify-center items-center"
+      >
+        <div className="mb-6 px-8 py-8 lg:w-4/5 w-fit max-w-[1000px] h-fit flex flex-col justify-cente border border-primary_-2_dark rounded-md overflow-auto">
+          <div className="text-4xl font-bold text-white pb-2 mb-5">
+            나의 팀 목록
+          </div>
           {/* 타이틀 */}
           <div className="flex justify-between items-center md:mb-5 mb-2">
             <div className="flex items-center">
@@ -36,13 +41,16 @@ const Teams = () => {
                 {myNickname}
               </span>
               {/* 제목 */}
-              <span className="text-white text-sm md:font-bold">
-                님의 팀 목록 ({myTeams.length})
+              <span className="text-white text-sm md:font-bold mr-1">
+                님의 팀
+              </span>
+              <span className="bg-point_purple_op20 text-white text-xs font-semibold mr-2 px-1.5 py-0.5 rounded">
+                {myTeams.length}
               </span>
             </div>
             {/* 팀 생성 버튼 */}
             <button
-              className="md:px-3 ml-4 px-2 py-1 md:text-sm text-[13px] font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow rounded-md transition"
+              className="md:px-3 ml-4 px-2 py-1 md:text-sm text-[13px] font-bold bg-point_purple text-component_dark hover:bg-point_purple_-2 hover:text-white rounded-md transition"
               onClick={createTeamHandler}
             >
               새로운 팀 생성

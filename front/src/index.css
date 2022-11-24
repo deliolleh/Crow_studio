@@ -86,7 +86,7 @@ hr {
 .Resizer.horizontal:hover {
   /* border-top: 2px solid greenyellow;
   border-bottom: 2px solid greenyellow; */
-  background-color: greenyellow;
+  background-color: #f4e5ad;
   background-size: 2px;
 }
 
@@ -101,7 +101,7 @@ hr {
 .Resizer.vertical:hover {
   /* border-left: 2px solid greenyellow;
   border-right: 2px solid greenyellow; */
-  background-color: greenyellow;
+  background-color: #f4e5ad;
   background-size: 2px;
 }
 .Resizer.disabled {
@@ -206,6 +206,7 @@ input:-webkit-autofill:active {
   --contexify-activeRightSlot-color: #fff;
   --contexify-arrow-color: #6f6e77;
   --contexify-activeArrow-color: #fff;
+  --contexify-menu-minWidth: 120px;
 }
 
 .contexify-crow-nav {
@@ -219,4 +220,151 @@ input:-webkit-autofill:active {
   --contexify-arrow-color: #6f6e77;
   --contexify-activeArrow-color: #fff;
   --contexify-menu-minWidth: 110px;
+}
+
+:root {
+  --toastify-color-light: #fff;
+  /* --toastify-color-dark: #121212; */
+  --toastify-color-dark: #3c3c3c;
+  /* --toastify-color-info: #3498db; */
+  --toastify-color-info: #9187ff;
+  /* --toastify-color-success: #07bc0c; */
+  --toastify-color-success: #d4a8e3;
+  /* --toastify-color-warning: #f1c40f; */
+  --toastify-color-warning: #ffdc62;
+  /* --toastify-color-error: #e74c3c; */
+  --toastify-color-error: #f97988;
+  --toastify-color-transparent: rgba(255, 255, 255, 0.7);
+
+  --toastify-icon-color-info: var(--toastify-color-info);
+  --toastify-icon-color-success: var(--toastify-color-success);
+  --toastify-icon-color-warning: var(--toastify-color-warning);
+  --toastify-icon-color-error: var(--toastify-color-error);
+
+  --toastify-toast-width: 320px;
+  --toastify-toast-background: #fff;
+  --toastify-toast-min-height: 64px;
+  --toastify-toast-max-height: 800px;
+  --toastify-font-family: sans-serif;
+  --toastify-z-index: 9999;
+
+  --toastify-text-color-light: #757575;
+  --toastify-text-color-dark: #fff;
+
+  /* //Used only for colored theme */
+  --toastify-text-color-info: #fff;
+  --toastify-text-color-success: #fff;
+  --toastify-text-color-warning: #fff;
+  --toastify-text-color-error: #fff;
+
+  --toastify-spinner-color: #616161;
+  --toastify-spinner-color-empty-area: #e0e0e0;
+
+  /* // Used when no type is provided
+  // toast("**hello**") */
+  --toastify-color-progress-light: linear-gradient(
+    to right,
+    #4cd964,
+    #5ac8fa,
+    #007aff,
+    #34aadc,
+    #5856d6,
+    #ff2d55
+  );
+  /* // Used when no type is provided */
+  --toastify-color-progress-dark: #bb86fc;
+  --toastify-color-progress-info: var(--toastify-color-info);
+  --toastify-color-progress-success: var(--toastify-color-success);
+  --toastify-color-progress-warning: var(--toastify-color-warning);
+  --toastify-color-progress-error: var(--toastify-color-error);
+}
+
+.Toastify div {
+  font-family: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto", "Apple SD Gothic Neo",
+    "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu", "Cantarell",
+    "Fira Sans", "Droid Sans", "Helvetica Neue", "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+/* sweet alert 2 */
+.swal2-container.swal2-center.swal2-backdrop-show {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+.swal2-modal.swal2-popup {
+  padding: 40px 40px 38px !important;
+  border-radius: 10px !important;
+  width: fit-content !important;
+  background-color: #3c3c3c !important;
+  color: white !important;
+}
+
+.swal2-title {
+  font-size: 18px !important;
+  color: white !important;
+  font-weight: 400 !important;
+  width: 100% !important;
+}
+
+.swal2-input {
+  border-radius: 10px !important;
+  background-color: #797979 !important;
+  color: white !important;
+}
+
+.swal2-input:focus {
+  border: 2px solid #d4a8e3 !important;
+  box-shadow: none !important;
+}
+
+.swal2-actions {
+  margin-top: 10px !important;
+}
+
+/* .swal2-styled.swal2-styled {
+  font-size: 14px !important;
+  padding: 0 !important;
+  width: 70px !important;
+  height: 35px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+} */
+
+.swal2-styled.swal2-confirm {
+  font-size: 14px !important;
+  padding: 0 !important;
+  width: 70px !important;
+  height: 35px !important;
+  background-color: #d4a8e3 !important;
+}
+
+.swal2-styled.swal2-confirm:hover {
+  background-color: #a34dc1 !important;
+  box-shadow: none !important;
+}
+.swal2-styled.swal2-confirm:focus {
+  box-shadow: none !important;
+}
+
+.swal2-styled.swal2-cancel {
+  font-size: 14px !important;
+  padding: 0 !important;
+  width: 70px !important;
+  height: 35px !important;
+  background-color: #797979 !important;
+}
+
+.swal2-styled.swal2-cancel:hover {
+  background-color: #626262 !important;
+  box-shadow: none !important;
+}
+
+/* mini loading font */
+.mini-loading div {
+  font-family: "Pretendard Variable", Pretendard, -apple-system,
+  BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto", "Apple SD Gothic Neo",
+  "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu", "Cantarell",
+  "Fira Sans", "Droid Sans", "Helvetica Neue", "Apple Color Emoji",
+  "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 }

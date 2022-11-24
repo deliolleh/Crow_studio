@@ -1,5 +1,7 @@
 import React, { Fragment, useState } from "react";
 import styled from "styled-components";
+import { toast } from "react-toastify";
+
 import { Combobox, Transition, Switch } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
@@ -127,11 +129,12 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
   // 세팅 저장
   const trySave = () => {
     saveSetting();
+    toast.success("세팅이 저장되었습니다");
   };
 
   return (
     <>
-      <SettingsContainer className="mb-3 bg-component_item_bg_dark flex flex-col">
+      <SettingsContainer className="mb-3 bg-component_item_bg_dark flex flex-col  overflow-auto">
         <div
           className="flex justify-between items-center"
           style={{ padding: 15 }}
@@ -142,7 +145,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
         <div className="" style={{ padding: 15 }}>
           <div className="pl-1">
             <label
-              className="block text-primary_dark text-sm font-bold mb-2"
+              className="block text-primary_dark text-xl font-bold mb-2"
               htmlFor="editorFontSize"
             >
               에디터 폰트 크기
@@ -158,17 +161,18 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
             />
           </div>
           <div className="pl-1 mt-5">
-            <div className="text-primary_dark text-sm font-bold ">
+            <div className="text-primary_dark text-xl font-bold mb-2">
               에디터 폰트
             </div>
             {/* headless ui combobox */}
             <Combobox
               value={nowEditorFont}
               onChange={(e) => editorChange("font", e)}
+              className="mb-5"
             >
               <div className="relative mt-1">
                 <div
-                  className="flex justify-between items-center rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left shadow-sm hover:bg-point_purple_op20 active:outline-none active:ring-2 active:ring-point_purple"
+                  className="relative flex justify-between items-center rounded-md bg-component_item_bg_+2_dark px-1.5 py-2 text-xs font-medium text-white text-left shadow-sm hover:bg-point_purple_op20 active:outline-none active:ring-2 active:ring-point_purple"
                   style={{ height: 26, width: 217 }}
                 >
                   <Combobox.Input
@@ -192,7 +196,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
                   afterLeave={() => setQuery("")}
                 >
                   <Combobox.Options
-                    className="absolute left-0 z-10 mt-0.5 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    className="absolute z-10 mt-0.5 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                     style={{ height: 130, width: 217 }}
                   >
                     {filteredFonts.length === 0 && query !== "" ? (
@@ -251,7 +255,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
             </Combobox>
           </div>
           <div className="pl-1 mt-5 flex items-center">
-            <div className="text-primary_dark text-sm font-bold ">
+            <div className="text-primary_dark text-xl font-bold ">
               에디터 자동 줄바꿈
             </div>
             <Switch
@@ -260,7 +264,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
               className={`${
                 checkSwitch ? "bg-point_purple" : "bg-component_item_bg_+2_dark"
               }
-                relative inline-flex h-[26px] w-[46px] ml-[68px] text-right shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+                relative inline-flex h-[26px] w-[46px] ml-[25px] text-right shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
             >
               <span className="sr-only">Use setting</span>
               <span
@@ -274,7 +278,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
           </div>
           <div className="pl-1 mt-5">
             <label
-              className="block text-primary_dark text-sm font-bold mb-2"
+              className="block text-primary_dark text-xl font-bold mb-2"
               htmlFor="consoleFontSize"
             >
               콘솔 폰트 크기
@@ -290,17 +294,18 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
             />
           </div>
           <div className="pl-1 mt-5">
-            <div className="text-primary_dark text-sm font-bold ">
+            <div className="text-primary_dark text-xl font-bold mb-2">
               콘솔 폰트
             </div>
             {/* headless ui combobox */}
             <Combobox
               defaultValue={nowConsoleFont}
               onChange={(e) => consoleChange("font", e)}
+              className="mb-5"
             >
               <div className="relative mt-1">
                 <div
-                  className="flex justify-between items-center rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-xs font-medium text-white text-left shadow-sm hover:bg-point_purple_op20 active:outline-none active:ring-2 active:ring-point_purple"
+                  className="relative flex justify-between items-center rounded-md bg-component_item_bg_+2_dark px-1.5 py-2 text-xs font-medium text-white text-left shadow-sm hover:bg-point_purple_op20 active:outline-none active:ring-2 active:ring-point_purple"
                   style={{ height: 26, width: 217 }}
                 >
                   <Combobox.Input
@@ -324,7 +329,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
                   afterLeave={() => setQuery("")}
                 >
                   <Combobox.Options
-                    className="absolute left-0 z-10 mt-0.5 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    className="absolute z-10 mt-0.5 origin-top-right rounded-md bg-component_item_bg_+2_dark shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                     style={{ height: 130, width: 217 }}
                   >
                     {filteredFonts.length === 0 && query !== "" ? (

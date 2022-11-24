@@ -1,16 +1,26 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import compileApi from "../../../api/compileApi";
+
+import { startLoading, endLoading } from "../../../redux/globalSlice";
 
 import { BsPlayFill } from "react-icons/bs";
 import { BsStopFill } from "react-icons/bs";
 import { TbTerminal } from "react-icons/tb";
 
+import LoadingMini from "../../../components/LoadingMini";
+
 const ConsoleTerminal = (props) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isLoading = useSelector((state) => state.global.value.isLoading);
   const { teamName, projectType } = useSelector((state) => state.team.value);
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
+  const [finalOutputDataList, setFinalOutputDataList] = useState([]);
 
   const {
     teamSeq,
@@ -21,10 +31,15 @@ const ConsoleTerminal = (props) => {
     setting,
   } = props;
 
+  useEffect(() => {
+    setFinalOutputDataList(lintResultList);
+  }, [lintResultList]);
+
   const changeInputData = (e) => setInputData(e.target.value);
 
   const startCompileHandler = async () => {
-    setLintResultList([]);
+    dispatch(startLoading());
+    // setLintResultList([]);
     const compileData = {
       type: projectType,
       filePath: selectedFilePath,
@@ -32,19 +47,25 @@ const ConsoleTerminal = (props) => {
     };
     try {
       const res = await compileApi.getCompileResult(compileData);
-      setOutputData(res.data.response);
+      // setOutputData(res.data.response);
+      setFinalOutputDataList(res.data.response.split("\n"));
+      dispatch(endLoading());
     } catch (err) {
-      console.error(err);
+      dispatch(endLoading());
+      toast.error("컴파일 오류");
     }
   };
 
   const stopCompileHandler = async () => {
-    setLintResultList([]);
+    dispatch(endLoading());
+    // setLintResultList([]);
     const teamData = { teamSeq, teamName };
     try {
       await compileApi.stopCompile(teamData);
+      setFinalOutputDataList([]);
     } catch (err) {
-      console.error(err);
+      dispatch(endLoading());
+      toast.error("컴파일 오류");
     }
   };
 
@@ -52,6 +73,20 @@ const ConsoleTerminal = (props) => {
 
   const consoleHeightReal = consoleHeight - 8;
   const boxHeight = consoleHeight - 88;
+
+  const toGoogleHandler = (searchQuery) => {
+    if (searchQuery.includes("k7d207.p.ssafy.io")) {
+      // navigate("/redirect/server", {
+      //   state: { url: `http://${searchQuery}` },
+      // });
+      window.open(`http://${searchQuery}`, "_blank");
+    } else {
+      // navigate("/redirect", {
+      //   state: { url: `https://www.google.com/search?q=${searchQuery}` },
+      // });
+      window.open(`https://www.google.com/search?q=${searchQuery}`, "_blank");
+    }
+  };
 
   return (
     <div
@@ -68,13 +103,17 @@ const ConsoleTerminal = (props) => {
           {/* btns */}
           <BsPlayFill
             onClick={startCompileHandler}
-            className="mr-[10px] cursor-pointer"
+            className={`mr-[10px] cursor-pointer hover:text-point_purple hover:scale-110 transition ${
+              isLoading && "animate-pulse"
+            }`}
             size="27"
+            data-tip="코드 실행"
           />
           <BsStopFill
-            className="cursor-pointer"
+            className="cursor-pointer hover:text-point_purple hover:scale-110 transition"
             size="27"
             onClick={stopCompileHandler}
+            data-tip="코드 실행 멈춤"
           />
         </div>
       </div>
@@ -109,15 +148,38 @@ const ConsoleTerminal = (props) => {
             </div>
           </div>
           <div
-            className="w-full h-full p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white  overflow-auto"
+            className={`w-full h-full p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white overflow-auto ${
+              isLoading && "flex items-center justify-center"
+            }`}
             style={{
               fontSize: parseInt(setting.fontSize),
               fontFamily: setting.font,
+              whiteSpace: "pre-wrap",
             }}
           >
-            {outputData}
-            {lintResultList.length > 0 &&
-              lintResultList.map((lintResult) => <div>{lintResult}</div>)}
+            {isLoading && (
+              <div className="flex justify-center items-center overflow-x-hidden h-full">
+                <LoadingMini />
+              </div>
+            )}
+            {/* {!isLoading && lintResultList.length === 0 && outputData}
+            {!isLoading &&
+              lintResultList.length > 0 &&
+              lintResultList.map((lintResult, i) => (
+                <div className="cursor-pointer" key={i}>
+                  {lintResult}
+                </div>
+              ))} */}
+            {!isLoading &&
+              finalOutputDataList.map((el, i) => (
+                <div
+                  key={i}
+                  className="cursor-pointer hover:text-point_purple transition break-all"
+                  onClick={() => toGoogleHandler(el)}
+                >
+                  {el}
+                </div>
+              ))}
           </div>
         </div>
       </div>

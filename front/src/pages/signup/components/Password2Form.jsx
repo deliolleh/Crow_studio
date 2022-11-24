@@ -4,7 +4,7 @@ const Password2Form = (props) => {
   const { password2, inputChangeHandler, password2ErrMsg } = props;
 
   return (
-    <div className="w-80 mb-10">
+    <div className="w-80 mb-1">
       <label htmlFor="password2">비밀번호 확인</label>
       <input
         type="password"

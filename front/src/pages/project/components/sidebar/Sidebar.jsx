@@ -1,18 +1,21 @@
 import React, { useRef } from "react";
 import styled from "styled-components";
+import ReactTooltip from "react-tooltip";
 
 // svg
 import { ReactComponent as IcDirectory } from "../../../../assets/icons/ic_dir.svg";
+import { ReactComponent as IcEdit } from "../../../../assets/icons/ic_edit.svg";
 import { ReactComponent as IcGit } from "../../../../assets/icons/ic_git.svg";
 import { ReactComponent as IcTeam } from "../../../../assets/icons/ic_team.svg";
 import { ReactComponent as IcApi } from "../../../../assets/icons/ic_api.svg";
 import { ReactComponent as IcVar } from "../../../../assets/icons/ic_var.svg";
 import { ReactComponent as IcSettings } from "../../../../assets/icons/ic_set.svg";
 
-const Sidebar = ({ clickIcon, showComponent }) => {
+const Sidebar = ({ clickIcon, showComponent, goCodeShare }) => {
   const classRef = useRef(null);
   const activeIconDir = showComponent === "Dir" ? " activeIcon" : "";
   const activeIconGit = showComponent === "Git" ? " activeIcon" : "";
+  const activeIconShare = (showComponent = "Share" ? "activeIcon" : "");
   const activeIconTeam = showComponent === "Team" ? " activeIcon" : "";
   const activeIconApi = showComponent === "Api" ? " activeIcon" : "";
   const activeIconVar = showComponent === "Var" ? " activeIcon" : "";
@@ -41,6 +44,10 @@ const Sidebar = ({ clickIcon, showComponent }) => {
       case "Set":
         isActive || showComponent === "Set" ? clickIcon("") : clickIcon("Set");
         break;
+      case "Share":
+        isActive || showComponent === "Share"
+          ? clickIcon("")
+          : clickIcon("Share");
       default:
         break;
     }
@@ -49,7 +56,7 @@ const Sidebar = ({ clickIcon, showComponent }) => {
   return (
     <React.Fragment>
       <SidebarContainer
-        className="ml-3 mb-3 bg-component_item_bg_dark"
+        className="mb-3 bg-component_item_bg_dark overflow-auto"
         style={
           showComponent === ""
             ? { borderRadius: "10px" }
@@ -63,9 +70,22 @@ const Sidebar = ({ clickIcon, showComponent }) => {
               className={`flex flex-col items-center py-0.5 ${activeIconDir}`}
               ref={classRef}
               onClick={() => clickHandler("Dir")}
+              data-tip="디렉토리"
             >
               <IcSpan>
                 <IcDirectory alt="directory" />
+              </IcSpan>
+            </ListHover>
+
+            {/* CodeShare */}
+            <ListHover
+              className={`flex flex-col items-center py-0.5`}
+              ref={classRef}
+              onClick={() => goCodeShare()}
+              data-tip="동시 편집"
+            >
+              <IcSpan>
+                <IcEdit alt="settings" />
               </IcSpan>
             </ListHover>
 
@@ -74,6 +94,7 @@ const Sidebar = ({ clickIcon, showComponent }) => {
               className={`flex flex-col items-center py-0.5 ${activeIconGit}`}
               ref={classRef}
               onClick={() => clickHandler("Git")}
+              data-tip="깃"
             >
               <IcSpan>
                 <IcGit alt="git" />
@@ -85,6 +106,7 @@ const Sidebar = ({ clickIcon, showComponent }) => {
               className={`flex flex-col items-center py-0.5 ${activeIconTeam}`}
               ref={classRef}
               onClick={() => clickHandler("Team")}
+              data-tip="팀"
             >
               <IcSpan>
                 <IcTeam alt="team" />
@@ -96,6 +118,7 @@ const Sidebar = ({ clickIcon, showComponent }) => {
               className={`flex flex-col items-center py-0.5 ${activeIconApi}`}
               ref={classRef}
               onClick={() => clickHandler("Api")}
+              data-tip="API 테스트"
             >
               <IcSpan>
                 <IcApi alt="api" />
@@ -107,6 +130,7 @@ const Sidebar = ({ clickIcon, showComponent }) => {
               className={`flex flex-col items-center py-0.5 ${activeIconVar}`}
               ref={classRef}
               onClick={() => clickHandler("Var")}
+              data-tip="변수명 추천"
             >
               <IcSpan>
                 <IcVar alt="variable name" />
@@ -118,11 +142,13 @@ const Sidebar = ({ clickIcon, showComponent }) => {
               className={`flex flex-col items-center py-0.5 ${activeIconSet}`}
               ref={classRef}
               onClick={() => clickHandler("Set")}
+              data-tip="설정"
             >
               <IcSpan>
                 <IcSettings alt="settings" />
               </IcSpan>
             </ListHover>
+            <ReactTooltip place="right" />
           </ul>
         </div>
       </SidebarContainer>

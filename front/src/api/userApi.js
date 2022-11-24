@@ -16,6 +16,7 @@ const userApi = {
   getPersonalSetting: (teamSeq) => api.get(`/users/personal/${teamSeq}`),
   setPersonalSetting: (teamSeq, settingData) =>
     api.put(`/users/personal/${teamSeq}`, settingData),
+  getUnLogin: () => api.get("/unlogin"),
 };
 
 export default userApi;

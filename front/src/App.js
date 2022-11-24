@@ -1,6 +1,10 @@
 import React, { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 import { getUser } from "./redux/userSlice";
 
@@ -17,16 +21,17 @@ import TeamDetail from "./pages/team-detail/TeamDetail";
 import Project from "./pages/project/Project";
 import NotFound from "./pages/not-found/NotFound";
 import Forbidden from "./pages/forbidden/Forbidden";
-import WithLoading from "./components/WithLoading";
-import YMonaco3 from "./pages/code-share/YMonaco3";
+import YMonaco from "./pages/code-share/YMonaco";
+import Redirect from "./pages/redirect/Redirect";
+import RedirectServer from "./pages/redirect/RedirectServer";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <WithLoading>
+      <ProtectedRoute>
         <Intro />
-      </WithLoading>
+      </ProtectedRoute>
     ),
   },
   {
@@ -81,27 +86,29 @@ const router = createBrowserRouter([
     path: "/teams/create",
     element: (
       <PrivateRoute>
-        <WithLoading>
-          <TeamCreate />
-        </WithLoading>
+        <TeamCreate />
       </PrivateRoute>
     ),
   },
   {
     path: "/project/:teamSeq",
     element: (
-      <WithLoading>
+      <PrivateRoute>
         <Project />
-      </WithLoading>
+      </PrivateRoute>
     ),
   },
   {
     path: "/project/code-share",
-    element: (
-      <WithLoading>
-        <YMonaco3 />
-      </WithLoading>
-    ),
+    element: <YMonaco />,
+  },
+  {
+    path: "/redirect/server",
+    element: <RedirectServer />,
+  },
+  {
+    path: "/redirect",
+    element: <Redirect />,
   },
   {
     path: "/403",
@@ -121,6 +128,8 @@ function App() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.user.value.isLoggedIn);
 
+  AOS.init();
+
   useEffect(() => {
     const accessToken = localStorage.getItem("access-token");
     if (accessToken) {
@@ -131,6 +140,19 @@ function App() {
   return (
     <React.Fragment>
       <RouterProvider router={router} />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={700}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover={false}
+        theme="dark"
+        className="rounded-[10px] text-[16px]"
+      />
     </React.Fragment>
   );
 }

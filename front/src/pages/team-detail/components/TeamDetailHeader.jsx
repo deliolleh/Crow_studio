@@ -1,70 +1,99 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
-import { modifyTeamName, deleteTeam } from "../../../redux/teamSlice";
+import teamApi from "../../../api/teamApi";
 
 import TeamName from "./TeamName";
-import TeamNameModifyInput from "./TeamNameModifyInput";
-import TeamListButton from "./TeamListButton";
+import TeamNameUpdateInput from "./TeamNameUpdateInput";
 import RedButton from "./RedButton";
 
 const TeamDetailHeader = (props) => {
   const { teamName, isLeader, teamSeq, setTeamName } = props;
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [isModify, setIsModify] = useState(false);
+  const [showTeamNameUpdate, setShowTeamNameUpdate] = useState(false);
+  const MySwal = withReactContent(Swal);
 
-  const openModifyHandler = () => setIsModify(true);
-  const closeModifyHandler = () => setIsModify(false);
-  const submitTeamNameModifyHandler = (modifiedTeamName) => {
-    dispatch(modifyTeamName({ teamName: modifiedTeamName, teamSeq }))
-      .unwrap()
-      .then((resTeamName) => {
-        setTeamName(resTeamName);
-        setIsModify(false);
-      })
-      .catch(console.error);
+  const openTeamNameUpdateHandler = () => setShowTeamNameUpdate(true);
+  const closeTeamNameUpdateHandler = () => setShowTeamNameUpdate(false);
+
+  const submitTeamNameUpdateHandler = async (updatedTeamName) => {
+    try {
+      const teamNameData = { teamName: updatedTeamName };
+      await teamApi.updateTeamName(teamSeq, teamNameData);
+      setTeamName(updatedTeamName);
+      setShowTeamNameUpdate(false);
+      toast.success("팀 이름 변경 성공");
+    } catch (err) {
+      const errStatusCode = err.response.status;
+      if (errStatusCode === 409) {
+        toast.warning("이미 같은 팀 이름이 존재합니다");
+      } else {
+        toast.error("Error");
+      }
+    }
   };
 
-  const goTeamListHandler = () => navigate("/teams");
-
-  const deleteTeamHandler = () => {
-    if (!window.confirm("정말로 팀을 삭제하시겠습니까?")) {
+  const deleteTeamHandler = async () => {
+    const res = await MySwal.fire({
+      title: "정말로 팀을 삭제하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
+      background: "#3C3C3C",
+    });
+    if (!res.isConfirmed) {
       return;
     }
-    dispatch(deleteTeam(teamSeq))
-      .unwrap()
-      .then(() => {
-        alert("성공적으로 삭제되었습니다");
-        navigate("/teams");
-      })
-      .catch(console.error);
+    try {
+      await teamApi.deleteTeam(teamSeq);
+      navigate("/teams");
+      toast.success("팀 삭제 성공");
+    } catch (err) {
+      toast.error("Error");
+    }
   };
 
-  const resignTeamHandler = () => {
-    if (!window.confirm("정말로 팀에서 탈퇴하시겠습니까?")) {
+  const resignTeamHandler = async () => {
+    const res = await MySwal.fire({
+      title: "정말로 팀에서 탈퇴하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: "네",
+      cancelButtonText: "아니오",
+      background: "#3C3C3C",
+    });
+    if (!res.isConfirmed) {
       return;
     }
-    alert("가지마");
+    try {
+      await teamApi.resignTeam(teamSeq);
+      navigate("/teams");
+      toast.success("팀 탈퇴 성공");
+    } catch (err) {
+      toast.error("Error");
+    }
   };
 
   return (
     <div className="flex justify-between items-center w-full mb-5">
-      {/* isModify가 아니면 팀 이름, isModify이면 팀 이름 변경 input 나옴 */}
-      {!isModify ? (
-        <TeamName onOpenModify={openModifyHandler}>{teamName}</TeamName>
+      {!showTeamNameUpdate ? (
+        <TeamName
+          openTeamNameUpdate={openTeamNameUpdateHandler}
+          isLeader={isLeader}
+        >
+          {teamName}
+        </TeamName>
       ) : (
-        <TeamNameModifyInput
-          originTeamName={teamName}
-          onSubmitModify={submitTeamNameModifyHandler}
-          onCloseModify={closeModifyHandler}
+        <TeamNameUpdateInput
+          initialTeamName={teamName}
+          submitTeamNameUpdate={submitTeamNameUpdateHandler}
+          closeTeamNameUpdate={closeTeamNameUpdateHandler}
         />
       )}
-
       {/* 팀 목록 버튼, 팀 삭제(팀 탈퇴) 버튼 컨테이너 */}
       <div className="flex gap-2">
-        <TeamListButton onClick={goTeamListHandler}>팀 목록</TeamListButton>
         <RedButton onClick={isLeader ? deleteTeamHandler : resignTeamHandler}>
           {isLeader ? "팀 삭제" : "팀 탈퇴"}
         </RedButton>
