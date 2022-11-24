@@ -2,17 +2,15 @@ import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import { MonacoBinding } from "y-monaco";
 // import * as monaco from "monaco-editor";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import { useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { margin } from "@mui/system";
 
 const YMonaco = () => {
   const editorRef = useRef(null);
   const location = useLocation();
-  const selectedFileName = location.state.selectedFileName;
-  const data = location.state.data;
+  const teamSeq = location.state.teamSeq;
   const options = location.state.options;
 
   const editorOptions = {
@@ -31,7 +29,7 @@ const YMonaco = () => {
     const ydoc = new Y.Doc();
     const provider = new WebsocketProvider(
       "wss://demos.yjs.dev",
-      selectedFileName,
+      teamSeq,
       ydoc
     );
     const ytext = ydoc.getText("monaco");
@@ -53,21 +51,12 @@ const YMonaco = () => {
         const ydoc = new Y.Doc();
         const provider = new WebsocketProvider(
           "wss://demos.yjs.dev",
-          selectedFileName,
+          teamSeq,
           ydoc
         );
-        provider.destroy();
+        provider.disconnect();
       });
     };
-  });
-
-  useEffect(() => {
-    if (
-      editorRef.current !== null &&
-      !editorRef?.current.getModel().getValue()
-    ) {
-      editorRef.current.getModel().setValue(data);
-    }
   }, []);
 
   const goBack = () => {

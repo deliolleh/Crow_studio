@@ -238,8 +238,7 @@ const Project = () => {
     saveSetting();
     navigate("/project/code-share", {
       state: {
-        data: editorRef.current.getValue(),
-        selectedFileName,
+        teamSeq,
         options: setting.editors,
       },
       target: "_blank",

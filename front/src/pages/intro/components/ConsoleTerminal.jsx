@@ -80,6 +80,7 @@ const ConsoleTerminal = (props) => {
     try {
       const res = await compileApi.getUnLoginCompileResult(compileData);
       // setOutputData(res.data.response);
+      console.log(res.data.response.split("\n"));
       setFinalOutputDataList(res.data.response.split("\n"));
       dispatch(endLoading());
     } catch (err) {
