@@ -289,64 +289,73 @@ input:-webkit-autofill:active {
 
 /* sweet alert 2 */
 .swal2-container.swal2-center.swal2-backdrop-show {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.7) !important;
 }
 .swal2-modal.swal2-popup {
-  padding: 40px 40px 38px;
-  border-radius: 10px;
-  width: fit-content;
+  padding: 40px 40px 38px !important;
+  border-radius: 10px !important;
+  width: fit-content !important;
+  background-color: #3c3c3c !important;
+  color: white !important;
 }
 
 .swal2-title {
-  font-size: 18px;
-  color: white;
-  font-weight: 400;
-  width: 100%;
+  font-size: 18px !important;
+  color: white !important;
+  font-weight: 400 !important;
+  width: 100% !important;
 }
 
 .swal2-input {
-  border-radius: 10px;
-  background-color: #797979;
-  color: white;
-  /* box-shadow: rgb(212 168 227 / 0.5);; */
+  border-radius: 10px !important;
+  background-color: #797979 !important;
+  color: white !important;
 }
 
 .swal2-input:focus {
-  border: 2px solid #d4a8e3;
-  box-shadow: none;
+  border: 2px solid #d4a8e3 !important;
+  box-shadow: none !important;
 }
 
 .swal2-actions {
-  margin-top: 10px;
+  margin-top: 10px !important;
 }
 
-.swal2-styled.swal2-styled {
-  font-size: 14px;
-  /* padding: 8px 12px 8px 12px; */
-  padding: 0;
-  width: 70px;
-  height: 35px;
-  display: flex;
-  justify-content: center;
-}
+/* .swal2-styled.swal2-styled {
+  font-size: 14px !important;
+  padding: 0 !important;
+  width: 70px !important;
+  height: 35px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+} */
 
 .swal2-styled.swal2-confirm {
-  background-color: #d4a8e3;
+  font-size: 14px !important;
+  padding: 0 !important;
+  width: 70px !important;
+  height: 35px !important;
+  background-color: #d4a8e3 !important;
 }
 
 .swal2-styled.swal2-confirm:hover {
-  background-color: #a34dc1;
-  box-shadow: none;
+  background-color: #a34dc1 !important;
+  box-shadow: none !important;
 }
 .swal2-styled.swal2-confirm:focus {
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
 .swal2-styled.swal2-cancel {
-  background-color: #797979;
+  font-size: 14px !important;
+  padding: 0 !important;
+  width: 70px !important;
+  height: 35px !important;
+  background-color: #797979 !important;
 }
 
 .swal2-styled.swal2-cancel:hover {
-  background-color: #626262;
-  box-shadow: none;
+  background-color: #626262 !important;
+  box-shadow: none !important;
 }
