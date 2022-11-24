@@ -19,10 +19,7 @@ const VariableName = () => {
     setVariable(() => e.target.value);
   };
 
-  const clickHandler = (li) => {
-    navigator.clipboard.writeText(li);
-    toast.success("클립보드에 복사 완료");
-  };
+  const clickHandler = (li) => navigator.clipboard.writeText(li);
 
   const rendering = () => {
     let show = [];
@@ -34,7 +31,7 @@ const VariableName = () => {
           className="mt-1 ml-[15px] text-xl text-white cursor-pointer hover:text-point_yellow transition"
           onClick={() => {
             clickHandler(li);
-            toast.success("해당 변수명을 복사했습니다");
+            toast.success("클립보드에 복사 완료");
           }}
         >
           {li}

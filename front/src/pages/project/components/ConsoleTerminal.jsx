@@ -76,13 +76,15 @@ const ConsoleTerminal = (props) => {
 
   const toGoogleHandler = (searchQuery) => {
     if (searchQuery.includes("k7d207.p.ssafy.io")) {
-      navigate("/redirect/server", {
-        state: { url: `http://${searchQuery}` },
-      });
+      // navigate("/redirect/server", {
+      //   state: { url: `http://${searchQuery}` },
+      // });
+      window.open(`http://${searchQuery}`, "_blank");
     } else {
-      navigate("/redirect", {
-        state: { url: `https://www.google.com/search?q=${searchQuery}` },
-      });
+      // navigate("/redirect", {
+      //   state: { url: `https://www.google.com/search?q=${searchQuery}` },
+      // });
+      window.open(`https://www.google.com/search?q=${searchQuery}`, "_blank");
     }
   };
 
