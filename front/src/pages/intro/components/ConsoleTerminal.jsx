@@ -79,7 +79,6 @@ const ConsoleTerminal = (props) => {
     };
     try {
       const res = await compileApi.getUnLoginCompileResult(compileData);
-      console.log("res:", res);
       // setOutputData(res.data.response);
       setFinalOutputDataList([res.data.response]);
       dispatch(endLoading());
@@ -87,9 +86,6 @@ const ConsoleTerminal = (props) => {
       toast.error("컴파일 오류");
     }
   };
-
-  // 파일 저장
-  const unLoginRunCompileHandler = async () => {};
 
   const stopCompileHandler = async () => {
     dispatch(endLoading());
@@ -192,17 +188,6 @@ const ConsoleTerminal = (props) => {
                 <LoadingMini />
               </div>
             )}
-            <div>
-              <LoadingMini />
-            </div>
-            {/* {!isLoading && lintResultList.length === 0 && outputData}
-            {!isLoading &&
-              lintResultList.length > 0 &&
-              lintResultList.map((lintResult, i) => (
-                <div className="cursor-pointer" key={i}>
-                  {lintResult}
-                </div>
-              ))} */}
             {!isLoading &&
               finalOutputDataList.map((el, i) => (
                 <div
