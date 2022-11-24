@@ -48,4 +48,5 @@ public interface TeamRepository extends JpaRepository<TeamEntity, Long> {
      */
     Optional<TeamEntity> findByTeamSeq(Long teamSeq);
 
+    Optional<TeamEntity> findTeamPortByTeamSeq(Long teamSeq);
 }

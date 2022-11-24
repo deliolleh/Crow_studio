@@ -267,9 +267,10 @@ public class GitService {
      * @param filePath add할 파일 경로 (특정하지 않으면 all)
      * @return 성패에 따른 String 반환
      */
-    public String gitAddService(String gitPath, String filePath) {
+    public Map<String, String> gitAddService(String gitPath, String filePath) {
         ProcessBuilder command = new ProcessBuilder();
-
+        Map<String, String> serviceRes = new HashMap<>();
+        serviceRes.put("addMessage", "");
         // filePath를 입력했으면 filePath 사용 / add할 파일을 특정하지 않았으면 "."
         if (filePath.equals("all")) {
             command.command("git", "add", ".");
@@ -292,17 +293,22 @@ public class GitService {
                 msg.append("\n");
             }
             p.waitFor();
+            serviceRes.put("addMessage", msg.toString());
         } catch (IOException e) {
-            return NO_SUCH;
+            serviceRes.put("result",NO_SUCH);
+            return serviceRes;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            return UNKNOWN;
+            serviceRes.put("result",UNKNOWN);
+            return serviceRes;
         }
         // 성공 여부 판단
         if (msg.length() == 0) {
-            return SUCCESS;
+            serviceRes.put("result",SUCCESS);
+            return serviceRes;
         }
-        return UNKNOWN;
+        serviceRes.put("result",UNKNOWN);
+        return serviceRes;
     }
 
     /**
@@ -316,12 +322,14 @@ public class GitService {
      */
     public Map<String, String> gitCommitService(String message, Long teamSeq, String filePath) {
         Map<String, String> serviceRes = new HashMap<>();
-        serviceRes.put("message", "");
+        serviceRes.put("commitMessage", "");
+
         String gitPath = getGitPath(teamSeq);
         // git add 로직 수행
-        String gitAddCheck = gitAddService(gitPath, filePath);
-        if (!gitAddCheck.equals(SUCCESS)) {
-            serviceRes.put("result", gitAddCheck);
+        Map<String, String> gitAddCheck = gitAddService(gitPath, filePath);
+        serviceRes.put("addMessage",gitAddCheck.get("addMessage"));
+        if (!gitAddCheck.get("result").equals(SUCCESS)) {
+            serviceRes.put("result", gitAddCheck.get("result"));
             return serviceRes;
         }
 
@@ -344,6 +352,7 @@ public class GitService {
                 msg.append(forPrint);
                 msg.append("\n");
             }
+            serviceRes.put("commitMessage", msg.toString());
             p.waitFor();
         } catch (IOException e) {
             serviceRes.put("result", NO_SUCH);
@@ -353,11 +362,10 @@ public class GitService {
             serviceRes.put("result", UNKNOWN);
             return serviceRes;
         }
-        String message2 = msg.toString();
 
         // 성공 여부 판단
         serviceRes.put("result", SUCCESS);
-        serviceRes.put("message", message2);
+
         return serviceRes;
     }
 
@@ -375,9 +383,12 @@ public class GitService {
     public Map<String, String> gitPushService(String branchName, String message, Long teamSeq, String filePath, Long userSeq) {
         Map<String, String> serviceRes = new HashMap<>();
         String gitPath = getGitPath(teamSeq);
-        serviceRes.put("message", "");
+        serviceRes.put("pushMessage", "");
         // commit 로직 수행
         Map<String, String> gitCommitCheck = gitCommitService(message, teamSeq, filePath);
+        serviceRes.put("addMessage", gitCommitCheck.get("addMessage"));
+        serviceRes.put("commitMessage",gitCommitCheck.get("commitMessage"));
+
         if (!gitCommitCheck.get("result").equals(SUCCESS)) {
             serviceRes.put("result", gitCommitCheck.get("result"));
             return serviceRes;
@@ -412,30 +423,39 @@ public class GitService {
 
         // Git Push 명령어
         ProcessBuilder command = new ProcessBuilder("git", "push", "origin", branchName);
+        command.redirectErrorStream(true);
         // 명령어를 수행할 프로젝트 경로 설정
         command.directory(new File(gitPath));
         // 명령어 수행 후 결과값을 저장하기 위한 StringBuilder
         StringBuilder msg = new StringBuilder();
         // 명령어 수행 로직
         try {
-            String read = null;
+            String read;
             Process p = command.start();
             BufferedReader result = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((read = result.readLine()) != null) {
                 msg.append(read).append("\n");
             }
+            p.waitFor();
         } catch (IOException e) {
             serviceRes.put("result", NO_SUCH);
+            return serviceRes;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            serviceRes.put("result",UNKNOWN);
             return serviceRes;
         }
 
         // 경로 재설정 로직 수행
         boolean returnOld = setNewUrlService(gitUrl, gitPath);
+
+
         // 경로 재설정에 실패한 경우
         if (!returnOld) {
             serviceRes.put("result", UNKNOWN);
             return serviceRes;
         }
+        serviceRes.put("pushMessage",msg.toString());
 
         serviceRes.put("result", SUCCESS);
         return serviceRes;
@@ -448,7 +468,7 @@ public class GitService {
      * @param type    조회하려는 branch의 종류 (1 : local branch, 2 : remote branch)
      * @return branch 목록을 List<String>으로 반환, 없거나 오류가 날 경우 null
      */
-    public List<String> getBranchService(Long teamSeq, Integer type) {
+    public List<String> getBranchService(Long teamSeq, int type) {
         List<String> branches = new ArrayList<>();
         ProcessBuilder command = new ProcessBuilder();
 
@@ -668,5 +688,4 @@ public class GitService {
         }
         return serviceRes;
     }
-
 }

@@ -3,11 +3,13 @@ package com.example.goldencrow.liveCode.controller;
 import com.example.goldencrow.liveCode.dto.FileContentSaveDto;
 import com.example.goldencrow.liveCode.service.LiveFileService;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -21,11 +23,15 @@ public class SocketController {
      * @return
      * @throws Exception
      */
-    @MessageMapping("/share/{teamSeq}/{fileName}")
-    @SendTo("/topic/{teamSeq}/{fileName}")
-    public FileContentSaveDto saveContent(@DestinationVariable Long teamSeq, @DestinationVariable String fileName, Map<String,String> body) throws Exception {
-        FileContentSaveDto fileContentSaveDto = new FileContentSaveDto(body.get("content"), body.get("path"));
-        liveFileService.insertLive(fileContentSaveDto);
-        return fileContentSaveDto;
+    @MessageMapping("/share/{teamSeq}")
+    @SendTo("/topic/{teamSeq}")
+    public JSONObject saveContent(@DestinationVariable Long teamSeq, Map<String,String> body) throws Exception {
+        String user = body.get("user");
+        String filePath = body.get("filePath");
+        Map<String, String> resMap = new HashMap<>();
+        resMap.put("user",user);
+        resMap.put("filePath", filePath);
+        JSONObject res = new JSONObject(resMap);
+        return res;
     }
 }

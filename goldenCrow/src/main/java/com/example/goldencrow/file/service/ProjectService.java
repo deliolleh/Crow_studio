@@ -45,6 +45,7 @@ public class ProjectService {
         String pjt = path + name;
         File pjtDir = new File(pjt);
         if (pjtDir.mkdir()) {
+
             return pjt;
         }
         return DUPLICATE;
@@ -83,6 +84,9 @@ public class ProjectService {
                 File dir = files[i];
                 String name = names[i];
                 if (name.equals("Dockerfile")) {
+                    continue;
+                }
+                if (name.equals(".git")) {
                     continue;
                 }
                 String thisPath = dir.getPath();
@@ -149,13 +153,12 @@ public class ProjectService {
     /**
      * 프로젝트 생성 내부 로직
      *
-     * @param path        프로젝트 생성할 경로
      * @param type        생성할 프로젝트의 종류 (1: pure Python, 2: Django, 3: Flask, 4: FastAPI)
      * @param projectName 생성할 프로젝트의 이름
      * @param teamSeq     생성할 프로젝트의 팀 Sequence
      * @return 성패에 따른 result 반환
      */
-    public Map<String, String> createProjectService(String path, int type, String projectName, Long teamSeq) {
+    public Map<String, String> createProjectService(int type, String projectName, Long teamSeq) {
         Map<String, String> serviceRes = new HashMap<>();
         String teamFile = createDirService(BASE_URL,String.valueOf(teamSeq));
 
@@ -169,9 +172,14 @@ public class ProjectService {
             ProcessBuilder djangoStarter = new ProcessBuilder();
             djangoStarter.command("django-admin", "startproject", projectName);
             djangoStarter.directory(new File(teamFile));
-
+            StringBuilder sb = new StringBuilder();
             try {
+                String read;
                 Process p = djangoStarter.start();
+                BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                while ((read = br.readLine()) != null) {
+                    sb.append(read);
+                }
                 p.waitFor();
             } catch (IOException e) {
                 serviceRes.put("result", UNKNOWN);
@@ -179,6 +187,13 @@ public class ProjectService {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 serviceRes.put("result", UNKNOWN);
+                return serviceRes;
+            }
+
+            String message = sb.toString();
+
+            if (message.contains("CommandError")) {
+                serviceRes.put("result",WRONG);
                 return serviceRes;
             }
 
@@ -205,8 +220,7 @@ public class ProjectService {
             File file = new File(pjt + "/" + projectName + ".py");
             try {
                 if (file.createNewFile()) {
-                    String pjtPath = pjt + "/" + projectName;
-                    saveFilesInDIrService(pjtPath, teamSeq);
+                    saveFilesInDIrService(pjt, teamSeq);
                     serviceRes.put("result", SUCCESS);
                 } else {
                     serviceRes.put("result", DUPLICATE);
@@ -241,8 +255,7 @@ public class ProjectService {
                 serviceRes.put("result", UNKNOWN);
                 return serviceRes;
             }
-            String pjtPath = pjt + "/" + projectName;
-            saveFilesInDIrService(pjtPath, teamSeq);
+            saveFilesInDIrService(pjt, teamSeq);
             serviceRes.put("result", SUCCESS);
             return serviceRes;
         } else if (type == 4) {
@@ -251,8 +264,8 @@ public class ProjectService {
                 serviceRes.put("result", DUPLICATE);
                 return serviceRes;
             }
-            String pjt1 = createDirService(pjt+"/", projectName);
-            File file = new File(pjt1 + "/main.py");
+
+            File file = new File(pjt + "/main.py");
 
             // main.py에 저장할 내용
             String content = "from fastapi import FastAPI\n" +
@@ -269,8 +282,8 @@ public class ProjectService {
                 serviceRes.put("result", UNKNOWN);
                 return serviceRes;
             }
-            String pjtPath = pjt + "/" + projectName;
-            saveFilesInDIrService(pjtPath, teamSeq);
+
+            saveFilesInDIrService(pjt, teamSeq);
             serviceRes.put("result", SUCCESS);
             return serviceRes;
         }
