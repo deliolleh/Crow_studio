@@ -220,8 +220,7 @@ public class ProjectService {
             File file = new File(pjt + "/" + projectName + ".py");
             try {
                 if (file.createNewFile()) {
-                    String pjtPath = pjt + "/" + projectName;
-                    saveFilesInDIrService(pjtPath, teamSeq);
+                    saveFilesInDIrService(pjt, teamSeq);
                     serviceRes.put("result", SUCCESS);
                 } else {
                     serviceRes.put("result", DUPLICATE);
