@@ -184,7 +184,7 @@ const ConsoleTerminal = (props) => {
             }}
           >
             {isLoading && (
-              <div>
+              <div className="h-full">
                 <LoadingMini />
               </div>
             )}

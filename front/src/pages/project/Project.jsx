@@ -333,10 +333,10 @@ const Project = () => {
                   />
                 ) : (
                   <div
-                    className="flex flex-wrap items-center justify-center "
+                    className="flex flex-wrap items-center justify-center"
                     style={{ height: editorHeight }}
                   >
-                    <div className="flex flex-col justify-center items-center overflow-auto my-5">
+                    <div className="flex flex-col justify-center items-center overflow-auto">
                       <img
                         className="w-[100px] rounded-full"
                         src={require("../../assets/images/logo.png")}

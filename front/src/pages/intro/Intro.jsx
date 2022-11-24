@@ -55,7 +55,7 @@ const Intro = () => {
 
   const editorOptions = {
     scrollBeyondLastLine: false,
-    fontSize: setting.editors.fontSize,
+    fontSize: "20px",
     fontFamily: setting.editors.font,
     autoIndent: "advanced",
     wrappingIndent: "same",
