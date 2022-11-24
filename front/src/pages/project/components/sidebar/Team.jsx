@@ -147,14 +147,18 @@ const Team = () => {
             </div>
             <div>
               <div className="text-primary_dark text-lg mb-1">팀원</div>
-              {members?.map((member) => (
-                <div
-                  key={`m${member.memberSeq}`}
-                  className="text-white text-2xl font-bold"
-                >
-                  {member.memberNickname}
-                </div>
-              ))}
+              {members?.length === 0 && (
+                <div className="text-white">팀원이 존재하지 않습니다</div>
+              )}
+              {members?.length > 0 &&
+                members?.map((member) => (
+                  <div
+                    key={`m${member.memberSeq}`}
+                    className="text-white text-2xl font-bold"
+                  >
+                    {member.memberNickname}
+                  </div>
+                ))}
             </div>
           </div>
         </div>
