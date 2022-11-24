@@ -48,7 +48,7 @@ const ConsoleTerminal = (props) => {
     try {
       const res = await compileApi.getCompileResult(compileData);
       // setOutputData(res.data.response);
-      setFinalOutputDataList([res.data.response]);
+      setFinalOutputDataList(res.data.response.split("\n"));
       dispatch(endLoading());
     } catch (err) {
       dispatch(endLoading());
