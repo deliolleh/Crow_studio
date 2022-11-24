@@ -55,6 +55,14 @@ const getFileType = (filePath) => {
   switch (filenameExtension) {
     case "py":
       return "python";
+    case "md":
+      return "text";
+    case "html":
+      return "html";
+    case "js":
+      return "js";
+    case "css":
+      return "css";
     case null:
       // return "directory";
       return "folder";
