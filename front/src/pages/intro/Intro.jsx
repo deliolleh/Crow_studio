@@ -63,6 +63,8 @@ const Intro = () => {
     wordWrap: setting.editors.autoLine,
   };
 
+  const firstEditorValue = `# Welcome to Golden Crow!\n# Insert your Python code here.\n`;
+
   useEffect(() => {
     userApi
       .getUnLogin()
@@ -75,31 +77,31 @@ const Intro = () => {
     userApi.setPersonalSetting(teamSeq, setting);
   };
 
-  // 파일, 폴더 클릭할 때마다 리렌더링, 파일이면 해당 내용 서버에서 받아와 에디터에 출력
-  useEffect(() => {
-    (async () => {
-      // if (selectedFileType.length > 0 && selectedFileType !== "directory") {
-      if (selectedFileType.length > 0 && selectedFileType !== "folder") {
-        try {
-          const filePathData = { filePath: selectedFilePath };
-          const res = await fileApi.getFileContent(filePathData);
-          editorRef.current.getModel().setValue(res.data.fileContent);
-          setSetting((prev) => {
-            return { ...prev, lastTab: [filePathData] };
-          });
-          saveSetting();
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    })();
-  }, [
-    dispatch,
-    selectedFileName,
-    selectedFileType,
-    selectedFilePath,
-    lintResultList,
-  ]);
+  // // 파일, 폴더 클릭할 때마다 리렌더링, 파일이면 해당 내용 서버에서 받아와 에디터에 출력
+  // useEffect(() => {
+  //   (async () => {
+  //     // if (selectedFileType.length > 0 && selectedFileType !== "directory") {
+  //     if (selectedFileType.length > 0 && selectedFileType !== "folder") {
+  //       try {
+  //         const filePathData = { filePath: selectedFilePath };
+  //         const res = await fileApi.getFileContent(filePathData);
+  //         editorRef.current.getModel().setValue(res.data.fileContent);
+  //         setSetting((prev) => {
+  //           return { ...prev, lastTab: [filePathData] };
+  //         });
+  //         saveSetting();
+  //       } catch (err) {
+  //         console.error(err);
+  //       }
+  //     }
+  //   })();
+  // }, [
+  //   dispatch,
+  //   selectedFileName,
+  //   selectedFileType,
+  //   selectedFilePath,
+  //   lintResultList,
+  // ]);
 
   // 사이드바 아이콘 눌러서 해당 컴포넌트 보여주기
   const showComponentHandler = (componentName) => {
@@ -245,6 +247,7 @@ const Intro = () => {
                   height={editorHeight}
                   theme="vs-dark"
                   defaultLanguage="python"
+                  defaultValue={firstEditorValue}
                   onMount={(editor) => {
                     editorRef.current = editor;
                   }}
