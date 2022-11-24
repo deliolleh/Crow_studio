@@ -4,7 +4,8 @@ const RedirectServer = () => {
   const location = useLocation();
   const { url } = location.state;
   if (url) {
-    window.location.href = url;
+    // window.location.href = url;
+    window.open(url, "_blank");
   }
   return null;
 };
