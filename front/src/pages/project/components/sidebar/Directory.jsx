@@ -461,7 +461,7 @@ const Directory = (props) => {
 
       <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto">
         <div className="justify-between items-center" style={{ padding: 15 }}>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between gap-4">
             <div className="text-xl font-bold text-white">Directory</div>
             <div className="mt-1 flex items-center">
               <IcSpan onClick={createFileHandler} data-tip="새 파일">
