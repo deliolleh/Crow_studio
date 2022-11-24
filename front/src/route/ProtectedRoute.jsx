@@ -5,7 +5,7 @@ const ProtectedRoute = ({ children }) => {
   const isLoggedIn = !!localStorage.getItem("access-token");
 
   if (isLoggedIn) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/teams" replace />;
   }
   return children;
 };

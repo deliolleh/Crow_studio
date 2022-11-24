@@ -20,7 +20,7 @@ const Login = () => {
       localStorage.setItem("access-token", `${res.data.jwt}`);
       dispatch(getUser());
       toast.success("로그인 성공");
-      navigate("/");
+      navigate("/teams");
     } catch (err) {
       if (err.response.status === 409) {
         toast.warning("해당 아이디가 존재하지 않거나 비밀번호가 틀립니다");

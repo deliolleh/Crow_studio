@@ -28,7 +28,11 @@ import RedirectServer from "./pages/redirect/RedirectServer";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Intro />,
+    element: (
+      <ProtectedRoute>
+        <Intro />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/login",
