@@ -20,7 +20,7 @@ const Signup = () => {
       localStorage.setItem("access-token", `${res.data.jwt}`);
       dispatch(getUser());
       toast.success("회원가입 성공");
-      navigate("/");
+      navigate("/teams");
     } catch (err) {
       if (err.response.status === 409) {
         toast.warning("이미 해당 아이디가 존재합니다");

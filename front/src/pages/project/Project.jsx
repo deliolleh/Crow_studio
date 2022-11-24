@@ -105,7 +105,7 @@ const Project = () => {
   const saveSetting = async () => {
     userApi
       .setPersonalSetting(teamSeq, setting)
-      .then(() => toast.success("저장되었습니다"))
+      // .then(() => toast.success("저장되었습니다"))
       .catch(() => toast.error("오류가 발생했습니다"));
   };
 
