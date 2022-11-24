@@ -18,9 +18,8 @@ public class TeamDto {
     private Long teamLeaderSeq;
     private String teamLeaderNickname;
     private String teamLeaderProfile;
-
     private String teamGit;
-
+    private String teamPort;
     private String projectType;
 
     private List<MemberDto> memberDtoList;
@@ -51,7 +50,9 @@ public class TeamDto {
             this.teamGit = teamEntity.getTeamGit();
         }
 
-        switch (teamEntity.getType()) {
+        this.teamPort = teamEntity.getTeamPort();
+
+        switch (teamEntity.getProjectType()) {
             case (1):
                 this.projectType = "pure Python";
                 break;

@@ -1,5 +1,6 @@
 package com.example.goldencrow.team;
 
+import com.example.goldencrow.compile.CompileService;
 import com.example.goldencrow.file.service.ProjectService;
 import com.example.goldencrow.git.GitService;
 import com.example.goldencrow.team.dto.MemberDto;
@@ -30,7 +31,9 @@ public class TeamService {
 
     private final JwtService jwtService;
     private final ProjectService projectService;
+    private final CompileService compileService;
     private final GitService gitService;
+
 
     /**
      * TeamService 생성자
@@ -40,15 +43,18 @@ public class TeamService {
      * @param memberRepository Member table에 접속하는 repository
      * @param jwtService       jwt를 관리하는 service
      * @param projectService   project를 관리하는 service
+     * @param compileService   compile을 관리하는 service
      * @param gitService       git을 관리하는 service
      */
     public TeamService(UserRepository userRepository, TeamRepository teamRepository, MemberRepository memberRepository,
-                       JwtService jwtService, ProjectService projectService, GitService gitService) {
+                       JwtService jwtService, ProjectService projectService, CompileService compileService,
+                       GitService gitService) {
         this.userRepository = userRepository;
         this.teamRepository = teamRepository;
         this.memberRepository = memberRepository;
         this.jwtService = jwtService;
         this.projectService = projectService;
+        this.compileService = compileService;
         this.gitService = gitService;
     }
 
@@ -241,70 +247,90 @@ public class TeamService {
                 return serviceRes;
             }
 
-            // 사용자를 팀장으로 하는 팀 생성, DB에 기록
-            TeamEntity teamEntity = new TeamEntity(userEntity, teamName, typeNum, teamGit);
+            // 사용자를 팀장으로 하는 팀 생성
+            TeamEntity teamEntity = new TeamEntity(userEntity, teamName, teamGit, typeNum);
             teamRepository.saveAndFlush(teamEntity);
             Long teamSeq = teamEntity.getTeamSeq();
+            System.out.println("말좀해봐뭐가문제야:"+teamEntity);
 
-            // 만들어진 팀에 사용자를 멤버로 DB에 기록
-            MemberEntity memberEntity = new MemberEntity(userEntity, teamEntity);
-            memberRepository.saveAndFlush(memberEntity);
+            // 팀의 프로젝트에 대한 컨테이너 생성
+            Map<String, String> containerRes = compileService.containerCreateService(teamName, teamSeq);
+            if (!containerRes.get("result").equals(SUCCESS)) {
+                // 생성에 실패함
+                return containerRes;
+
+            }
+
+            System.out.println("컨테이너 생성 성공");
 
             // git clone을 받아오는지, 새로 생성하는지 판별
             if (teamGit == null) {
 
-                // git 정보가 비어있는 상태이므로 클론을 받아오지 않고, 프로젝트를 생성함
-                Map<String, String> projectCreateResult
-                        = projectService.createProjectService(BASE_URL, typeNum, teamName, teamSeq);
+                System.out.println("깃정보가 비었음이 확인됨");
 
-                if (projectCreateResult.get("result").equals(SUCCESS)) {
+                // git 정보가 비어있는 상태이므로 클론을 받아오지 않고, 프로젝트를 생성함
+                Map<String, String> projectCreateRes
+                        = projectService.createProjectService(typeNum, teamName, teamSeq);
+
+                if (projectCreateRes.get("result").equals(SUCCESS)) {
                     // 성공
                     serviceRes.put("result", SUCCESS);
                     serviceRes.put("teamSeq", String.valueOf(teamSeq));
 
+                    System.out.println("생성이 성공함");
+
                 } else {
                     // 모든 경우의 프로젝트 생성 실패
+                    System.out.println("여기서?터졋나?");
 
-                    // 등록되었던 팀을 삭제
-                    // 해당 팀에 연결된 멤버도 자동으로 삭제
+                    // 미리 만들어두었던 팀을 삭제
+                    // 팀 삭제와 함께 멤버도 자동으로 삭제됨
                     teamRepository.delete(teamEntity);
 
-                    if (projectCreateResult.get("result").equals(DUPLICATE)) {
-                        serviceRes.put("result", DUPLICATE);
-                    } else {
-                        serviceRes.put("result", UNKNOWN);
-                    }
+                    return projectCreateRes;
+
                 }
 
             } else {
 
                 // 쓰여진 주소에서 정보를 받아와 프로젝트를 구축함
                 Map<String, String> gitCloneRes = gitService.gitCloneService(teamGit, teamSeq, teamName);
-                String gitCloneResult = gitCloneRes.get("result");
 
-                if (gitCloneResult.equals(SUCCESS)) {
+                if (gitCloneRes.get("result").equals(SUCCESS)) {
                     // 성공
                     serviceRes.put("result", SUCCESS);
                     serviceRes.put("teamSeq", String.valueOf(teamSeq));
+
                 } else {
-                    // 모든 경우의 프로젝트 생성 실패
-                    // 등록되었던 팀을 삭제
-                    // 해당 팀에 연결된 멤버도 자동으로 삭제
+
+                    // 미리 만들어두었던 팀을 삭제
+                    // 팀 삭제와 함께 멤버도 자동으로 삭제됨
                     teamRepository.delete(teamEntity);
 
-                    if (gitCloneResult.equals(NO_PER)) {
-                        serviceRes.put("result", NO_PER);
-                    } else if (gitCloneResult.equals(NO_SUCH)) {
-                        serviceRes.put("result", NO_SUCH);
-                    } else {
-                        serviceRes.put("result", WRONG);
-                    }
+                    return gitCloneRes;
 
                 }
 
             }
 
+            System.out.println("포트저장시작");
+
+            teamEntity.setTeamPort(containerRes.get("port"));
+            teamRepository.saveAndFlush(teamEntity);
+
+            System.out.println("포트저장완료");
+
+            // 만들어진 팀에 사용자를 멤버로 DB에 기록
+            MemberEntity memberEntity = new MemberEntity(userEntity, teamEntity);
+            memberRepository.saveAndFlush(memberEntity);
+
+            System.out.println("멤버등록성공");
+
+            serviceRes.put("result", SUCCESS);
+            serviceRes.put("teamSeq", String.valueOf(teamSeq));
+
         } catch (Exception e) {
+            System.out.println("언노운");
             serviceRes.put("result", UNKNOWN);
 
         }
@@ -424,85 +450,6 @@ public class TeamService {
                 // 팀장과 팀 시퀀스가 일치하는 팀이 존재함
                 TeamEntity teamEntity = teamEntityOptional.get();
                 teamEntity.setTeamGit(teamGit);
-                teamRepository.saveAndFlush(teamEntity);
-                serviceRes.put("result", SUCCESS);
-
-            } else {
-                // 그 팀의 팀장이 사용자가 아니므로, 수정할 수 없음
-                serviceRes.put("result", NO_PER);
-
-            }
-
-        } catch (Exception e) {
-            serviceRes.put("result", UNKNOWN);
-
-        }
-
-        return serviceRes;
-
-    }
-
-    /**
-     * 팀의 프로젝트 타입을 수정하는 내부 로직
-     *
-     * @param jwt         회원가입 및 로그인 시 발급되는 access token
-     * @param teamSeq     프로젝트 타입을 바꾸고자 하는 팀의 Seq
-     * @param projectType 적용될 새로운 프로젝트 타입
-     * @return 성공 시 수정된 프로젝트 타입 반환, 성패에 따른 result 반환
-     */
-    public Map<String, String> teamModifyTypeService(String jwt, Long teamSeq, String projectType) {
-
-        Map<String, String> serviceRes = new HashMap<>();
-
-        // String으로 입력받은 projectType을 내부 로직용으로 int로 치환
-        int typeNum;
-        switch (projectType) {
-            case "pure Python":
-                typeNum = 1;
-                break;
-            case "Django":
-                typeNum = 2;
-                break;
-            case "Flask":
-                typeNum = 3;
-                break;
-            case "FastAPI":
-                typeNum = 4;
-                break;
-            default:
-                serviceRes.put("result", WRONG);
-                return serviceRes;
-        }
-
-        try {
-
-            // jwt가 인증하는 사용자의 UserEntity를 추출
-            Optional<UserEntity> userEntityOptional = userRepository.findById(jwtService.JWTtoUserSeq(jwt));
-
-            // 해당하는 사용자가 존재하는지 확인
-            if (!userEntityOptional.isPresent()) {
-                // 해당하는 사용자가 없음
-                serviceRes.put("result", NO_SUCH);
-                return serviceRes;
-            }
-
-            UserEntity userEntity = userEntityOptional.get();
-            Long userSeq = userEntity.getUserSeq();
-
-            // 입력받은 팀이 존재하는지 확인
-            Optional<TeamEntity> teamEntityFoundCheck = teamRepository.findByTeamSeq(teamSeq);
-            if (!teamEntityFoundCheck.isPresent()) {
-                // 해당하는 팀이 없음
-                serviceRes.put("result", NO_SUCH);
-                return serviceRes;
-            }
-
-            // 그 팀의 팀장이 사용자가 맞는지 확인
-            Optional<TeamEntity> teamEntityOptional = teamRepository.findByTeamSeqAndTeamLeader_UserSeq(teamSeq, userSeq);
-            if (teamEntityOptional.isPresent()) {
-                // 팀장과 팀 시퀀스가 일치하는 팀이 존재함
-                TeamEntity teamEntity = teamEntityOptional.get();
-                teamEntity.setType(typeNum);
                 teamRepository.saveAndFlush(teamEntity);
                 serviceRes.put("result", SUCCESS);
 

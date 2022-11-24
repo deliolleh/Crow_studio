@@ -32,32 +32,6 @@ public class ProjectController {
     }
 
     /**
-     * 프로젝트 생성 API
-     *
-     * @param teamSeq 프로젝트를 생성할 팀의 Sequence
-     * @param type    생성할 프로젝트의 종류 (1: pure Python, 2: Django, 3: Flask, 4: FastAPI)
-     * @param req     "projectName"을 key로 가지는 Map<String, String>
-     * @return
-     * @status
-     */
-    @PostMapping("/{teamSeq}")
-    public ResponseEntity<Map<String, String>> teamProjectCreate(@PathVariable Long teamSeq,
-                                                    @RequestParam int type,
-                                                    @RequestBody Map<String, String> req) {
-        String pjt = req.get("projectName");
-
-        Map<String, String> res = projectService.createProjectService(BASE_URL, type, pjt, teamSeq);
-        switch (res.get("result")) {
-            case SUCCESS:
-                return new ResponseEntity<>(res, HttpStatus.OK);
-            case DUPLICATE:
-                return new ResponseEntity<>(res, HttpStatus.CONFLICT);
-            default:
-                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    /**
      * 프로젝트 디렉토리 조회 API
      *
      * @param teamSeq 조회하려는 프로젝트의 팀 Sequence
@@ -78,11 +52,14 @@ public class ProjectController {
             res.put("result", BAD_REQ);
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
-
-        String rootPath = files[0].getPath();
-        String rootName = files[0].getName();
-        rootPath = rootPath.replace(BASE_URL, "");
-        res = projectService.readDirectoryService(rootPath, rootName, res);
+        pjtPath = pjtPath.replace(BASE_URL,"");
+        for (File rootFile : files) {
+            if (rootFile.getName().equals("DockerFile")) {
+                continue;
+            }
+            String rootPath = rootFile.getPath().replace(BASE_URL, "");
+            res = projectService.readDirectoryService(rootPath,rootFile.getName(),res);
+        }
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 }

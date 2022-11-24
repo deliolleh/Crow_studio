@@ -38,9 +38,23 @@ public class FileService {
      */
     public Map<String, String> createFileService(Long teamSeq, int type, FileCreateRequestDto fileCreateRequestDto) {
         Map<String, String> serviceRes = new HashMap<>();
+        String filePath = BASE_URL+ fileCreateRequestDto.getFilePath();
+        File checkFile = new File(filePath);
 
+        if (!checkFile.isDirectory()) {
+            Optional<FileEntity> baseFile = fileRepository.findFileEntityByTeamSeqAndFilePath(teamSeq,filePath);
+            if (!baseFile.isPresent()) {
+                System.out.println("여긴가?");
+                System.out.println(filePath);
+                serviceRes.put("result",NO_SUCH);
+                return serviceRes;
+            }
+            String baseFileName = baseFile.get().getFileTitle();
+
+            filePath = filePath.replace("/"+baseFileName,"");
+        }
         // 생성할 파일 혹은 폴더의 경로
-        String newFilePath = BASE_URL + fileCreateRequestDto.getFilePath() + "/" + fileCreateRequestDto.getFileTitle();
+        String newFilePath = filePath + "/" + fileCreateRequestDto.getFileTitle();
 
         // 경로와 타입으로 file 생성 로직 수행
         String makeNewFileRes = makeNewFileService(newFilePath, type);
@@ -148,7 +162,6 @@ public class FileService {
         } else {
             try {
                 Files.delete(path);
-                System.out.println("실제 파일 삭제에서 터짐");
             } catch (NoSuchFileException e) {
                 return NO_SUCH;
             } catch (IOException ioe) {
