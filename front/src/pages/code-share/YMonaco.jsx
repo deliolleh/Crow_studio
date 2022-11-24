@@ -10,7 +10,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 const YMonaco = () => {
   const editorRef = useRef(null);
   const location = useLocation();
-  const teamSeq = location.state.teamSeq;
+  const teamSeq = location.state.teamSeq ? location.state.teamSeq : 332;
   const options = location.state.options;
 
   const editorOptions = {
